@@ -1,6 +1,8 @@
 #include "App.hpp"
 #include "Log.hpp"
 
+#include "utils/ColliderHelper.hpp"
+
 bool App::Init() {
     InitWindow(500, 500, m_title);
     if (!IsWindowReady()) {
