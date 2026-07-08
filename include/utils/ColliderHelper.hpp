@@ -3,8 +3,9 @@
 #include "CommonIncludes.hpp"
 #include "utils/MeshHelper.hpp"
 #include "utils/MathHelper.hpp"
+#include "Physics.hpp"
 
-inline void AddBoundsBoxColliderToBody(rc::PhysicsCommon& physicsCommon, rc::RigidBody* body, const Model& model) {
+inline void AddBoundsBoxColliderToBody(rc::RigidBody* body, const Model& model) {
     if (model.meshCount == 0) return;
 
     // Compute axis-aligned bounding box (AABB) of all meshes in the model
@@ -28,14 +29,14 @@ inline void AddBoundsBoxColliderToBody(rc::PhysicsCommon& physicsCommon, rc::Rig
     rc::Vector3 center = (maxPt + minPt) * 0.5f;
 
     // Create the box shape using half-extents
-    rc::BoxShape* boxShape = physicsCommon.createBoxShape(halfExtents);
+    rc::BoxShape* boxShape = Physics::Get().GetCommon().createBoxShape(halfExtents);
 
     // Attach the box as a collider using a local transform
     rc::Transform localTransform{center, rc::Quaternion::identity()};
     body->addCollider(boxShape, localTransform);
 }
 
-inline void AddBoundsBoxColliderToBodyMulty(rc::PhysicsCommon& physicsCommon, rc::RigidBody* body, const Model& model) {
+inline void AddBoundsBoxColliderToBodyMulty(rc::RigidBody* body, const Model& model) {
     if (model.meshCount == 0) return;
 
     // Compute axis-aligned bounding box (AABB) of all meshes in the model
@@ -55,7 +56,7 @@ inline void AddBoundsBoxColliderToBodyMulty(rc::PhysicsCommon& physicsCommon, rc
         rc::Vector3 center = (maxPt + minPt) * 0.5f;
 
         // Create the box shape using half-extents
-        rc::BoxShape* boxShape = physicsCommon.createBoxShape(halfExtents);
+        rc::BoxShape* boxShape = Physics::Get().GetCommon().createBoxShape(halfExtents);
 
         // Attach the box as a collider using a local transform
         rc::Transform localTransform{center, rc::Quaternion::identity()};
@@ -63,20 +64,20 @@ inline void AddBoundsBoxColliderToBodyMulty(rc::PhysicsCommon& physicsCommon, rc
     }
 }
 
-inline void AddBoundingSphereColliderToBody(rc::PhysicsCommon& physicsCommon, rc::RigidBody* body, const Model& model) {
+inline void AddBoundingSphereColliderToBody(rc::RigidBody* body, const Model& model) {
     if (model.meshCount == 0) return;
 
     float max_rad = MaxRad(model);
 
     // Create the box shape using half-extents
-    rc::SphereShape* sphereShape = physicsCommon.createSphereShape(max_rad);
+    rc::SphereShape* sphereShape = Physics::Get().GetCommon().createSphereShape(max_rad);
 
     // Attach the box as a collider using a local transform
     rc::Transform localTransform{rc::Vector3{0, 0, 0}, rc::Quaternion::identity()};
     body->addCollider(sphereShape, localTransform);
 }
 
-inline void AddHeightmapCollider(Image heightmap_image, Vector3 scale, rc::PhysicsCommon& physicsCommon, rc::RigidBody* body) {
+inline void AddHeightmapCollider(Image heightmap_image, Vector3 scale, rc::RigidBody* body) {
     int nbColumns = heightmap_image.width;
     int nbRows = heightmap_image.height;
 
@@ -95,7 +96,7 @@ inline void AddHeightmapCollider(Image heightmap_image, Vector3 scale, rc::Physi
     std::vector<rc::Message> messages;
 
     // Create the HeightField object
-    rc::HeightField* heightField = physicsCommon.createHeightField(
+    rc::HeightField* heightField = Physics::Get().GetCommon().createHeightField(
         nbColumns,
         nbRows,
         heights.data(),
@@ -103,7 +104,7 @@ inline void AddHeightmapCollider(Image heightmap_image, Vector3 scale, rc::Physi
         messages
     );
 
-    rc::HeightFieldShape* shape = physicsCommon.createHeightFieldShape(
+    rc::HeightFieldShape* shape = Physics::Get().GetCommon().createHeightFieldShape(
         heightField,
         rc::Vector3(scale.x/128, scale.y/20, scale.z/128)  // scaling for x,y,z
     );

@@ -1,7 +1,5 @@
 #pragma once
-#include "CommonIncludes.hpp"
-#include "World.hpp"
-#include "ResourceManager.hpp"
+#include "lil_engine.hpp"
 
 class App {
 public:
@@ -15,7 +13,7 @@ public:
     void Draw();
 
 private:
-    const char *m_title = "Datum";
+    const char *m_title = "lil editor";
     
     Camera3D m_camera = {0};
     World m_world;

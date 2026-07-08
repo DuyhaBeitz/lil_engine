@@ -3,26 +3,17 @@
 #include "CommonIncludes.hpp"
 
 class Actor {
-public:
-    Actor(rc::RigidBody* body) 
-    : m_body(body) {
-    }
+protected:
+    rc::RigidBody* m_body;
 
-    void SetModel(std::string model_key, Vector3 local_offset = {0, 0, 0});
-    
-    void Draw();
+public:
+    Actor(rc::BodyType body_type = rc::BodyType::DYNAMIC, Vector3 position = Vector3{0.0f, 0.0f, 0.0f});
+
+    virtual void Draw() = 0;
 
     Vector3 GetAxisAngle(float& angle);
     Vector3 GetPosition();
     void SetPosition(Vector3 position);
 
     rc::RigidBody* GetBody();
-    Model* GetModel();
-
-    std::string& ModelKey();
-
-private:
-    rc::RigidBody* m_body;
-    std::string m_model_key;
-    Vector3 m_model_local_offset;
 };

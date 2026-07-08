@@ -39,21 +39,23 @@ void App::InitCamera() {
 
 void App::InitPhyiscs() {
     Model car_model = *ResourceManager::Get().GetModel("Car.glb");
-    auto car = m_world.AddActor();
+    auto car = std::make_shared<Pawn>();
     car->SetModel("Car.glb");
-    AddBoundsBoxColliderToBodyMulty(m_world.GetPhysicsCommon(), car->GetBody(), car_model);
+    AddBoundsBoxColliderToBodyMulty(car->GetBody(), car_model);
     car->SetPosition({0, 5, 0});
+    m_world.AddActor(car);
 
     Model earth_model = *ResourceManager::Get().GetModel("Earth.glb");
-    auto earth = m_world.AddActor();
+    auto earth = std::make_shared<Pawn>();
     earth->SetModel("Earth.glb");
-    AddBoundingSphereColliderToBody(m_world.GetPhysicsCommon(), earth->GetBody(), earth_model);
+    AddBoundingSphereColliderToBody(earth->GetBody(), earth_model);
     earth->SetPosition({0, 20, 0});
+    m_world.AddActor(earth);
 
     Vector3 map_size = {128, 4, 128};
-    auto map = m_world.AddHeightmapActor(*ResourceManager::Get().GetTextrue("heightmap.png"), map_size);
+    auto map = std::make_shared<Heightmap>(*ResourceManager::Get().GetTextrue("heightmap.png"), map_size);
+    m_world.AddActor(map);
 }
-
 
 void App::Update() {
     if (!m_cursor_enabled) {UpdateCamera(&m_camera, CAMERA_FREE);}
