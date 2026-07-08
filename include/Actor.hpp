@@ -16,4 +16,6 @@ public:
     void SetPosition(Vector3 position);
 
     rc::RigidBody* GetBody();
+
+    void SetAngularLockAxisFactor(Vector3 lock_axis);
 };

@@ -29,3 +29,7 @@ void Actor::SetPosition(Vector3 position) {
 }
 
 rc::RigidBody *Actor::GetBody() { return m_body; }
+
+void Actor::SetAngularLockAxisFactor(Vector3 lock_axis) {
+    m_body->setAngularLockAxisFactor(rc::Vector3(lock_axis.x, lock_axis.y, lock_axis.z));
+}

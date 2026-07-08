@@ -6,6 +6,31 @@ std::shared_ptr<Actor> World::AddActor(std::shared_ptr<Actor> actor) {
     return actor;
 }
 
+std::shared_ptr<Pawn> World::AddPawn(std::string model_key, Vector3 model_offset) {
+    auto pawn = std::make_shared<Pawn>();
+    pawn->SetModel(model_key, model_offset);
+    AddActor(pawn);
+    return pawn;
+}
+
+std::shared_ptr<Heightmap> World::AddHeightmap(Image heightmap_image, Vector3 map_size) {
+    auto heightmap = std::make_shared<Heightmap>(heightmap_image, map_size);
+    AddActor(heightmap);
+    return heightmap;
+}
+
+std::shared_ptr<Heightmap> World::AddHeightmap(Texture2D heightmap_texture, Vector3 map_size) {
+    auto heightmap = std::make_shared<Heightmap>(heightmap_texture, map_size);
+    AddActor(heightmap);
+    return heightmap;
+}
+
+std::shared_ptr<Heightmap> World::AddHeightmap(std::string texture_key, Vector3 map_size) {
+    auto heightmap = std::make_shared<Heightmap>(*ResourceManager::Get().GetTexture(texture_key), map_size);
+    AddActor(heightmap);
+    return heightmap;
+}
+
 void World::Draw() {
     for (auto& [key, actor] : m_actors) actor->Draw();
 }

@@ -2,7 +2,7 @@
 
 #include "Actor.hpp"
 
-// pawn is an actor with a 3D model
+// Pawn is an Actor with a 3D model
 class Pawn : public Actor {
 private:
     std::string m_model_key;
@@ -18,4 +18,8 @@ public:
 
     Model* GetModel();
     std::string& ModelKey();
+
+    void AddBoundBoxCollider();
+    void AddBoundBoxColliderMulty(); // for each mesh in the model
+    void AddBoundSphereCollider();
 };

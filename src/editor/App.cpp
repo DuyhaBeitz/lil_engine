@@ -27,6 +27,7 @@ void App::InitResources() {
     ResourceManager::Get().AddTexture("assets/heightmap.png");
     ResourceManager::Get().AddModel("assets/Car.glb");
     ResourceManager::Get().AddModel("assets/Earth.glb");
+    ResourceManager::Get().AddModel("assets/CesiumMan.glb");
 }
 
 void App::InitCamera() {
@@ -38,23 +39,23 @@ void App::InitCamera() {
 }
 
 void App::InitPhyiscs() {
-    Model car_model = *ResourceManager::Get().GetModel("Car.glb");
-    auto car = std::make_shared<Pawn>();
-    car->SetModel("Car.glb");
-    AddBoundsBoxColliderToBodyMulty(car->GetBody(), car_model);
-    car->SetPosition({0, 5, 0});
-    m_world.AddActor(car);
+    Model man_model = *ResourceManager::Get().GetModel("CesiumMan.glb");
+    auto man = std::make_shared<Character>();
+    man->SetModel("CesiumMan.glb");
+    AddBoundsBoxColliderToBodyMulty(man->GetBody(), man_model);
+    man->SetPosition({13, 5, 0});
+    m_world.AddActor(man);
 
-    Model earth_model = *ResourceManager::Get().GetModel("Earth.glb");
-    auto earth = std::make_shared<Pawn>();
-    earth->SetModel("Earth.glb");
-    AddBoundingSphereColliderToBody(earth->GetBody(), earth_model);
+    auto car = m_world.AddPawn("Car.glb");
+    car->AddBoundBoxColliderMulty();
+    car->SetPosition({0, 5, 0});
+
+    auto earth = m_world.AddPawn("Earth.glb");
+    earth->AddBoundSphereCollider();
     earth->SetPosition({0, 20, 0});
-    m_world.AddActor(earth);
 
     Vector3 map_size = {128, 4, 128};
-    auto map = std::make_shared<Heightmap>(*ResourceManager::Get().GetTextrue("heightmap.png"), map_size);
-    m_world.AddActor(map);
+    auto map = m_world.AddHeightmap("heightmap.png", map_size);
 }
 
 void App::Update() {

@@ -1,6 +1,6 @@
 #include "Pawn.hpp"
-
 #include "ResourceManager.hpp"
+#include "utils/ColliderHelper.hpp"
 
 void Pawn::Draw() {
     float angle;
@@ -17,3 +17,17 @@ void Pawn::SetModel(std::string model_key, Vector3 local_offset) {
 
 Model *Pawn::GetModel() { return ResourceManager::Get().GetModel(m_model_key); }
 std::string &Pawn::ModelKey() {return m_model_key;}
+
+void Pawn::AddBoundBoxCollider() {
+    AddBoundsBoxColliderToBody(m_body, *ResourceManager::Get().GetModel(m_model_key));
+}
+
+void Pawn::AddBoundBoxColliderMulty() {
+    AddBoundsBoxColliderToBodyMulty(m_body, *ResourceManager::Get().GetModel(m_model_key));
+}
+
+void Pawn::AddBoundSphereCollider() {
+    AddBoundingSphereColliderToBody(m_body, *ResourceManager::Get().GetModel(m_model_key));
+}
+
+

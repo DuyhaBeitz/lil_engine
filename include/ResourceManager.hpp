@@ -22,7 +22,7 @@ public:
     void AddModel(std::string key, std::string filename);
     void AddModel(std::string filename);
 
-    Texture2D* GetTextrue(std::string key) {
+    Texture2D* GetTexture(std::string key) {
         if (m_textures.find(key) != m_textures.end()) return &m_textures[key];
         else return nullptr;
     }
