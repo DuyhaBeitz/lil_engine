@@ -1,0 +1,1 @@
+emrun build/index.html --browser chrome

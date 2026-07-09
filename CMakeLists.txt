@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(lil_engine LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_BUILD_TYPE Release)
@@ -18,7 +18,6 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/src/lil_engine
 )
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PLATFORM}.cmake)
 
 # -------------------------------
 # Editor Executable
@@ -32,3 +31,4 @@ target_link_libraries(lil_editor PRIVATE
 target_include_directories(lil_editor PUBLIC 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/editor
 )
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PLATFORM}.cmake)

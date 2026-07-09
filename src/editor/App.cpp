@@ -4,7 +4,7 @@
 #include "utils/ColliderHelper.hpp"
 
 bool App::Init() {
-    InitWindow(500, 500, m_title);
+    InitWindow(720, 720, m_title);
     if (!IsWindowReady()) {
         LOG_ERROR("Failed to initialize raylib");
         return false;
@@ -62,15 +62,15 @@ void App::Update() {
     if (!m_cursor_enabled) {UpdateCamera(&m_camera, CAMERA_FREE);}
     m_world.Update();
 
-    if (IsKeyPressed(KEY_F4)) {
+    if (IsKeyPressed(KEY_L)) {
         if (m_cursor_enabled) DisableCursor();
         else EnableCursor();
         m_cursor_enabled = !m_cursor_enabled;
     }
-    if (IsKeyPressed(KEY_F5)) {
+    if (IsKeyPressed(KEY_F)) {
         m_world.ToggleSimulationGoing();
     }
-    if (IsKeyPressed(KEY_F6)) {
+    if (IsKeyPressed(KEY_V)) {
         m_world.m_physics_debug = !m_world.m_physics_debug;
     }
 

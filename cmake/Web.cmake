@@ -2,7 +2,7 @@
 set(RAYLIB_DIR ${CMAKE_SOURCE_DIR}/include/external/raylib)
 
 target_link_libraries(${PROJECT_NAME} 
-    ${RAYLIB_DIR}/libraylib.a
+    ${CMAKE_SOURCE_DIR}/web/libraylib.a
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
@@ -17,11 +17,18 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 set(REACTPHYSICS_DIR ${CMAKE_SOURCE_DIR}/include/external/reactphysics3d)
 
 target_link_libraries(${PROJECT_NAME} 
-    ${REACTPHYSICS_DIR}/libreactphysics3d.a
+    ${CMAKE_SOURCE_DIR}/web/libreactphysics3d.a
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC 
     ${REACTPHYSICS_DIR}/include
+)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -s ASYNCIFY -sMAX_WEBGL_VERSION=2 --preload-file assets --shell-file shell.html")
+
+set_target_properties(lil_editor PROPERTIES
+    OUTPUT_NAME "index"
+    SUFFIX ".html"
 )
 
 #native file dialog

@@ -13,6 +13,7 @@ public:
 
     Vector3 GetAxisAngle(float& angle);
     Vector3 GetPosition();
+    
     void SetPosition(Vector3 position);
 
     rc::RigidBody* GetBody();
