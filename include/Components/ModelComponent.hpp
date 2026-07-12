@@ -13,7 +13,6 @@ public:
     virtual void Draw();
 
     void SetModel(std::string model_key);
-    virtual void Update(Actor& actor) override;
 
     Model* GetModel();
     std::string& ModelKey();

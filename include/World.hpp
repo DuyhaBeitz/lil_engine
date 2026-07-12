@@ -14,11 +14,18 @@ class World {
 private:
     std::unordered_map<Actor*, std::unique_ptr<Actor>> m_actors;
     std::unordered_map<Component*, std::unique_ptr<Component>> m_components;
+    bool m_update_ready = false;
+
+    void UpdateActorLayout() {
+        for (auto& [key, actor] : m_actors) actor->LayoutUpdate();
+    }
+
+    void PrepareUpdate() {
+        UpdateActorLayout();
+    }
 
 public:
     World() = default;
-
-    //std::shared_ptr<Actor> AddActor(std::shared_ptr<Actor> actor);
 
     template<typename T = Actor, typename... Args>
     T* CreateActor(Args&&... args) {
@@ -52,7 +59,7 @@ public:
     void DebugDraw();
     void ToggleSimulationGoing() { m_simulation_going = !m_simulation_going; }
 
-    bool m_simulation_going = false;
+    bool m_simulation_going = true;
     float m_simulation_speed = 1.0f;
     bool m_physics_debug = false;
 };

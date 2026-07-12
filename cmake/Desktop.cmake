@@ -1,4 +1,4 @@
-# Raylib
+# raylib
 set(RAYLIB_DIR ${CMAKE_SOURCE_DIR}/include/external/raylib)
 
 target_link_libraries(${PROJECT_NAME} 
@@ -6,11 +6,26 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
-    "${RAYLIB_DIR}"
+    ${RAYLIB_DIR}
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC 
     ${RAYLIB_DIR}/include
+)
+
+#raylib-gizmo
+add_library(raylib-gizmo STATIC ${CMAKE_SOURCE_DIR}/include/external/raylib-gizmo/raygizmo.c)
+target_include_directories(raylib-gizmo PUBLIC
+    ${CMAKE_SOURCE_DIR}/include/external/raylib-gizmo
+    ${RAYLIB_DIR}/include
+)
+
+target_include_directories(${PROJECT_NAME}  PUBLIC
+    ${CMAKE_SOURCE_DIR}/include/external/raylib-gizmo
+)
+
+target_link_libraries(${PROJECT_NAME}
+    raylib-gizmo
 )
 
 # ReactPhysics3D

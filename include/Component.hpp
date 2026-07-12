@@ -43,27 +43,22 @@ public:
     Component() = default;
     Component(Transform local_transform) : m_local_space(local_transform), Transformable() {}
 
-    void PropogateTransform(Transform parent_transform) {
-        // Position: parent.pos + parent.rot * (parent.scale * local.pos)
+    void LayoutUpdate(Transform parent_transform) {
         Vector3 rotated = Vector3RotateByQuaternion(m_local_space.GetPosition(), parent_transform.rotation);
         SetPosition(parent_transform.translation + rotated);
-
-        // Rotation: parent.rot * local.rot
         SetRotation(QuaternionMultiply(parent_transform.rotation, m_local_space.GetRotation()));
-
-        // Scale: parent.scale * local.scale (works for uniform scale)
         SetScale(m_local_space.GetScale() * parent_transform.scale);
 
-        OnPropogateTransform();
+        OnLayoutUpdate();
     }
 
     Transformable& Local() { return m_local_space; }
 
-    virtual void Update(Actor& actor) {};
+    virtual void SimulationUpdate(Actor& actor) {};
     virtual void Draw() {};
     virtual void DebugDraw() {};
 
-    virtual void OnPropogateTransform() {};
+    virtual void OnLayoutUpdate() {};
 };
 
 struct Attachment {

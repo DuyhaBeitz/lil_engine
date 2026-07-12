@@ -8,27 +8,20 @@ private:
     std::vector<Component*> m_components;
     std::vector<Attachment> m_attachments;
 
-    void PropogateTransform() {
-        for (auto& attachment : m_attachments) {
-            attachment.child->PropogateTransform(attachment.parent->GetTransform());
-        }
-    }
-
 public:
     Actor() = default;
+    
     void LayoutUpdate() {
-        PropogateTransform();
-    }
-
-    void ComponentsUpdate() {
-        for (auto& component : m_components) {
-            component->Update(*this);
+        for (auto& attachment : m_attachments) {
+            attachment.child->LayoutUpdate(attachment.parent->GetTransform());
         }
-        CustomUpdate();
     }
 
-    // for editing scene, attaching components (actor propogates to components)
-    virtual void CustomUpdate() {};
+    void SimulationUpdate() {
+        for (auto& component : m_components) {
+            component->SimulationUpdate(*this);
+        }
+    }
 
     void Draw() {
         for (auto& component : m_components) component->Draw();

@@ -20,12 +20,5 @@ void ModelComponent::SetModel(std::string model_key) {
     m_model_key = model_key;
 }
 
-void ModelComponent::Update(Actor &actor) {
-    // std::cout << GetRotation().w << std::endl;
-    // std::cout << GetRotation().x << std::endl;
-    // std::cout << GetRotation().y << std::endl;
-    // std::cout << GetRotation().z << std::endl << std::endl;
-}
-
 Model *ModelComponent::GetModel() { return Lil::Resources().GetModel(m_model_key); }
 std::string &ModelComponent::ModelKey() {return m_model_key;}

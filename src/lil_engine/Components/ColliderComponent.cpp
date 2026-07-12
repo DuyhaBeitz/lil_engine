@@ -18,7 +18,7 @@ void ColliderComponent::SetAngularLockAxisFactor(Vector3 lock_axis) {
     m_body->setAngularLockAxisFactor(rc::Vector3(lock_axis.x, lock_axis.y, lock_axis.z));
 }
 
-void ColliderComponent::Update(Actor &actor) {
+void ColliderComponent::SimulationUpdate(Actor &actor) {
     Transform t = GetTransform();
     t.translation = RlVector3(m_body->getTransform().getPosition());
     t.rotation = RlQuaternion(m_body->getTransform().getOrientation());
@@ -33,6 +33,7 @@ void ColliderComponent::Update(Actor &actor) {
 
     Vector3 rotatedLocalPos = Vector3RotateByQuaternion(m_local_space.GetPosition(), actorWorld.rotation);
     actorWorld.translation = m_transform.translation - m_local_space.GetPosition();
+    actorWorld.scale = GetScale() / Local().GetScale();
 
     actor.SetTransform(actorWorld);
 }

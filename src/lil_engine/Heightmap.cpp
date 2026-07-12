@@ -41,10 +41,3 @@ Heightmap::Heightmap(std::string texture_key, Vector3 map_size) {
     Setup(heightmap_image, map_size);
     UnloadImage(heightmap_image);
 }
-
-void Heightmap::CustomUpdate() {
-    // Vector3 map_size = {128, 4, 128};
-    // model->Local().SetPosition(Vector3{-map_size.x/2, -map_size.y*sinf(GetTime()), -map_size.z/2});
-    // std::cout << GetPosition().y << std::endl;
-    //model->Local().SetRotation(QuaternionFromAxisAngle(Vector3{1, 0, 0}, 2*PI*sinf(0.5*GetTime())));
-}

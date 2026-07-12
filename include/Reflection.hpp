@@ -41,6 +41,7 @@ struct Field {
 class Reflectable {
 private:
     std::unordered_map<std::string, Field> m_fields;
+
 public:
     Reflectable() {RegisterFields();}
 
