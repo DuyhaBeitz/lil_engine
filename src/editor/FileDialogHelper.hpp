@@ -18,7 +18,7 @@ inline void BrowseTexture() {
     {
         std::string filename = outPath;
         NFD_FreePathU8(outPath);
-        ResourceManager::Get().AddTexture(NameFromPath(filename), filename);
+        Lil::Resources().AddTexture(NameFromPath(filename), filename);
     }
     else if (result == NFD_CANCEL)
     {
@@ -47,7 +47,7 @@ inline void BrowseModel() {
     {
         std::string filename = outPath;
         NFD_FreePathU8(outPath);
-        ResourceManager::Get().AddModel(NameFromPath(filename), filename);
+        Lil::Resources().AddModel(NameFromPath(filename), filename);
     }
     else if (result == NFD_CANCEL)
     {

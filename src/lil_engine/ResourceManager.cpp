@@ -31,6 +31,5 @@ void ResourceManager::AddModel(std::string key, std::string filename) {
 
 void ResourceManager::AddModel(std::string filename) {
     std::string key = NameFromPath(filename);
-    std::cout << "key: " << key << '\n';
     AddModel(key, filename);
 }

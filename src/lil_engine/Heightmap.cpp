@@ -1,25 +1,50 @@
 #include "Heightmap.hpp"
+#include "CommonIncludes.hpp"
 #include "utils/MeshHelper.hpp"
 #include "utils/ColliderHelper.hpp"
-#include "ResourceManager.hpp"
-#include "Physics.hpp"
 
-Heightmap::Heightmap(Image heightmap_image, Vector3 map_size) 
-: Pawn(rc::BodyType::STATIC)
+#include "lil_engine.hpp"
+#include "Components/ModelComponent.hpp"
+#include "Components/ColliderComponent.hpp"
+
+void Heightmap::Setup(Image heightmap_image, Vector3 map_size) {
+    Lil::Resources().AddModel("heightmap", HeightmapModel(heightmap_image, map_size));
+    model = Lil::GetWorld().CreateComponent<ModelComponent>("heightmap");
+    auto collider = Lil::GetWorld().CreateComponent<ColliderComponent>(rc::BodyType::STATIC);
+    auto b = collider->GetBody();
+    AttachComponent(model);
+    Transform t1 = GetTransform();
+    AttachComponent(collider);
+    Transform t2 = GetTransform();
+
+    model->SetModel("heightmap");
+    model->Local().SetPosition(Vector3{-map_size.x/2, -map_size.y/2, -map_size.z/2});
+    AddHeightmapCollider(heightmap_image, map_size, b);
+}
+
+Heightmap::Heightmap(Image heightmap_image, Vector3 map_size)
+    : Actor()
 {
-    ResourceManager::Get().AddModel("heightmap", HeightmapModel(heightmap_image, map_size));
-    SetModel("heightmap", Vector3{-map_size.x/2, -map_size.y/2, -map_size.z/2});
-    AddHeightmapCollider(heightmap_image, map_size, m_body);
+    Setup(heightmap_image, map_size);
 }
 
 Heightmap::Heightmap(Texture2D heightmap_texture, Vector3 map_size)
-: Pawn(rc::BodyType::STATIC)
+    : Actor()
 {
     Image heightmap_image = LoadImageFromTexture(heightmap_texture);
-
-    ResourceManager::Get().AddModel("heightmap", HeightmapModel(heightmap_image, map_size));
-    SetModel("heightmap", Vector3{-map_size.x/2, -map_size.y/2, -map_size.z/2});
-    AddHeightmapCollider(heightmap_image, map_size, m_body);
-
+    Setup(heightmap_image, map_size);
     UnloadImage(heightmap_image);
+}
+
+Heightmap::Heightmap(std::string texture_key, Vector3 map_size) {
+    Image heightmap_image = LoadImageFromTexture(*Lil::Resources().GetTexture(texture_key));
+    Setup(heightmap_image, map_size);
+    UnloadImage(heightmap_image);
+}
+
+void Heightmap::CustomUpdate() {
+    // Vector3 map_size = {128, 4, 128};
+    // model->Local().SetPosition(Vector3{-map_size.x/2, -map_size.y*sinf(GetTime()), -map_size.z/2});
+    // std::cout << GetPosition().y << std::endl;
+    //model->Local().SetRotation(QuaternionFromAxisAngle(Vector3{1, 0, 0}, 2*PI*sinf(0.5*GetTime())));
 }

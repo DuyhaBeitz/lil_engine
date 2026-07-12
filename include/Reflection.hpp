@@ -13,6 +13,7 @@ enum class LilType : FieldType {
 
     Vector2,
     Vector3,
+    Quaternion,
     Color,
 
     Unknown
@@ -44,8 +45,13 @@ public:
     Reflectable() {RegisterFields();}
 
     template <typename T>
-    void AddField(const std::string& name, T* ptr, LilType type) {
+    void AddField(const std::string& name, T* ptr, FieldType type) {
         m_fields[name] = Field{(void*)ptr, type};
+    }
+
+    template <typename T>
+    void AddField(const std::string& name, T* ptr, LilType type) {
+        m_fields[name] = Field{(void*)ptr, FieldType(type)};
     }
 
     virtual void RegisterFields() {};

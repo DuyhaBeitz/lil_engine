@@ -2,11 +2,18 @@
 
 #include "Reflection.hpp"
 
-class Object : Reflectable {
+class Transformable : Reflectable {
 protected:
-    Transform m_transform;
+    Transform m_transform = {
+        .translation = Vector3{0.0f, 0.0f, 0.0f},
+        .rotation = QuaternionIdentity(),
+        .scale = Vector3{1.0f, 1.0f, 1.0f}
+    };
 
 public:
+    Transformable() = default;
+    Transformable(Transform transform) : m_transform(transform), Reflectable() {}
+
     void SetTransform(Transform transform) {m_transform = transform;}
     void SetPosition(Vector3 position) {m_transform.translation = position;}
     void SetRotation(Quaternion rotation) {m_transform.rotation = rotation;}
@@ -16,15 +23,50 @@ public:
     Vector3 GetPosition() {return m_transform.translation;}
     Quaternion GetRotation() {return m_transform.rotation;}
     Vector3 GetScale() {return m_transform.scale;}
+
+    Vector3 GetAxisAngle(float& angle);
+
+    virtual void RegisterFields() {
+        AddField("position", &m_transform.translation, LilType::Vector3);
+        AddField("rotation", &m_transform.rotation, LilType::Quaternion);
+        AddField("scale", &m_transform.scale, LilType::Vector3);
+    };
 };
 
-class Component : Object {
-private:
-    Object m_local_space;
+class Actor;
+
+class Component : public Transformable {
+protected:
+    Transformable m_local_space;
 
 public:
-    void UpdateTransform(Transform parent_transform) {
-        m_transform.translation = m_local_space.GetPosition() + parent_transform.translation;
-        m_tra
+    Component() = default;
+    Component(Transform local_transform) : m_local_space(local_transform), Transformable() {}
+
+    void PropogateTransform(Transform parent_transform) {
+        // Position: parent.pos + parent.rot * (parent.scale * local.pos)
+        Vector3 rotated = Vector3RotateByQuaternion(m_local_space.GetPosition(), parent_transform.rotation);
+        SetPosition(parent_transform.translation + rotated);
+
+        // Rotation: parent.rot * local.rot
+        SetRotation(QuaternionMultiply(parent_transform.rotation, m_local_space.GetRotation()));
+
+        // Scale: parent.scale * local.scale (works for uniform scale)
+        SetScale(m_local_space.GetScale() * parent_transform.scale);
+
+        OnPropogateTransform();
     }
+
+    Transformable& Local() { return m_local_space; }
+
+    virtual void Update(Actor& actor) {};
+    virtual void Draw() {};
+    virtual void DebugDraw() {};
+
+    virtual void OnPropogateTransform() {};
+};
+
+struct Attachment {
+    Transformable* parent;
+    Component* child;
 };

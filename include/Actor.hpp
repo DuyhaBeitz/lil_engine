@@ -1,22 +1,53 @@
 #pragma once
 
-#include "CommonIncludes.hpp"
+#include "Component.hpp"
+#include <vector>
 
-class Actor {
-protected:
-    rc::RigidBody* m_body;
+class Actor : public Transformable {
+private:
+    std::vector<Component*> m_components;
+    std::vector<Attachment> m_attachments;
+
+    void PropogateTransform() {
+        for (auto& attachment : m_attachments) {
+            attachment.child->PropogateTransform(attachment.parent->GetTransform());
+        }
+    }
 
 public:
-    Actor(rc::BodyType body_type = rc::BodyType::DYNAMIC, Vector3 position = Vector3{0.0f, 0.0f, 0.0f});
+    Actor() = default;
+    void LayoutUpdate() {
+        PropogateTransform();
+    }
 
-    virtual void Draw() = 0;
+    void ComponentsUpdate() {
+        for (auto& component : m_components) {
+            component->Update(*this);
+        }
+        CustomUpdate();
+    }
 
-    Vector3 GetAxisAngle(float& angle);
-    Vector3 GetPosition();
-    
-    void SetPosition(Vector3 position);
+    // for editing scene, attaching components (actor propogates to components)
+    virtual void CustomUpdate() {};
 
-    rc::RigidBody* GetBody();
+    void Draw() {
+        for (auto& component : m_components) component->Draw();
+    }
 
-    void SetAngularLockAxisFactor(Vector3 lock_axis);
+    void DebugDraw() {
+        for (auto& component : m_components) component->DebugDraw();
+
+        Vector3 v[3] = {
+            Vector3{1, 0, 0},
+            Vector3{0, 1, 0},
+            Vector3{0, 0, 1}
+        };
+        Color c[3] = {RED, GREEN, BLUE};
+        for (int i = 0; i < 3; i++) {
+            DrawLine3D(GetPosition(), GetPosition()+Vector3RotateByQuaternion(v[i], GetRotation())*10.0f, c[i]);
+        }
+    };
+
+    void AttachComponent(Component* component, Transformable* parent);
+    void AttachComponent(Component* component) { AttachComponent(component, this); }
 };
