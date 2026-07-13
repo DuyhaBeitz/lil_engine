@@ -1,3 +1,8 @@
+# refl-cpp
+target_include_directories(${PROJECT_NAME} PRIVATE
+    ${CMAKE_SOURCE_DIR}/include/external/refl-cpp
+)
+
 # raylib
 set(RAYLIB_DIR ${CMAKE_SOURCE_DIR}/include/external/raylib)
 

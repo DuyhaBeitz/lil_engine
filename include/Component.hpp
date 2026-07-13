@@ -3,7 +3,7 @@
 #include "Reflection.hpp"
 
 class Transformable : Reflectable {
-protected:
+public:
     Transform m_transform = {
         .translation = Vector3{0.0f, 0.0f, 0.0f},
         .rotation = QuaternionIdentity(),
@@ -11,6 +11,8 @@ protected:
     };
 
 public:
+    LIL_REFLECTABLE()
+
     Transformable() = default;
     Transformable(Transform transform) : m_transform(transform), Reflectable() {}
 
@@ -25,21 +27,21 @@ public:
     Vector3 GetScale() {return m_transform.scale;}
 
     Vector3 GetAxisAngle(float& angle);
-
-    virtual void RegisterFields() {
-        AddField("position", &m_transform.translation, LilType::Vector3);
-        AddField("rotation", &m_transform.rotation, LilType::Quaternion);
-        AddField("scale", &m_transform.scale, LilType::Vector3);
-    };
 };
+REFL_AUTO(
+    type(Transformable),
+    field(m_transform)
+)
 
 class Actor;
 
 class Component : public Transformable {
-protected:
+public:
     Transformable m_local_space;
 
 public:
+    LIL_REFLECTABLE()
+
     Component() = default;
     Component(Transform local_transform) : m_local_space(local_transform), Transformable() {}
 
@@ -60,6 +62,10 @@ public:
 
     virtual void OnLayoutUpdate() {};
 };
+REFL_AUTO(
+    type(Component),
+    field(m_local_space)
+)
 
 struct Attachment {
     Transformable* parent;

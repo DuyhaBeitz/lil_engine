@@ -4,7 +4,7 @@
 #include "utils/MathHelper.hpp"
 
 class ColliderComponent : public Component {
-private:
+public:
     virtual void OnLayoutUpdate() {
         m_body->setTransform(RcTransform(GetTransform()));
     }
@@ -13,6 +13,8 @@ protected:
     rc::RigidBody* m_body;
 
 public:
+    LIL_REFLECTABLE()
+
     ColliderComponent(rc::BodyType body_type = rc::BodyType::DYNAMIC);
 
     rc::RigidBody* GetBody();
@@ -22,3 +24,4 @@ public:
     virtual void SimulationUpdate(Actor& actor) override;
     virtual void DebugDraw() override;
 };
+REFL_AUTO(type(ColliderComponent))

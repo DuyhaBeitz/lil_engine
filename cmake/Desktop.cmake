@@ -1,3 +1,8 @@
+# refl-cpp
+target_include_directories(${PROJECT_NAME} PUBLIC
+    ${CMAKE_SOURCE_DIR}/include/external/refl-cpp
+)
+
 # raylib
 set(RAYLIB_DIR ${CMAKE_SOURCE_DIR}/include/external/raylib)
 
@@ -5,7 +10,7 @@ target_link_libraries(${PROJECT_NAME}
     ${RAYLIB_DIR}/libraylib.a
 )
 
-target_include_directories(${PROJECT_NAME} PRIVATE
+target_include_directories(${PROJECT_NAME} PUBLIC
     ${RAYLIB_DIR}
 )
 

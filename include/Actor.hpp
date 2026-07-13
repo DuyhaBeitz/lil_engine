@@ -4,11 +4,13 @@
 #include <vector>
 
 class Actor : public Transformable {
-private:
+public:
     std::vector<Component*> m_components;
     std::vector<Attachment> m_attachments;
 
 public:
+    LIL_REFLECTABLE()
+
     Actor() = default;
     
     void LayoutUpdate() {
@@ -44,3 +46,4 @@ public:
     void AttachComponent(Component* component, Transformable* parent);
     void AttachComponent(Component* component) { AttachComponent(component, this); }
 };
+REFL_AUTO(type(Actor))

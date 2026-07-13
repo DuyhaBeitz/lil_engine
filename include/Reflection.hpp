@@ -1,66 +1,85 @@
 #pragma once
 
 #include "CommonIncludes.hpp"
-#include <unordered_map>
 
-using FieldType = int;
-// you can add your own type, starting from LilType::Unknown + 1
-enum class LilType : FieldType {
-    Bool,
-    Int,
-    Float,
-    String,
+#include <vector>
+#include <cassert>
+#include <iostream>
+#include <raylib.h>
+#include "refl.hpp"
+#include "PrimitiveTypes.hpp"
 
-    Vector2,
-    Vector3,
-    Quaternion,
-    Color,
+class TypeInfo;
 
-    Unknown
+struct FieldInfo {
+    std::string name;
+    const TypeInfo* type;
+
+    void* (*GetPtr)(void*);
+    const void* (*GetPtrConst)(const void*);
 };
 
-// inline LilType deduceLilType(auto* ptr) {
-//     using T = std::remove_cv_t<std::remove_pointer_t<decltype(ptr)>>;
-//     if (std::is_same_v<T, bool>) return LilType::Bool;
-//     else if (std::is_same_v<T, int>) return LilType::Int;
-//     else if (std::is_same_v<T, float>) return LilType::Float;
-//     else if (std::is_same_v<T, std::string>) return LilType::String;
+class TypeInfo {
+public:
 
-//     else if (std::is_same_v<T, Vector2>) return LilType::Vector2;
-//     else if (std::is_same_v<T, Vector3>) return LilType::Vector3;
-//     else if (std::is_same_v<T, Color>) return LilType::Color;
+    template<typename T>
+    static const TypeInfo& Get() {
+        static const TypeInfo info(refl::reflect<T>());
+        return info;
+    }
 
-//     else return LilType::Unknown;
-// }
+    const std::string& Name() const {
+        return m_name;
+    }
 
-struct Field {
-    void* ptr = nullptr;
-    FieldType type = FieldType(LilType::Unknown);
+    const std::vector<FieldInfo>& Fields() const {
+        return m_fields;
+    }
+
+private:
+
+    std::string m_name;
+    std::vector<FieldInfo> m_fields;
+
+    template<typename T>
+    TypeInfo(refl::type_descriptor<T> td) : m_name(td.name) {
+        refl::util::for_each(td.members, [this](auto member) {
+            using Member = decltype(member);
+
+            if constexpr (refl::descriptor::is_field(Member{})) {
+                using FieldType = typename Member::value_type;
+
+                FieldInfo info;
+
+                info.name = member.name.c_str();
+                info.type = &TypeInfo::Get<FieldType>();
+
+                info.GetPtr = [](void* object) -> void* {
+                    auto* obj = static_cast<T*>(object);
+                    return &(obj->*Member::pointer);
+                };
+
+                info.GetPtrConst = [](const void* object) -> const void* {
+                    auto* obj = static_cast<const T*>(object);
+                    return &(obj->*Member::pointer);
+                };
+
+                m_fields.push_back(std::move(info));
+            }
+        });
+    }
 };
+
 
 class Reflectable {
-private:
-    std::unordered_map<std::string, Field> m_fields;
-
 public:
-    Reflectable() {RegisterFields();}
-
-    template <typename T>
-    void AddField(const std::string& name, T* ptr, FieldType type) {
-        m_fields[name] = Field{(void*)ptr, type};
-    }
-
-    template <typename T>
-    void AddField(const std::string& name, T* ptr, LilType type) {
-        m_fields[name] = Field{(void*)ptr, FieldType(type)};
-    }
-
-    virtual void RegisterFields() {};
-
-    // template <typename T>
-    // void AddField(const std::string& name, T* ptr) {
-    //     AddField(name, ptr, deduceLilType(ptr));
-    // }
+    virtual const TypeInfo& GetTypeInfo() const = 0;
 };
 
-//#define ADD_FIELD(serializer, var) serializer.AddField(NameFromObject(#var), &var)
+// define a convenience macro to autoimplement GetTypeInfo()
+#define LIL_REFLECTABLE() \
+    virtual const TypeInfo& GetTypeInfo() const override \
+    { \
+        return TypeInfo::Get<::refl::trait::remove_qualifiers_t<decltype(*this)>>(); \
+    }
+
