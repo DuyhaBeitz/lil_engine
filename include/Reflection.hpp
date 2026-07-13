@@ -12,11 +12,20 @@
 class TypeInfo;
 
 struct FieldInfo {
+    std::string parent_type_name;
     std::string name;
-    const TypeInfo* type;
+    const TypeInfo& type;
 
     void* (*GetPtr)(void*);
     const void* (*GetPtrConst)(const void*);
+
+    FieldInfo(const TypeInfo& type_) : type(type_) {}
+};
+
+class IFieldVisitor {
+public:
+    virtual ~IFieldVisitor() = default;
+    virtual bool Visit(const FieldInfo& field, void* instance) = 0;
 };
 
 class TypeInfo {
@@ -36,23 +45,49 @@ public:
         return m_fields;
     }
 
+    const std::vector<const TypeInfo*>& Bases() const {
+        return m_bases;
+    }
+
+
+    void VisitFields(void* instance, IFieldVisitor& visitor) const {
+        for (const auto& field : m_fields) {
+            if (!visitor.Visit(field, field.GetPtr(instance))) break;
+        }
+    }
+
+    bool operator==(const TypeInfo& other) const {
+        return m_name == other.Name();
+    }
+
 private:
 
     std::string m_name;
     std::vector<FieldInfo> m_fields;
+    std::vector<const TypeInfo*> m_bases;
 
     template<typename T>
     TypeInfo(refl::type_descriptor<T> td) : m_name(td.name) {
-        refl::util::for_each(td.members, [this](auto member) {
+        // populate bases
+        constexpr auto type = refl::reflect<T>();
+        if constexpr (type.declared_bases.size) {
+            refl::util::for_each(reflect_types(type.declared_bases), [this](auto t) {
+                using BaseType = typename decltype(t)::type;
+                m_bases.push_back(&TypeInfo::Get<BaseType>());
+            });
+        }
+        
+        refl::util::for_each(td.members, [this, td](auto member) {
             using Member = decltype(member);
 
+            // populate fields
             if constexpr (refl::descriptor::is_field(Member{})) {
                 using FieldType = typename Member::value_type;
 
-                FieldInfo info;
+                FieldInfo info(TypeInfo::Get<FieldType>());
 
                 info.name = member.name.c_str();
-                info.type = &TypeInfo::Get<FieldType>();
+                info.parent_type_name = m_name;
 
                 info.GetPtr = [](void* object) -> void* {
                     auto* obj = static_cast<T*>(object);

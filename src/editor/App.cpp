@@ -7,6 +7,8 @@
 #include "Components/ModelComponent.hpp"
 #include "Components/ColliderComponent.hpp"
 
+#include "EditorUI.hpp"
+
 bool App::Init() {
     InitWindow(720, 720, m_title);
     SetTargetFPS(10);
@@ -26,6 +28,11 @@ bool App::Init() {
     InitPhyiscs();
 
 	rlImGuiSetup(true);
+    ImGuiIO& io = ImGui::GetIO();
+    
+    float s = 3.0f;
+    io.DisplayFramebufferScale = ImVec2(s, s);
+    io.FontGlobalScale = s;
 
     return true;
 }
@@ -86,6 +93,7 @@ void App::Update() {
     }
 }
 
+EditorUIVisitor editor;
 void App::Draw() {
     BeginDrawing();
         ClearBackground(RAYBLACK);
@@ -99,34 +107,20 @@ void App::Draw() {
 
 
 
-		// start ImGui Conent
 		rlImGuiBegin();
+		
+        ImGui::Begin("Inspector");
 
-		// show ImGui Content
-		bool open = true;
-		ImGui::ShowDemoWindow(&open);
-
-		open = true;
-		if (ImGui::Begin("Test Window", &open))
-		{
-			ImGui::TextUnformatted(ICON_FA_JEDI);
-
-			//rlImGuiImage(&image);
-		}
+        car->GetTypeInfo().VisitFields(car, editor);
+	
 		ImGui::End();
-
-		// end ImGui Content
 		rlImGuiEnd();
 
-		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-			DrawText("Prssed", 0, 0, 20, RED);
-
-		if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
-			DrawText("Down", 0, 20, 20, GREEN);
-
-		if (IsWindowFocused())
-			DrawText("Focused", 100, 20, 20, WHITE);
-
-		EndDrawing();
     EndDrawing();
+
+    // auto ti = car->GetTypeInfo();
+    // std::cout << ti.Fields().size() << std::endl;
+    // for (auto field : ti.Fields()) {
+    //     std::cout << "field : " << field.parent_type_name << " " << field.type.Name() << " " << field.name << std::endl;
+    // }
 }

@@ -63,7 +63,7 @@ public:
     virtual void OnLayoutUpdate() {};
 };
 REFL_AUTO(
-    type(Component),
+    type(Component, bases<Transformable>),
     field(m_local_space)
 )
 

@@ -46,4 +46,4 @@ public:
     void AttachComponent(Component* component, Transformable* parent);
     void AttachComponent(Component* component) { AttachComponent(component, this); }
 };
-REFL_AUTO(type(Actor))
+REFL_AUTO(type(Actor, bases<Transformable>))

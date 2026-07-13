@@ -5,6 +5,9 @@
 #include "ResourceManager.hpp"
 #include "World.hpp"
 
+#include "imgui.h"
+#include "rlImGui.h"
+
 namespace Lil {
     class Engine {
     public:
