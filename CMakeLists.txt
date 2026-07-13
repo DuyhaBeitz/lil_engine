@@ -32,3 +32,5 @@ target_include_directories(lil_editor PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/editor
 )
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PLATFORM}.cmake)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-invalid-offsetof")
