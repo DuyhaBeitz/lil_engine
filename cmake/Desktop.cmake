@@ -1,3 +1,17 @@
+#imgui
+set(IMGUI_DIR ${CMAKE_SOURCE_DIR}/include/external/imgui)
+file(GLOB IMGUI_SOURCES
+    ${IMGUI_DIR}/*.cpp
+)
+
+add_library(imgui STATIC ${IMGUI_SOURCES})
+target_include_directories(imgui PUBLIC ${IMGUI_DIR})
+target_include_directories(${PROJECT_NAME} PUBLIC ${IMGUI_DIR})
+
+target_link_libraries(${PROJECT_NAME}
+    imgui
+)
+
 # refl-cpp
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${CMAKE_SOURCE_DIR}/include/external/refl-cpp
@@ -21,16 +35,34 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 #raylib-gizmo
 add_library(raylib-gizmo STATIC ${CMAKE_SOURCE_DIR}/include/external/raylib-gizmo/raygizmo.c)
 target_include_directories(raylib-gizmo PUBLIC
-    ${CMAKE_SOURCE_DIR}/include/external/raylib-gizmo
+    ${CMAKE_SOURCE_DIR}/include/external/raylib-gizmo/include
     ${RAYLIB_DIR}/include
 )
 
 target_include_directories(${PROJECT_NAME}  PUBLIC
-    ${CMAKE_SOURCE_DIR}/include/external/raylib-gizmo
+    ${CMAKE_SOURCE_DIR}/include/external/raylib-gizmo/include
 )
 
 target_link_libraries(${PROJECT_NAME}
     raylib-gizmo
+)
+
+#rlImGui-Raylib
+add_library(rlImGui STATIC ${CMAKE_SOURCE_DIR}/include/external/rlImGui-Raylib/rlImGui.cpp)
+target_include_directories(rlImGui PUBLIC
+    ${CMAKE_SOURCE_DIR}/include/external/rlImGui-Raylib/include
+    ${RAYLIB_DIR}/include
+    ${IMGUI_DIR}
+)
+
+target_link_libraries(rlImGui ${RAYLIB_DIR}/libraylib.a imgui)
+
+target_include_directories(${PROJECT_NAME}  PUBLIC
+    ${CMAKE_SOURCE_DIR}/include/external/rlImGui-Raylib/include
+)
+
+target_link_libraries(${PROJECT_NAME}
+    rlImGui
 )
 
 # ReactPhysics3D

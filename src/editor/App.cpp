@@ -25,6 +25,8 @@ bool App::Init() {
     InitCamera();
     InitPhyiscs();
 
+	rlImGuiSetup(true);
+
     return true;
 }
 
@@ -94,5 +96,37 @@ void App::Draw() {
             DrawGizmo3D(GIZMO_ALL, &t);
             car->SetTransform(t);
         EndMode3D();
+
+
+
+		// start ImGui Conent
+		rlImGuiBegin();
+
+		// show ImGui Content
+		bool open = true;
+		ImGui::ShowDemoWindow(&open);
+
+		open = true;
+		if (ImGui::Begin("Test Window", &open))
+		{
+			ImGui::TextUnformatted(ICON_FA_JEDI);
+
+			//rlImGuiImage(&image);
+		}
+		ImGui::End();
+
+		// end ImGui Content
+		rlImGuiEnd();
+
+		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+			DrawText("Prssed", 0, 0, 20, RED);
+
+		if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+			DrawText("Down", 0, 20, 20, GREEN);
+
+		if (IsWindowFocused())
+			DrawText("Focused", 100, 20, 20, WHITE);
+
+		EndDrawing();
     EndDrawing();
 }

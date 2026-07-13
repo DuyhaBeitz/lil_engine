@@ -21,12 +21,12 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 # raylib-gizmo
 add_library(raylib-gizmo STATIC ${CMAKE_SOURCE_DIR}/include/external/raylib-gizmo/raygizmo.c)
 target_include_directories(raylib-gizmo PUBLIC
-    ${CMAKE_SOURCE_DIR}/include/external/raylib-gizmo
+    ${CMAKE_SOURCE_DIR}/include/external/raylib-gizmo/include
     ${RAYLIB_DIR}/include
 )
 
 target_include_directories(${PROJECT_NAME}  PUBLIC
-    ${CMAKE_SOURCE_DIR}/include/external/raylib-gizmo
+    ${CMAKE_SOURCE_DIR}/include/external/raylib-gizmo/include
 )
 
 target_link_libraries(${PROJECT_NAME}
