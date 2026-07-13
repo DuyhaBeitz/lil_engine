@@ -1,1 +1,1 @@
-emrun build/index.html --browser chrome
+emrun build/index.html --browser firefox

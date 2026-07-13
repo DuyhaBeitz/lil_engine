@@ -10,7 +10,7 @@
 #include "EditorUI.hpp"
 
 bool App::Init() {
-    InitWindow(720, 720, m_title);
+    InitWindow(1920, 1080, m_title);
     SetTargetFPS(10);
     if (!IsWindowReady()) {
         LOG_ERROR("Failed to initialize raylib");
