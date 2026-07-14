@@ -170,7 +170,7 @@ void App::DrawTarget()
                 DrawGizmo3D(gizmo_flags, &t);
                 selected->SetTransform(t);
             }
-            if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+            if (m_cursor_enabled && IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
                 auto pick = Lil::GetWorld().PickActor(GetMousePosition(), render_target.texture.width, render_target.texture.height, m_camera);
                 if (pick) selected = pick;
             }
