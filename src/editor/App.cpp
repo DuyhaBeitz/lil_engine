@@ -26,13 +26,7 @@ bool App::Init() {
     InitResources();
     InitCamera();
     InitPhyiscs();
-
-	rlImGuiSetup(true);
-    ImGuiIO& io = ImGui::GetIO();
-    
-    float s = 3.0f;
-    io.DisplayFramebufferScale = ImVec2(s, s);
-    io.FontGlobalScale = s;
+    InitUI();
 
     return true;
 }
@@ -70,6 +64,18 @@ void App::InitPhyiscs() {
 
     Vector3 map_size = {128, 4, 128};
     auto map = Lil::GetWorld().CreateActor<Heightmap>("heightmap.png", map_size);
+}
+
+void App::InitUI() {
+	rlImGuiSetup(true);
+    ImGuiIO& io = ImGui::GetIO();
+    
+    float s = 3.0f;
+    io.DisplayFramebufferScale = ImVec2(s, s);
+    io.FontGlobalScale = s;
+#ifdef IMGUI_HAS_DOCK
+	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+#endif
 }
 
 void App::Update() {

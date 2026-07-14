@@ -32,3 +32,5 @@ target_include_directories(lil_editor PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/editor
 )
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PLATFORM}.cmake)
+
+add_compile_definitions(IMGUI_HAS_DOCK)

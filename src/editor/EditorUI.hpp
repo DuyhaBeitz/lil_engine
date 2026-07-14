@@ -2,6 +2,15 @@
 
 #include "lil_engine.hpp"
 
+// DPI scaling functions
+float ScaleToDPIF(float value) {
+	return GetWindowScaleDPI().x * value;
+}
+
+int ScaleToDPII(int value) {
+    return int(GetWindowScaleDPI().x * value);
+}
+
 class EditorUIVisitor : public IFieldVisitor {
 public:
     bool Visit(const FieldInfo& field, void* ptr) override {

@@ -1,7 +1,11 @@
 #imgui
 set(IMGUI_DIR ${CMAKE_SOURCE_DIR}/include/external/imgui)
-file(GLOB IMGUI_SOURCES
-    ${IMGUI_DIR}/*.cpp
+set(IMGUI_SOURCES
+    ${IMGUI_DIR}/imgui.cpp
+    ${IMGUI_DIR}/imgui_demo.cpp
+    ${IMGUI_DIR}/imgui_draw.cpp
+    ${IMGUI_DIR}/imgui_tables.cpp
+    ${IMGUI_DIR}/imgui_widgets.cpp
 )
 
 add_library(imgui STATIC ${IMGUI_SOURCES})

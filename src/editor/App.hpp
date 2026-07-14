@@ -22,4 +22,5 @@ private:
     void InitResources();
     void InitCamera();
     void InitPhyiscs();
+    void InitUI();
 };
