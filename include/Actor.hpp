@@ -45,5 +45,7 @@ public:
 
     void AttachComponent(Component* component, Transformable* parent);
     void AttachComponent(Component* component) { AttachComponent(component, this); }
+
+    const std::vector<Component*>& Components() const {return m_components;}
 };
 REFL_AUTO(type(Actor, bases<Transformable>))

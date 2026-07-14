@@ -1,7 +1,7 @@
 #include "Component.hpp"
 #include "utils/MathHelper.hpp"
 
-Vector3 Transformable::GetAxisAngle(float &angle) {
+Vector3 Transformable::GetAxisAngle(float &angle) const {
     Vector3 axis;
     QuaternionToAxisAngle(m_transform.rotation, &axis, &angle);
     return axis;

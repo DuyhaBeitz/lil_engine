@@ -21,12 +21,12 @@ public:
     void SetRotation(Quaternion rotation) {m_transform.rotation = rotation;}
     void SetScale(Vector3 scale) {m_transform.scale = scale;}
 
-    Transform GetTransform() {return m_transform;}
-    Vector3 GetPosition() {return m_transform.translation;}
-    Quaternion GetRotation() {return m_transform.rotation;}
-    Vector3 GetScale() {return m_transform.scale;}
+    Transform GetTransform() const {return m_transform;}
+    Vector3 GetPosition() const {return m_transform.translation;}
+    Quaternion GetRotation() const {return m_transform.rotation;}
+    Vector3 GetScale() const {return m_transform.scale;}
 
-    Vector3 GetAxisAngle(float& angle);
+    Vector3 GetAxisAngle(float& angle) const;
 };
 REFL_AUTO(
     type(Transformable),

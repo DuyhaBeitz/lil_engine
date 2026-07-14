@@ -2,6 +2,8 @@
 #include "utils/ColliderHelper.hpp"
 #include "lil_engine.hpp"
 
+#include "Components/ModelComponent.hpp"
+
 // std::shared_ptr<Actor> World::AddActor(std::shared_ptr<Actor> actor) {
 //     m_actors[std::to_string(m_actors.size())] = actor;
 //     return actor;
@@ -44,7 +46,22 @@ bool World::IsActorAlive(Actor *actor) const {
     return actor && m_actors.find(actor) != m_actors.end();
 }
 
-void World::DestroyComponent(Component *component) {
+Actor *World::PickActor(Vector2 screen_pos, int render_w, int render_h, Camera camera) {
+    Ray ray = GetScreenToWorldRayEx(screen_pos, camera, render_w, render_h);
+
+    DrawRay(ray, RED);
+    for (auto& [key, actor] : m_actors) {
+        for (auto& component : actor->Components()) {
+            if (ModelComponent* m = dynamic_cast<ModelComponent*>(component)) {            
+                if (m && m->Raycast(ray).hit)  return actor.get();
+            }
+        }
+    }
+    return nullptr;
+}
+
+void World::DestroyComponent(Component *component)
+{
     if (!component) return;
     auto it = m_components.find(component);
     if (it != m_components.end()) {

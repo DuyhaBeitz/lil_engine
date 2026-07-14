@@ -15,6 +15,7 @@ RenderTexture2D render_target;
 bool App::Init() {
     InitWindow(1920, 1080, m_title);
     SetTargetFPS(10);
+    SetExitKey(KEY_NULL);
     if (!IsWindowReady()) {
         LOG_ERROR("Failed to initialize raylib");
         return false;
@@ -51,11 +52,9 @@ void App::InitCamera() {
     m_camera.projection = CAMERA_PERSPECTIVE;             // Camera mode type
 }
 
-Actor* car = nullptr;
-
 void App::InitPhyiscs() {
     {
-    car = Lil::GetWorld().CreateActor<Actor>();
+    auto car = Lil::GetWorld().CreateActor<Actor>();
 
     auto m = Lil::GetWorld().CreateComponent<ModelComponent>("Car.glb");
     car->AttachComponent(m);
@@ -83,6 +82,8 @@ void App::InitUI() {
 #endif
 }
 
+Actor* selected = nullptr;
+
 void App::Update() {
     if (!m_cursor_enabled) {UpdateCamera(&m_camera, CAMERA_FREE);}
     Lil::GetWorld().Update();
@@ -102,6 +103,7 @@ void App::Update() {
     if (IsKeyPressed(KEY_F11)) {
         ToggleBorderlessWindowed();
     }
+    if (IsKeyPressed(KEY_ESCAPE)) selected = nullptr;
 }
 void App::Draw() {
 
@@ -116,7 +118,7 @@ void App::Draw() {
 #endif
 
         ImGui::Begin("Inspector");
-        car->GetTypeInfo().VisitFields(car, editor);
+        if (selected) selected->GetTypeInfo().VisitFields(selected, editor);
         ImGui::End();
         
         ImGui::Begin("Viewport");
@@ -154,12 +156,19 @@ void App::DrawTarget()
 {
     BeginTextureMode(render_target);
         ClearBackground(RAYBLACK);
+        
         BeginMode3D(m_camera);
             Lil::GetWorld().Draw();
             if (Lil::GetWorld().m_physics_debug) Lil::GetWorld().DebugDraw();
-            Transform t = car->GetTransform();
-            DrawGizmo3D(GIZMO_ALL, &t);
-            car->SetTransform(t);
+            if (selected) {
+                Transform t = selected->GetTransform();
+                DrawGizmo3D(GIZMO_ALL, &t);
+                selected->SetTransform(t);
+            }
+            if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+                auto pick = Lil::GetWorld().PickActor(GetMousePosition(), render_target.texture.width, render_target.texture.height, m_camera);
+                if (pick) selected = pick;
+            }
         EndMode3D();
     EndTextureMode();
 }

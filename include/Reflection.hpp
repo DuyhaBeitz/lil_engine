@@ -50,6 +50,11 @@ public:
     }
 
 
+    template<typename T>
+    bool IsA() const {
+        return IsA_Internal<T>(this);
+    }
+
     void VisitFields(void* instance, IFieldVisitor& visitor) const {
         for (const auto& field : m_fields) {
             if (!visitor.Visit(field, field.GetPtr(instance))) break;
@@ -102,6 +107,21 @@ private:
                 m_fields.push_back(std::move(info));
             }
         });
+    }
+
+    template<typename T>
+    bool IsA_Internal(const TypeInfo* current) const {
+        if (!current) return false;
+        
+        if (current == &TypeInfo::Get<T>()) return true;
+        
+        for (const auto* base : current->m_bases) {
+            if (IsA_Internal<T>(base)) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 };
 

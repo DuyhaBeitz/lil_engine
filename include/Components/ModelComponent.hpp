@@ -16,7 +16,9 @@ public:
 
     void SetModel(std::string model_key);
 
-    Model* GetModel();
+    Model* GetModel() const;
     std::string& ModelKey();
+
+    RayCollision Raycast(Ray ray) const;
 };
-REFL_AUTO(type(ModelComponent))
+REFL_AUTO(type(ModelComponent, bases<Component>))

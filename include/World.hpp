@@ -51,6 +51,8 @@ public:
         return ptr;
     }
 
+    Actor* PickActor(Vector2 screen_pos, int render_w, int render_h, Camera camera);
+
     void DestroyComponent(Component* component);
     bool IsComponentAlive(Component* component) const;
 
@@ -59,7 +61,7 @@ public:
     void DebugDraw();
     void ToggleSimulationGoing() { m_simulation_going = !m_simulation_going; }
 
-    bool m_simulation_going = true;
+    bool m_simulation_going = false;
     float m_simulation_speed = 1.0f;
     bool m_physics_debug = false;
 };
