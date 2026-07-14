@@ -155,6 +155,9 @@ static GizmoGlobals GIZMO = {
 	.activeAxis = 0
 };
 
+static int gizmo_render_width = 0;
+static int gizmo_render_height = 0;
+static bool gizmo_use_custom_size = false;
 
 //---------------------------------------------------------------------------------------------------
 // Function Declarations - Helper Functions
@@ -231,6 +234,31 @@ static Vector3 Vec3ScreenToWorld(Vector3 source, const Matrix* matViewProjInv);
  */
 static Ray Vec3ScreenToWorldRay(Vector2 position, const Matrix* matViewProjInv);
 
+// Helper function to get the current size
+static inline void GetGizmoRenderSize(int *width, int *height)
+{
+    if (gizmo_use_custom_size) {
+        *width = gizmo_render_width;
+        *height = gizmo_render_height;
+    } else {
+        *width = GetRenderWidth();
+        *height = GetRenderHeight();
+    }
+}
+
+static inline int GetGizmoRenderWidth() {
+	int width;
+	int height;
+	GetGizmoRenderSize(&width, &height);
+	return width;
+}
+
+static inline int GetGizmoRenderHeight() {
+	int width;
+	int height;
+	GetGizmoRenderSize(&width, &height);
+	return height;
+}
 
 //---------------------------------------------------------------------------------------------------
 // Functions Declaration - Drawing functions
@@ -463,6 +491,13 @@ void SetGizmoGlobalAxis(Vector3 right, Vector3 up, Vector3 forward)
 	GIZMO.axisCfg[GZ_AXIS_Z].normal = Vector3Normalize(forward);
 }
 
+RLAPI void SetGizmoRenderSize(int width, int height)
+{
+    gizmo_render_width = width;
+	gizmo_render_height = height;
+	gizmo_use_custom_size = true;
+}
+
 Transform GizmoIdentity(void)
 {
 	return (Transform){
@@ -569,9 +604,8 @@ static Ray Vec3ScreenToWorldRay(Vector2 position, const Matrix* matViewProjInv)
 {
 	Ray ray = {0};
 
-	const float width = (float)(GetRenderWidth());
-
-	const float height = (float)(GetRenderHeight());
+	const float width = (float)(GetGizmoRenderWidth());
+	const float height = (float)(GetGizmoRenderHeight());
 
 	const Vector2 deviceCoords = {(2.0f * position.x) / width - 1.0f, 1.0f - (2.0f * position.y) / height};
 

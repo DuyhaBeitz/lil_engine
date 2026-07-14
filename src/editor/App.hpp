@@ -13,6 +13,10 @@ public:
     void Update();
     void Draw();
 
+    void TryResizeTarget(int w, int h);
+    void LoadTarget(int w, int h);
+    void DrawTarget();
+
 private:
     const char *m_title = "lil editor";
     

@@ -9,6 +9,9 @@
 
 #include "EditorUI.hpp"
 
+EditorUIVisitor editor;
+RenderTexture2D render_target;
+
 bool App::Init() {
     InitWindow(1920, 1080, m_title);
     SetTargetFPS(10);
@@ -27,6 +30,8 @@ bool App::Init() {
     InitCamera();
     InitPhyiscs();
     InitUI();
+
+    LoadTarget(GetScreenWidth(), GetScreenHeight());
 
     return true;
 }
@@ -98,10 +103,56 @@ void App::Update() {
         ToggleBorderlessWindowed();
     }
 }
-
-EditorUIVisitor editor;
 void App::Draw() {
+
+
     BeginDrawing();
+        ClearBackground(RAYBLACK);
+
+		rlImGuiBegin();
+		
+#ifdef IMGUI_HAS_DOCK
+		ImGui::DockSpaceOverViewport(0,  NULL, ImGuiDockNodeFlags_PassthruCentralNode); // set ImGuiDockNodeFlags_PassthruCentralNode so that we can see the raylib contents behind the dockspace
+#endif
+
+        ImGui::Begin("Inspector");
+        car->GetTypeInfo().VisitFields(car, editor);
+        ImGui::End();
+        
+        ImGui::Begin("Viewport");
+        ImVec2 contentSize = ImGui::GetContentRegionAvail();
+        ImVec2 viewerTopLeft = ImGui::GetCursorScreenPos();
+        
+        SetMouseOffset(-viewerTopLeft.x, -viewerTopLeft.y);
+
+        TryResizeTarget(contentSize.x, contentSize.y);
+        SetGizmoRenderSize(contentSize.x, contentSize.y);
+
+        DrawTarget();
+        rlImGuiImageRenderTexture(&render_target);
+        SetMouseOffset(0, 0);
+        
+        ImGui::End();
+	
+		rlImGuiEnd();
+
+    EndDrawing();
+}
+
+void App::TryResizeTarget(int w, int h) {
+    if (render_target.texture.width != w || render_target.texture.height != h) {
+        LoadTarget(w, h);
+    }
+}
+
+void App::LoadTarget(int w, int h)
+{
+    render_target = LoadRenderTexture(w, h);
+}
+
+void App::DrawTarget()
+{
+    BeginTextureMode(render_target);
         ClearBackground(RAYBLACK);
         BeginMode3D(m_camera);
             Lil::GetWorld().Draw();
@@ -110,23 +161,5 @@ void App::Draw() {
             DrawGizmo3D(GIZMO_ALL, &t);
             car->SetTransform(t);
         EndMode3D();
-
-
-
-		rlImGuiBegin();
-		
-        ImGui::Begin("Inspector");
-
-        car->GetTypeInfo().VisitFields(car, editor);
-	
-		ImGui::End();
-		rlImGuiEnd();
-
-    EndDrawing();
-
-    // auto ti = car->GetTypeInfo();
-    // std::cout << ti.Fields().size() << std::endl;
-    // for (auto field : ti.Fields()) {
-    //     std::cout << "field : " << field.parent_type_name << " " << field.type.Name() << " " << field.name << std::endl;
-    // }
+    EndTextureMode();
 }

@@ -123,6 +123,13 @@ extern "C" {
 	 */
 	RLAPI void SetGizmoGlobalAxis(Vector3 right, Vector3 up, Vector3 forward);
 
+	/**
+	 * Set width and height for internal gizmo calculations
+	 * @param width screen width
+	 * @param height screen height
+	 * @default (1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0)
+	 */
+	RLAPI void SetGizmoRenderSize(int width, int height);
 
 //--------------------------------------------------------------------------------------------------
 
