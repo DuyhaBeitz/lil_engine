@@ -11,6 +11,7 @@
 
 EditorUIVisitor editor;
 RenderTexture2D render_target;
+GizmoFlags gizmo_flags = GIZMO_TRANSLATE;
 
 bool App::Init() {
     InitWindow(1920, 1080, m_title);
@@ -104,6 +105,10 @@ void App::Update() {
         ToggleBorderlessWindowed();
     }
     if (IsKeyPressed(KEY_ESCAPE)) selected = nullptr;
+
+    if (IsKeyPressed(KEY_G)) gizmo_flags = GIZMO_TRANSLATE;
+    if (IsKeyPressed(KEY_R)) gizmo_flags = GIZMO_ROTATE;
+    if (IsKeyPressed(KEY_S)) gizmo_flags = GIZMO_SCALE;
 }
 void App::Draw() {
 
@@ -162,7 +167,7 @@ void App::DrawTarget()
             if (Lil::GetWorld().m_physics_debug) Lil::GetWorld().DebugDraw();
             if (selected) {
                 Transform t = selected->GetTransform();
-                DrawGizmo3D(GIZMO_ALL, &t);
+                DrawGizmo3D(gizmo_flags, &t);
                 selected->SetTransform(t);
             }
             if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {

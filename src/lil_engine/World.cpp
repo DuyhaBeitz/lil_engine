@@ -49,15 +49,22 @@ bool World::IsActorAlive(Actor *actor) const {
 Actor *World::PickActor(Vector2 screen_pos, int render_w, int render_h, Camera camera) {
     Ray ray = GetScreenToWorldRayEx(screen_pos, camera, render_w, render_h);
 
+    float closest = INFINITY;
+    Actor* a = nullptr;
+    
     DrawRay(ray, RED);
     for (auto& [key, actor] : m_actors) {
         for (auto& component : actor->Components()) {
             if (ModelComponent* m = dynamic_cast<ModelComponent*>(component)) {            
-                if (m && m->Raycast(ray).hit)  return actor.get();
+                RayCollision res = m->Raycast(ray);
+                if (res.hit && res.distance < closest) {
+                    closest = res.distance;
+                    a = actor.get();
+                }
             }
         }
     }
-    return nullptr;
+    return a;
 }
 
 void World::DestroyComponent(Component *component)
