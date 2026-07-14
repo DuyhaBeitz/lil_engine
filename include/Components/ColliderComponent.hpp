@@ -5,7 +5,7 @@
 
 class ColliderComponent : public Component {
 public:
-    virtual void OnLayoutUpdate() {
+    virtual void OnLayoutUpdate() override {
         m_body->setTransform(RcTransform(GetTransform()));
     }
 

@@ -11,7 +11,8 @@
 
 EditorUIVisitor editor;
 RenderTexture2D render_target;
-GizmoFlags gizmo_flags = GIZMO_TRANSLATE;
+GizmoFlags gizmo_mode = GIZMO_TRANSLATE;
+GizmoFlags gizmo_space = GIZMO_DISABLED;
 
 bool App::Init() {
     InitWindow(1920, 1080, m_title);
@@ -106,41 +107,16 @@ void App::Update() {
     }
     if (IsKeyPressed(KEY_ESCAPE)) selected = nullptr;
 
-    if (IsKeyPressed(KEY_G)) gizmo_flags = GIZMO_TRANSLATE;
-    if (IsKeyPressed(KEY_R)) gizmo_flags = GIZMO_ROTATE;
-    if (IsKeyPressed(KEY_S)) gizmo_flags = GIZMO_SCALE;
+    if (IsKeyPressed(KEY_G)) gizmo_mode = GIZMO_TRANSLATE;
+    if (IsKeyPressed(KEY_R)) gizmo_mode = GIZMO_ROTATE;
+    if (IsKeyPressed(KEY_S)) gizmo_mode = GIZMO_SCALE;
 }
 void App::Draw() {
-
-
     BeginDrawing();
         ClearBackground(RAYBLACK);
 
 		rlImGuiBegin();
-		
-#ifdef IMGUI_HAS_DOCK
-		ImGui::DockSpaceOverViewport(0,  NULL, ImGuiDockNodeFlags_PassthruCentralNode); // set ImGuiDockNodeFlags_PassthruCentralNode so that we can see the raylib contents behind the dockspace
-#endif
-
-        ImGui::Begin("Inspector");
-        if (selected) selected->GetTypeInfo().VisitFields(selected, editor);
-        ImGui::End();
-        
-        ImGui::Begin("Viewport");
-        ImVec2 contentSize = ImGui::GetContentRegionAvail();
-        ImVec2 viewerTopLeft = ImGui::GetCursorScreenPos();
-        
-        SetMouseOffset(-viewerTopLeft.x, -viewerTopLeft.y);
-
-        TryResizeTarget(contentSize.x, contentSize.y);
-        SetGizmoRenderSize(contentSize.x, contentSize.y);
-
-        DrawTarget();
-        rlImGuiImageRenderTexture(&render_target);
-        SetMouseOffset(0, 0);
-        
-        ImGui::End();
-	
+		DrawUI();	
 		rlImGuiEnd();
 
     EndDrawing();
@@ -167,7 +143,7 @@ void App::DrawTarget()
             if (Lil::GetWorld().m_physics_debug) Lil::GetWorld().DebugDraw();
             if (selected) {
                 Transform t = selected->GetTransform();
-                DrawGizmo3D(gizmo_flags, &t);
+                DrawGizmo3D(gizmo_mode | gizmo_space, &t);
                 selected->SetTransform(t);
             }
             if (m_cursor_enabled && IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
@@ -176,4 +152,41 @@ void App::DrawTarget()
             }
         EndMode3D();
     EndTextureMode();
+}
+
+void App::DrawUI() {
+#ifdef IMGUI_HAS_DOCK
+    ImGui::DockSpaceOverViewport(0,  NULL, ImGuiDockNodeFlags_PassthruCentralNode); // set ImGuiDockNodeFlags_PassthruCentralNode so that we can see the raylib contents behind the dockspace
+#endif
+    ImGui::Begin("Inspector");
+    if (selected) selected->GetTypeInfo().VisitFields(selected, editor);
+    ImGui::End();
+    
+    DrawViewportUI();
+
+    ImGui::Begin("Panel");
+    if (gizmo_space == GIZMO_LOCAL) {
+        if (ImGui::Button("global")) gizmo_space = GIZMO_DISABLED; 
+    }
+    else if (ImGui::Button("local")) gizmo_space = GIZMO_LOCAL; 
+
+    ImGui::End();
+}
+
+void App::DrawViewportUI() {
+    ImGui::Begin("Viewport");
+    ImVec2 contentSize = ImGui::GetContentRegionAvail();
+    ImVec2 viewerTopLeft = ImGui::GetCursorScreenPos();
+    
+    SetMouseOffset(-viewerTopLeft.x, -viewerTopLeft.y);
+
+    TryResizeTarget(contentSize.x, contentSize.y);
+    SetGizmoRenderSize(contentSize.x, contentSize.y);
+
+    DrawTarget();
+    rlImGuiImageRenderTexture(&render_target);
+    
+    SetMouseOffset(0, 0);
+    
+    ImGui::End();
 }

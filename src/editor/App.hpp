@@ -17,6 +17,9 @@ public:
     void LoadTarget(int w, int h);
     void DrawTarget();
 
+    void DrawUI();
+    void DrawViewportUI();
+
 private:
     const char *m_title = "lil editor";
     
