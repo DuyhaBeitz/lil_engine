@@ -1,5 +1,5 @@
 #include "utils/ColliderHelper.hpp"
-#include "lil_engine.hpp"
+#include "LilEngine.hpp"
 
 void AddBoundsBoxColliderToBody(rc::RigidBody *body, const Model &model) {
     if (model.meshCount == 0) return;

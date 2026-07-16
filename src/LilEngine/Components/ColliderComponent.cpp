@@ -4,7 +4,7 @@
 #include "utils/MathHelper.hpp"
 #include "Physics.hpp"
 
-#include "lil_engine.hpp"
+#include "LilEngine.hpp"
 
 ColliderComponent::ColliderComponent(rc::BodyType body_type)
 : m_body(Lil::Physics().GetWorld()->createRigidBody(RcTransform(GetTransform()))), Component()

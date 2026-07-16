@@ -61,7 +61,7 @@ public:
     void DebugDraw();
     void ToggleSimulationGoing() { m_simulation_going = !m_simulation_going; }
 
-    bool m_simulation_going = false;
+    bool m_simulation_going = true;
     float m_simulation_speed = 1.0f;
     bool m_physics_debug = false;
 };

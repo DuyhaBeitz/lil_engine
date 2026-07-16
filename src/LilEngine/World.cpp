@@ -1,6 +1,6 @@
 #include "World.hpp"
 #include "utils/ColliderHelper.hpp"
-#include "lil_engine.hpp"
+#include "LilEngine.hpp"
 
 #include "Components/ModelComponent.hpp"
 

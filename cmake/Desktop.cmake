@@ -10,29 +10,25 @@ set(IMGUI_SOURCES
 
 add_library(imgui STATIC ${IMGUI_SOURCES})
 target_include_directories(imgui PUBLIC ${IMGUI_DIR})
-target_include_directories(${PROJECT_NAME} PUBLIC ${IMGUI_DIR})
+target_include_directories(lil_engine PUBLIC ${IMGUI_DIR})
 
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(lil_engine
     imgui
 )
 
 # refl-cpp
-target_include_directories(${PROJECT_NAME} PUBLIC
+target_include_directories(lil_engine PUBLIC
     ${CMAKE_SOURCE_DIR}/include/external/refl-cpp
 )
 
 # raylib
 set(RAYLIB_DIR ${CMAKE_SOURCE_DIR}/include/external/raylib)
 
-target_link_libraries(${PROJECT_NAME} 
+target_link_libraries(lil_engine 
     ${RAYLIB_DIR}/libraylib.a
 )
 
-target_include_directories(${PROJECT_NAME} PUBLIC
-    ${RAYLIB_DIR}
-)
-
-target_include_directories(${PROJECT_NAME} PUBLIC 
+target_include_directories(lil_engine PUBLIC 
     ${RAYLIB_DIR}/include
 )
 
@@ -43,11 +39,11 @@ target_include_directories(raylib-gizmo PUBLIC
     ${RAYLIB_DIR}/include
 )
 
-target_include_directories(${PROJECT_NAME}  PUBLIC
+target_include_directories(lil_engine  PUBLIC
     ${CMAKE_SOURCE_DIR}/include/external/raylib-gizmo/include
 )
 
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(lil_engine
     raylib-gizmo
 )
 
@@ -61,32 +57,32 @@ target_include_directories(rlImGui PUBLIC
 
 target_link_libraries(rlImGui ${RAYLIB_DIR}/libraylib.a imgui)
 
-target_include_directories(${PROJECT_NAME}  PUBLIC
+target_include_directories(lil_engine  PUBLIC
     ${CMAKE_SOURCE_DIR}/include/external/rlImGui-Raylib/include
 )
 
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(lil_engine
     rlImGui
 )
 
 # ReactPhysics3D
 set(REACTPHYSICS_DIR ${CMAKE_SOURCE_DIR}/include/external/reactphysics3d)
 
-target_link_libraries(${PROJECT_NAME} 
+target_link_libraries(lil_engine 
     ${REACTPHYSICS_DIR}/libreactphysics3d.a
 )
 
-target_include_directories(${PROJECT_NAME} PUBLIC 
+target_include_directories(lil_engine PUBLIC 
     ${REACTPHYSICS_DIR}/include
 )
 
 #native file dialog
 # set(NFD_DIR ${CMAKE_SOURCE_DIR}/include/external/nfd)
 
-# target_link_libraries(${PROJECT_NAME} 
+# target_link_libraries(lil_engine 
 #     ${NFD_DIR}/libnfd.a
 # )
 
-# target_include_directories(${PROJECT_NAME} PUBLIC 
+# target_include_directories(lil_engine PUBLIC 
 #     ${NFD_DIR}/include
 # )

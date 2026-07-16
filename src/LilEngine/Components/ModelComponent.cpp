@@ -1,6 +1,6 @@
 #include "Components/ModelComponent.hpp"
 
-#include "lil_engine.hpp"
+#include "LilEngine.hpp"
 
 ModelComponent::ModelComponent(std::string model_key)
 : m_model_key(model_key), Component()

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "lil_engine.hpp"
+#include "LilEngine.hpp"
 
 // DPI scaling functions
 float ScaleToDPIF(float value) {

@@ -1,4 +1,4 @@
-#include "lil_engine.hpp"
+#include "LilEngine.hpp"
 
 Lil::Engine &Lil::Engine::Get() {
     static Lil::Engine instance;
