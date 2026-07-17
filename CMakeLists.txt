@@ -28,7 +28,7 @@ target_link_libraries(lil_editor PUBLIC
     lil_engine
 )
 target_include_directories(lil_editor PUBLIC 
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/LilEditor
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/LilEditor
 )
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PLATFORM}.cmake)

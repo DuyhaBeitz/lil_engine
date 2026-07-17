@@ -8,7 +8,7 @@
 #include "Components/ModelComponent.hpp"
 #include "Components/ColliderComponent.hpp"
 
-Camera camera = {
+static Camera camera = {
     .position = (Vector3){ 10.0f,10.0f, 10.0f },  // Camera position
     .target = (Vector3){ 0.0f, 0.0f, 0.0f },      // Camera looking at point
     .up = (Vector3){ 0.0f, 1.0f, 0.0f },          // Camera up vector (rotation towards target)
@@ -44,14 +44,23 @@ int main() {
     auto map = Lil::GetWorld().CreateActor<Heightmap>("heightmap.png", map_size);
     }
 
+    Lil::Editor::Get().Init();
     while (!WindowShouldClose()) {
-        UpdateCamera(&camera, CAMERA_FREE);
-        Lil::GetWorld().Update();
+        if (1) {
+            Lil::Editor::Get().Update();
+            BeginDrawing();
+            Lil::Editor::Get().Draw();
+            EndDrawing();
+        }
+        else {
+            UpdateCamera(&camera, CAMERA_FREE);
+            Lil::GetWorld().Update();
 
-        BeginDrawing();
-            ClearBackground(RAYBLACK);
-            DrawGame();
-        EndDrawing();
+            BeginDrawing();
+                ClearBackground(RAYBLACK);
+                DrawGame();
+            EndDrawing();
+        }      
     }
     return 0;
 }

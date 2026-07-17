@@ -3,11 +3,11 @@
 #include "LilEngine.hpp"
 
 // DPI scaling functions
-float ScaleToDPIF(float value) {
+inline float ScaleToDPIF(float value) {
 	return GetWindowScaleDPI().x * value;
 }
 
-int ScaleToDPII(int value) {
+inline int ScaleToDPII(int value) {
     return int(GetWindowScaleDPI().x * value);
 }
 
