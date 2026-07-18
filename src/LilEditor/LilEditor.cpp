@@ -20,6 +20,7 @@ void Lil::Editor::InitUI() {
 #ifdef IMGUI_HAS_DOCK
 	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 #endif
+    Lil::UIStyle::InitGlobalTheme();
 }
 
 void Lil::Editor::LoadTarget(int w, int h) {
@@ -63,9 +64,10 @@ void Lil::Editor::DrawInspector() {
         
         ImGui::Spacing();
         
+
         // Components section with + button
         float availWidth = ImGui::GetContentRegionAvail().x;
-        ImGui::Text("Components");
+        ImGui::Begin("Components");
         ImGui::SameLine(availWidth - 30.0f);
         
         if (ImGui::Button("+")) {
@@ -128,6 +130,7 @@ void Lil::Editor::DrawInspector() {
             
             ImGui::EndPopup();
         }
+        ImGui::End();
     }
 
     ImGui::End();
