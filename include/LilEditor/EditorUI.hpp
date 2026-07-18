@@ -73,6 +73,11 @@ namespace Lil {
         // ==========================================
         // Visual Type Tints
         // ==========================================
+
+        // Visual Indicator for Constant (Read-Only) Fields
+        static inline const ImVec4 COLOR_CONST_BADGE      = ImVec4(0.30f, 0.30f, 0.30f, 1.0f);
+        static inline const ImVec4 COLOR_CONST_BADGE_TXT  = ImVec4(0.60f, 0.60f, 0.60f, 1.0f);
+
         static inline const ImVec4 COLOR_TYPE_BOOL        = ImVec4(0.70f, 0.00f, 0.00f, 1.0f); 
         static inline const ImVec4 COLOR_TYPE_NUMBER      = ImVec4(0.35f, 0.65f, 0.95f, 1.0f); 
         static inline const ImVec4 COLOR_TYPE_STRING      = ImVec4(0.85f, 0.45f, 0.10f, 1.0f); 
@@ -251,33 +256,51 @@ namespace Lil {
         // ==========================================
         // Reusable Read-Only (Const) Draw Elements
         // ==========================================
+        static void DrawConstIndicator() {
+            ImGui::SameLine();
+            ImGui::PushStyleColor(ImGuiCol_Button, COLOR_CONST_BADGE);
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, COLOR_CONST_BADGE);
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, COLOR_CONST_BADGE);
+            ImGui::PushStyleColor(ImGuiCol_Text, COLOR_CONST_BADGE_TXT);
+            
+            // Tiny, flat, non-interactive visual tag next to read-only parameters
+            ImGui::SmallButton("CONST");
+            
+            ImGui::PopStyleColor(4);
+        }
+
         static void DrawConstBoolField(const std::string& name, const bool* value) {
             BeginPropertyRow(name, COLOR_TYPE_BOOL);
             ImGui::TextColored(COLOR_CONST_VAL, *value ? "True" : "False");
+            DrawConstIndicator();
             EndPropertyRow();
         }
 
         static void DrawConstIntField(const std::string& name, const int* value) {
             BeginPropertyRow(name, GetNumericColor(name));
             ImGui::TextColored(COLOR_CONST_VAL, "%d", *value);
+            DrawConstIndicator();
             EndPropertyRow();
         }
 
         static void DrawConstUInt32Field(const std::string& name, const uint32_t* value) {
             BeginPropertyRow(name, COLOR_TYPE_NUMBER);
             ImGui::TextColored(COLOR_CONST_VAL, "%u", *value);
+            DrawConstIndicator();
             EndPropertyRow();
         }
 
         static void DrawConstFloatField(const std::string& name, const float* value) {
             BeginPropertyRow(name, GetNumericColor(name));
             ImGui::TextColored(COLOR_CONST_VAL, "%.3f", *value);
+            DrawConstIndicator();
             EndPropertyRow();
         }
 
         static void DrawConstStringField(const std::string& name, const std::string* value) {
             BeginPropertyRow(name, COLOR_TYPE_STRING);
             ImGui::TextColored(COLOR_CONST_VAL, "%s", value->c_str());
+            DrawConstIndicator();
             EndPropertyRow();
         }
     };
