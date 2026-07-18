@@ -55,7 +55,7 @@ void Lil::Editor::DrawTarget() {
 }
 
 void Lil::Editor::DrawInspector() {
-ImGui::Begin("Inspector");
+    ImGui::Begin("Inspector");
 
     if (m_selected) {
         ImGui::SeparatorText(m_selected->GetTypeInfo().Name().c_str());
@@ -213,22 +213,13 @@ void Lil::Editor::Draw() {
         if (ti->IsA<Actor>()) {
             const char* typeName = name.c_str();
 
-            //Create a clickable/draggable button
             if (ImGui::Selectable(typeName, false, ImGuiSelectableFlags_AllowDoubleClick)) {
-                // Optional: Double-click to spawn at origin
                 if (ImGui::IsMouseDoubleClicked(0)) {
                     Actor* actor = Lil::GetWorld().CreateActor(ti);
                     if (actor) {
                         m_selected = actor;
                     }
                 }
-            }
-            
-            if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
-                ImGui::SetDragDropPayload("ACTOR_TYPE", typeName, strlen(typeName) + 1);
-                ImGui::Text("Create %s", typeName);
-                
-                ImGui::EndDragDropSource();
             }
         }        
     }

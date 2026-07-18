@@ -58,7 +58,9 @@ public:
 
         else {
             if (ImGui::CollapsingHeader(field.name.c_str())) {
+                ImGui::Indent();
                 field.type.VisitFields(ptr, *this);
+                ImGui::Unindent();
             }            
         }
 
