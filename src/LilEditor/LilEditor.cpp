@@ -175,7 +175,7 @@ void Lil::Editor::DrawViewport() {
     SetMouseOffset(-viewerTopLeft.x, -viewerTopLeft.y);
 
     ImGuiIO& io = ImGui::GetIO();
-    if (ImGui::IsWindowHovered() || ImGui::IsWindowFocused()) HandleViewportInput();
+    if (ImGui::IsWindowHovered() || ImGui::IsWindowFocused() || !m_cursor_enabled) HandleViewportInput();
 
     TryResizeTarget(contentSize.x, contentSize.y);
     SetGizmoRenderSize(contentSize.x, contentSize.y);
