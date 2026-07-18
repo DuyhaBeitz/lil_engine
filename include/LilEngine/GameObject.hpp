@@ -31,7 +31,7 @@ LIL_REFLECT(Transformable, bases<>,
 
 class GameObject : public Transformable {
 public:
-    uint32_t m_id;
+    const uint32_t m_id;
 
 public:
     GameObject(Transform transform = TRANSFORM_EMPTY);

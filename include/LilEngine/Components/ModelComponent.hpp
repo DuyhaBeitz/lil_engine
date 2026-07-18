@@ -3,6 +3,8 @@
 #include "Component.hpp"
 #include "ResourceManager.hpp"
 
+#include "ReflAttributes.hpp"
+
 class ModelComponent : public Component {
 public:
     std::string m_model_key;
@@ -23,5 +25,11 @@ public:
     RayCollision Raycast(Ray ray) const;
 };
 LIL_REFLECT(ModelComponent, bases<Component>,
-    field(m_model_key)
+    field(m_model_key, ModelKeyAttribute())
 )
+// REFL_AUTO(type(ModelComponent, bases<Component>),
+//     field(m_model_key, ModelKeyAttribute())
+// )
+// REFL_TYPE(ModelComponent, bases<Component>)
+//     REFL_FIELD(m_model_key, ModelKeyAttribute())
+// REFL_END
