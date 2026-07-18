@@ -3,11 +3,11 @@
 #include "CommonIncludes.hpp"
 
 #include <vector>
+#include <set>
 #include <cassert>
 #include <iostream>
 #include <raylib.h>
 #include "refl.hpp"
-#include "PrimitiveTypes.hpp"
 
 class TypeInfo;
 
@@ -126,6 +126,33 @@ private:
 };
 
 
+namespace Lil {
+    class Reflection {
+    public:
+        static Reflection& Get() {
+            static Reflection instance;
+            return instance;
+        }
+
+        template<typename T>
+        void RegisterType() {
+            m_types.insert(&TypeInfo::Get<T>());
+        }
+
+        std::set<const TypeInfo*>& Types() { return m_types; }
+               
+    private:
+        std::set<const TypeInfo*> m_types;
+    };
+};
+
+template<typename T>
+struct TypeRegisterer {
+    TypeRegisterer() {
+        Lil::Reflection().Get().RegisterType<T>();
+    }
+};
+
 class Reflectable {
 public:
     virtual const TypeInfo& GetTypeInfo() const = 0;
@@ -138,3 +165,59 @@ public:
         return TypeInfo::Get<::refl::trait::remove_qualifiers_t<decltype(*this)>>(); \
     }
 
+#define LIL_REFLECT_NO_FIELDS(typename, bases) \
+REFL_AUTO(type(typename, bases)) \
+static TypeRegisterer<typename> _##typename##_registerer;
+
+#define LIL_REFLECT_NO_BASE(typename, ...) \
+REFL_AUTO(type(typename), __VA_ARGS__) \
+static TypeRegisterer<typename> _##typename##_registerer;
+
+#define LIL_REFLECT(typename, bases, ...) \
+REFL_AUTO(type(typename, bases), __VA_ARGS__) \
+static TypeRegisterer<typename> _##typename##_registerer;
+
+
+LIL_REFLECT_NO_BASE(
+    Vector2,
+    field(x),
+    field(y)
+)
+
+LIL_REFLECT_NO_BASE(
+    Vector3,
+    field(x),
+    field(y),
+    field(z)
+)
+
+LIL_REFLECT_NO_BASE(
+    Color,
+    field(r),
+    field(g),
+    field(b),
+    field(a)
+)
+
+LIL_REFLECT_NO_BASE(
+    Vector4,
+    field(x),
+    field(y),
+    field(z),
+    field(w)
+)
+
+LIL_REFLECT_NO_BASE(
+    Transform,
+    field(translation),
+    field(rotation),
+    field(scale)
+)
+
+LIL_REFLECT_NO_BASE(
+    Rectangle,
+    field(x),
+    field(y),
+    field(width),
+    field(height)
+)

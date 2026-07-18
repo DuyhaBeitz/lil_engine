@@ -28,8 +28,7 @@ public:
 
     Vector3 GetAxisAngle(float& angle) const;
 };
-REFL_AUTO(
-    type(Transformable),
+LIL_REFLECT_NO_BASE(Transformable,
     field(m_transform)
 )
 
@@ -62,8 +61,7 @@ public:
 
     virtual void OnLayoutUpdate() {};
 };
-REFL_AUTO(
-    type(Component, bases<Transformable>),
+LIL_REFLECT(Component, bases<Transformable>,
     field(m_local_space)
 )
 

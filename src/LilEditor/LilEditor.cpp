@@ -123,6 +123,17 @@ void Lil::Editor::Draw() {
     ImGui::End();
 
     ImGui::Begin("Actors");
+    // Actor actor;
+    // auto ti = actor.GetTypeInfo();
+
+    //refl::type_descriptor<Actor> td;
+
+    for (auto& ti : Lil::Reflection::Get().Types()) {
+        if (ti->IsA<Actor>()) {
+            ImGui::Text(ti->Name().c_str());
+        }        
+    }
+
     ImGui::End();
 
     rlImGuiEnd();

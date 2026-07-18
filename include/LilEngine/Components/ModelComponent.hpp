@@ -21,4 +21,4 @@ public:
 
     RayCollision Raycast(Ray ray) const;
 };
-REFL_AUTO(type(ModelComponent, bases<Component>))
+LIL_REFLECT_NO_FIELDS(ModelComponent, bases<Component>)

@@ -16,4 +16,4 @@ public:
     Heightmap(Texture2D heightmap_texture, Vector3 map_size);
     Heightmap(std::string texture_key, Vector3 map_size);
 };
-REFL_AUTO(type(Heightmap, bases<Actor>))
+LIL_REFLECT_NO_FIELDS(Heightmap, bases<Actor>)

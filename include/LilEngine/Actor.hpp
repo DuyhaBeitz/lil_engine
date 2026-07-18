@@ -48,4 +48,4 @@ public:
 
     const std::vector<Component*>& Components() const {return m_components;}
 };
-REFL_AUTO(type(Actor, bases<Transformable>))
+LIL_REFLECT_NO_FIELDS(Actor, bases<Transformable>)
