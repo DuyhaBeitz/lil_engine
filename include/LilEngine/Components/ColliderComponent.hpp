@@ -24,4 +24,4 @@ public:
     virtual void SimulationUpdate(Actor& actor) override;
     virtual void DebugDraw() override;
 };
-LIL_REFLECT_NO_FIELDS(ColliderComponent, bases<Component>)
+LIL_REFLECT(ColliderComponent, bases<Component>)

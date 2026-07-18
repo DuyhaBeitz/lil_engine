@@ -18,8 +18,16 @@ void Heightmap::Setup(Image heightmap_image, Vector3 map_size) {
     Transform t2 = GetTransform();
 
     model->SetModel("heightmap");
-    model->Local().SetPosition(Vector3{-map_size.x/2, -map_size.y/2, -map_size.z/2});
+    model->Local().translation = Vector3{-map_size.x/2, -map_size.y/2, -map_size.z/2};
     AddHeightmapCollider(heightmap_image, map_size, b);
+}
+
+Heightmap::Heightmap() {
+    model = Lil::GetWorld().CreateComponent<ModelComponent>("");
+    auto collider = Lil::GetWorld().CreateComponent<ColliderComponent>(rc::BodyType::STATIC);
+    auto b = collider->GetBody();
+    AttachComponent(model);
+    AttachComponent(collider);
 }
 
 Heightmap::Heightmap(Image heightmap_image, Vector3 map_size)

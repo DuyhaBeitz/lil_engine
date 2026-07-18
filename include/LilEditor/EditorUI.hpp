@@ -29,6 +29,17 @@ public:
             auto* p = static_cast<float*>(ptr);
             ImGui::DragFloat(field.name.c_str(), p);
         }
+        else if (field.type == TypeInfo::Get<std::string>()) {
+            auto* p = static_cast<std::string*>(ptr);
+            
+            char buffer[256];
+            strncpy(buffer, p->c_str(), sizeof(buffer) - 1);
+            buffer[sizeof(buffer) - 1] = '\0';
+            
+            if (ImGui::InputText(field.name.c_str(), buffer, sizeof(buffer))) {
+                *p = buffer;
+            }
+        }
         // else if (field.type == TypeInfo::Get<Vector2>()) {
         //     auto* p = static_cast<Vector2*>(ptr);
         //     float pp[2] = {p->x, p->y};

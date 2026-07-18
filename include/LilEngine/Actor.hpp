@@ -3,7 +3,12 @@
 #include "Component.hpp"
 #include <vector>
 
-class Actor : public Transformable {
+struct Attachment {
+    GameObject* parent; // parent can be actor or component
+    Component* child;
+};
+
+class Actor : public GameObject {
 public:
     std::vector<Component*> m_components;
     std::vector<Attachment> m_attachments;
@@ -43,9 +48,9 @@ public:
         }
     };
 
-    void AttachComponent(Component* component, Transformable* parent);
+    void AttachComponent(Component* component, GameObject* parent);
     void AttachComponent(Component* component) { AttachComponent(component, this); }
 
     const std::vector<Component*>& Components() const {return m_components;}
 };
-LIL_REFLECT_NO_FIELDS(Actor, bases<Transformable>)
+LIL_REFLECT(Actor, bases<GameObject>)

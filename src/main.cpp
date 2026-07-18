@@ -31,17 +31,18 @@ int main() {
     Lil::Resources().AddModel("assets/CesiumMan.glb");
 
     {
-    auto car = Lil::GetWorld().CreateActor<Actor>();
-    auto m = Lil::GetWorld().CreateComponent<ModelComponent>("Car.glb");
-    car->AttachComponent(m);
-    auto c = Lil::GetWorld().CreateComponent<ColliderComponent>(rc::BodyType::DYNAMIC);
-    auto b = c->GetBody();
-    AddBoundsBoxColliderToBody(b, *m->GetModel());
-    car->AttachComponent(c);
-    car->SetPosition({0, 15, 0});
+    // auto car = Lil::GetWorld().CreateActor<Actor>();
+    // auto m = Lil::GetWorld().CreateComponent<ModelComponent>("Car.glb");
+    // car->AttachComponent(m);
+    // auto c = Lil::GetWorld().CreateComponent<ColliderComponent>(rc::BodyType::DYNAMIC);
+    // auto b = c->GetBody();
+    // AddBoundsBoxColliderToBody(b, *m->GetModel());
+    // car->AttachComponent(c);
+    // car->SetPosition({0, 15, 0});
     
     Vector3 map_size = {128, 4, 128};
     auto map = Lil::GetWorld().CreateActor<Heightmap>("heightmap.png", map_size);
+    map->SetPosition(Vector3{0, -4, 0});
     }
 
     Lil::Editor::Get().Init();

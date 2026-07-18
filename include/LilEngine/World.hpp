@@ -24,6 +24,8 @@ private:
         UpdateActorLayout();
     }
 
+    uint32_t m_next_id = 1; // leaving 0 for 'unassigned'
+
 public:
     World() = default;
 
@@ -35,6 +37,26 @@ public:
         T* ptr = actor.get();
         m_actors[ptr] = std::move(actor);
         return ptr;
+    }
+
+    Actor* CreateActor(const TypeInfo* ti) {
+        if (ti->IsA<Actor>()) {
+            void* p = ti->Create();
+            if (p) {
+                auto actor = std::unique_ptr<Actor>(static_cast<Actor*>(p));
+                Actor* ptr = actor.get();
+                m_actors[ptr] = std::move(actor);
+                return ptr;
+            }
+            else {
+                LOG_ERROR("Failed to create Actor");
+                return nullptr;
+            }
+        }
+        else {
+            LOG_ERROR("Trying to create Actor type doesn't inherit from it");
+            return nullptr;
+        }
     }
 
     void DestroyActor(Actor* actor);
@@ -51,6 +73,26 @@ public:
         return ptr;
     }
 
+    Component* CreateComponent(const TypeInfo* ti) {
+        if (ti->IsA<Component>()) {
+            void* p = ti->Create();
+            if (p) {
+                auto component = std::unique_ptr<Component>(static_cast<Component*>(p));
+                Component* ptr = component.get();
+                m_components[ptr] = std::move(component);
+                return ptr;
+            }
+            else {
+                LOG_ERROR("Failed to create Component");
+                return nullptr;
+            }
+        }
+        else {
+            LOG_ERROR("Trying to create Component type doesn't inherit from it");
+            return nullptr;
+        }
+    }
+
     Actor* PickActor(Vector2 screen_pos, int render_w, int render_h, Camera camera);
 
     void DestroyComponent(Component* component);
@@ -60,6 +102,8 @@ public:
     void Update();
     void DebugDraw();
     void ToggleSimulationGoing() { m_simulation_going = !m_simulation_going; }
+
+    uint32_t GetNewId() {return ++m_next_id; }
 
     bool m_simulation_going = true;
     float m_simulation_speed = 1.0f;

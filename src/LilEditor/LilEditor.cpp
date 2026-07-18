@@ -35,6 +35,7 @@ void Lil::Editor::TryResizeTarget(int w, int h) {
 void Lil::Editor::Init() {
     LoadTarget(GetScreenWidth(), GetScreenHeight());
     InitUI();
+    SetExitKey(KEY_NULL);
 }
 
 void Lil::Editor::DrawTarget() {
@@ -49,23 +50,93 @@ void Lil::Editor::DrawTarget() {
                 DrawGizmo3D(m_gizmo_mode | m_gizmo_space, &t);
                 m_selected->SetTransform(t);
             }
-            if (m_cursor_enabled && IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-                Actor* pick = Lil::GetWorld().PickActor(GetMousePosition(), m_render_target.texture.width, m_render_target.texture.height, m_camera);
-                if (pick) m_selected = pick;
-            }
         EndMode3D();
     EndTextureMode();
+}
+
+void Lil::Editor::DrawInspector() {
+ImGui::Begin("Inspector");
+
+    if (m_selected) {
+        ImGui::SeparatorText(m_selected->GetTypeInfo().Name().c_str());
+        m_selected->GetTypeInfo().VisitFields(m_selected, m_editor);
+        
+        ImGui::Spacing();
+        
+        // Components section with + button
+        float availWidth = ImGui::GetContentRegionAvail().x;
+        ImGui::Text("Components");
+        ImGui::SameLine(availWidth - 30.0f);
+        
+        if (ImGui::Button("+")) {
+            ImGui::OpenPopup("AddComponentPopup");
+        }
+        ImGui::Separator();
+        
+        // Display existing components
+        for (int i = 0; i < m_selected->Components().size(); ++i) {
+            Component* component = m_selected->Components()[i];
+            
+            ImGui::PushID(i);
+            
+            // Component header with remove button
+            bool open = ImGui::CollapsingHeader(component->GetTypeInfo().Name().c_str());
+            
+            // // Small X button to remove component
+            // ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 25.0f);
+            // if (ImGui::SmallButton("×")) {
+            //     m_selected->RemoveComponent(component);
+            //     ImGui::PopID();
+            //     continue; // Skip rendering fields
+            // }
+            
+            if (open) {
+                ImGui::Indent();
+                component->GetTypeInfo().VisitFields(component, m_editor);
+                ImGui::Unindent();
+            }
+            
+            ImGui::PopID();
+        }
+        
+        // Add component popup
+        if (ImGui::BeginPopup("AddComponentPopup")) {
+            ImGui::Text("Available components:");
+            ImGui::Separator();
+            
+            // Filter for components only
+            for (auto& [name, ti] : Lil::Reflection::Get().Types()) {
+                if (ti->IsA<Component>() && *ti != TypeInfo::Get<Component>()) {
+                    // Check if already added
+                    bool exists = false;
+                    for (Component* comp : m_selected->Components()) {
+                        if (comp->GetTypeInfo().Name() == name) {
+                            exists = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!exists && ImGui::MenuItem(name.c_str())) {
+                        Component* component = Lil::GetWorld().CreateComponent(ti);
+                        if (component) {
+                            m_selected->AttachComponent(component);
+                        }                        
+                        ImGui::CloseCurrentPopup();
+                    }
+                }
+            }
+            
+            ImGui::EndPopup();
+        }
+    }
+
+    ImGui::End();
 }
 
 void Lil::Editor::Update() {
     if (!m_cursor_enabled) {UpdateCamera(&m_camera, CAMERA_FREE);}
     Lil::GetWorld().Update();
 
-    if (IsKeyPressed(TOGGLE_CURSOR_KEY)) {
-        if (m_cursor_enabled) DisableCursor();
-        else EnableCursor();
-        m_cursor_enabled = !m_cursor_enabled;
-    }
     if (IsKeyPressed(TOGGLE_SIMULATION_KEY)) {
         Lil::GetWorld().ToggleSimulationGoing();
     }
@@ -76,19 +147,35 @@ void Lil::Editor::Update() {
     if (IsKeyPressed(TOGGLE_FULLSCREEN_KEY)) {
         ToggleBorderlessWindowed();
     }
-    if (IsKeyPressed(KEY_ESCAPE)) m_selected = nullptr;
-
-    if (IsKeyPressed(KEY_G)) m_gizmo_mode = GIZMO_TRANSLATE;
-    if (IsKeyPressed(KEY_R)) m_gizmo_mode = GIZMO_ROTATE;
-    if (IsKeyPressed(KEY_S)) m_gizmo_mode = GIZMO_SCALE;
 }
 
-void Lil::Editor::DrawViewportUI() {
+void Lil::Editor::HandleViewportInput() {
+    if (IsKeyPressed(TOGGLE_CURSOR_KEY)) {
+        if (m_cursor_enabled) DisableCursor();
+        else EnableCursor();
+        m_cursor_enabled = !m_cursor_enabled;
+    }
+    
+    if (IsKeyPressed(KEY_ESCAPE)) m_selected = nullptr;
+    if (IsKeyPressed(KEY_ONE)) m_gizmo_mode = GIZMO_TRANSLATE;
+    if (IsKeyPressed(KEY_TWO)) m_gizmo_mode = GIZMO_ROTATE;
+    if (IsKeyPressed(KEY_THREE)) m_gizmo_mode = GIZMO_SCALE;
+
+    if (m_cursor_enabled && IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+        Actor* pick = Lil::GetWorld().PickActor(GetMousePosition(), m_render_target.texture.width, m_render_target.texture.height, m_camera);
+        if (pick) m_selected = pick;
+    }
+}
+
+void Lil::Editor::DrawViewport() {
     ImGui::Begin("Viewport");
     ImVec2 contentSize = ImGui::GetContentRegionAvail();
     ImVec2 viewerTopLeft = ImGui::GetCursorScreenPos();
     
     SetMouseOffset(-viewerTopLeft.x, -viewerTopLeft.y);
+
+    ImGuiIO& io = ImGui::GetIO();
+    if (ImGui::IsWindowHovered() || ImGui::IsWindowFocused()) HandleViewportInput();
 
     TryResizeTarget(contentSize.x, contentSize.y);
     SetGizmoRenderSize(contentSize.x, contentSize.y);
@@ -97,6 +184,7 @@ void Lil::Editor::DrawViewportUI() {
     rlImGuiImageRenderTexture(&m_render_target);
     
     SetMouseOffset(0, 0);
+   
     
     ImGui::End();
 }
@@ -108,11 +196,9 @@ void Lil::Editor::Draw() {
 #ifdef IMGUI_HAS_DOCK
     ImGui::DockSpaceOverViewport(0,  NULL, ImGuiDockNodeFlags_PassthruCentralNode); // set ImGuiDockNodeFlags_PassthruCentralNode so that we can see the raylib contents behind the dockspace
 #endif
-    ImGui::Begin("Inspector");
-    if (m_selected) m_selected->GetTypeInfo().VisitFields(m_selected, m_editor);
-    ImGui::End();
-    
-    DrawViewportUI();
+    DrawInspector();
+        
+    DrawViewport();
 
     ImGui::Begin("Panel");
     if (m_gizmo_space == GIZMO_LOCAL) {
@@ -123,17 +209,29 @@ void Lil::Editor::Draw() {
     ImGui::End();
 
     ImGui::Begin("Actors");
-    // Actor actor;
-    // auto ti = actor.GetTypeInfo();
-
-    //refl::type_descriptor<Actor> td;
-
-    for (auto& ti : Lil::Reflection::Get().Types()) {
+    for (auto& [name, ti] : Lil::Reflection::Get().Types()) {
         if (ti->IsA<Actor>()) {
-            ImGui::Text(ti->Name().c_str());
+            const char* typeName = name.c_str();
+
+            //Create a clickable/draggable button
+            if (ImGui::Selectable(typeName, false, ImGuiSelectableFlags_AllowDoubleClick)) {
+                // Optional: Double-click to spawn at origin
+                if (ImGui::IsMouseDoubleClicked(0)) {
+                    Actor* actor = Lil::GetWorld().CreateActor(ti);
+                    if (actor) {
+                        m_selected = actor;
+                    }
+                }
+            }
+            
+            if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+                ImGui::SetDragDropPayload("ACTOR_TYPE", typeName, strlen(typeName) + 1);
+                ImGui::Text("Create %s", typeName);
+                
+                ImGui::EndDragDropSource();
+            }
         }        
     }
-
     ImGui::End();
 
     rlImGuiEnd();

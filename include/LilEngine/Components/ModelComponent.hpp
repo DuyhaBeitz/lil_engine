@@ -10,6 +10,7 @@ public:
 public:
     LIL_REFLECTABLE()
 
+    ModelComponent() = default;
     ModelComponent(std::string model_key);
 
     virtual void Draw() override;
@@ -21,4 +22,6 @@ public:
 
     RayCollision Raycast(Ray ray) const;
 };
-LIL_REFLECT_NO_FIELDS(ModelComponent, bases<Component>)
+LIL_REFLECT(ModelComponent, bases<Component>,
+    field(m_model_key)
+)

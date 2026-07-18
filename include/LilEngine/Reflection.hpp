@@ -11,6 +11,8 @@
 
 class TypeInfo;
 
+#include <memory>
+
 struct FieldInfo {
     std::string parent_type_name;
     std::string name;
@@ -49,6 +51,7 @@ public:
         return m_bases;
     }
 
+    void* Create() const { if(m_create_fn) return m_create_fn(); else return nullptr; }
 
     template<typename T>
     bool IsA() const {
@@ -65,14 +68,22 @@ public:
         return m_name == other.Name();
     }
 
+    bool operator!=(const TypeInfo& other) const {
+        return !(*this == other);
+    }
+
 private:
 
     std::string m_name;
     std::vector<FieldInfo> m_fields;
     std::vector<const TypeInfo*> m_bases;
 
+    std::function<void* ()> m_create_fn = nullptr;
+
     template<typename T>
     TypeInfo(refl::type_descriptor<T> td) : m_name(td.name) {
+        m_create_fn = [](){return (void*)new T();};
+
         // populate bases
         constexpr auto type = refl::reflect<T>();
         if constexpr (type.declared_bases.size) {
@@ -136,13 +147,14 @@ namespace Lil {
 
         template<typename T>
         void RegisterType() {
-            m_types.insert(&TypeInfo::Get<T>());
+            const auto& ti = TypeInfo::Get<T>();
+            m_types[ti.Name()] = &ti;
         }
 
-        std::set<const TypeInfo*>& Types() { return m_types; }
+        std::unordered_map<std::string, const TypeInfo*>& Types() { return m_types; }
                
     private:
-        std::set<const TypeInfo*> m_types;
+        std::unordered_map<std::string, const TypeInfo*> m_types{};
     };
 };
 
@@ -165,57 +177,55 @@ public:
         return TypeInfo::Get<::refl::trait::remove_qualifiers_t<decltype(*this)>>(); \
     }
 
-#define LIL_REFLECT_NO_FIELDS(typename, bases) \
-REFL_AUTO(type(typename, bases)) \
-static TypeRegisterer<typename> _##typename##_registerer;
-
-#define LIL_REFLECT_NO_BASE(typename, ...) \
-REFL_AUTO(type(typename), __VA_ARGS__) \
-static TypeRegisterer<typename> _##typename##_registerer;
-
 #define LIL_REFLECT(typename, bases, ...) \
-REFL_AUTO(type(typename, bases), __VA_ARGS__) \
-static TypeRegisterer<typename> _##typename##_registerer;
+    REFL_AUTO(type(typename, bases) __VA_OPT__(,) __VA_ARGS__) \
+    static TypeRegisterer<typename> _##typename##_registerer;
 
 
-LIL_REFLECT_NO_BASE(
+LIL_REFLECT(
     Vector2,
+    bases<>,
     field(x),
     field(y)
 )
 
-LIL_REFLECT_NO_BASE(
+LIL_REFLECT(
     Vector3,
+    bases<>,
     field(x),
     field(y),
     field(z)
 )
 
-LIL_REFLECT_NO_BASE(
+LIL_REFLECT(
     Color,
+    bases<>,
     field(r),
     field(g),
     field(b),
     field(a)
 )
 
-LIL_REFLECT_NO_BASE(
+LIL_REFLECT(
     Vector4,
+    bases<>,
     field(x),
     field(y),
     field(z),
     field(w)
 )
 
-LIL_REFLECT_NO_BASE(
+LIL_REFLECT(
     Transform,
+    bases<>,
     field(translation),
     field(rotation),
     field(scale)
 )
 
-LIL_REFLECT_NO_BASE(
+LIL_REFLECT(
     Rectangle,
+    bases<>,
     field(x),
     field(y),
     field(width),

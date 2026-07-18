@@ -7,7 +7,7 @@
 #include "LilEngine.hpp"
 
 ColliderComponent::ColliderComponent(rc::BodyType body_type)
-: m_body(Lil::Physics().GetWorld()->createRigidBody(RcTransform(GetTransform()))), Component()
+: Component(), m_body(Lil::Physics().GetWorld()->createRigidBody(RcTransform(GetTransform())))
 {
     m_body->setType(body_type);
 }
@@ -28,12 +28,12 @@ void ColliderComponent::SimulationUpdate(Actor &actor) {
 
     actorWorld.rotation = QuaternionMultiply(
         m_transform.rotation,
-        QuaternionInvert(m_local_space.GetRotation())
+        QuaternionInvert(m_local_transform.rotation)
     );
 
-    Vector3 rotatedLocalPos = Vector3RotateByQuaternion(m_local_space.GetPosition(), actorWorld.rotation);
-    actorWorld.translation = m_transform.translation - m_local_space.GetPosition();
-    actorWorld.scale = GetScale() / Local().GetScale();
+    Vector3 rotatedLocalPos = Vector3RotateByQuaternion(m_local_transform.translation, actorWorld.rotation);
+    actorWorld.translation = m_transform.translation - m_local_transform.translation;
+    actorWorld.scale = GetScale() / Local().scale;
 
     actor.SetTransform(actorWorld);
 }

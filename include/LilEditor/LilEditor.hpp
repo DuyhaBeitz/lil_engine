@@ -61,6 +61,10 @@ namespace Lil {
         void TryResizeTarget(int w, int h);
         void LoadTarget(int w, int h);
         void DrawTarget();
-        void DrawViewportUI();
+
+        void DrawInspector();
+
+        void HandleViewportInput();
+        void DrawViewport();
     };
 }
