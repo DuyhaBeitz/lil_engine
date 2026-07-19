@@ -27,9 +27,3 @@ public:
 LIL_REFLECT(ModelComponent, bases<Component>,
     field(m_model_key, ModelKeyAttribute())
 )
-// REFL_AUTO(type(ModelComponent, bases<Component>),
-//     field(m_model_key, ModelKeyAttribute())
-// )
-// REFL_TYPE(ModelComponent, bases<Component>)
-//     REFL_FIELD(m_model_key, ModelKeyAttribute())
-// REFL_END

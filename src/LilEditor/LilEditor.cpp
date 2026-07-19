@@ -1,4 +1,5 @@
 #include "LilEditor.hpp"
+#include "extras/FA6FreeSolidFontData.h"
 
 Lil::Editor &Lil::Editor::Get() {
     static Lil::Editor instance;
@@ -10,16 +11,23 @@ Lil::Editor &Lil::Editor::Get() {
 #define TOGGLE_DEBUG_KEY KEY_V
 #define TOGGLE_FULLSCREEN_KEY KEY_F11
 
+ImFont* IconFont = nullptr;
+
 void Lil::Editor::InitUI() {
-	rlImGuiSetup(true);
+    rlImGuiBeginInitImGui();
+    ImGui::StyleColorsDark();
+
     ImGuiIO& io = ImGui::GetIO();
-    
+
     float s = 3.0f;
     io.DisplayFramebufferScale = ImVec2(s, s);
     io.FontGlobalScale = s;
+
 #ifdef IMGUI_HAS_DOCK
-	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 #endif
+    
+    rlImGuiEndInitImGui();
     Lil::UIStyle::InitGlobalTheme();
 }
 
@@ -208,6 +216,41 @@ void Lil::Editor::Draw() {
         if (ImGui::Button("global")) m_gizmo_space = GIZMO_DISABLED; 
     }
     else if (ImGui::Button("local")) m_gizmo_space = GIZMO_LOCAL; 
+
+    // Store this outside your ImGui code (as a static or class member)
+    static const std::unordered_map<std::string, RenderMode> renderModeMap = {
+        {"Unlit", RenderMode::Unlit},
+        {"Wireframe", RenderMode::Wireframe}
+    };
+
+    // In your ImGui code:
+    static RenderMode currentMode = RenderMode::Unlit; // Track current selection
+
+    // Find the current mode's name for the preview
+    std::string currentName = "Unlit";
+    for (const auto& [name, mode] : renderModeMap) {
+        if (mode == currentMode) {
+            currentName = name;
+            break;
+        }
+    }
+
+    if (ImGui::BeginCombo("Render Mode", currentName.c_str()))
+    {
+        for (const auto& [name, mode] : renderModeMap)
+        {
+            bool isSelected = (mode == currentMode);
+            if (ImGui::Selectable(name.c_str(), isSelected))
+            {
+                currentMode = mode;
+                Lil::GetWorld().SetRenderMode(mode);
+            }
+            if (isSelected) {
+                ImGui::SetItemDefaultFocus();
+            }
+        }
+        ImGui::EndCombo();
+    }
 
     ImGui::End();
 

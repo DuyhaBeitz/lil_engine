@@ -11,7 +11,17 @@ void ModelComponent::Draw() {
     float angle;
     Vector3 axis = GetAxisAngle(angle);
     Model* m = GetModel();
-    if (m) DrawModelEx(*m, GetPosition(), axis, angle*RAD2DEG, GetScale(), WHITE);
+    if (m) {
+    switch (Lil::GetWorld().GetRenderMode()) {
+        case RenderMode::Unlit:
+            DrawModelEx(*m, GetPosition(), axis, angle*RAD2DEG, GetScale(), WHITE);
+            break;
+        
+        case RenderMode::Wireframe:
+            DrawModelWiresEx(*m, GetPosition(), axis, angle*RAD2DEG, GetScale(), WHITE);
+            break;
+        }
+    }
     else DrawSphere(GetPosition(), 2.f, RAYRED);
 }
 

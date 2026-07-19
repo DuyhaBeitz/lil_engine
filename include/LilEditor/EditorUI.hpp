@@ -315,7 +315,6 @@ public:
         Lil::UIStyle::PushRowSpacing();
 
         if (field.HasAttribute("ModelKeyAttribute")) {
-            // Keep specialized resource combo inline or call generic layout row strings
             Lil::UIStyle::BeginPropertyRow(field.name, Lil::UIStyle::COLOR_TYPE_STRING);
             ImGui::PushStyleColor(ImGuiCol_FrameBg, Lil::UIStyle::COLOR_COMBO_BG);
             

@@ -10,6 +10,11 @@
 // #include "Character.hpp"
 #include "Heightmap.hpp"
 
+enum class RenderMode : uint8_t {
+    Unlit = 0,
+    Wireframe
+};
+
 class World {
 private:
     std::unordered_map<Actor*, std::unique_ptr<Actor>> m_actors;
@@ -105,7 +110,11 @@ public:
 
     uint32_t GetNewId() {return ++m_next_id; }
 
+    RenderMode GetRenderMode() { return m_render_mode; }
+    void SetRenderMode(RenderMode render_mode) { m_render_mode = render_mode; }
+
     bool m_simulation_going = true;
     float m_simulation_speed = 1.0f;
     bool m_physics_debug = false;
+    RenderMode m_render_mode = RenderMode::Unlit;
 };
