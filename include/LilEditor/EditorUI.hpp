@@ -16,6 +16,12 @@ inline int ScaleToDPII(int value) {
 #include <vector>
 
 namespace Lil {
+
+    struct RowSpacingGuard {
+        RowSpacingGuard();
+        ~RowSpacingGuard();
+    };
+
     class UIStyle {
     public:
         // ==========================================
@@ -93,6 +99,11 @@ namespace Lil {
         static constexpr float DRAG_FLOAT_MIN             = 0.0f;
         static constexpr float DRAG_FLOAT_MAX             = 0.0f;
         static constexpr size_t STRING_BUFFER_SIZE        = 256;
+
+        // Horizontal Vector Layout Tokens
+        static constexpr float VECTOR_ITEM_PADDING   = 4.0f;
+        static constexpr float VECTOR_LABEL_PADDING  = 3.0f;
+        static inline const ImVec4 COLOR_TEXT_WHITE  = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
 
         // ==========================================
         // Global Theme Engine Initialization
@@ -253,6 +264,137 @@ namespace Lil {
             EndPropertyRow();
         }
 
+        static void DrawVector2Field(const std::string& name, ::Vector2* values) {
+            BeginPropertyRow(name, COLOR_TYPE_NUMBER);
+            ImGui::PopItemWidth(); 
+            ImGui::PushID(values);
+
+            float totalWidthAvailable = ImGui::GetContentRegionAvail().x;
+            float singleItemWidth = (totalWidthAvailable - VECTOR_ITEM_PADDING) / 2.0f; 
+
+            const char* labels[] = { "X", "Y" };
+            ImVec4 colors[]      = { COLOR_AXIS_X, COLOR_AXIS_Y };
+            float* dataRefs[]    = { &values->x, &values->y };
+
+            ImGui::PushStyleColor(ImGuiCol_FrameBg, COLOR_INPUT_BG);
+            ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, COLOR_INPUT_BG_HOVER);
+            ImGui::PushStyleColor(ImGuiCol_Text, COLOR_TEXT_WHITE);
+
+            for (int i = 0; i < 2; ++i) {
+                ImGui::SetNextItemWidth(singleItemWidth);
+                
+                // Render a clean, blank label so the field spans the full calculated space
+                ImGui::DragFloat((std::string("##Field") + labels[i]).c_str(), dataRefs[i], DRAG_FLOAT_SPEED, DRAG_FLOAT_MIN, DRAG_FLOAT_MAX, "%.2f");
+                
+                // Calculate the bounding box of the box we just rendered to draw our accent line
+                ImVec2 minBound = ImGui::GetItemRectMin();
+                ImVec2 maxBound = ImGui::GetItemRectMax();
+                
+                // Draw an absolute 3-pixel-wide colored line flush on the left border inside the field box
+                maxBound.x = minBound.x + 3.0f; 
+                ImGui::GetWindowDrawList()->AddRectFilled(minBound, maxBound, ImGui::ColorConvertFloat4ToU32(colors[i]), ROUNDING_FRAME);
+
+                if (i < 1) ImGui::SameLine(0.0f, VECTOR_ITEM_PADDING);
+            }
+
+            ImGui::PopStyleColor(3);
+            ImGui::PopID();
+            ImGui::PushItemWidth(-1.0f);
+            EndPropertyRow();
+        }
+
+        static void DrawVector3Field(const std::string& name, ::Vector3* values) {
+            BeginPropertyRow(name, COLOR_TYPE_NUMBER);
+            ImGui::PopItemWidth(); 
+            ImGui::PushID(values);
+
+            float totalWidthAvailable = ImGui::GetContentRegionAvail().x;
+            float singleItemWidth = (totalWidthAvailable - (VECTOR_ITEM_PADDING * 2.0f)) / 3.0f; 
+
+            const char* labels[] = { "X", "Y", "Z" };
+            ImVec4 colors[]      = { COLOR_AXIS_X, COLOR_AXIS_Y, COLOR_AXIS_Z };
+            float* dataRefs[]    = { &values->x, &values->y, &values->z };
+
+            ImGui::PushStyleColor(ImGuiCol_FrameBg, COLOR_INPUT_BG);
+            ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, COLOR_INPUT_BG_HOVER);
+            ImGui::PushStyleColor(ImGuiCol_Text, COLOR_TEXT_WHITE);
+
+            for (int i = 0; i < 3; ++i) {
+                ImGui::SetNextItemWidth(singleItemWidth);
+                ImGui::DragFloat((std::string("##Field") + labels[i]).c_str(), dataRefs[i], DRAG_FLOAT_SPEED, DRAG_FLOAT_MIN, DRAG_FLOAT_MAX, "%.2f");
+                
+                ImVec2 minBound = ImGui::GetItemRectMin();
+                ImVec2 maxBound = ImGui::GetItemRectMax();
+                
+                maxBound.x = minBound.x + 3.0f; 
+                ImGui::GetWindowDrawList()->AddRectFilled(minBound, maxBound, ImGui::ColorConvertFloat4ToU32(colors[i]), ROUNDING_FRAME);
+
+                if (i < 2) ImGui::SameLine(0.0f, VECTOR_ITEM_PADDING);
+            }
+
+            ImGui::PopStyleColor(3);
+            ImGui::PopID();
+            ImGui::PushItemWidth(-1.0f);
+            EndPropertyRow();
+        }
+
+        static void DrawVector4Field(const std::string& name, ::Vector4* values) {
+            BeginPropertyRow(name, COLOR_TYPE_NUMBER);
+            ImGui::PopItemWidth(); 
+            ImGui::PushID(values);
+
+            float totalWidthAvailable = ImGui::GetContentRegionAvail().x;
+            float singleItemWidth = (totalWidthAvailable - (VECTOR_ITEM_PADDING * 3.0f)) / 4.0f; 
+
+            const char* labels[] = { "X", "Y", "Z", "W" };
+            ImVec4 colors[]      = { COLOR_AXIS_X, COLOR_AXIS_Y, COLOR_AXIS_Z, COLOR_AXIS_W };
+            float* dataRefs[]    = { &values->x, &values->y, &values->z, &values->w };
+
+            ImGui::PushStyleColor(ImGuiCol_FrameBg, COLOR_INPUT_BG);
+            ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, COLOR_INPUT_BG_HOVER);
+            ImGui::PushStyleColor(ImGuiCol_Text, COLOR_TEXT_WHITE);
+
+            for (int i = 0; i < 4; ++i) {
+                ImGui::SetNextItemWidth(singleItemWidth);
+                ImGui::DragFloat((std::string("##Field") + labels[i]).c_str(), dataRefs[i], DRAG_FLOAT_SPEED, DRAG_FLOAT_MIN, DRAG_FLOAT_MAX, "%.2f");
+                
+                ImVec2 minBound = ImGui::GetItemRectMin();
+                ImVec2 maxBound = ImGui::GetItemRectMax();
+                
+                maxBound.x = minBound.x + 3.0f; 
+                ImGui::GetWindowDrawList()->AddRectFilled(minBound, maxBound, ImGui::ColorConvertFloat4ToU32(colors[i]), ROUNDING_FRAME);
+
+                if (i < 3) ImGui::SameLine(0.0f, VECTOR_ITEM_PADDING);
+            }
+
+            ImGui::PopStyleColor(3);
+            ImGui::PopID();
+            ImGui::PushItemWidth(-1.0f);
+            EndPropertyRow();
+        }
+
+        static void DrawTransformBlock(const std::string& sectionName, ::Transform* transform) {
+            RowSpacingGuard spacing;
+            ImGui::PushStyleColor(ImGuiCol_Header, COLOR_HEADER_BG);
+            ImGui::PushStyleColor(ImGuiCol_HeaderHovered, COLOR_HEADER_BG_HOVER);
+            ImGui::PushID(transform);
+            
+            bool isOpen = ImGui::CollapsingHeader(sectionName.c_str(), ImGuiTreeNodeFlags_DefaultOpen);
+            ImGui::PopStyleColor(2);
+
+            if (isOpen) {
+                ImGui::Indent(STRUCT_INDENT_PADDING);
+                
+                DrawVector3Field("Position", &transform->translation);
+                DrawVector4Field("Rotation", &transform->rotation);
+                DrawVector3Field("Scale",    &transform->scale);
+                
+                ImGui::Unindent(STRUCT_INDENT_PADDING);
+                ImGui::Spacing();
+            }
+            ImGui::PopID();
+        }
+
         // ==========================================
         // Reusable Read-Only (Const) Draw Elements
         // ==========================================
@@ -302,6 +444,145 @@ namespace Lil {
             ImGui::TextColored(COLOR_CONST_VAL, "%s", value->c_str());
             DrawConstIndicator();
             EndPropertyRow();
+        }
+
+        static void DrawConstVector2Field(const std::string& name, const ::Vector2* values) {
+            BeginPropertyRow(name, COLOR_TYPE_NUMBER);
+            ImGui::PopItemWidth(); 
+            ImGui::PushID(values);
+
+            float totalWidthAvailable = ImGui::GetContentRegionAvail().x;
+            float singleItemWidth = (totalWidthAvailable - VECTOR_ITEM_PADDING) / 2.0f; 
+
+            const char* labels[] = { "X", "Y" };
+            ImVec4 colors[]      = { COLOR_AXIS_X, COLOR_AXIS_Y };
+            float data[]         = { values->x, values->y };
+
+            for (int i = 0; i < 2; ++i) {
+                ImGui::BeginGroup();
+                
+                // Render a flat background container frame mimicking the input boxes
+                ImVec2 startPos = ImGui::GetCursorScreenPos();
+                ImVec2 endPos = ImVec2(startPos.x + singleItemWidth, startPos.y + ImGui::GetFrameHeight());
+                ImGui::GetWindowDrawList()->AddRectFilled(startPos, endPos, ImGui::ColorConvertFloat4ToU32(COLOR_INPUT_BG), ROUNDING_FRAME);
+                
+                // Draw the colored left edge line inside the simulated box
+                ImVec2 lineEnd = ImVec2(startPos.x + 3.0f, endPos.y);
+                ImGui::GetWindowDrawList()->AddRectFilled(startPos, lineEnd, ImGui::ColorConvertFloat4ToU32(colors[i]), ROUNDING_FRAME);
+
+                // Place the read-only text cleanly inside the container area
+                ImGui::SetCursorScreenPos(ImVec2(startPos.x + 8.0f, startPos.y + ImGui::GetStyle().FramePadding.y));
+                ImGui::TextColored(COLOR_CONST_VAL, "%.2f", data[i]);
+                
+                // Advance cursor position safely to handle group spacing mechanics
+                ImGui::SetCursorScreenPos(startPos);
+                ImGui::Dummy(ImVec2(singleItemWidth, ImGui::GetFrameHeight()));
+                ImGui::EndGroup();
+
+                if (i < 1) ImGui::SameLine(0.0f, VECTOR_ITEM_PADDING);
+            }
+
+            DrawConstIndicator();
+            ImGui::PopID();
+            ImGui::PushItemWidth(-1.0f);
+            EndPropertyRow();
+        }
+
+        static void DrawConstVector3Field(const std::string& name, const ::Vector3* values) {
+            BeginPropertyRow(name, COLOR_TYPE_NUMBER);
+            ImGui::PopItemWidth(); 
+            ImGui::PushID(values);
+
+            float totalWidthAvailable = ImGui::GetContentRegionAvail().x;
+            float singleItemWidth = (totalWidthAvailable - (VECTOR_ITEM_PADDING * 2.0f)) / 3.0f; 
+
+            const char* labels[] = { "X", "Y", "Z" };
+            ImVec4 colors[]      = { COLOR_AXIS_X, COLOR_AXIS_Y, COLOR_AXIS_Z };
+            float data[]         = { values->x, values->y, values->z };
+
+            for (int i = 0; i < 3; ++i) {
+                ImGui::BeginGroup();
+                
+                ImVec2 startPos = ImGui::GetCursorScreenPos();
+                ImVec2 endPos = ImVec2(startPos.x + singleItemWidth, startPos.y + ImGui::GetFrameHeight());
+                ImGui::GetWindowDrawList()->AddRectFilled(startPos, endPos, ImGui::ColorConvertFloat4ToU32(COLOR_INPUT_BG), ROUNDING_FRAME);
+                
+                ImVec2 lineEnd = ImVec2(startPos.x + 3.0f, endPos.y);
+                ImGui::GetWindowDrawList()->AddRectFilled(startPos, lineEnd, ImGui::ColorConvertFloat4ToU32(colors[i]), ROUNDING_FRAME);
+
+                ImGui::SetCursorScreenPos(ImVec2(startPos.x + 8.0f, startPos.y + ImGui::GetStyle().FramePadding.y));
+                ImGui::TextColored(COLOR_CONST_VAL, "%.2f", data[i]);
+                
+                ImGui::SetCursorScreenPos(startPos);
+                ImGui::Dummy(ImVec2(singleItemWidth, ImGui::GetFrameHeight()));
+                ImGui::EndGroup();
+
+                if (i < 2) ImGui::SameLine(0.0f, VECTOR_ITEM_PADDING);
+            }
+
+            DrawConstIndicator();
+            ImGui::PopID();
+            ImGui::PushItemWidth(-1.0f);
+            EndPropertyRow();
+        }
+
+        static void DrawConstVector4Field(const std::string& name, const ::Vector4* values) {
+            BeginPropertyRow(name, COLOR_TYPE_NUMBER);
+            ImGui::PopItemWidth(); 
+            ImGui::PushID(values);
+
+            float totalWidthAvailable = ImGui::GetContentRegionAvail().x;
+            float singleItemWidth = (totalWidthAvailable - (VECTOR_ITEM_PADDING * 3.0f)) / 4.0f; 
+
+            const char* labels[] = { "X", "Y", "Z", "W" };
+            ImVec4 colors[]      = { COLOR_AXIS_X, COLOR_AXIS_Y, COLOR_AXIS_Z, COLOR_AXIS_W };
+            float data[]         = { values->x, values->y, values->z, values->w };
+
+            for (int i = 0; i < 4; ++i) {
+                ImGui::BeginGroup();
+                
+                ImVec2 startPos = ImGui::GetCursorScreenPos();
+                ImVec2 endPos = ImVec2(startPos.x + singleItemWidth, startPos.y + ImGui::GetFrameHeight());
+                ImGui::GetWindowDrawList()->AddRectFilled(startPos, endPos, ImGui::ColorConvertFloat4ToU32(COLOR_INPUT_BG), ROUNDING_FRAME);
+                
+                ImVec2 lineEnd = ImVec2(startPos.x + 3.0f, endPos.y);
+                ImGui::GetWindowDrawList()->AddRectFilled(startPos, lineEnd, ImGui::ColorConvertFloat4ToU32(colors[i]), ROUNDING_FRAME);
+
+                ImGui::SetCursorScreenPos(ImVec2(startPos.x + 8.0f, startPos.y + ImGui::GetStyle().FramePadding.y));
+                ImGui::TextColored(COLOR_CONST_VAL, "%.2f", data[i]);
+                
+                ImGui::SetCursorScreenPos(startPos);
+                ImGui::Dummy(ImVec2(singleItemWidth, ImGui::GetFrameHeight()));
+                ImGui::EndGroup();
+
+                if (i < 3) ImGui::SameLine(0.0f, VECTOR_ITEM_PADDING);
+            }
+
+            DrawConstIndicator();
+            ImGui::PopID();
+            ImGui::PushItemWidth(-1.0f);
+            EndPropertyRow();
+        }
+        static void DrawConstTransformBlock(const std::string& sectionName, const ::Transform* transform) {
+            RowSpacingGuard spacing;
+            ImGui::PushStyleColor(ImGuiCol_Header, COLOR_HEADER_BG);
+            ImGui::PushStyleColor(ImGuiCol_HeaderHovered, COLOR_HEADER_BG_HOVER);
+            ImGui::PushID(transform);
+            
+            bool isOpen = ImGui::CollapsingHeader(sectionName.c_str(), ImGuiTreeNodeFlags_DefaultOpen);
+            ImGui::PopStyleColor(2);
+
+            if (isOpen) {
+                ImGui::Indent(STRUCT_INDENT_PADDING);
+                
+                DrawConstVector3Field("Position", &transform->translation);
+                DrawConstVector4Field("Rotation", &transform->rotation);
+                DrawConstVector3Field("Scale",    &transform->scale);
+                
+                ImGui::Unindent(STRUCT_INDENT_PADDING);
+                ImGui::Spacing();
+            }
+            ImGui::PopID();
         }
     };
 };
@@ -353,6 +634,18 @@ public:
         else if (field.type == TypeInfo::Get<std::string>()) {
             Lil::UIStyle::DrawStringField(field.name, static_cast<std::string*>(ptr));
         }
+        else if (field.type == TypeInfo::Get<Vector2>()) {
+            Lil::UIStyle::DrawVector2Field(field.name, static_cast<Vector2*>(ptr));
+        }
+        else if (field.type == TypeInfo::Get<Vector3>()) {
+            Lil::UIStyle::DrawVector3Field(field.name, static_cast<Vector3*>(ptr));
+        }
+        else if (field.type == TypeInfo::Get<Vector4>()) {
+            Lil::UIStyle::DrawVector4Field(field.name, static_cast<Vector4*>(ptr));
+        }
+        else if (field.type == TypeInfo::Get<Transform>()) {
+            Lil::UIStyle::DrawTransformBlock(field.name, static_cast<Transform*>(ptr));
+        }
         else {
             ImGui::PushStyleColor(ImGuiCol_Header, Lil::UIStyle::COLOR_HEADER_BG);
             ImGui::PushStyleColor(ImGuiCol_HeaderHovered, Lil::UIStyle::COLOR_HEADER_BG_HOVER);
@@ -395,6 +688,18 @@ public:
         }
         else if (field.type == TypeInfo::Get<std::string>()) {
             Lil::UIStyle::DrawConstStringField(field.name, static_cast<const std::string*>(ptr));
+        }
+        else if (field.type == TypeInfo::Get<Vector2>()) {
+            Lil::UIStyle::DrawConstVector2Field(field.name, static_cast<const Vector2*>(ptr));
+        }
+        else if (field.type == TypeInfo::Get<Vector3>()) {
+            Lil::UIStyle::DrawConstVector3Field(field.name, static_cast<const Vector3*>(ptr));
+        }
+        else if (field.type == TypeInfo::Get<Vector4>()) {
+            Lil::UIStyle::DrawConstVector4Field(field.name, static_cast<const Vector4*>(ptr));
+        }
+        else if (field.type == TypeInfo::Get<Transform>()) {
+            Lil::UIStyle::DrawConstTransformBlock(field.name, static_cast<const Transform*>(ptr));
         }
         else {
             ImGui::PushStyleColor(ImGuiCol_Header, Lil::UIStyle::COLOR_COMBO_BG);

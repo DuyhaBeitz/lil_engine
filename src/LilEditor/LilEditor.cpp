@@ -11,8 +11,6 @@ Lil::Editor &Lil::Editor::Get() {
 #define TOGGLE_DEBUG_KEY KEY_V
 #define TOGGLE_FULLSCREEN_KEY KEY_F11
 
-ImFont* IconFont = nullptr;
-
 void Lil::Editor::InitUI() {
     rlImGuiBeginInitImGui();
     ImGui::StyleColorsDark();
@@ -21,11 +19,20 @@ void Lil::Editor::InitUI() {
 
     float s = 3.0f;
     io.DisplayFramebufferScale = ImVec2(s, s);
-    io.FontGlobalScale = s;
+    io.FontGlobalScale = s; 
 
 #ifdef IMGUI_HAS_DOCK
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 #endif
+
+    float fontSize = 16.0f;
+    ImFont* customFont = io.Fonts->AddFontFromFileTTF("assets/font/JetBrainsMono-Medium.ttf", fontSize);
+    
+    if (customFont == nullptr) {
+        LOG_WARN("ImGui failed to load custom font! Falling back to default.");
+    }
+
+    io.FontDefault = customFont;
     
     rlImGuiEndInitImGui();
     Lil::UIStyle::InitGlobalTheme();
