@@ -54,8 +54,8 @@ Actor *World::PickActor(Vector2 screen_pos, int render_w, int render_h, Camera c
     
     DrawRay(ray, RED);
     for (auto& [key, actor] : m_actors) {
-        for (auto& component : actor->Components()) {
-            if (ModelComponent* m = dynamic_cast<ModelComponent*>(component)) {            
+        for (auto& [component, parent] : actor->Components()) {
+            if (ModelComponent* m = dynamic_cast<ModelComponent*>(component)) {
                 RayCollision res = m->Raycast(ray);
                 if (res.hit && res.distance < closest) {
                     closest = res.distance;

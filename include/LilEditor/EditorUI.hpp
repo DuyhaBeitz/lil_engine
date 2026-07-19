@@ -41,7 +41,7 @@ namespace Lil {
         // The ghost bounding preview container displayed while dragging/docking a panel
         static inline const ImVec4 COLOR_DOCKING_PREVIEW     = ImVec4(0.25f, 0.25f, 0.25f, 0.60f);
 
-        // Corner Rounding Constants (UE5 Flat Theme)
+        // Corner Rounding Constants (Flat Theme)
         static constexpr float ROUNDING_FRAME                  = 2.0f;
         static constexpr float ROUNDING_WINDOW                 = 4.0f;
         static constexpr float ROUNDING_GRAB                   = 2.0f;
@@ -605,7 +605,7 @@ public:
         Lil::UIStyle::PushRowSpacing();
 
         if (field.HasAttribute("ModelKeyAttribute")) {
-            Lil::UIStyle::BeginPropertyRow(field.name, Lil::UIStyle::COLOR_TYPE_STRING);
+            Lil::UIStyle::BeginPropertyRow(field.name, Lil::UIStyle::COLOR_TYPE_STRING, ICON_FA_CAR);
             ImGui::PushStyleColor(ImGuiCol_FrameBg, Lil::UIStyle::COLOR_COMBO_BG);
             
             auto* p = static_cast<std::string*>(ptr);

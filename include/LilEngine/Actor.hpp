@@ -3,54 +3,30 @@
 #include "Component.hpp"
 #include <vector>
 
-struct Attachment {
-    GameObject* parent; // parent can be actor or component
-    Component* child;
-};
-
 class Actor : public GameObject {
 public:
-    std::vector<Component*> m_components;
-    std::vector<Attachment> m_attachments;
+    // key = component; value = parent ptr
+    std::unordered_map<Component*, GameObject*> m_components;
+    std::set<Component*> m_marked_deattached;
 
 public:
     LIL_REFLECTABLE()
 
     Actor() = default;
     
-    void LayoutUpdate() {
-        for (auto& attachment : m_attachments) {
-            attachment.child->LayoutUpdate(attachment.parent->GetTransform());
-        }
-    }
+    void LayoutUpdate() ;
+    void SimulationUpdate();
 
-    void SimulationUpdate() {
-        for (auto& component : m_components) {
-            component->SimulationUpdate(*this);
-        }
-    }
-
-    void Draw() {
-        for (auto& component : m_components) component->Draw();
-    }
-
-    void DebugDraw() {
-        for (auto& component : m_components) component->DebugDraw();
-
-        Vector3 v[3] = {
-            Vector3{1, 0, 0},
-            Vector3{0, 1, 0},
-            Vector3{0, 0, 1}
-        };
-        Color c[3] = {RED, GREEN, BLUE};
-        for (int i = 0; i < 3; i++) {
-            DrawLine3D(GetPosition(), GetPosition()+Vector3RotateByQuaternion(v[i], GetRotation())*10.0f, c[i]);
-        }
-    };
+    void Draw();
+    void DebugDraw();
 
     void AttachComponent(Component* component, GameObject* parent);
-    void AttachComponent(Component* component) { AttachComponent(component, this); }
+    void AttachComponent(Component* component);
 
-    const std::vector<Component*>& Components() const {return m_components;}
+    void DeattachComponent(Component* component);
+
+    bool IsComponentAttached(Component* component);
+
+    const std::unordered_map<Component*, GameObject*>& Components() const {return m_components;}
 };
 LIL_REFLECT(Actor, bases<GameObject>)

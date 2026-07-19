@@ -78,8 +78,6 @@ void Lil::Editor::DrawInspector() {
         
         ImGui::Spacing();
         
-
-        // Components section with + button
         float availWidth = ImGui::GetContentRegionAvail().x;
         ImGui::Begin("Components");
         ImGui::SameLine(availWidth - 30.0f);
@@ -89,22 +87,18 @@ void Lil::Editor::DrawInspector() {
         }
         ImGui::Separator();
         
-        // Display existing components
-        for (int i = 0; i < m_selected->Components().size(); ++i) {
-            Component* component = m_selected->Components()[i];
+        for (auto& [component, parent] : m_selected->Components()) {            
+            ImGui::PushID(component);
             
-            ImGui::PushID(i);
-            
-            // Component header with remove button
             bool open = ImGui::CollapsingHeader(component->GetTypeInfo().Name().c_str());
             
-            // // Small X button to remove component
-            // ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 25.0f);
-            // if (ImGui::SmallButton("×")) {
-            //     m_selected->RemoveComponent(component);
-            //     ImGui::PopID();
-            //     continue; // Skip rendering fields
-            // }
+            //ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 25.0f);
+            if (ImGui::SmallButton("X")) {
+                m_selected->DeattachComponent(component);
+                Lil::GetWorld().DestroyComponent(component);
+                ImGui::PopID();
+                continue;
+            }
             
             if (open) {
                 ImGui::Indent();
@@ -115,18 +109,15 @@ void Lil::Editor::DrawInspector() {
             ImGui::PopID();
         }
         
-        // Add component popup
         if (ImGui::BeginPopup("AddComponentPopup")) {
             ImGui::Text("Available components:");
             ImGui::Separator();
             
-            // Filter for components only
             for (auto& [name, ti] : Lil::Reflection::Get().Types()) {
                 if (ti->IsA<Component>() && *ti != TypeInfo::Get<Component>()) {
-                    // Check if already added
                     bool exists = false;
-                    for (Component* comp : m_selected->Components()) {
-                        if (comp->GetTypeInfo().Name() == name) {
+                    for (auto& [component, parent] : m_selected->Components()) {
+                        if (component->GetTypeInfo().Name() == name) {
                             exists = true;
                             break;
                         }
@@ -223,16 +214,13 @@ void Lil::Editor::Draw() {
     }
     else if (ImGui::Button("local")) m_gizmo_space = GIZMO_LOCAL; 
 
-    // Store this outside your ImGui code (as a static or class member)
     static const std::unordered_map<std::string, RenderMode> renderModeMap = {
         {"Unlit", RenderMode::Unlit},
         {"Wireframe", RenderMode::Wireframe}
     };
 
-    // In your ImGui code:
-    static RenderMode currentMode = RenderMode::Unlit; // Track current selection
-
-    // Find the current mode's name for the preview
+    static RenderMode currentMode = RenderMode::Unlit;
+    
     std::string currentName = "Unlit";
     for (const auto& [name, mode] : renderModeMap) {
         if (mode == currentMode) {
