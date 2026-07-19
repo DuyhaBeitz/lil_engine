@@ -416,53 +416,44 @@ namespace Lil {
         // ==========================================
         // Reusable Read-Only (Const) Draw Elements
         // ==========================================
-        static void DrawConstIndicator() {
-            ImGui::SameLine();
-            ImGui::PushStyleColor(ImGuiCol_Text, COLOR_CONST_BADGE_TXT);
-            
-            // Renders a sleek lock icon inline next to read-only parameters
-            ImGui::TextUnformatted(ICON_FA_LOCK);
-            
-            ImGui::PopStyleColor();
-        }
 
         static void DrawConstBoolField(const std::string& name, const bool* value) {
-            BeginPropertyRow(name, COLOR_TYPE_BOOL);
+            BeginPropertyRow(name + " " + ICON_FA_LOCK, COLOR_TYPE_BOOL);
             ImGui::TextColored(COLOR_CONST_VAL, *value ? "True" : "False");
-            DrawConstIndicator();
+            
             EndPropertyRow();
         }
 
         static void DrawConstIntField(const std::string& name, const int* value) {
-            BeginPropertyRow(name, GetNumericColor(name));
+            BeginPropertyRow(name + " " + ICON_FA_LOCK, GetNumericColor(name));
             ImGui::TextColored(COLOR_CONST_VAL, "%d", *value);
-            DrawConstIndicator();
+            
             EndPropertyRow();
         }
 
         static void DrawConstUInt32Field(const std::string& name, const uint32_t* value) {
-            BeginPropertyRow(name, COLOR_TYPE_NUMBER);
+            BeginPropertyRow(name + " " + ICON_FA_LOCK, COLOR_TYPE_NUMBER);
             ImGui::TextColored(COLOR_CONST_VAL, "%u", *value);
-            DrawConstIndicator();
+            
             EndPropertyRow();
         }
 
         static void DrawConstFloatField(const std::string& name, const float* value) {
-            BeginPropertyRow(name, GetNumericColor(name));
+            BeginPropertyRow(name + " " + ICON_FA_LOCK, GetNumericColor(name));
             ImGui::TextColored(COLOR_CONST_VAL, "%.3f", *value);
-            DrawConstIndicator();
+            
             EndPropertyRow();
         }
 
         static void DrawConstStringField(const std::string& name, const std::string* value) {
-            BeginPropertyRow(name, COLOR_TYPE_STRING);
+            BeginPropertyRow(name + " " + ICON_FA_LOCK, COLOR_TYPE_STRING);
             ImGui::TextColored(COLOR_CONST_VAL, "%s", value->c_str());
-            DrawConstIndicator();
+            
             EndPropertyRow();
         }
 
         static void DrawConstVector2Field(const std::string& name, const ::Vector2* values) {
-            BeginPropertyRow(name, COLOR_TYPE_NUMBER);
+            BeginPropertyRow(name + " " + ICON_FA_LOCK, COLOR_TYPE_NUMBER);
             ImGui::PopItemWidth(); 
             ImGui::PushID(values);
 
@@ -497,14 +488,14 @@ namespace Lil {
                 if (i < 1) ImGui::SameLine(0.0f, VECTOR_ITEM_PADDING);
             }
 
-            DrawConstIndicator();
+            
             ImGui::PopID();
             ImGui::PushItemWidth(-1.0f);
             EndPropertyRow();
         }
 
         static void DrawConstVector3Field(const std::string& name, const ::Vector3* values) {
-            BeginPropertyRow(name, COLOR_TYPE_NUMBER);
+            BeginPropertyRow(name + " " + ICON_FA_LOCK, COLOR_TYPE_NUMBER);
             ImGui::PopItemWidth(); 
             ImGui::PushID(values);
 
@@ -535,14 +526,14 @@ namespace Lil {
                 if (i < 2) ImGui::SameLine(0.0f, VECTOR_ITEM_PADDING);
             }
 
-            DrawConstIndicator();
+            
             ImGui::PopID();
             ImGui::PushItemWidth(-1.0f);
             EndPropertyRow();
         }
 
         static void DrawConstVector4Field(const std::string& name, const ::Vector4* values) {
-            BeginPropertyRow(name, COLOR_TYPE_NUMBER);
+            BeginPropertyRow(name + " " + ICON_FA_LOCK, COLOR_TYPE_NUMBER);
             ImGui::PopItemWidth(); 
             ImGui::PushID(values);
 
@@ -573,7 +564,7 @@ namespace Lil {
                 if (i < 3) ImGui::SameLine(0.0f, VECTOR_ITEM_PADDING);
             }
 
-            DrawConstIndicator();
+            
             ImGui::PopID();
             ImGui::PushItemWidth(-1.0f);
             EndPropertyRow();
@@ -585,7 +576,7 @@ namespace Lil {
             ImGui::PushStyleColor(ImGuiCol_Header, COLOR_HEADER_BG);
             ImGui::PushStyleColor(ImGuiCol_HeaderHovered, COLOR_HEADER_BG_HOVER);
             
-            std::string compositeHeaderName = std::string(ICON_FA_ARROWS_UP_DOWN_LEFT_RIGHT) + "  " + sectionName;
+            std::string compositeHeaderName = std::string(ICON_FA_ARROWS_UP_DOWN_LEFT_RIGHT) + "  " + sectionName  + " " + ICON_FA_LOCK;
             bool isOpen = ImGui::CollapsingHeader(compositeHeaderName.c_str());
             ImGui::PopStyleColor(2);
 
