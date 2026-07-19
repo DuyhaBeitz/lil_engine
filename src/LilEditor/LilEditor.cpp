@@ -1,5 +1,4 @@
 #include "LilEditor.hpp"
-#include "extras/FA6FreeSolidFontData.h"
 
 Lil::Editor &Lil::Editor::Get() {
     static Lil::Editor instance;
@@ -85,7 +84,7 @@ void Lil::Editor::DrawInspector() {
         ImGui::Begin("Components");
         ImGui::SameLine(availWidth - 30.0f);
         
-        if (ImGui::Button("+")) {
+        if (ImGui::Button(ICON_FA_PLUS)) {
             ImGui::OpenPopup("AddComponentPopup");
         }
         ImGui::Separator();

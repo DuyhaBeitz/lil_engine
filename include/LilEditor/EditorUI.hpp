@@ -1,6 +1,7 @@
 #pragma once
 
 #include "LilEngine.hpp"
+#include "extras/IconsFontAwesome6.h"
 
 // DPI scaling functions
 inline float ScaleToDPIF(float value) {
@@ -48,6 +49,9 @@ namespace Lil {
         static constexpr float BORDER_SIZE_FRAME               = 1.0f;
 
         static inline const ImVec2 ITEM_SPACING = ImVec2(8.0f, 4.0f);
+
+        // Icon Spacing Configuration Tokens
+        static constexpr float ICON_LABEL_GAP_PADDING = 6.0f;
 
         // ==========================================
         // Dark Panel Themes
@@ -162,7 +166,7 @@ namespace Lil {
             ImGui::PopStyleVar();
         }
 
-        static void BeginPropertyRow(const std::string& name, const ImVec4& typeColorAccent) {
+        static void BeginPropertyRow(const std::string& name, const ImVec4& typeColorAccent, const char* fontAwesomeIcon = nullptr) {
             ImGui::Columns(2, nullptr, false);
             
             static bool widthSet = false;
@@ -171,11 +175,21 @@ namespace Lil {
                 widthSet = true;
             }
 
+            // Leftmost Type Strip Accent
             ImGui::PushStyleColor(ImGuiCol_Text, typeColorAccent);
             ImGui::TextUnformatted("|");
             ImGui::PopStyleColor();
             ImGui::SameLine();
 
+            // Inline Icon Injection (if provided)
+            if (fontAwesomeIcon != nullptr) {
+                ImGui::PushStyleColor(ImGuiCol_Text, typeColorAccent);
+                ImGui::TextUnformatted(fontAwesomeIcon);
+                ImGui::PopStyleColor();
+                ImGui::SameLine(0.0f, ICON_LABEL_GAP_PADDING);
+            }
+
+            // Property Label
             ImGui::PushStyleColor(ImGuiCol_Text, COLOR_LABEL);
             ImGui::TextUnformatted(name.c_str());
             ImGui::PopStyleColor();
@@ -375,11 +389,14 @@ namespace Lil {
 
         static void DrawTransformBlock(const std::string& sectionName, ::Transform* transform) {
             RowSpacingGuard spacing;
+            ImGui::PushID(transform);
+
             ImGui::PushStyleColor(ImGuiCol_Header, COLOR_HEADER_BG);
             ImGui::PushStyleColor(ImGuiCol_HeaderHovered, COLOR_HEADER_BG_HOVER);
-            ImGui::PushID(transform);
             
-            bool isOpen = ImGui::CollapsingHeader(sectionName.c_str(), ImGuiTreeNodeFlags_DefaultOpen);
+            // Injects a solid geometric node icon before the Transform section header text
+            std::string compositeHeaderName = std::string(ICON_FA_ARROWS_UP_DOWN_LEFT_RIGHT) + "  " + sectionName;
+            bool isOpen = ImGui::CollapsingHeader(compositeHeaderName.c_str());
             ImGui::PopStyleColor(2);
 
             if (isOpen) {
@@ -392,6 +409,7 @@ namespace Lil {
                 ImGui::Unindent(STRUCT_INDENT_PADDING);
                 ImGui::Spacing();
             }
+
             ImGui::PopID();
         }
 
@@ -400,15 +418,12 @@ namespace Lil {
         // ==========================================
         static void DrawConstIndicator() {
             ImGui::SameLine();
-            ImGui::PushStyleColor(ImGuiCol_Button, COLOR_CONST_BADGE);
-            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, COLOR_CONST_BADGE);
-            ImGui::PushStyleColor(ImGuiCol_ButtonActive, COLOR_CONST_BADGE);
             ImGui::PushStyleColor(ImGuiCol_Text, COLOR_CONST_BADGE_TXT);
             
-            // Tiny, flat, non-interactive visual tag next to read-only parameters
-            ImGui::SmallButton("CONST");
+            // Renders a sleek lock icon inline next to read-only parameters
+            ImGui::TextUnformatted(ICON_FA_LOCK);
             
-            ImGui::PopStyleColor(4);
+            ImGui::PopStyleColor();
         }
 
         static void DrawConstBoolField(const std::string& name, const bool* value) {
@@ -565,11 +580,13 @@ namespace Lil {
         }
         static void DrawConstTransformBlock(const std::string& sectionName, const ::Transform* transform) {
             RowSpacingGuard spacing;
+            ImGui::PushID(transform);
+
             ImGui::PushStyleColor(ImGuiCol_Header, COLOR_HEADER_BG);
             ImGui::PushStyleColor(ImGuiCol_HeaderHovered, COLOR_HEADER_BG_HOVER);
-            ImGui::PushID(transform);
             
-            bool isOpen = ImGui::CollapsingHeader(sectionName.c_str(), ImGuiTreeNodeFlags_DefaultOpen);
+            std::string compositeHeaderName = std::string(ICON_FA_ARROWS_UP_DOWN_LEFT_RIGHT) + "  " + sectionName;
+            bool isOpen = ImGui::CollapsingHeader(compositeHeaderName.c_str());
             ImGui::PopStyleColor(2);
 
             if (isOpen) {
@@ -582,6 +599,7 @@ namespace Lil {
                 ImGui::Unindent(STRUCT_INDENT_PADDING);
                 ImGui::Spacing();
             }
+
             ImGui::PopID();
         }
     };
