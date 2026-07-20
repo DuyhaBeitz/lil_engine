@@ -4,16 +4,19 @@
 #include "utils/MathHelper.hpp"
 
 class ColliderComponent : public Component {
-public:
+private:
+    virtual void Clean() override;
+    
     virtual void OnLayoutUpdate() override {
         m_body->setTransform(RcTransform(GetTransform()));
     }
 
 protected:
     rc::RigidBody* m_body;
-
 public:
     LIL_REFLECTABLE()
+
+public:
 
     ColliderComponent(rc::BodyType body_type = rc::BodyType::DYNAMIC);
 

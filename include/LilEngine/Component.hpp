@@ -6,12 +6,14 @@
 class Actor;
 
 class Component : public GameObject {
-public:
-    Transform m_local_transform = TRANSFORM_EMPTY;
+private:
+    virtual void OnLayoutUpdate() {};
 
 public:
     LIL_REFLECTABLE()
+    Transform m_local_transform = TRANSFORM_EMPTY;
 
+public:
     Component() = default;
     Component(Transform local_transform) : m_local_transform(local_transform), GameObject() {}
 
@@ -29,8 +31,6 @@ public:
     virtual void SimulationUpdate(Actor& actor) {};
     virtual void Draw() {};
     virtual void DebugDraw() {};
-
-    virtual void OnLayoutUpdate() {};
 };
 LIL_REFLECT(Component, bases<GameObject>,
     field(m_local_transform)

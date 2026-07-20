@@ -12,6 +12,10 @@ ColliderComponent::ColliderComponent(rc::BodyType body_type)
     m_body->setType(body_type);
 }
 
+void ColliderComponent::Clean() {
+    Lil::Physics().GetWorld()->destroyRigidBody(m_body);
+}
+
 rc::RigidBody *ColliderComponent::GetBody() { return m_body; }
 
 void ColliderComponent::SetAngularLockAxisFactor(Vector3 lock_axis) {

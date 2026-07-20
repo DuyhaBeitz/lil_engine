@@ -198,10 +198,12 @@ public:
         return TypeInfo::Get<::refl::trait::remove_qualifiers_t<decltype(*this)>>(); \
     }
 
-#define LIL_REFLECT(typename, bases, ...) \
+#define LIL_REFLECT_EX(typename, bases, registername, ...) \
     REFL_AUTO(type(typename, bases) __VA_OPT__(,) __VA_ARGS__) \
-    static TypeRegisterer<typename> _##typename##_registerer;
+    static TypeRegisterer<typename> _##registername##_registerer;
 
+#define LIL_REFLECT(typename, bases, ...) \
+    LIL_REFLECT_EX(typename, bases, typename, __VA_ARGS__)
 
 LIL_REFLECT(
     Vector2,

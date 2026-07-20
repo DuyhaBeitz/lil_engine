@@ -38,6 +38,7 @@ void World::DestroyActor(Actor *actor) {
     if (!actor) return;
     auto it = m_actors.find(actor);
     if (it != m_actors.end()) {
+        actor->Clean();
         m_actors.erase(it);
     }
 }
@@ -72,6 +73,7 @@ void World::DestroyComponent(Component *component)
     if (!component) return;
     auto it = m_components.find(component);
     if (it != m_components.end()) {
+        component->Clean();
         m_components.erase(it);
     }
 }

@@ -4,7 +4,7 @@
 
 #define TRANSFORM_EMPTY Transform{.translation = Vector3{0.0f, 0.0f, 0.0f}, .rotation = QuaternionIdentity(), .scale = Vector3{1.0f, 1.0f, 1.0f}}
 
-class Transformable : Reflectable {
+class Transformable : public Reflectable {
 public:
     Transform m_transform = TRANSFORM_EMPTY;
 
@@ -35,6 +35,8 @@ public:
 
 public:
     GameObject(Transform transform = TRANSFORM_EMPTY);
+
+    virtual void Clean() {};
 
     LIL_REFLECTABLE()
 };
