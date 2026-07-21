@@ -2,3 +2,472 @@
 
 Lil::RowSpacingGuard::RowSpacingGuard() { UIStyle::PushRowSpacing(); }
 Lil::RowSpacingGuard::~RowSpacingGuard() { UIStyle::PopRowSpacing(); }
+
+void Lil::UIStyle::InitGlobalTheme() {
+    ImGuiStyle& style = ImGui::GetStyle();
+    
+    style.FrameRounding    = ROUNDING_FRAME;
+    style.WindowRounding   = ROUNDING_WINDOW;
+    style.GrabRounding     = ROUNDING_GRAB;
+    style.PopupRounding    = ROUNDING_POPUP;
+    style.FrameBorderSize  = BORDER_SIZE_FRAME;
+
+    style.Colors[ImGuiCol_TitleBg]           = COLOR_TITLE_BG;
+    style.Colors[ImGuiCol_TitleBgActive]     = COLOR_TITLE_BG_ACTIVE;
+    style.Colors[ImGuiCol_TitleBgCollapsed]  = COLOR_TITLE_BG_COLLAPSED;
+
+    style.Colors[ImGuiCol_DockingPreview]        = COLOR_DOCKING_PREVIEW;
+    style.Colors[ImGuiCol_Tab]                   = COLOR_TAB;
+    style.Colors[ImGuiCol_TabHovered]            = COLOR_TAB_HOVERED;
+    style.Colors[ImGuiCol_TabActive]             = COLOR_TAB_SELECTED;
+    style.Colors[ImGuiCol_TabUnfocused]          = COLOR_TAB_DIMMED;
+    style.Colors[ImGuiCol_TabUnfocusedActive]   = COLOR_TAB_DIMMED_SELECTED;
+    style.Colors[ImGuiCol_TabSelectedOverline]   = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
+    style.Colors[ImGuiCol_TabDimmedSelectedOverline] = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
+    
+    style.Colors[ImGuiCol_WindowBg]          = COLOR_WINDOW_BG;
+    style.Colors[ImGuiCol_PopupBg]           = COLOR_POPUP_BG;
+    style.Colors[ImGuiCol_Border]            = COLOR_BORDER;
+
+    style.Colors[ImGuiCol_TitleBg]          = COLOR_TITLE_BG;
+    style.Colors[ImGuiCol_TitleBgActive]    = COLOR_TITLE_BG_ACTIVE;
+    style.Colors[ImGuiCol_TitleBgCollapsed] = COLOR_TITLE_BG_COLLAPSED;
+
+    style.Colors[ImGuiCol_FrameBg]           = COLOR_INPUT_BG;
+    style.Colors[ImGuiCol_FrameBgHovered]    = COLOR_INPUT_BG_HOVER;
+    style.Colors[ImGuiCol_FrameBgActive]     = COLOR_INPUT_BG_ACTIVE;
+
+    style.Colors[ImGuiCol_Header]            = COLOR_HEADER_BG;
+    style.Colors[ImGuiCol_HeaderHovered]     = COLOR_HEADER_BG_HOVER;
+    style.Colors[ImGuiCol_HeaderActive]      = COLOR_HEADER_BG;
+
+    style.Colors[ImGuiCol_Button]            = COLOR_BUTTON;
+    style.Colors[ImGuiCol_ButtonHovered]     = COLOR_BUTTON_HOVER;
+    style.Colors[ImGuiCol_ButtonActive]      = COLOR_BUTTON_ACTIVE;
+}
+
+void Lil::UIStyle::PushRowSpacing() {ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ITEM_SPACING);}
+void Lil::UIStyle::PopRowSpacing(){ImGui::PopStyleVar();}
+
+void Lil::UIStyle::BeginPropertyRow(const std::string &name, const ImVec4 &typeColorAccent, const char *fontAwesomeIcon) {
+    ImGui::Columns(2, nullptr, false);
+    
+    static bool widthSet = false;
+    if (!widthSet) {
+        ImGui::SetColumnWidth(0, ImGui::GetWindowWidth() * PROPERTY_LABEL_COLUMN_WIDTH_PCT);
+        widthSet = true;
+    }
+
+    // Leftmost Type Strip Accent
+    ImGui::PushStyleColor(ImGuiCol_Text, typeColorAccent);
+    ImGui::TextUnformatted("|");
+    ImGui::PopStyleColor();
+    ImGui::SameLine();
+
+    // Inline Icon Injection (if provided)
+    if (fontAwesomeIcon != nullptr) {
+        ImGui::PushStyleColor(ImGuiCol_Text, typeColorAccent);
+        ImGui::TextUnformatted(fontAwesomeIcon);
+        ImGui::PopStyleColor();
+        ImGui::SameLine(0.0f, ICON_LABEL_GAP_PADDING);
+    }
+
+    // Property Label
+    ImGui::PushStyleColor(ImGuiCol_Text, COLOR_LABEL);
+    ImGui::TextUnformatted(name.c_str());
+    ImGui::PopStyleColor();
+    
+    ImGui::NextColumn();
+    ImGui::PushItemWidth(-1.0f);
+}
+
+void Lil::UIStyle::EndPropertyRow() {
+    ImGui::PopItemWidth();
+    ImGui::Columns(1);
+}
+
+ImVec4 Lil::UIStyle::GetNumericColor(const std::string &name) {
+    if (name == "x" || name == "X") return COLOR_AXIS_X;
+    if (name == "y" || name == "Y") return COLOR_AXIS_Y;
+    if (name == "z" || name == "Z") return COLOR_AXIS_Z;
+    if (name == "w" || name == "W") return COLOR_AXIS_W;
+    return COLOR_TYPE_NUMBER;
+}
+
+void Lil::UIStyle::DrawBoolField(const std::string &name, bool *value) {
+    BeginPropertyRow(name, COLOR_TYPE_BOOL);
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, COLOR_INPUT_BG);
+    ImGui::PushStyleColor(ImGuiCol_CheckMark, COLOR_TYPE_BOOL);
+    
+    ImGui::Checkbox(("##" + name).c_str(), value);
+    
+    ImGui::PopStyleColor(2);
+    EndPropertyRow();
+}
+
+void Lil::UIStyle::DrawIntField(const std::string &name, int *value) {
+    ImVec4 fieldColor = GetNumericColor(name);
+    BeginPropertyRow(name, fieldColor);
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, COLOR_INPUT_BG);
+    ImGui::PushStyleColor(ImGuiCol_Text, fieldColor);
+    
+    ImGui::InputInt(("##" + name).c_str(), value, 0, 0);
+    
+    ImGui::PopStyleColor(2);
+    EndPropertyRow();
+}
+
+void Lil::UIStyle::DrawUInt32Field(const std::string &name, uint32_t *value) {
+    BeginPropertyRow(name, COLOR_TYPE_NUMBER);
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, COLOR_INPUT_BG);
+    ImGui::PushStyleColor(ImGuiCol_Text, COLOR_TYPE_NUMBER);
+    
+    ImGui::InputScalar(("##" + name).c_str(), ImGuiDataType_U32, value, nullptr, nullptr, "%u");
+    
+    ImGui::PopStyleColor(2);
+    EndPropertyRow();
+}
+
+void Lil::UIStyle::DrawFloatField(const std::string &name, float *value) {
+    ImVec4 fieldColor = GetNumericColor(name);
+    BeginPropertyRow(name, fieldColor);
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, COLOR_INPUT_BG);
+    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, COLOR_INPUT_BG_HOVER);
+    ImGui::PushStyleColor(ImGuiCol_Text, fieldColor);
+    
+    ImGui::DragFloat(("##" + name).c_str(), value, DRAG_FLOAT_SPEED, DRAG_FLOAT_MIN, DRAG_FLOAT_MAX, "%.3f");
+    
+    ImGui::PopStyleColor(3);
+    EndPropertyRow();
+}
+
+void Lil::UIStyle::DrawStringField(const std::string &name, std::string *value) {
+    BeginPropertyRow(name, COLOR_TYPE_STRING);
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, COLOR_INPUT_BG);
+    ImGui::PushStyleColor(ImGuiCol_Text, COLOR_TYPE_STRING);
+    
+    char buffer[STRING_BUFFER_SIZE];
+    strncpy(buffer, value->c_str(), sizeof(buffer) - 1);
+    buffer[sizeof(buffer) - 1] = '\0';
+    
+    if (ImGui::InputText(("##" + name).c_str(), buffer, sizeof(buffer))) {
+        *value = buffer;
+    }
+    
+    ImGui::PopStyleColor(2);
+    EndPropertyRow();
+}
+
+void Lil::UIStyle::DrawVector2Field(const std::string &name, ::Vector2 *values) {
+    BeginPropertyRow(name, COLOR_TYPE_NUMBER);
+    ImGui::PopItemWidth(); 
+    ImGui::PushID(values);
+
+    float totalWidthAvailable = ImGui::GetContentRegionAvail().x;
+    float singleItemWidth = (totalWidthAvailable - VECTOR_ITEM_PADDING) / 2.0f; 
+
+    const char* labels[] = { "X", "Y" };
+    ImVec4 colors[]      = { COLOR_AXIS_X, COLOR_AXIS_Y };
+    float* dataRefs[]    = { &values->x, &values->y };
+
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, COLOR_INPUT_BG);
+    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, COLOR_INPUT_BG_HOVER);
+    ImGui::PushStyleColor(ImGuiCol_Text, COLOR_TEXT_WHITE);
+
+    for (int i = 0; i < 2; ++i) {
+        ImGui::SetNextItemWidth(singleItemWidth);
+        
+        // Render a clean, blank label so the field spans the full calculated space
+        ImGui::DragFloat((std::string("##Field") + labels[i]).c_str(), dataRefs[i], DRAG_FLOAT_SPEED, DRAG_FLOAT_MIN, DRAG_FLOAT_MAX, "%.2f");
+        
+        // Calculate the bounding box of the box we just rendered to draw our accent line
+        ImVec2 minBound = ImGui::GetItemRectMin();
+        ImVec2 maxBound = ImGui::GetItemRectMax();
+        
+        // Draw an absolute 3-pixel-wide colored line flush on the left border inside the field box
+        maxBound.x = minBound.x + 3.0f; 
+        ImGui::GetWindowDrawList()->AddRectFilled(minBound, maxBound, ImGui::ColorConvertFloat4ToU32(colors[i]), ROUNDING_FRAME);
+
+        if (i < 1) ImGui::SameLine(0.0f, VECTOR_ITEM_PADDING);
+    }
+
+    ImGui::PopStyleColor(3);
+    ImGui::PopID();
+    ImGui::PushItemWidth(-1.0f);
+    EndPropertyRow();
+}
+
+void Lil::UIStyle::DrawVector3Field(const std::string &name, ::Vector3 *values) {
+    BeginPropertyRow(name, COLOR_TYPE_NUMBER);
+    ImGui::PopItemWidth(); 
+    ImGui::PushID(values);
+
+    float totalWidthAvailable = ImGui::GetContentRegionAvail().x;
+    float singleItemWidth = (totalWidthAvailable - (VECTOR_ITEM_PADDING * 2.0f)) / 3.0f; 
+
+    const char* labels[] = { "X", "Y", "Z" };
+    ImVec4 colors[]      = { COLOR_AXIS_X, COLOR_AXIS_Y, COLOR_AXIS_Z };
+    float* dataRefs[]    = { &values->x, &values->y, &values->z };
+
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, COLOR_INPUT_BG);
+    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, COLOR_INPUT_BG_HOVER);
+    ImGui::PushStyleColor(ImGuiCol_Text, COLOR_TEXT_WHITE);
+
+    for (int i = 0; i < 3; ++i) {
+        ImGui::SetNextItemWidth(singleItemWidth);
+        ImGui::DragFloat((std::string("##Field") + labels[i]).c_str(), dataRefs[i], DRAG_FLOAT_SPEED, DRAG_FLOAT_MIN, DRAG_FLOAT_MAX, "%.2f");
+        
+        ImVec2 minBound = ImGui::GetItemRectMin();
+        ImVec2 maxBound = ImGui::GetItemRectMax();
+        
+        maxBound.x = minBound.x + 3.0f; 
+        ImGui::GetWindowDrawList()->AddRectFilled(minBound, maxBound, ImGui::ColorConvertFloat4ToU32(colors[i]), ROUNDING_FRAME);
+
+        if (i < 2) ImGui::SameLine(0.0f, VECTOR_ITEM_PADDING);
+    }
+
+    ImGui::PopStyleColor(3);
+    ImGui::PopID();
+    ImGui::PushItemWidth(-1.0f);
+    EndPropertyRow();
+}
+
+void Lil::UIStyle::DrawVector4Field(const std::string &name, ::Vector4 *values) {
+    BeginPropertyRow(name, COLOR_TYPE_NUMBER);
+    ImGui::PopItemWidth(); 
+    ImGui::PushID(values);
+
+    float totalWidthAvailable = ImGui::GetContentRegionAvail().x;
+    float singleItemWidth = (totalWidthAvailable - (VECTOR_ITEM_PADDING * 3.0f)) / 4.0f; 
+
+    const char* labels[] = { "X", "Y", "Z", "W" };
+    ImVec4 colors[]      = { COLOR_AXIS_X, COLOR_AXIS_Y, COLOR_AXIS_Z, COLOR_AXIS_W };
+    float* dataRefs[]    = { &values->x, &values->y, &values->z, &values->w };
+
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, COLOR_INPUT_BG);
+    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, COLOR_INPUT_BG_HOVER);
+    ImGui::PushStyleColor(ImGuiCol_Text, COLOR_TEXT_WHITE);
+
+    for (int i = 0; i < 4; ++i) {
+        ImGui::SetNextItemWidth(singleItemWidth);
+        ImGui::DragFloat((std::string("##Field") + labels[i]).c_str(), dataRefs[i], DRAG_FLOAT_SPEED, DRAG_FLOAT_MIN, DRAG_FLOAT_MAX, "%.2f");
+        
+        ImVec2 minBound = ImGui::GetItemRectMin();
+        ImVec2 maxBound = ImGui::GetItemRectMax();
+        
+        maxBound.x = minBound.x + 3.0f; 
+        ImGui::GetWindowDrawList()->AddRectFilled(minBound, maxBound, ImGui::ColorConvertFloat4ToU32(colors[i]), ROUNDING_FRAME);
+
+        if (i < 3) ImGui::SameLine(0.0f, VECTOR_ITEM_PADDING);
+    }
+
+    ImGui::PopStyleColor(3);
+    ImGui::PopID();
+    ImGui::PushItemWidth(-1.0f);
+    EndPropertyRow();
+}
+
+void Lil::UIStyle::DrawTransformBlock(const std::string &sectionName, ::Transform *transform) {
+    RowSpacingGuard spacing;
+    ImGui::PushID(transform);
+
+    ImGui::PushStyleColor(ImGuiCol_Header, COLOR_HEADER_BG);
+    ImGui::PushStyleColor(ImGuiCol_HeaderHovered, COLOR_HEADER_BG_HOVER);
+    
+    // Injects a solid geometric node icon before the Transform section header text
+    std::string compositeHeaderName = std::string(ICON_FA_ARROWS_UP_DOWN_LEFT_RIGHT) + "  " + sectionName;
+    bool isOpen = ImGui::CollapsingHeader(compositeHeaderName.c_str());
+    ImGui::PopStyleColor(2);
+
+    if (isOpen) {
+        ImGui::Indent(STRUCT_INDENT_PADDING);
+        
+        DrawVector3Field("Position", &transform->translation);
+        DrawVector4Field("Rotation", &transform->rotation);
+        DrawVector3Field("Scale",    &transform->scale);
+        
+        ImGui::Unindent(STRUCT_INDENT_PADDING);
+        ImGui::Spacing();
+    }
+
+    ImGui::PopID();
+}
+
+void Lil::UIStyle::DrawConstBoolField(const std::string &name, const bool *value)
+{
+    BeginPropertyRow(name + " " + ICON_FA_LOCK, COLOR_TYPE_BOOL);
+    ImGui::TextColored(COLOR_CONST_VAL, *value ? "True" : "False");
+    
+    EndPropertyRow();
+}
+
+void Lil::UIStyle::DrawConstIntField(const std::string &name, const int *value) {
+    BeginPropertyRow(name + " " + ICON_FA_LOCK, GetNumericColor(name));
+    ImGui::TextColored(COLOR_CONST_VAL, "%d", *value);
+    
+    EndPropertyRow();
+}
+
+void Lil::UIStyle::DrawConstUInt32Field(const std::string &name, const uint32_t *value) {
+    BeginPropertyRow(name + " " + ICON_FA_LOCK, COLOR_TYPE_NUMBER);
+    ImGui::TextColored(COLOR_CONST_VAL, "%u", *value);
+    
+    EndPropertyRow();
+}
+
+void Lil::UIStyle::DrawConstFloatField(const std::string &name, const float *value) {
+    BeginPropertyRow(name + " " + ICON_FA_LOCK, GetNumericColor(name));
+    ImGui::TextColored(COLOR_CONST_VAL, "%.3f", *value);
+    
+    EndPropertyRow();
+}
+
+void Lil::UIStyle::DrawConstStringField(const std::string &name, const std::string *value) {
+    BeginPropertyRow(name + " " + ICON_FA_LOCK, COLOR_TYPE_STRING);
+    ImGui::TextColored(COLOR_CONST_VAL, "%s", value->c_str());
+    
+    EndPropertyRow();
+}
+
+void Lil::UIStyle::DrawConstVector2Field(const std::string &name, const ::Vector2 *values) {
+    BeginPropertyRow(name + " " + ICON_FA_LOCK, COLOR_TYPE_NUMBER);
+    ImGui::PopItemWidth(); 
+    ImGui::PushID(values);
+
+    float totalWidthAvailable = ImGui::GetContentRegionAvail().x;
+    float singleItemWidth = (totalWidthAvailable - VECTOR_ITEM_PADDING) / 2.0f; 
+
+    const char* labels[] = { "X", "Y" };
+    ImVec4 colors[]      = { COLOR_AXIS_X, COLOR_AXIS_Y };
+    float data[]         = { values->x, values->y };
+
+    for (int i = 0; i < 2; ++i) {
+        ImGui::BeginGroup();
+        
+        // Render a flat background container frame mimicking the input boxes
+        ImVec2 startPos = ImGui::GetCursorScreenPos();
+        ImVec2 endPos = ImVec2(startPos.x + singleItemWidth, startPos.y + ImGui::GetFrameHeight());
+        ImGui::GetWindowDrawList()->AddRectFilled(startPos, endPos, ImGui::ColorConvertFloat4ToU32(COLOR_INPUT_BG), ROUNDING_FRAME);
+        
+        // Draw the colored left edge line inside the simulated box
+        ImVec2 lineEnd = ImVec2(startPos.x + 3.0f, endPos.y);
+        ImGui::GetWindowDrawList()->AddRectFilled(startPos, lineEnd, ImGui::ColorConvertFloat4ToU32(colors[i]), ROUNDING_FRAME);
+
+        // Place the read-only text cleanly inside the container area
+        ImGui::SetCursorScreenPos(ImVec2(startPos.x + 8.0f, startPos.y + ImGui::GetStyle().FramePadding.y));
+        ImGui::TextColored(COLOR_CONST_VAL, "%.2f", data[i]);
+        
+        // Advance cursor position safely to handle group spacing mechanics
+        ImGui::SetCursorScreenPos(startPos);
+        ImGui::Dummy(ImVec2(singleItemWidth, ImGui::GetFrameHeight()));
+        ImGui::EndGroup();
+
+        if (i < 1) ImGui::SameLine(0.0f, VECTOR_ITEM_PADDING);
+    }
+
+    
+    ImGui::PopID();
+    ImGui::PushItemWidth(-1.0f);
+    EndPropertyRow();
+}
+
+void Lil::UIStyle::DrawConstVector3Field(const std::string &name, const ::Vector3 *values) {
+    BeginPropertyRow(name + " " + ICON_FA_LOCK, COLOR_TYPE_NUMBER);
+    ImGui::PopItemWidth(); 
+    ImGui::PushID(values);
+
+    float totalWidthAvailable = ImGui::GetContentRegionAvail().x;
+    float singleItemWidth = (totalWidthAvailable - (VECTOR_ITEM_PADDING * 2.0f)) / 3.0f; 
+
+    const char* labels[] = { "X", "Y", "Z" };
+    ImVec4 colors[]      = { COLOR_AXIS_X, COLOR_AXIS_Y, COLOR_AXIS_Z };
+    float data[]         = { values->x, values->y, values->z };
+
+    for (int i = 0; i < 3; ++i) {
+        ImGui::BeginGroup();
+        
+        ImVec2 startPos = ImGui::GetCursorScreenPos();
+        ImVec2 endPos = ImVec2(startPos.x + singleItemWidth, startPos.y + ImGui::GetFrameHeight());
+        ImGui::GetWindowDrawList()->AddRectFilled(startPos, endPos, ImGui::ColorConvertFloat4ToU32(COLOR_INPUT_BG), ROUNDING_FRAME);
+        
+        ImVec2 lineEnd = ImVec2(startPos.x + 3.0f, endPos.y);
+        ImGui::GetWindowDrawList()->AddRectFilled(startPos, lineEnd, ImGui::ColorConvertFloat4ToU32(colors[i]), ROUNDING_FRAME);
+
+        ImGui::SetCursorScreenPos(ImVec2(startPos.x + 8.0f, startPos.y + ImGui::GetStyle().FramePadding.y));
+        ImGui::TextColored(COLOR_CONST_VAL, "%.2f", data[i]);
+        
+        ImGui::SetCursorScreenPos(startPos);
+        ImGui::Dummy(ImVec2(singleItemWidth, ImGui::GetFrameHeight()));
+        ImGui::EndGroup();
+
+        if (i < 2) ImGui::SameLine(0.0f, VECTOR_ITEM_PADDING);
+    }
+
+    
+    ImGui::PopID();
+    ImGui::PushItemWidth(-1.0f);
+    EndPropertyRow();
+}
+
+void Lil::UIStyle::DrawConstVector4Field(const std::string &name, const ::Vector4 *values) {
+    BeginPropertyRow(name + " " + ICON_FA_LOCK, COLOR_TYPE_NUMBER);
+    ImGui::PopItemWidth(); 
+    ImGui::PushID(values);
+
+    float totalWidthAvailable = ImGui::GetContentRegionAvail().x;
+    float singleItemWidth = (totalWidthAvailable - (VECTOR_ITEM_PADDING * 3.0f)) / 4.0f; 
+
+    const char* labels[] = { "X", "Y", "Z", "W" };
+    ImVec4 colors[]      = { COLOR_AXIS_X, COLOR_AXIS_Y, COLOR_AXIS_Z, COLOR_AXIS_W };
+    float data[]         = { values->x, values->y, values->z, values->w };
+
+    for (int i = 0; i < 4; ++i) {
+        ImGui::BeginGroup();
+        
+        ImVec2 startPos = ImGui::GetCursorScreenPos();
+        ImVec2 endPos = ImVec2(startPos.x + singleItemWidth, startPos.y + ImGui::GetFrameHeight());
+        ImGui::GetWindowDrawList()->AddRectFilled(startPos, endPos, ImGui::ColorConvertFloat4ToU32(COLOR_INPUT_BG), ROUNDING_FRAME);
+        
+        ImVec2 lineEnd = ImVec2(startPos.x + 3.0f, endPos.y);
+        ImGui::GetWindowDrawList()->AddRectFilled(startPos, lineEnd, ImGui::ColorConvertFloat4ToU32(colors[i]), ROUNDING_FRAME);
+
+        ImGui::SetCursorScreenPos(ImVec2(startPos.x + 8.0f, startPos.y + ImGui::GetStyle().FramePadding.y));
+        ImGui::TextColored(COLOR_CONST_VAL, "%.2f", data[i]);
+        
+        ImGui::SetCursorScreenPos(startPos);
+        ImGui::Dummy(ImVec2(singleItemWidth, ImGui::GetFrameHeight()));
+        ImGui::EndGroup();
+
+        if (i < 3) ImGui::SameLine(0.0f, VECTOR_ITEM_PADDING);
+    }
+
+    
+    ImGui::PopID();
+    ImGui::PushItemWidth(-1.0f);
+    EndPropertyRow();
+}
+
+void Lil::UIStyle::DrawConstTransformBlock(const std::string &sectionName, const ::Transform *transform) {
+    RowSpacingGuard spacing;
+    ImGui::PushID(transform);
+
+    ImGui::PushStyleColor(ImGuiCol_Header, COLOR_HEADER_BG);
+    ImGui::PushStyleColor(ImGuiCol_HeaderHovered, COLOR_HEADER_BG_HOVER);
+    
+    std::string compositeHeaderName = std::string(ICON_FA_ARROWS_UP_DOWN_LEFT_RIGHT) + "  " + sectionName  + " " + ICON_FA_LOCK;
+    bool isOpen = ImGui::CollapsingHeader(compositeHeaderName.c_str());
+    ImGui::PopStyleColor(2);
+
+    if (isOpen) {
+        ImGui::Indent(STRUCT_INDENT_PADDING);
+        
+        DrawConstVector3Field("Position", &transform->translation);
+        DrawConstVector4Field("Rotation", &transform->rotation);
+        DrawConstVector3Field("Scale",    &transform->scale);
+        
+        ImGui::Unindent(STRUCT_INDENT_PADDING);
+        ImGui::Spacing();
+    }
+
+    ImGui::PopID();
+}
