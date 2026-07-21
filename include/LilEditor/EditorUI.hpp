@@ -11,10 +11,6 @@ inline float ScaleToDPIF(float value) {
 inline int ScaleToDPII(int value) {
     return int(GetWindowScaleDPI().x * value);
 }
-#pragma once
-#include <imgui.h>
-#include <string>
-#include <vector>
 
 namespace Lil {
 
