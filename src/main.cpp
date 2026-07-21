@@ -23,7 +23,7 @@ void DrawGame() {
 }
 
 int main() {
-    InitWindow(1920, 1080, "game");
+    InitWindow(1920/2, 1080/2, "game");
     SetTraceLogLevel(LOG_NONE);
     DisableCursor();
     Lil::Resources().AddTexture("assets/heightmap.png");

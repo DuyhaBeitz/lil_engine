@@ -73,8 +73,8 @@ void Lil::Editor::DrawInspector() {
     ImGui::Begin("Inspector");
 
     if (m_selected) {
-        ImGui::SeparatorText(m_selected->GetTypeInfo().Name().c_str());
-        m_selected->GetTypeInfo().VisitFields(m_selected, m_editor);
+        m_editor.SetCurrentObjectName(m_selected->GetTypeInfo().Name());
+        m_editor.VisitObject(m_selected->GetTypeInfo(), m_selected);
         
         ImGui::Spacing();
         
@@ -90,21 +90,15 @@ void Lil::Editor::DrawInspector() {
         for (auto& [component, parent] : m_selected->Components()) {            
             ImGui::PushID(component);
             
-            bool open = ImGui::CollapsingHeader(component->GetTypeInfo().Name().c_str());
-            
-            //ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 25.0f);
             if (ImGui::SmallButton("X")) {
                 m_selected->DeattachComponent(component);
                 Lil::GetWorld().DestroyComponent(component);
                 ImGui::PopID();
                 continue;
             }
-            
-            if (open) {
-                ImGui::Indent();
-                component->GetTypeInfo().VisitFields(component, m_editor);
-                ImGui::Unindent();
-            }
+            ImGui::SameLine();
+            m_editor.SetCurrentObjectName(component->GetTypeInfo().Name());
+            m_editor.VisitObject(component->GetTypeInfo(), component);
             
             ImGui::PopID();
         }

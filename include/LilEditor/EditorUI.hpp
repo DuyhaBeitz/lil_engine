@@ -1,6 +1,7 @@
 #pragma once
 
 #include "LilEngine.hpp"
+#include "Components/ColliderComponent.hpp"
 #include "extras/IconsFontAwesome6.h"
 
 // DPI scaling functions
@@ -132,8 +133,9 @@ namespace Lil {
         static void DrawVector2Field(const std::string& name, ::Vector2* values);
         static void DrawVector3Field(const std::string& name, ::Vector3* values);
         static void DrawVector4Field(const std::string& name, ::Vector4* values);
-        static void DrawTransformBlock(const std::string& sectionName, ::Transform* transform);
-        
+        static void DrawTransformBlock(const std::string& name, ::Transform* transform);
+        static void DrawModelKeyField(const std::string& name, std::string* model_key);
+
         // ==========================================
         // Reusable Read-Only (Const) Draw Elements
         // ==========================================
@@ -146,135 +148,209 @@ namespace Lil {
         static void DrawConstVector2Field(const std::string& name, const ::Vector2* values);
         static void DrawConstVector3Field(const std::string& name, const ::Vector3* values);
         static void DrawConstVector4Field(const std::string& name, const ::Vector4* values);
-        static void DrawConstTransformBlock(const std::string& sectionName, const ::Transform* transform);
+        static void DrawConstTransformBlock(const std::string& name, const ::Transform* transform);
+        static void DrawConstModelKeyField(const std::string& name, const std::string* model_key);
     };
 };
 
-class EditorUIVisitor : public IFieldVisitor {
-public:
-    bool Visit(const FieldInfo& field, void* ptr) override {
-        ImGui::PushID(reinterpret_cast<intptr_t>(ptr));
-        ImGui::PushID(field.name.c_str());
+class EditorUIVisitor : public IVisitor {
 
-        Lil::UIStyle::PushRowSpacing();
+    std::string m_object_name = "";
 
+    void HandleField(const FieldInfo& field, void* ptr) {
         if (field.HasAttribute("ModelKeyAttribute")) {
-            Lil::UIStyle::BeginPropertyRow(field.name, Lil::UIStyle::COLOR_TYPE_STRING, ICON_FA_CAR);
-            ImGui::PushStyleColor(ImGuiCol_FrameBg, Lil::UIStyle::COLOR_COMBO_BG);
-            
-            auto* p = static_cast<std::string*>(ptr);
-            const auto& models = Lil::Resources().Models();
-            int currentIndex = -1;
-            std::vector<std::string> modelKeys;
-            for (const auto& [key, model] : *models) {
-                modelKeys.push_back(key);
-                if (key == *p) currentIndex = modelKeys.size() - 1;
-            }
-           
-            if (ImGui::BeginCombo(("##" + field.name).c_str(), (*p).c_str())) {
-                for (size_t i = 0; i < modelKeys.size(); i++) {
-                    bool isSelected = (static_cast<int>(i) == currentIndex);
-                    if (ImGui::Selectable(modelKeys[i].c_str(), isSelected)) *p = modelKeys[i];
-                    if (isSelected) ImGui::SetItemDefaultFocus();
-                }
-                ImGui::EndCombo();
-            }
-            ImGui::PopStyleColor();
-            Lil::UIStyle::EndPropertyRow();
-        }
-        else if (field.type == TypeInfo::Get<bool>()) {
-            Lil::UIStyle::DrawBoolField(field.name, static_cast<bool*>(ptr));
-        }
-        else if (field.type == TypeInfo::Get<int>()) {
-            Lil::UIStyle::DrawIntField(field.name, static_cast<int*>(ptr));
-        }
-        else if (field.type == TypeInfo::Get<uint32_t>()) {
-            Lil::UIStyle::DrawUInt32Field(field.name, static_cast<uint32_t*>(ptr));
-        }
-        else if (field.type == TypeInfo::Get<float>()) {
-            Lil::UIStyle::DrawFloatField(field.name, static_cast<float*>(ptr));
-        }
-        else if (field.type == TypeInfo::Get<std::string>()) {
-            Lil::UIStyle::DrawStringField(field.name, static_cast<std::string*>(ptr));
-        }
-        else if (field.type == TypeInfo::Get<Vector2>()) {
-            Lil::UIStyle::DrawVector2Field(field.name, static_cast<Vector2*>(ptr));
-        }
-        else if (field.type == TypeInfo::Get<Vector3>()) {
-            Lil::UIStyle::DrawVector3Field(field.name, static_cast<Vector3*>(ptr));
-        }
-        else if (field.type == TypeInfo::Get<Vector4>()) {
-            Lil::UIStyle::DrawVector4Field(field.name, static_cast<Vector4*>(ptr));
-        }
-        else if (field.type == TypeInfo::Get<Transform>()) {
-            Lil::UIStyle::DrawTransformBlock(field.name, static_cast<Transform*>(ptr));
+            Lil::UIStyle::DrawModelKeyField(field.name, static_cast<std::string*>(field.GetPtr(ptr)));
         }
         else {
-            ImGui::PushStyleColor(ImGuiCol_Header, Lil::UIStyle::COLOR_HEADER_BG);
-            ImGui::PushStyleColor(ImGuiCol_HeaderHovered, Lil::UIStyle::COLOR_HEADER_BG_HOVER);
-            
-            if (ImGui::CollapsingHeader(field.name.c_str(), 0)) {
-                ImGui::PopStyleColor(2);
-                ImGui::Indent(Lil::UIStyle::STRUCT_INDENT_PADDING);
-                field.type.VisitFields(ptr, *this);
-                ImGui::Unindent(Lil::UIStyle::STRUCT_INDENT_PADDING);
-            } else {
-                ImGui::PopStyleColor(2);
+            SetCurrentObjectName(field.name);
+            if (field.type.IsConst()) {
+                VisitObjectConst(field.type, field.GetPtrConst(ptr));
+            }
+            else {
+                VisitObject(field.type, field.GetPtr(ptr));
             }
         }
-
-        Lil::UIStyle::PopRowSpacing();
-        ImGui::PopID();
-        ImGui::PopID();
-        return true;
     }
 
-    bool VisitConst(const FieldInfo& field, const void* ptr) override {
-        ImGui::PushID(reinterpret_cast<intptr_t>(ptr));
-        ImGui::PushID(field.name.c_str());
-        
-        ImGui::PushStyleColor(ImGuiCol_FrameBg, Lil::UIStyle::COLOR_COMBO_BG);
-        Lil::UIStyle::PushRowSpacing();
-        ImGui::BeginDisabled();
-
-        if (field.type == TypeInfo::Get<bool>()) {
-            Lil::UIStyle::DrawConstBoolField(field.name, static_cast<const bool*>(ptr));
-        }
-        else if (field.type == TypeInfo::Get<int>()) {
-            Lil::UIStyle::DrawConstIntField(field.name, static_cast<const int*>(ptr));
-        }
-        else if (field.type == TypeInfo::Get<uint32_t>()) {
-            Lil::UIStyle::DrawConstUInt32Field(field.name, static_cast<const uint32_t*>(ptr));
-        }
-        else if (field.type == TypeInfo::Get<float>()) {
-            Lil::UIStyle::DrawConstFloatField(field.name, static_cast<const float*>(ptr));
-        }
-        else if (field.type == TypeInfo::Get<std::string>()) {
-            Lil::UIStyle::DrawConstStringField(field.name, static_cast<const std::string*>(ptr));
-        }
-        else if (field.type == TypeInfo::Get<Vector2>()) {
-            Lil::UIStyle::DrawConstVector2Field(field.name, static_cast<const Vector2*>(ptr));
-        }
-        else if (field.type == TypeInfo::Get<Vector3>()) {
-            Lil::UIStyle::DrawConstVector3Field(field.name, static_cast<const Vector3*>(ptr));
-        }
-        else if (field.type == TypeInfo::Get<Vector4>()) {
-            Lil::UIStyle::DrawConstVector4Field(field.name, static_cast<const Vector4*>(ptr));
-        }
-        else if (field.type == TypeInfo::Get<Transform>()) {
-            Lil::UIStyle::DrawConstTransformBlock(field.name, static_cast<const Transform*>(ptr));
+    // here THE OBJECT is const, the field only follows
+    void HandleFieldConst(const FieldInfo& field, const void* ptr) {
+        if (field.HasAttribute("ModelKeyAttribute")) {
+            Lil::UIStyle::DrawConstModelKeyField(field.name, static_cast<const std::string*>(field.GetPtrConst(ptr)));
         }
         else {
-            ImGui::PushStyleColor(ImGuiCol_Header, Lil::UIStyle::COLOR_COMBO_BG);
-            ImGui::CollapsingHeader(field.name.c_str(), ImGuiTreeNodeFlags_Leaf);
-            ImGui::PopStyleColor();
+            SetCurrentObjectName(field.name);
+            VisitObjectConst(field.type, field.GetPtrConst(ptr));
         }
+    }
 
-        ImGui::EndDisabled();
-        Lil::UIStyle::PopRowSpacing();
-        ImGui::PopStyleColor();
-        ImGui::PopID();
-        ImGui::PopID();
-        return true;
+public:
+    
+    void SetCurrentObjectName(std::string current_object_name) { m_object_name = current_object_name; }
+
+    void VisitObject(const TypeInfo& ti, void* ptr) override {
+        if (ptr) {
+            ImGui::PushID(reinterpret_cast<intptr_t>(ptr));
+            ImGui::PushID(m_object_name.c_str());
+            Lil::UIStyle::PushRowSpacing();
+            if (ti == TypeInfo::Get<bool>()) {
+                Lil::UIStyle::DrawBoolField(m_object_name, static_cast<bool*>(ptr));
+            }
+            else if (ti == TypeInfo::Get<int>()) {
+                Lil::UIStyle::DrawIntField(m_object_name, static_cast<int*>(ptr));
+            }
+            else if (ti == TypeInfo::Get<uint32_t>()) {
+                Lil::UIStyle::DrawUInt32Field(m_object_name, static_cast<uint32_t*>(ptr));
+            }
+            else if (ti == TypeInfo::Get<float>()) {
+                Lil::UIStyle::DrawFloatField(m_object_name, static_cast<float*>(ptr));
+            }
+            else if (ti == TypeInfo::Get<std::string>()) {
+                Lil::UIStyle::DrawStringField(m_object_name, static_cast<std::string*>(ptr));
+            }
+            else if (ti == TypeInfo::Get<Vector2>()) {
+                Lil::UIStyle::DrawVector2Field(m_object_name, static_cast<Vector2*>(ptr));
+            }
+            else if (ti == TypeInfo::Get<Vector3>()) {
+                Lil::UIStyle::DrawVector3Field(m_object_name, static_cast<Vector3*>(ptr));
+            }
+            else if (ti == TypeInfo::Get<Vector4>()) {
+                Lil::UIStyle::DrawVector4Field(m_object_name, static_cast<Vector4*>(ptr));
+            }
+            else if (ti == TypeInfo::Get<Transform>()) {
+                Lil::UIStyle::DrawTransformBlock(m_object_name, static_cast<Transform*>(ptr));
+            }
+            else if (ti.IsContainer()) {
+                ImGui::PushStyleColor(ImGuiCol_Header, Lil::UIStyle::COLOR_HEADER_BG);
+                ImGui::PushStyleColor(ImGuiCol_HeaderHovered, Lil::UIStyle::COLOR_HEADER_BG_HOVER);
+                
+                auto* c = ti.Container();
+                if (ImGui::Button(ICON_FA_PLUS)) {
+                    c->InsertDefault(ptr);
+                }
+                ImGui::SameLine();
+                if (ImGui::CollapsingHeader(m_object_name.c_str(), 0)) {
+                    ImGui::PopStyleColor(2);
+                    ImGui::Indent(Lil::UIStyle::STRUCT_INDENT_PADDING);
+                    size_t n = c->Size(ptr);
+                    for (size_t i = 0; i < n; ++i) {
+                        ImGui::PushID((int)i);
+
+                        auto* c = ti.Container();
+                        if (ImGui::Button("X")) {
+                            c->Erase(ptr, i);
+                            break;
+                        }
+                        ImGui::SameLine();
+
+                        void* element = c->GetElement(ptr, i);
+
+                        SetCurrentObjectName(TextFormat("element %d", i));
+                        VisitObject(c->ElementType(), element);
+                        ImGui::PopID();
+                    }
+
+                    ImGui::Unindent(Lil::UIStyle::STRUCT_INDENT_PADDING);
+                } else {
+                    ImGui::PopStyleColor(2);
+                }
+            }
+            else {
+                ImGui::PushStyleColor(ImGuiCol_Header, Lil::UIStyle::COLOR_HEADER_BG);
+                ImGui::PushStyleColor(ImGuiCol_HeaderHovered, Lil::UIStyle::COLOR_HEADER_BG_HOVER);
+                
+                if (ImGui::CollapsingHeader(m_object_name.c_str(), 0)) {
+                    ImGui::PopStyleColor(2);
+                    ImGui::Indent(Lil::UIStyle::STRUCT_INDENT_PADDING);
+                    for (auto& f : ti.Fields()) {
+                        HandleField(f, ptr);
+                    }
+                    ImGui::Unindent(Lil::UIStyle::STRUCT_INDENT_PADDING);
+                } else {
+                    ImGui::PopStyleColor(2);
+                }
+            }
+
+            Lil::UIStyle::PopRowSpacing();
+            ImGui::PopID();
+            ImGui::PopID();
+        }
+    }
+
+    void VisitObjectConst(const TypeInfo& ti, const void* ptr) override {
+        if (ptr) {
+            ImGui::PushID(reinterpret_cast<intptr_t>(ptr));
+            ImGui::PushID(m_object_name.c_str());
+            Lil::UIStyle::PushRowSpacing();
+
+            if (ti == TypeInfo::Get<bool>()) {
+                Lil::UIStyle::DrawConstBoolField(m_object_name, static_cast<const bool*>(ptr));
+            }
+            else if (ti == TypeInfo::Get<int>()) {
+                Lil::UIStyle::DrawConstIntField(m_object_name, static_cast<const int*>(ptr));
+            }
+            else if (ti == TypeInfo::Get<uint32_t>()) {
+                Lil::UIStyle::DrawConstUInt32Field(m_object_name, static_cast<const uint32_t*>(ptr));
+            }
+            else if (ti == TypeInfo::Get<float>()) {
+                Lil::UIStyle::DrawConstFloatField(m_object_name, static_cast<const float*>(ptr));
+            }
+            else if (ti == TypeInfo::Get<std::string>()) {
+                Lil::UIStyle::DrawConstStringField(m_object_name, static_cast<const std::string*>(ptr));
+            }
+            else if (ti == TypeInfo::Get<Vector2>()) {
+                Lil::UIStyle::DrawConstVector2Field(m_object_name, static_cast<const Vector2*>(ptr));
+            }
+            else if (ti == TypeInfo::Get<Vector3>()) {
+                Lil::UIStyle::DrawConstVector3Field(m_object_name, static_cast<const Vector3*>(ptr));
+            }
+            else if (ti == TypeInfo::Get<Vector4>()) {
+                Lil::UIStyle::DrawConstVector4Field(m_object_name, static_cast<const Vector4*>(ptr));
+            }
+            else if (ti == TypeInfo::Get<Transform>()) {
+                Lil::UIStyle::DrawConstTransformBlock(m_object_name, static_cast<const Transform*>(ptr));
+            }
+            // else if (ti.IsContainer()) {
+            //     ImGui::PushStyleColor(ImGuiCol_Header, Lil::UIStyle::COLOR_HEADER_BG);
+            //     ImGui::PushStyleColor(ImGuiCol_HeaderHovered, Lil::UIStyle::COLOR_HEADER_BG_HOVER);
+                
+            //     if (ImGui::CollapsingHeader(m_object_name.c_str(), 0)) {
+            //         ImGui::PopStyleColor(2);
+            //         ImGui::Indent(Lil::UIStyle::STRUCT_INDENT_PADDING);
+
+            //         auto* c = ti.Container();
+            //         size_t n = c->Size(ptr);
+            //         for (size_t i = 0; i < n; ++i) {
+            //             const void* element = c->GetElement(ptr, i);
+            //             ImGui::PushID((int)i);
+            //             SetCurrentObjectName(TextFormat("element %d", i));
+            //             VisitObjectConst(c->ElementType(), element);
+            //             ImGui::PopID();
+            //         }
+
+            //         ImGui::Unindent(Lil::UIStyle::STRUCT_INDENT_PADDING);
+            //     } else {
+            //         ImGui::PopStyleColor(2);
+            //     }
+            // }
+            else {
+                ImGui::PushStyleColor(ImGuiCol_Header, Lil::UIStyle::COLOR_HEADER_BG);
+                ImGui::PushStyleColor(ImGuiCol_HeaderHovered, Lil::UIStyle::COLOR_HEADER_BG_HOVER);
+                
+                if (ImGui::CollapsingHeader(m_object_name.c_str(), 0)) {
+                    ImGui::PopStyleColor(2);
+                    ImGui::Indent(Lil::UIStyle::STRUCT_INDENT_PADDING);
+                    for (auto& f : ti.Fields()) {
+                        HandleFieldConst(f, ptr);
+                    }
+                    ImGui::Unindent(Lil::UIStyle::STRUCT_INDENT_PADDING);
+                } else {
+                    ImGui::PopStyleColor(2);
+                }
+            }
+
+            Lil::UIStyle::PopRowSpacing();
+            ImGui::PopID();
+            ImGui::PopID();
+        }
     }
 };

@@ -267,7 +267,7 @@ void Lil::UIStyle::DrawVector4Field(const std::string &name, ::Vector4 *values) 
     EndPropertyRow();
 }
 
-void Lil::UIStyle::DrawTransformBlock(const std::string &sectionName, ::Transform *transform) {
+void Lil::UIStyle::DrawTransformBlock(const std::string &name, ::Transform *transform) {
     RowSpacingGuard spacing;
     ImGui::PushID(transform);
 
@@ -275,7 +275,7 @@ void Lil::UIStyle::DrawTransformBlock(const std::string &sectionName, ::Transfor
     ImGui::PushStyleColor(ImGuiCol_HeaderHovered, COLOR_HEADER_BG_HOVER);
     
     // Injects a solid geometric node icon before the Transform section header text
-    std::string compositeHeaderName = std::string(ICON_FA_ARROWS_UP_DOWN_LEFT_RIGHT) + "  " + sectionName;
+    std::string compositeHeaderName = std::string(ICON_FA_ARROWS_UP_DOWN_LEFT_RIGHT) + "  " + name;
     bool isOpen = ImGui::CollapsingHeader(compositeHeaderName.c_str());
     ImGui::PopStyleColor(2);
 
@@ -291,6 +291,30 @@ void Lil::UIStyle::DrawTransformBlock(const std::string &sectionName, ::Transfor
     }
 
     ImGui::PopID();
+}
+
+void Lil::UIStyle::DrawModelKeyField(const std::string &name, std::string *model_key) {
+    Lil::UIStyle::BeginPropertyRow(name, Lil::UIStyle::COLOR_TYPE_STRING, ICON_FA_CAR);
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, Lil::UIStyle::COLOR_COMBO_BG);
+    
+    const auto& models = Lil::Resources().Models();
+    int currentIndex = -1;
+    std::vector<std::string> modelKeys;
+    for (const auto& [key, model] : *models) {
+        modelKeys.push_back(key);
+        if (key == *model_key) currentIndex = modelKeys.size() - 1;
+    }
+
+    if (ImGui::BeginCombo(("##" + name).c_str(), (*model_key).c_str())) {
+        for (size_t i = 0; i < modelKeys.size(); i++) {
+            bool isSelected = (static_cast<int>(i) == currentIndex);
+            if (ImGui::Selectable(modelKeys[i].c_str(), isSelected)) *model_key = modelKeys[i];
+            if (isSelected) ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
+    }
+    ImGui::PopStyleColor();
+    Lil::UIStyle::EndPropertyRow();
 }
 
 void Lil::UIStyle::DrawConstBoolField(const std::string &name, const bool *value)
@@ -447,14 +471,14 @@ void Lil::UIStyle::DrawConstVector4Field(const std::string &name, const ::Vector
     EndPropertyRow();
 }
 
-void Lil::UIStyle::DrawConstTransformBlock(const std::string &sectionName, const ::Transform *transform) {
+void Lil::UIStyle::DrawConstTransformBlock(const std::string &name, const ::Transform *transform) {
     RowSpacingGuard spacing;
     ImGui::PushID(transform);
 
     ImGui::PushStyleColor(ImGuiCol_Header, COLOR_HEADER_BG);
     ImGui::PushStyleColor(ImGuiCol_HeaderHovered, COLOR_HEADER_BG_HOVER);
     
-    std::string compositeHeaderName = std::string(ICON_FA_ARROWS_UP_DOWN_LEFT_RIGHT) + "  " + sectionName  + " " + ICON_FA_LOCK;
+    std::string compositeHeaderName = std::string(ICON_FA_ARROWS_UP_DOWN_LEFT_RIGHT) + "  " + name  + " " + ICON_FA_LOCK;
     bool isOpen = ImGui::CollapsingHeader(compositeHeaderName.c_str());
     ImGui::PopStyleColor(2);
 
@@ -470,4 +494,12 @@ void Lil::UIStyle::DrawConstTransformBlock(const std::string &sectionName, const
     }
 
     ImGui::PopID();
+}
+
+void Lil::UIStyle::DrawConstModelKeyField(const std::string &name, const std::string *model_key) {
+
+    BeginPropertyRow(name + " " + ICON_FA_LOCK, COLOR_TYPE_STRING, ICON_FA_CAR);
+    ImGui::TextColored(COLOR_CONST_VAL, "%s", model_key->c_str());
+    
+    EndPropertyRow();
 }
