@@ -90,3 +90,50 @@ void ColliderComponent::DebugDraw() {
         DrawTriangleStrip3D(&points[0], 3, c);
     }
 }
+
+void CollisionShape::Destroy() {
+    if (m_collider) m_collider->getBody()->removeCollider(m_collider);
+}
+
+void CollisionShape::Create(rc::RigidBody *body)
+{
+    rc::CollisionShape* shape = nullptr;
+    switch (m_type) {
+    case ::CollisionShapeType::SPHERE :
+        shape =  Lil::Physics().GetCommon().createSphereShape(m_radius);
+        break;
+    
+    case ::CollisionShapeType::BOX :
+        shape =  Lil::Physics().GetCommon().createBoxShape(RcVector3(m_half_extends));
+        break;
+    }
+    m_collider = body->addCollider(shape, rc::Transform(RcVector3(m_local_position), RcQuaternion(m_local_rotation)));
+}
+
+void CollisionShape::Update(rc::RigidBody *body) {
+    if (!m_collider) {
+        Create(body);
+    }
+    else {
+        bool type_changed = false;
+        if (rc::SphereShape* sphere = dynamic_cast<rc::SphereShape*>(m_collider->getCollisionShape())) {
+            if (m_type == ::CollisionShapeType::SPHERE) {
+                sphere->setRadius(m_radius);
+            }
+            else type_changed = true;
+        }
+        else if (rc::BoxShape* box = dynamic_cast<rc::BoxShape*>(m_collider->getCollisionShape())) {
+            if (m_type == ::CollisionShapeType::BOX) {
+                box->setHalfExtents(RcVector3(m_half_extends));
+            }
+            else type_changed = true;
+        }
+
+        if (type_changed) {
+            Destroy();
+            Create(body);
+        }
+
+        m_collider->setLocalToBodyTransform(rc::Transform(RcVector3(m_local_position), RcQuaternion(m_local_rotation)));
+    }
+}

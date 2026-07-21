@@ -133,8 +133,9 @@ namespace Lil {
         static void DrawVector2Field(const std::string& name, ::Vector2* values);
         static void DrawVector3Field(const std::string& name, ::Vector3* values);
         static void DrawVector4Field(const std::string& name, ::Vector4* values);
-        static void DrawTransformBlock(const std::string& name, ::Transform* transform);
-        static void DrawModelKeyField(const std::string& name, std::string* model_key);
+        static void DrawTransformBlock(const std::string& name, ::Transform* value);
+        static void DrawModelKeyField(const std::string& name, std::string* value);
+        static void DrawCollisionShapeField(const std::string& name, CollisionShape* value);
 
         // ==========================================
         // Reusable Read-Only (Const) Draw Elements
@@ -148,8 +149,8 @@ namespace Lil {
         static void DrawConstVector2Field(const std::string& name, const ::Vector2* values);
         static void DrawConstVector3Field(const std::string& name, const ::Vector3* values);
         static void DrawConstVector4Field(const std::string& name, const ::Vector4* values);
-        static void DrawConstTransformBlock(const std::string& name, const ::Transform* transform);
-        static void DrawConstModelKeyField(const std::string& name, const std::string* model_key);
+        static void DrawConstTransformBlock(const std::string& name, const ::Transform* value);
+        static void DrawConstModelKeyField(const std::string& name, const std::string* value);
     };
 };
 
@@ -218,6 +219,9 @@ public:
             }
             else if (ti == TypeInfo::Get<Transform>()) {
                 Lil::UIStyle::DrawTransformBlock(m_object_name, static_cast<Transform*>(ptr));
+            }
+            else if (ti == TypeInfo::Get<CollisionShape>()) {
+                Lil::UIStyle::DrawCollisionShapeField(m_object_name, static_cast<CollisionShape*>(ptr));
             }
             else if (ti.IsContainer()) {
                 ImGui::PushStyleColor(ImGuiCol_Header, Lil::UIStyle::COLOR_HEADER_BG);
