@@ -16,6 +16,7 @@ file(GLOB_RECURSE ENGINE_SOURCES
 add_library(lil_engine STATIC ${ENGINE_SOURCES})
 target_include_directories(lil_engine PUBLIC 
     ${CMAKE_CURRENT_SOURCE_DIR}/include/LilEngine
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/external
 )
 
 # -------------------------------

@@ -70,6 +70,17 @@ struct is_vector<std::vector<T, A>> : std::true_type {};
 template<typename T, typename A>
 struct is_vector<const std::vector<T, A>> : std::true_type {};
 
+
+template<typename T>
+struct ValType {
+    TypeInfo* Get() {return nullptr;}
+};
+
+template<typename T>
+struct ValType<T*> {
+    const TypeInfo* Get();
+};
+
 class TypeInfo {
 public:
 
@@ -115,6 +126,10 @@ public:
     }
 
     bool IsConst() const { return m_is_const; }
+    bool IsPointer() const { return m_is_pointer; }
+    const TypeInfo& ValueType() const {
+        return *val_type;
+    }
 
 private:
 
@@ -125,9 +140,15 @@ private:
     std::function<void* ()> m_create_fn = nullptr;
     std::unique_ptr<ContainerInfo> m_container = nullptr;
 
+    bool m_is_pointer;
+    const TypeInfo* val_type;
+
+
     template<typename T>
-    TypeInfo(refl::type_descriptor<T> td) : m_name(td.name) {
+    TypeInfo(refl::type_descriptor<T> td) : m_name(td.name), val_type(ValType<T>().Get()) {
         m_is_const = std::is_const_v<T>;
+        m_is_pointer = std::is_pointer_v<T>;
+
         if constexpr (std::default_initializable<T>) {
             m_create_fn = [] { return static_cast<void*>(new T()); };
         }
@@ -330,4 +351,9 @@ template <typename T>
 inline void VectorContainerInfo<T>::Erase(void *c, size_t i) const {
     auto& v = *static_cast<std::vector<T>*>(c);
     v.erase(v.begin() + i);
+}
+
+template <typename T>
+inline const TypeInfo *ValType<T *>::Get() {
+    return &TypeInfo::Get<T>();
 }

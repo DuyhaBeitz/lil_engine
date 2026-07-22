@@ -87,9 +87,8 @@ void Lil::Editor::DrawInspector() {
         }
         ImGui::Separator();
         
-        for (auto& [component, parent] : m_selected->Components()) {            
+        for (auto& component : m_selected->Components()) {            
             ImGui::PushID(component);
-            
             if (ImGui::SmallButton("X")) {
                 m_selected->DeattachComponent(component);
                 Lil::GetWorld().DestroyComponent(component);
@@ -110,7 +109,7 @@ void Lil::Editor::DrawInspector() {
             for (auto& [name, ti] : Lil::Reflection::Get().Types()) {
                 if (ti->IsA<Component>() && *ti != TypeInfo::Get<Component>()) {
                     bool exists = false;
-                    for (auto& [component, parent] : m_selected->Components()) {
+                    for (auto& component : m_selected->Components()) {
                         if (component->GetTypeInfo().Name() == name) {
                             exists = true;
                             break;

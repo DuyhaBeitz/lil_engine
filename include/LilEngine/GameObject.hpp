@@ -2,6 +2,10 @@
 
 #include "Reflection.hpp"
 
+#include "stduuid/uuid.h"
+#include <random>
+#include <cstdint>
+
 #define TRANSFORM_EMPTY Transform{.translation = Vector3{0.0f, 0.0f, 0.0f}, .rotation = QuaternionIdentity(), .scale = Vector3{1.0f, 1.0f, 1.0f}}
 
 class Transformable : public Reflectable {
@@ -29,10 +33,29 @@ LIL_REFLECT(Transformable, bases<>,
     field(m_transform)
 )
 
-class GameObject : public Transformable {
-public:
-    const uint32_t m_id;
+class Identifiable : public Reflectable {
+private:
+    const uuids::uuid m_id;
 
+    static uuids::uuid GenerateID() {
+        std::random_device rd;
+        std::mt19937 engine(rd());
+       
+        uuids::uuid_random_generator gen{engine};
+        return gen();
+    }
+
+public:
+    LIL_REFLECTABLE()
+
+    Identifiable() : m_id(GenerateID()) {}
+
+    const uuids::uuid& GetID() const {return m_id;}
+    std::string GetIDString() const {return uuids::to_string(m_id);}
+};
+LIL_REFLECT(Identifiable, bases<>)
+
+class GameObject : public Identifiable, public Transformable {
 public:
     GameObject(Transform transform = TRANSFORM_EMPTY);
 
@@ -40,6 +63,4 @@ public:
 
     LIL_REFLECTABLE()
 };
-LIL_REFLECT(GameObject, bases<Transformable>,
-    field(m_id)
-)
+LIL_REFLECT(GameObject, (bases<Identifiable, Transformable>))

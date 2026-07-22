@@ -17,8 +17,8 @@ enum class RenderMode : uint8_t {
 
 class World {
 private:
-    std::unordered_map<Actor*, std::unique_ptr<Actor>> m_actors;
-    std::unordered_map<Component*, std::unique_ptr<Component>> m_components;
+    std::unordered_map<uuids::uuid, std::unique_ptr<Actor>> m_actors;
+    std::unordered_map<uuids::uuid, std::unique_ptr<Component>> m_components;
     bool m_update_ready = false;
 
     void UpdateActorLayout() {
@@ -29,8 +29,6 @@ private:
         UpdateActorLayout();
     }
 
-    uint32_t m_next_id = 1; // leaving 0 for 'unassigned'
-
 public:
     World() = default;
 
@@ -40,7 +38,7 @@ public:
         
         auto actor = std::make_unique<T>(std::forward<Args>(args)...);
         T* ptr = actor.get();
-        m_actors[ptr] = std::move(actor);
+        m_actors[ptr->GetID()] = std::move(actor);
         return ptr;
     }
 
@@ -50,7 +48,7 @@ public:
             if (p) {
                 auto actor = std::unique_ptr<Actor>(static_cast<Actor*>(p));
                 Actor* ptr = actor.get();
-                m_actors[ptr] = std::move(actor);
+                m_actors[ptr->GetID()] = std::move(actor);
                 return ptr;
             }
             else {
@@ -74,7 +72,7 @@ public:
         
         auto component = std::make_unique<T>(std::forward<Args>(args)...);
         T* ptr = component.get();
-        m_components[ptr] = std::move(component);
+        m_components[ptr->GetID()] = std::move(component);
         return ptr;
     }
 
@@ -84,7 +82,7 @@ public:
             if (p) {
                 auto component = std::unique_ptr<Component>(static_cast<Component*>(p));
                 Component* ptr = component.get();
-                m_components[ptr] = std::move(component);
+                m_components[ptr->GetID()] = std::move(component);
                 return ptr;
             }
             else {
@@ -107,8 +105,6 @@ public:
     void Update();
     void DebugDraw();
     void ToggleSimulationGoing() { m_simulation_going = !m_simulation_going; }
-
-    uint32_t GetNewId() {return ++m_next_id; }
 
     RenderMode GetRenderMode() { return m_render_mode; }
     void SetRenderMode(RenderMode render_mode) { m_render_mode = render_mode; }

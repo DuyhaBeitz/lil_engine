@@ -5,8 +5,7 @@
 
 class Actor : public GameObject {
 public:
-    // key = component; value = parent ptr
-    std::unordered_map<Component*, GameObject*> m_components;
+    std::vector<Component*> m_components;
     std::set<Component*> m_marked_deattached;
 
 public:
@@ -14,19 +13,20 @@ public:
 
     Actor() = default;
     
-    void LayoutUpdate() ;
+    void LayoutUpdate();
     void SimulationUpdate();
 
     void Draw();
     void DebugDraw();
 
-    void AttachComponent(Component* component, GameObject* parent);
     void AttachComponent(Component* component);
 
     void DeattachComponent(Component* component);
 
     bool IsComponentAttached(Component* component);
 
-    const std::unordered_map<Component*, GameObject*>& Components() const {return m_components;}
+    const std::vector<Component*>& Components() const {return m_components;}
 };
+
+LIL_REFLECT_EX(std::vector<Component*>, bases<>, std_vector_ComponentPtr)
 LIL_REFLECT(Actor, bases<GameObject>)

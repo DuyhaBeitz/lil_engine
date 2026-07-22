@@ -36,7 +36,7 @@
 
 void World::DestroyActor(Actor *actor) {
     if (!actor) return;
-    auto it = m_actors.find(actor);
+    auto it = m_actors.find(actor->GetID());
     if (it != m_actors.end()) {
         actor->Clean();
         m_actors.erase(it);
@@ -44,7 +44,7 @@ void World::DestroyActor(Actor *actor) {
 }
 
 bool World::IsActorAlive(Actor *actor) const {
-    return actor && m_actors.find(actor) != m_actors.end();
+    return actor && m_actors.find(actor->GetID()) != m_actors.end();
 }
 
 Actor *World::PickActor(Vector2 screen_pos, int render_w, int render_h, Camera camera) {
@@ -55,7 +55,7 @@ Actor *World::PickActor(Vector2 screen_pos, int render_w, int render_h, Camera c
     
     DrawRay(ray, RED);
     for (auto& [key, actor] : m_actors) {
-        for (auto& [component, parent] : actor->Components()) {
+        for (auto& component : actor->Components()) {
             if (ModelComponent* m = dynamic_cast<ModelComponent*>(component)) {
                 RayCollision res = m->Raycast(ray);
                 if (res.hit && res.distance < closest) {
@@ -68,10 +68,9 @@ Actor *World::PickActor(Vector2 screen_pos, int render_w, int render_h, Camera c
     return a;
 }
 
-void World::DestroyComponent(Component *component)
-{
+void World::DestroyComponent(Component *component) {
     if (!component) return;
-    auto it = m_components.find(component);
+    auto it = m_components.find(component->GetID());
     if (it != m_components.end()) {
         component->Clean();
         m_components.erase(it);
@@ -79,7 +78,7 @@ void World::DestroyComponent(Component *component)
 }
 
 bool World::IsComponentAlive(Component *component) const {
-    return component && m_components.find(component) != m_components.end();
+    return component && m_components.find(component->GetID()) != m_components.end();
 }
 
 void World::Draw() {
