@@ -1,12 +1,14 @@
 #pragma once
 
 #include "Component.hpp"
+#include "Components/ColliderComponent.hpp"
+#include "Components/ModelComponent.hpp"
 #include <vector>
 
 class Actor : public GameObject {
 public:
     std::vector<Component*> m_components;
-    std::set<Component*> m_marked_deattached;
+    std::set<const Component*> m_marked_deattached;
 
 public:
     LIL_REFLECTABLE()
@@ -23,10 +25,32 @@ public:
 
     void DeattachComponent(Component* component);
 
-    bool IsComponentAttached(Component* component);
+    bool IsComponentAttached(const Component* component) const;
 
     const std::vector<Component*>& Components() const {return m_components;}
-};
 
-LIL_REFLECT_EX(std::vector<Component*>, bases<>, std_vector_ComponentPtr)
+    void CreateComponentFromId(uuids::uuid id);
+
+    template <class Archive>
+    void save( Archive & ar ) const {
+        LIL_SAVE_BASE(GameObject)
+        std::vector<uuids::uuid> component_ids = {};
+        for (Component* component : m_components) {
+            if (!IsComponentAttached(component)) continue;
+            component_ids.push_back(component->GetID());
+        }
+        ar(component_ids);
+    }
+        
+    template <class Archive>
+    void load( Archive & ar ) {
+        LIL_LOAD_BASE(GameObject)
+        std::vector<uuids::uuid> component_ids = {};
+        ar(component_ids);
+        for (uuids::uuid id : component_ids) {
+            CreateComponentFromId(id);
+        }        
+    }
+};
 LIL_REFLECT(Actor, bases<GameObject>)
+LIL_DISAMBIGUATE_LOAD_SAVE(Actor)

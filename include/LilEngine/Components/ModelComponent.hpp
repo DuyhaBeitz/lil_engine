@@ -11,6 +11,7 @@ public:
 
 public:
     LIL_REFLECTABLE()
+    LIL_SERIALIZABLE()
 
     ModelComponent() = default;
     ModelComponent(std::string model_key);
@@ -27,3 +28,7 @@ public:
 LIL_REFLECT(ModelComponent, bases<Component>,
     field(m_model_key, ModelKeyAttribute())
 )
+LIL_SER_BEGIN(ModelComponent)
+LIL_SER_BASE(Component)
+LIL_SER_FIELD(m_model_key)
+LIL_SER_END()

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CommonIncludes.hpp"
+#include "Serialization.hpp"
 #include "ResourceManager.hpp"
 #include <vector>
 
@@ -8,7 +9,7 @@
 
 // #include "Pawn.hpp"
 // #include "Character.hpp"
-#include "Heightmap.hpp"
+// #include "Heightmap.hpp"
 
 enum class RenderMode : uint8_t {
     Unlit = 0,
@@ -61,6 +62,10 @@ public:
             return nullptr;
         }
     }
+    Actor* GetActor(uuids::uuid id) {
+        if (m_actors.find(id) == m_actors.end()) return nullptr;
+        return m_actors.at(id).get();
+    }
 
     void DestroyActor(Actor* actor);
     bool IsActorAlive(Actor* actor) const;
@@ -95,6 +100,10 @@ public:
             return nullptr;
         }
     }
+    Component* GetComponent(uuids::uuid id) {
+        if (m_components.find(id) == m_components.end()) return nullptr;
+        return m_components.at(id).get();
+    }
 
     Actor* PickActor(Vector2 screen_pos, int render_w, int render_h, Camera camera);
 
@@ -113,4 +122,19 @@ public:
     float m_simulation_speed = 1.0f;
     bool m_physics_debug = false;
     RenderMode m_render_mode = RenderMode::Unlit;
+
+    template <class Archive>
+    void save( Archive & ar ) const {
+        ar(m_simulation_going, m_simulation_speed, m_physics_debug, m_render_mode);
+        ar(cereal::make_nvp("components", m_components));
+        ar(cereal::make_nvp("actors", m_actors));
+    }
+        
+    template <class Archive>
+    void load( Archive & ar ) {
+        ar(m_simulation_going, m_simulation_speed, m_physics_debug, m_render_mode);
+        ar(cereal::make_nvp("components", m_components));
+        ar(cereal::make_nvp("actors", m_actors));
+    }
 };
+LIL_DISAMBIGUATE_LOAD_SAVE(World)

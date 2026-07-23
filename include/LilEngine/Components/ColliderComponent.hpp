@@ -3,7 +3,11 @@
 #include "Component.hpp"
 #include "utils/MathHelper.hpp"
 
-enum class CollisionShapeType {SPHERE = 0, BOX, COUNT};
+enum class CollisionShapeType : uint8_t {
+    SPHERE = 0,
+    BOX,
+    COUNT
+};
 LIL_REFLECT(CollisionShapeType, bases<>)
 
 class CollisionShape : public Reflectable {
@@ -12,6 +16,7 @@ private:
     
 public:
     LIL_REFLECTABLE()
+    LIL_SERIALIZABLE()
 
     CollisionShape() = default;
 
@@ -42,6 +47,14 @@ LIL_REFLECT(CollisionShape, bases<>,
     field(m_radius),
     field(m_half_extends)
 )
+LIL_SER_BEGIN(CollisionShape)
+LIL_SER_FIELD(m_type)
+LIL_SER_FIELD(m_local_position)
+LIL_SER_FIELD(m_local_rotation)
+LIL_SER_FIELD(m_radius)
+LIL_SER_FIELD(m_half_extends)
+LIL_SER_END()
+
 
 class ColliderComponent : public Component {
 private:
@@ -57,6 +70,7 @@ protected:
     rc::RigidBody* m_body;
 public:
     LIL_REFLECTABLE()
+    LIL_SERIALIZABLE()
     std::vector<CollisionShape> m_shapes = {};
 
 public:
@@ -74,3 +88,7 @@ LIL_REFLECT_EX(std::vector<CollisionShape>, bases<>, std_vector_CollisionShape)
 LIL_REFLECT(ColliderComponent, bases<Component>,
     field(m_shapes)
 )
+LIL_SER_BEGIN(ColliderComponent)
+LIL_SER_BASE(Component)
+LIL_SER_FIELD(m_shapes)
+LIL_SER_END()

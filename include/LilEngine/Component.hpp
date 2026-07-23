@@ -11,6 +11,7 @@ private:
 
 public:
     LIL_REFLECTABLE()
+    LIL_SERIALIZABLE()
     Transform m_local_transform = TRANSFORM_EMPTY;
 
 public:
@@ -35,3 +36,7 @@ public:
 LIL_REFLECT(Component, bases<GameObject>,
     field(m_local_transform)
 )
+LIL_SER_BEGIN(Component)
+LIL_SER_BASE(GameObject)
+LIL_SER_FIELD(m_local_transform)
+LIL_SER_END()

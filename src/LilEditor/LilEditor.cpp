@@ -72,6 +72,17 @@ void Lil::Editor::DrawTarget() {
 void Lil::Editor::DrawInspector() {
     ImGui::Begin("Inspector");
 
+    if (IsKeyPressed(KEY_J)) {
+        std::ofstream os("out.json");
+        ArchiveOut a_out(os);
+        a_out(Lil::GetWorld());            
+    }
+    if (IsKeyPressed(KEY_K)) {
+        std::ifstream is("out.json");
+        ArchiveIn a_in(is);
+        a_in(Lil::GetWorld());
+    }
+
     if (m_selected) {
         m_editor.SetCurrentObjectName(m_selected->GetTypeInfo().Name());
         m_editor.VisitObject(m_selected->GetTypeInfo(), m_selected);

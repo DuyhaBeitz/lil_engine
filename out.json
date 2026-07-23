@@ -1,0 +1,205 @@
+{
+    "value0": {
+        "value0": false,
+        "value1": 1.0,
+        "value2": true,
+        "value3": 0,
+        "components": [
+            {
+                "key": {
+                    "value0": "9b09fc4e-4a3c-4490-a1e9-f37c602f36d2"
+                },
+                "value": {
+                    "polymorphic_id": 2147483649,
+                    "polymorphic_name": "ColliderComponent",
+                    "ptr_wrapper": {
+                        "valid": 1,
+                        "data": {
+                            "value0": {
+                                "value0": {
+                                    "value0": {
+                                        "value0": {
+                                            "value0": "9b09fc4e-4a3c-4490-a1e9-f37c602f36d2"
+                                        }
+                                    },
+                                    "value1": {
+                                        "value0": {
+                                            "value0": {
+                                                "value0": 0.0,
+                                                "value1": -3.4123220443725588,
+                                                "value2": 0.0
+                                            },
+                                            "value1": {
+                                                "value0": 0.0,
+                                                "value1": 0.0,
+                                                "value2": 0.0,
+                                                "value3": 1.0
+                                            },
+                                            "value2": {
+                                                "value0": 1.0,
+                                                "value1": 1.0,
+                                                "value2": 1.0
+                                            }
+                                        }
+                                    }
+                                },
+                                "value1": {
+                                    "value0": {
+                                        "value0": 0.0,
+                                        "value1": 0.0,
+                                        "value2": 0.0
+                                    },
+                                    "value1": {
+                                        "value0": 0.0,
+                                        "value1": 0.0,
+                                        "value2": 0.0,
+                                        "value3": 1.0
+                                    },
+                                    "value2": {
+                                        "value0": 1.0,
+                                        "value1": 1.0,
+                                        "value2": 1.0
+                                    }
+                                }
+                            },
+                            "value1": [
+                                {
+                                    "value0": 0,
+                                    "value1": {
+                                        "value0": 0.0,
+                                        "value1": 0.0,
+                                        "value2": 0.0
+                                    },
+                                    "value2": {
+                                        "value0": 0.0,
+                                        "value1": 0.0,
+                                        "value2": 0.0,
+                                        "value3": 1.0
+                                    },
+                                    "value3": 3.799999952316284,
+                                    "value4": {
+                                        "value0": 0.0,
+                                        "value1": 0.0,
+                                        "value2": 0.0
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "key": {
+                    "value0": "6802a083-e859-44de-8b26-62e8378d15ab"
+                },
+                "value": {
+                    "polymorphic_id": 2147483650,
+                    "polymorphic_name": "ModelComponent",
+                    "ptr_wrapper": {
+                        "valid": 1,
+                        "data": {
+                            "value0": {
+                                "value0": {
+                                    "value0": {
+                                        "value0": {
+                                            "value0": "6802a083-e859-44de-8b26-62e8378d15ab"
+                                        }
+                                    },
+                                    "value1": {
+                                        "value0": {
+                                            "value0": {
+                                                "value0": 0.0,
+                                                "value1": -3.4123220443725588,
+                                                "value2": 0.0
+                                            },
+                                            "value1": {
+                                                "value0": 0.0,
+                                                "value1": 0.0,
+                                                "value2": 0.0,
+                                                "value3": 1.0
+                                            },
+                                            "value2": {
+                                                "value0": 1.0,
+                                                "value1": 1.0,
+                                                "value2": 1.0
+                                            }
+                                        }
+                                    }
+                                },
+                                "value1": {
+                                    "value0": {
+                                        "value0": 0.0,
+                                        "value1": 0.0,
+                                        "value2": 0.0
+                                    },
+                                    "value1": {
+                                        "value0": 0.0,
+                                        "value1": 0.0,
+                                        "value2": 0.0,
+                                        "value3": 1.0
+                                    },
+                                    "value2": {
+                                        "value0": 1.0,
+                                        "value1": 1.0,
+                                        "value2": 1.0
+                                    }
+                                }
+                            },
+                            "value1": "Car.glb"
+                        }
+                    }
+                }
+            }
+        ],
+        "actors": [
+            {
+                "key": {
+                    "value0": "2dff6d70-c71a-4e30-93dd-d29a184aa101"
+                },
+                "value": {
+                    "polymorphic_id": 1073741824,
+                    "ptr_wrapper": {
+                        "valid": 1,
+                        "data": {
+                            "value0": {
+                                "value0": {
+                                    "value0": {
+                                        "value0": "2dff6d70-c71a-4e30-93dd-d29a184aa101"
+                                    }
+                                },
+                                "value1": {
+                                    "value0": {
+                                        "value0": {
+                                            "value0": 0.0,
+                                            "value1": -3.4123220443725588,
+                                            "value2": 0.0
+                                        },
+                                        "value1": {
+                                            "value0": 0.0,
+                                            "value1": 0.0,
+                                            "value2": 0.0,
+                                            "value3": 1.0
+                                        },
+                                        "value2": {
+                                            "value0": 1.0,
+                                            "value1": 1.0,
+                                            "value2": 1.0
+                                        }
+                                    }
+                                }
+                            },
+                            "value1": [
+                                {
+                                    "value0": "6802a083-e859-44de-8b26-62e8378d15ab"
+                                },
+                                {
+                                    "value0": "9b09fc4e-4a3c-4490-a1e9-f37c602f36d2"
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        ]
+    }
+}

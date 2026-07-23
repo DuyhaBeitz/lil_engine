@@ -1,5 +1,6 @@
 #include "Actor.hpp"
 #include <algorithm>
+#include "LilEngine.hpp"
 
 void Actor::LayoutUpdate(){
     for (auto& component : m_marked_deattached) {
@@ -58,8 +59,14 @@ void Actor::DeattachComponent(Component *component) {
 }
 
 
-bool Actor::IsComponentAttached(Component *component) {
+bool Actor::IsComponentAttached(const Component *component) const {
     bool exists = std::find(m_components.begin(), m_components.end(), component) != m_components.end();
     bool not_deattached = (m_marked_deattached.find(component) == m_marked_deattached.end());
     return component && exists && not_deattached;
+}
+
+void Actor::CreateComponentFromId(uuids::uuid id) {
+    if (Component* component = Lil::GetWorld().GetComponent(id)) {
+        m_components.push_back(component);
+    }
 }
