@@ -186,8 +186,11 @@ void typename::serialize( Archive & ar ) { ar(__VA_ARGS__); }
 #define LIL_SAVE_BASE(base_typename) ar(cereal::base_class<base_typename>(this));
 #define LIL_LOAD_BASE(base_typename) ar(cereal::base_class<base_typename>(this));
 
+#define LIL_SER_REGISTER_POLYMORPHIC(typename) \
+CEREAL_REGISTER_TYPE(typename)
+
 #define LIL_SER_BEGIN(typename) \
-CEREAL_REGISTER_TYPE(typename) \
+LIL_SER_REGISTER_POLYMORPHIC(typename) \
 LIL_DISAMBIGUATE_SERIALIZE(typename) \
 template <class Archive> \
 void typename::serialize( Archive & ar )  {

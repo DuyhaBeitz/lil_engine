@@ -297,10 +297,9 @@ void Lil::UIStyle::DrawModelKeyField(const std::string &name, std::string *value
     Lil::UIStyle::BeginPropertyRow(name, Lil::UIStyle::COLOR_TYPE_STRING, ICON_FA_CAR);
     ImGui::PushStyleColor(ImGuiCol_FrameBg, Lil::UIStyle::COLOR_COMBO_BG);
     
-    const auto& models = Lil::Resources().Models();
     int currentIndex = -1;
     std::vector<std::string> modelKeys;
-    for (const auto& [key, model] : *models) {
+    for (const auto& [key, model] : Lil::Resources().Models()) {
         modelKeys.push_back(key);
         if (key == *value) currentIndex = modelKeys.size() - 1;
     }
@@ -317,61 +316,117 @@ void Lil::UIStyle::DrawModelKeyField(const std::string &name, std::string *value
     Lil::UIStyle::EndPropertyRow();
 }
 
-void Lil::UIStyle::DrawCollisionShapeField(const std::string &name, CollisionShape *value) {
-    RowSpacingGuard spacing;
-    ImGui::PushID(value);
-
-    ImGui::PushStyleColor(ImGuiCol_Header, COLOR_HEADER_BG);
-    ImGui::PushStyleColor(ImGuiCol_HeaderHovered, COLOR_HEADER_BG_HOVER);
+void Lil::UIStyle::DrawTextureKeyField(const std::string &name, std::string *value) {
+    Lil::UIStyle::BeginPropertyRow(name, Lil::UIStyle::COLOR_TYPE_STRING, ICON_FA_MAP);
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, Lil::UIStyle::COLOR_COMBO_BG);
     
-    std::string compositeHeaderName = std::string(ICON_FA_ARROWS_UP_DOWN_LEFT_RIGHT) + "  " + name  + " " + ICON_FA_LOCK;
-    bool isOpen = ImGui::CollapsingHeader(compositeHeaderName.c_str());
-    ImGui::PopStyleColor(2);
-
-    if (isOpen) {
-        ImGui::Indent(STRUCT_INDENT_PADDING);
-        
-        DrawVector3Field("local position", &(value->m_local_position));
-        DrawVector4Field("local rotation", &(value->m_local_rotation));
-
-        std::string labels[2] = {"Sphere", "Box"};
-        ::CollisionShapeType types[2] = {::CollisionShapeType::SPHERE, ::CollisionShapeType::BOX};
-        int currentIndex = -1;
-        for (size_t i = 0; i < (int)::CollisionShapeType::COUNT; i++) {
-            if (value->m_type == types[i]) {
-                currentIndex = i;
-                break;
-            }
-        }
-
-        if (ImGui::BeginCombo(("##" + name).c_str(), labels[currentIndex].c_str())) {
-            for (size_t i = 0; i < (int)::CollisionShapeType::COUNT; i++) {
-                bool isSelected = (static_cast<int>(i) == currentIndex);
-                if (ImGui::Selectable(labels[i].c_str(), isSelected)) value->m_type = types[i];
-                if (isSelected) ImGui::SetItemDefaultFocus();
-            }
-            ImGui::EndCombo();
-        }
-
-
-        switch (value->m_type) {
-        case ::CollisionShapeType::SPHERE:
-            DrawFloatField("radius", &(value->m_radius));
-            break;
-        
-        case ::CollisionShapeType::BOX:
-            DrawVector3Field("half extends", &(value->m_half_extends));
-            break;
-
-        default:
-            break;
-        }
-        
-        ImGui::Unindent(STRUCT_INDENT_PADDING);
-        ImGui::Spacing();
+    int currentIndex = -1;
+    std::vector<std::string> textureKeys;
+    for (const auto& [key, texture] : Lil::Resources().Textures()) {
+        textureKeys.push_back(key);
+        if (key == *value) currentIndex = textureKeys.size() - 1;
     }
 
-    ImGui::PopID();
+    if (ImGui::BeginCombo(("##" + name).c_str(), (*value).c_str())) {
+        for (size_t i = 0; i < textureKeys.size(); i++) {
+            bool isSelected = (static_cast<int>(i) == currentIndex);
+            if (ImGui::Selectable(textureKeys[i].c_str(), isSelected)) *value = textureKeys[i];
+            if (isSelected) ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
+    }
+    ImGui::PopStyleColor();
+    Lil::UIStyle::EndPropertyRow();
+}
+
+void Lil::UIStyle::DrawCollisionShapeField(const std::string &name, CollisionShape *value) {
+    if (value) {
+        RowSpacingGuard spacing;
+        ImGui::PushID(value);
+
+        ImGui::PushStyleColor(ImGuiCol_Header, COLOR_HEADER_BG);
+        ImGui::PushStyleColor(ImGuiCol_HeaderHovered, COLOR_HEADER_BG_HOVER);
+        
+        std::string compositeHeaderName = std::string(ICON_FA_ARROWS_UP_DOWN_LEFT_RIGHT) + "  " + name  + " " + ICON_FA_LOCK;
+        bool isOpen = ImGui::CollapsingHeader(compositeHeaderName.c_str());
+        ImGui::PopStyleColor(2);
+
+        if (isOpen) {
+            ImGui::Indent(STRUCT_INDENT_PADDING);
+            
+            DrawVector3Field("local position", &(value->m_local_position));
+            DrawVector4Field("local rotation", &(value->m_local_rotation));
+
+            std::string labels[] = {"Sphere", "Box", "Heightmap"};
+            ::CollisionShapeType types[] = {::CollisionShapeType::SPHERE, ::CollisionShapeType::BOX, ::CollisionShapeType::HEIGHTMAP};
+            int currentIndex = -1;
+            for (size_t i = 0; i < (int)::CollisionShapeType::COUNT; i++) {
+                if (value->m_type == types[i]) {
+                    currentIndex = i;
+                    break;
+                }
+            }
+
+            if (ImGui::BeginCombo(("##" + name).c_str(), labels[currentIndex].c_str())) {
+                for (size_t i = 0; i < (int)::CollisionShapeType::COUNT; i++) {
+                    bool isSelected = (static_cast<int>(i) == currentIndex);
+                    if (ImGui::Selectable(labels[i].c_str(), isSelected)) value->m_type = types[i];
+                    if (isSelected) ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
+
+
+            switch (value->m_type) {
+            case ::CollisionShapeType::SPHERE:
+                DrawFloatField("radius", &(value->m_radius));
+                break;
+            
+            case ::CollisionShapeType::BOX:
+                DrawVector3Field("half extends", &(value->m_half_extends));
+                break;
+
+            case ::CollisionShapeType::HEIGHTMAP:
+                DrawTextureKeyField("heightmap texture key", &(value->m_heightmap_texture_key));
+                break;
+
+            default:
+                break;
+            }
+            
+            ImGui::Unindent(STRUCT_INDENT_PADDING);
+            ImGui::Spacing();
+        }
+
+        ImGui::PopID();
+    }
+}
+
+void Lil::UIStyle::DrawBodyTypeField(const std::string &name, BodyType *value) {
+    Lil::UIStyle::BeginPropertyRow(name, Lil::UIStyle::COLOR_TYPE_STRING, ICON_FA_MAP);
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, Lil::UIStyle::COLOR_COMBO_BG);
+    
+    std::string labels[] = {"Static", "Dynamic", "Kinematic"};
+    ::BodyType types[] = {::BodyType::STATIC, ::BodyType::DYNAMIC, ::BodyType::KINEMATIC};
+    int currentIndex = -1;
+    for (size_t i = 0; i < (int)::BodyType::COUNT; i++) {
+        if (*value == types[i]) {
+            currentIndex = i;
+            break;
+        }
+    }
+
+    if (ImGui::BeginCombo(("##" + name).c_str(), labels[currentIndex].c_str())) {
+        for (size_t i = 0; i < (int)::CollisionShapeType::COUNT; i++) {
+            bool isSelected = (static_cast<int>(i) == currentIndex);
+            if (ImGui::Selectable(labels[i].c_str(), isSelected)) *value = types[i];
+            if (isSelected) ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
+    }
+
+    ImGui::PopStyleColor();
+    Lil::UIStyle::EndPropertyRow();
 }
 
 void Lil::UIStyle::DrawConstBoolField(const std::string &name, const bool *value) {
@@ -553,9 +608,14 @@ void Lil::UIStyle::DrawConstTransformBlock(const std::string &name, const ::Tran
 }
 
 void Lil::UIStyle::DrawConstModelKeyField(const std::string &name, const std::string *value) {
-
     BeginPropertyRow(name + " " + ICON_FA_LOCK, COLOR_TYPE_STRING, ICON_FA_CAR);
     ImGui::TextColored(COLOR_CONST_VAL, "%s", value->c_str());
     
+    EndPropertyRow();
+}
+
+void Lil::UIStyle::DrawConstTextureKeyField(const std::string &name, const std::string *value) {
+    BeginPropertyRow(name + " " + ICON_FA_LOCK, COLOR_TYPE_STRING, ICON_FA_MAP);
+    ImGui::TextColored(COLOR_CONST_VAL, "%s", value->c_str());
     EndPropertyRow();
 }

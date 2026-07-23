@@ -1,51 +1,50 @@
 #include "Heightmap.hpp"
-#include "CommonIncludes.hpp"
-#include "utils/MeshHelper.hpp"
-#include "utils/ColliderHelper.hpp"
-
-#include "LilEngine.hpp"
-#include "Components/ModelComponent.hpp"
+#include <LilEngine.hpp>
+#include <utils/MeshHelper.hpp>
 #include "Components/ColliderComponent.hpp"
 
-void Heightmap::Setup(Image heightmap_image, Vector3 map_size) {
-    Lil::Resources().AddModel("heightmap", HeightmapModel(heightmap_image, map_size));
-    model = Lil::GetWorld().CreateComponent<ModelComponent>("heightmap");
-    auto collider = Lil::GetWorld().CreateComponent<ColliderComponent>(rc::BodyType::STATIC);
-    auto b = collider->GetBody();
-    AttachComponent(model);
-    Transform t1 = GetTransform();
-    AttachComponent(collider);
-    Transform t2 = GetTransform();
+void Heightmap::OnLayoutUpdate() {
+    TryInitialize();
 
-    model->SetModel("heightmap");
-    model->Local().translation = Vector3{-map_size.x/2, -map_size.y/2, -map_size.z/2};
-    AddHeightmapCollider(heightmap_image, map_size, b);
+    std::string heightmap_name = HeightmapNameFromImageName(m_heightmap_texture_key);
+    if (Lil::Resources().TextureExists(m_heightmap_texture_key)) {
+        if (!Lil::Resources().ModelExists(heightmap_name)) {
+            Image image = LoadImageFromTexture(*Lil::Resources().GetTexture(m_heightmap_texture_key));
+            Lil::Resources().AddModel(heightmap_name, HeightmapModel(image, Vector3{1.0f, 1.0f, 1.0f}));
+            UnloadImage(image);
+        }
+        else {
+            if (m_model) {
+                m_model->SetModel(heightmap_name);
+                m_model->Local().translation = GetScale() * (-0.5f);
+            }
+            if (m_collider && m_shape) {
+                m_shape->m_heightmap_texture_key = m_heightmap_texture_key;
+                m_shape->m_map_size = GetScale();
+            }
+        }
+    }
 }
 
-Heightmap::Heightmap() {
-    model = Lil::GetWorld().CreateComponent<ModelComponent>("");
-    auto collider = Lil::GetWorld().CreateComponent<ColliderComponent>(rc::BodyType::STATIC);
-    auto b = collider->GetBody();
-    AttachComponent(model);
-    AttachComponent(collider);
-}
+void Heightmap::TryInitialize() {
+    if (m_model && m_collider) return;
+    m_model = GetFirst<ModelComponent>();
+    m_collider = GetFirst<ColliderComponent>();
 
-Heightmap::Heightmap(Image heightmap_image, Vector3 map_size)
-    : Actor()
-{
-    Setup(heightmap_image, map_size);
-}
+    // components might be already loaded
+    if (!m_model) {
+        m_model = Lil::GetWorld().CreateComponent<ModelComponent>();
+        AttachComponent(m_model);
+    }
 
-Heightmap::Heightmap(Texture2D heightmap_texture, Vector3 map_size)
-    : Actor()
-{
-    Image heightmap_image = LoadImageFromTexture(heightmap_texture);
-    Setup(heightmap_image, map_size);
-    UnloadImage(heightmap_image);
-}
-
-Heightmap::Heightmap(std::string texture_key, Vector3 map_size) {
-    Image heightmap_image = LoadImageFromTexture(*Lil::Resources().GetTexture(texture_key));
-    Setup(heightmap_image, map_size);
-    UnloadImage(heightmap_image);
+    if (!m_collider) {
+        m_collider = Lil::GetWorld().CreateComponent<ColliderComponent>(BodyType::STATIC);
+        CollisionShape shape;
+        shape.m_type = CollisionShapeType::HEIGHTMAP;
+        m_shape = m_collider->AddShape(shape);
+        AttachComponent(m_collider);
+    }
+    else {
+        m_shape = m_collider->GetFirstShape(CollisionShapeType::HEIGHTMAP);
+    }
 }

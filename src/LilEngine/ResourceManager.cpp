@@ -17,6 +17,10 @@ void ResourceManager::AddTexture(std::string filename) {
     AddTexture(key, filename);
 }
 
+bool ResourceManager::TextureExists(std::string key) {
+    return m_textures.find(key) != m_textures.end();
+}
+
 void ResourceManager::AddModel(std::string key, Model model) {
     if (m_models.find(key) != m_models.end()) {
         UnloadModel(m_models[key]);
@@ -32,4 +36,8 @@ void ResourceManager::AddModel(std::string key, std::string filename) {
 void ResourceManager::AddModel(std::string filename) {
     std::string key = NameFromPath(filename);
     AddModel(key, filename);
+}
+
+bool ResourceManager::ModelExists(std::string key) {
+    return m_models.find(key) != m_models.end();
 }

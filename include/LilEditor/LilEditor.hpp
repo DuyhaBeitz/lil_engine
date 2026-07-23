@@ -66,5 +66,7 @@ namespace Lil {
 
         void HandleViewportInput();
         void DrawViewport();
+
+        void DrawResources();
     };
 }

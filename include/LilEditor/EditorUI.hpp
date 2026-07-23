@@ -135,7 +135,9 @@ namespace Lil {
         static void DrawVector4Field(const std::string& name, ::Vector4* values);
         static void DrawTransformBlock(const std::string& name, ::Transform* value);
         static void DrawModelKeyField(const std::string& name, std::string* value);
+        static void DrawTextureKeyField(const std::string& name, std::string* value);
         static void DrawCollisionShapeField(const std::string& name, CollisionShape* value);
+        static void DrawBodyTypeField(const std::string& name, BodyType* value);
 
         // ==========================================
         // Reusable Read-Only (Const) Draw Elements
@@ -151,6 +153,7 @@ namespace Lil {
         static void DrawConstVector4Field(const std::string& name, const ::Vector4* values);
         static void DrawConstTransformBlock(const std::string& name, const ::Transform* value);
         static void DrawConstModelKeyField(const std::string& name, const std::string* value);
+        static void DrawConstTextureKeyField(const std::string& name, const std::string* value);
     };
 };
 
@@ -161,6 +164,9 @@ class EditorUIVisitor : public IVisitor {
     void HandleField(const FieldInfo& field, void* ptr) {
         if (field.HasAttribute("ModelKeyAttribute")) {
             Lil::UIStyle::DrawModelKeyField(field.name, static_cast<std::string*>(field.GetPtr(ptr)));
+        }
+        else if (field.HasAttribute("TextureKeyAttribute")) {
+            Lil::UIStyle::DrawTextureKeyField(field.name, static_cast<std::string*>(field.GetPtr(ptr)));
         }
         else {
             SetCurrentObjectName(field.name);
@@ -177,6 +183,9 @@ class EditorUIVisitor : public IVisitor {
     void HandleFieldConst(const FieldInfo& field, const void* ptr) {
         if (field.HasAttribute("ModelKeyAttribute")) {
             Lil::UIStyle::DrawConstModelKeyField(field.name, static_cast<const std::string*>(field.GetPtrConst(ptr)));
+        }
+        else if (field.HasAttribute("TextureKeyAttribute")) {
+            Lil::UIStyle::DrawConstTextureKeyField(field.name, static_cast<const std::string*>(field.GetPtrConst(ptr)));
         }
         else {
             SetCurrentObjectName(field.name);
@@ -222,6 +231,9 @@ public:
             }
             else if (ti == TypeInfo::Get<CollisionShape>()) {
                 Lil::UIStyle::DrawCollisionShapeField(m_object_name, static_cast<CollisionShape*>(ptr));
+            }
+            else if (ti == TypeInfo::Get<BodyType>()) {
+                Lil::UIStyle::DrawBodyTypeField(m_object_name, static_cast<BodyType*>(ptr));
             }
             else if (ti.IsContainer()) {
                 ImGui::PushStyleColor(ImGuiCol_Header, Lil::UIStyle::COLOR_HEADER_BG);

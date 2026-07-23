@@ -13,6 +13,7 @@ void Actor::LayoutUpdate(){
     for (Component* component : m_components) {
         component->LayoutUpdate(GetTransform());
     }
+    OnLayoutUpdate();
 }
 
 void Actor::SimulationUpdate(){

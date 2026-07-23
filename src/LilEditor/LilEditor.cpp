@@ -1,4 +1,5 @@
 #include "LilEditor.hpp"
+#include <utils/MeshHelper.hpp>
 
 Lil::Editor &Lil::Editor::Get() {
     static Lil::Editor instance;
@@ -71,17 +72,6 @@ void Lil::Editor::DrawTarget() {
 
 void Lil::Editor::DrawInspector() {
     ImGui::Begin("Inspector");
-
-    if (IsKeyPressed(KEY_J)) {
-        std::ofstream os("out.json");
-        ArchiveOut a_out(os);
-        a_out(Lil::GetWorld());            
-    }
-    if (IsKeyPressed(KEY_K)) {
-        std::ifstream is("out.json");
-        ArchiveIn a_in(is);
-        a_in(Lil::GetWorld());
-    }
 
     if (m_selected) {
         m_editor.SetCurrentObjectName(m_selected->GetTypeInfo().Name());
@@ -201,6 +191,38 @@ void Lil::Editor::DrawViewport() {
     ImGui::End();
 }
 
+void Lil::Editor::DrawResources() {
+    ImGui::Begin("Models");
+    if (ImGui::Button(ICON_FA_PLUS)) {
+        //BrowseModel();
+    }
+
+    for (auto& [key, model] : Lil::Resources().Models()) {
+        ImGui::Text(key.c_str());
+    }
+    ImGui::End();
+
+
+    ImGui::Begin("Textures");
+    if (ImGui::Button(ICON_FA_PLUS)) {
+        //BrowseTexture();
+    }
+
+    for (auto& [key, texture] : Lil::Resources().Textures()) {
+        if (ImGui::CollapsingHeader(key.c_str())) {
+            std::string heightmap_name = HeightmapNameFromImageName(key);
+            if (!Lil::Resources().ModelExists(heightmap_name)) {
+                if (ImGui::Button("Generate heightmap model")) {
+                    Image image = LoadImageFromTexture(texture);
+                    Lil::Resources().AddModel(heightmap_name, HeightmapModel(image, Vector3{1.0f, 1.0f, 1.0f}));
+                    UnloadImage(image);
+                }
+            }
+        }
+    }
+    ImGui::End();
+}
+
 void Lil::Editor::Draw() {
     ClearBackground(RAYBLACK);
     rlImGuiBegin();
@@ -209,7 +231,7 @@ void Lil::Editor::Draw() {
     ImGui::DockSpaceOverViewport(0,  NULL, ImGuiDockNodeFlags_PassthruCentralNode); // set ImGuiDockNodeFlags_PassthruCentralNode so that we can see the raylib contents behind the dockspace
 #endif
     DrawInspector();
-        
+    DrawResources();
     DrawViewport();
 
     ImGui::Begin("Panel");
@@ -218,6 +240,18 @@ void Lil::Editor::Draw() {
     }
     else if (ImGui::Button("local")) m_gizmo_space = GIZMO_LOCAL; 
 
+    ImGui::SameLine();
+    if (ImGui::Button("save")) {
+        std::ofstream os("out.json");
+        ArchiveOut a_out(os);
+        a_out(Lil::GetWorld());            
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("load")) {
+        std::ifstream is("out.json");
+        ArchiveIn a_in(is);
+        a_in(Lil::GetWorld());
+    }
     static const std::unordered_map<std::string, RenderMode> renderModeMap = {
         {"Unlit", RenderMode::Unlit},
         {"Wireframe", RenderMode::Wireframe}
@@ -233,6 +267,7 @@ void Lil::Editor::Draw() {
         }
     }
 
+    ImGui::SameLine();
     if (ImGui::BeginCombo("Render Mode", currentName.c_str()))
     {
         for (const auto& [name, mode] : renderModeMap)

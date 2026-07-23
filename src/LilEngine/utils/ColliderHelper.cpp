@@ -73,7 +73,7 @@ void AddBoundingSphereColliderToBody(rc::RigidBody *body, const Model &model) {
     body->addCollider(sphereShape, localTransform);
 }
 
-void AddHeightmapCollider(Image heightmap_image, Vector3 scale, rc::RigidBody *body) {
+reactphysics3d::HeightFieldShape *CreateHeightmapShape(Image heightmap_image, Vector3 scale) {
     int nbColumns = heightmap_image.width;
     int nbRows = heightmap_image.height;
 
@@ -104,6 +104,40 @@ void AddHeightmapCollider(Image heightmap_image, Vector3 scale, rc::RigidBody *b
         heightField,
         rc::Vector3(scale.x/128, scale.y/20, scale.z/128)  // scaling for x,y,z
     );
-
-    body->addCollider(shape, rc::Transform::identity());
+    return shape;
 }
+// reactphysics3d::Collider *AddHeightmapCollider(Image heightmap_image, Vector3 scale, rc::RigidBody *body)
+// {
+//     int nbColumns = heightmap_image.width;
+//     int nbRows = heightmap_image.height;
+
+//     std::vector<float> heights(nbColumns * nbRows, 0.0f);
+//     Color* pixels = LoadImageColors(heightmap_image);
+//     for (int y = 0; y < nbRows; y++) {
+//         for (int x = 0; x < nbColumns; x++) {
+//             int idx = y * nbColumns + x;
+//             float gray = pixels[idx].r / 255.0f; // assuming grayscale image
+//             heights[idx] = gray * 20.0f;         // scale heights (0..20 units)
+//         }
+//     }
+//     UnloadImageColors(pixels);
+
+
+//     std::vector<rc::Message> messages;
+
+//     // Create the HeightField object
+//     rc::HeightField* heightField = Lil::Physics().GetCommon().createHeightField(
+//         nbColumns,
+//         nbRows,
+//         heights.data(),
+//         rc::HeightField::HeightDataType::HEIGHT_FLOAT_TYPE,
+//         messages
+//     );
+
+//     rc::HeightFieldShape* shape = Lil::Physics().GetCommon().createHeightFieldShape(
+//         heightField,
+//         rc::Vector3(scale.x/128, scale.y/20, scale.z/128)  // scaling for x,y,z
+//     );
+
+//     return body->addCollider(shape, rc::Transform::identity());
+// }

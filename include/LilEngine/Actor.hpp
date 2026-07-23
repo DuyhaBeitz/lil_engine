@@ -9,6 +9,7 @@ class Actor : public GameObject {
 public:
     std::vector<Component*> m_components;
     std::set<const Component*> m_marked_deattached;
+    virtual void OnLayoutUpdate() {};
 
 public:
     LIL_REFLECTABLE()
@@ -50,6 +51,15 @@ public:
         for (uuids::uuid id : component_ids) {
             CreateComponentFromId(id);
         }        
+    }
+
+    template <class Comp>
+    Comp* GetFirst() {
+        static_assert(std::is_base_of_v<Component, Comp>, "Comp must be derived from Component");
+        for (auto& component : m_components) {
+            if (Comp* c = dynamic_cast<Comp*>(component)) return c;
+        }
+        return nullptr;
     }
 };
 LIL_REFLECT(Actor, bases<GameObject>)

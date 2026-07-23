@@ -3,18 +3,46 @@
 #include "Actor.hpp"
 
 class ModelComponent;
+class ColliderComponent;
 
 class Heightmap : public Actor {
-public:
-    void Setup(Image heightmap_image, Vector3 map_size);
-    ModelComponent* model;
+private:
+    virtual void OnLayoutUpdate() override;
+
+    void TryInitialize();
 
 public:
+    // void Setup(Image heightmap_image, Vector3 map_size);
     LIL_REFLECTABLE()
 
-    Heightmap();
-    Heightmap(Image heightmap_image, Vector3 map_size);
-    Heightmap(Texture2D heightmap_texture, Vector3 map_size);
-    Heightmap(std::string texture_key, Vector3 map_size);
+    std::string m_heightmap_texture_key;
+
+    ModelComponent* m_model = nullptr;
+    ColliderComponent* m_collider = nullptr;
+    CollisionShape* m_shape = nullptr;
+
+public:
+    Heightmap() = default;
+
+    template <class Archive>
+    void save( Archive & ar ) const {
+        LIL_SAVE_BASE(Actor)
+        ar(m_heightmap_texture_key);
+    }
+        
+    template <class Archive>
+    void load( Archive & ar ) {
+        LIL_LOAD_BASE(Actor)
+        ar(m_heightmap_texture_key);
+        m_model = GetFirst<ModelComponent>();
+        m_collider = GetFirst<ColliderComponent>();
+        if (m_collider) {
+            m_shape = m_collider->GetFirstShape(CollisionShapeType::HEIGHTMAP);
+        }
+    }
 };
-LIL_REFLECT(Heightmap, bases<Actor>)
+LIL_REFLECT(Heightmap, bases<Actor>,
+    field(m_heightmap_texture_key, TextureKeyAttribute())
+)
+LIL_DISAMBIGUATE_LOAD_SAVE(Heightmap)
+LIL_SER_REGISTER_POLYMORPHIC(Heightmap)

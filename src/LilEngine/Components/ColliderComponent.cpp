@@ -5,11 +5,12 @@
 #include "Physics.hpp"
 
 #include "LilEngine.hpp"
+#include <utils/ColliderHelper.hpp>
 
-ColliderComponent::ColliderComponent(rc::BodyType body_type)
+ColliderComponent::ColliderComponent(BodyType body_type)
 : Component(), m_body(Lil::Physics().GetWorld()->createRigidBody(RcTransform(GetTransform())))
 {
-    m_body->setType(body_type);
+    m_body->setType(GetBodyType(body_type));
 }
 
 void ColliderComponent::Clean() {
@@ -40,6 +41,10 @@ void ColliderComponent::SimulationUpdate(Actor &actor) {
     actorWorld.scale = GetScale() / Local().scale;
 
     actor.SetTransform(actorWorld);
+
+    m_linear_velocity = RlVector3(m_body->getLinearVelocity());
+    m_angular_velocity = RlVector3(m_body->getAngularVelocity());
+
 }
 
 void ColliderComponent::DebugDraw() {
@@ -91,23 +96,38 @@ void ColliderComponent::DebugDraw() {
     }
 }
 
-void CollisionShape::Destroy() {
-    if (m_collider) m_collider->getBody()->removeCollider(m_collider);
+CollisionShape* ColliderComponent::AddShape(CollisionShape shape) {
+    m_shapes.push_back(shape);
+    return &m_shapes.back();
 }
 
-void CollisionShape::Create(rc::RigidBody *body)
+void CollisionShape::Destroy()
 {
+    if (m_collider) {
+        m_collider->getBody()->removeCollider(m_collider);
+        m_collider = nullptr;
+    }
+}
+
+void CollisionShape::Create(rc::RigidBody *body) {
     rc::CollisionShape* shape = nullptr;
     switch (m_type) {
-    case ::CollisionShapeType::SPHERE :
+    case ::CollisionShapeType::SPHERE:
         shape =  Lil::Physics().GetCommon().createSphereShape(m_radius);
         break;
     
-    case ::CollisionShapeType::BOX :
+    case ::CollisionShapeType::BOX:
         shape =  Lil::Physics().GetCommon().createBoxShape(RcVector3(m_half_extends));
         break;
+    
+    case ::CollisionShapeType::HEIGHTMAP:
+        if (Lil::Resources().TextureExists(m_heightmap_texture_key)) {
+            Image image = LoadImageFromTexture(*Lil::Resources().GetTexture(m_heightmap_texture_key));
+            shape = CreateHeightmapShape(image, Vector3{1.0f, 1.0f, 1.0f});
+            UnloadImage(image);
+        }        
     }
-    m_collider = body->addCollider(shape, rc::Transform(RcVector3(m_local_position), RcQuaternion(m_local_rotation)));
+    if (shape) m_collider = body->addCollider(shape, rc::Transform(RcVector3(m_local_position), RcQuaternion(m_local_rotation)));
 }
 
 void CollisionShape::Update(rc::RigidBody *body) {
@@ -128,12 +148,18 @@ void CollisionShape::Update(rc::RigidBody *body) {
             }
             else type_changed = true;
         }
+        else if (rc::HeightFieldShape* heightmap = dynamic_cast<rc::HeightFieldShape*>(m_collider->getCollisionShape())) {
+            if (m_type == ::CollisionShapeType::HEIGHTMAP) {
+                heightmap->setScale(RcVector3(m_map_size*Vector3{1.0f/128.0f, 1.0f/20.0f, 1.0f/128.0f}));
+            }
+            else type_changed = true;
+        }
 
         if (type_changed) {
             Destroy();
             Create(body);
         }
 
-        m_collider->setLocalToBodyTransform(rc::Transform(RcVector3(m_local_position), RcQuaternion(m_local_rotation)));
+        if (m_collider) m_collider->setLocalToBodyTransform(rc::Transform(RcVector3(m_local_position), RcQuaternion(m_local_rotation)));
     }
 }

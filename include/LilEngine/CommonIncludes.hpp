@@ -19,6 +19,10 @@ inline std::string NameFromObject(std::string object) {
     return name;
 }
 
+inline std::string HeightmapNameFromImageName(std::string image_name) {
+    return "Heightmap_" + image_name;
+}
+
 // namespaces raylib and reactphysics3d conflict with color definitions
 #define RAYLIGHTGRAY  CLITERAL(Color){ 200, 200, 200, 255 }   // Light Gray
 #define RAYGRAY       CLITERAL(Color){ 130, 130, 130, 255 }   // Gray
