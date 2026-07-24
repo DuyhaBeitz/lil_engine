@@ -76,13 +76,13 @@ target_include_directories(lil_engine PUBLIC
     ${REACTPHYSICS_DIR}/include
 )
 
-#native file dialog
-# set(NFD_DIR ${CMAKE_SOURCE_DIR}/include/external/nfd)
+# tinyfiledialogs
+set(TFD_DIR ${CMAKE_SOURCE_DIR}/include/external/tinyfiledialogs)
+add_library(tinyfiledialogs ${TFD_DIR}/tinyfiledialogs.c)
+target_include_directories(tinyfiledialogs PUBLIC 
+    TFD_DIR
+)
 
-# target_link_libraries(lil_engine 
-#     ${NFD_DIR}/libnfd.a
-# )
-
-# target_include_directories(lil_engine PUBLIC 
-#     ${NFD_DIR}/include
-# )
+target_link_libraries(lil_engine 
+    tinyfiledialogs
+)

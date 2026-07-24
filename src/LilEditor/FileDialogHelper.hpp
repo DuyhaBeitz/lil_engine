@@ -1,54 +1,44 @@
 #pragma once
 
 #include "LilEngine.hpp"
-#include <nfd.h>
+#include <tinyfiledialogs/tinyfiledialogs.h>
 
-inline void BrowseTexture() {
-    NFD_Init();
+inline void BrowseTexture() {   
+    const char* filters[] = { "*.png", "*.jpeg", "*.jpg" };
+    const char* outPath = tinyfd_openFileDialog(
+        "Select Texture",           // Title
+        "",                          // Default path (empty = current directory)
+        3,                          // Number of filters
+        filters,                    // Filter array
+        "Image files",              // Filter description
+        0                           // Allow multiple selections (0 = single)
+    );
 
-    nfdu8char_t *outPath;
-    nfdu8filteritem_t filters[1] = { { "Image", "png,jpeg" } };
-    nfdopendialogu8args_t args = {0};
-    args.filterList = filters;
-    args.filterCount = 1;
-    nfdresult_t result = NFD_OpenDialogU8_With(&outPath, &args);
-
-    if (result == NFD_OKAY) {
+    if (outPath) {
         std::string filename = outPath;
-        NFD_FreePathU8(outPath);
         Lil::Resources().AddTexture(NameFromPath(filename), filename);
     }
-    else if (result == NFD_CANCEL) {
-        LOG_INFO("User pressed cancel.");
+    else {
+        LOG_INFO("User pressed cancel or an error occurred.");
     }
-    else  {
-        LOG_ERROR(NFD_GetError());
-    }
-
-    NFD_Quit();
 }
 
 inline void BrowseModel() {
-    NFD_Init();
+    const char* filters[] = { "*.glb" };
+    const char* outPath = tinyfd_openFileDialog(
+        "Select Model",
+        "",
+        1,
+        filters,
+        "Model files",
+        0
+    );
 
-    nfdu8char_t *outPath;
-    nfdu8filteritem_t filters[1] = { { "Model", "glb" } };
-    nfdopendialogu8args_t args = {0};
-    args.filterList = filters;
-    args.filterCount = 1;
-    nfdresult_t result = NFD_OpenDialogU8_With(&outPath, &args);
-
-    if (result == NFD_OKAY) {
+    if (outPath) {
         std::string filename = outPath;
-        NFD_FreePathU8(outPath);
         Lil::Resources().AddModel(NameFromPath(filename), filename);
     }
-    else if (result == NFD_CANCEL) {
-        LOG_INFO("User pressed cancel.");
+    else {
+        LOG_INFO("User pressed cancel or an error occurred.");
     }
-    else  {
-        LOG_ERROR(NFD_GetError());
-    }
-
-    NFD_Quit();
 }
