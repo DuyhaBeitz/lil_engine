@@ -252,7 +252,7 @@ public:
                         ImGui::PushID((int)i);
 
                         auto* c = ti.Container();
-                        if (ImGui::Button("X")) {
+                        if (ImGui::Button(ICON_FA_TRASH)) {
                             c->Erase(ptr, i);
                             break;
                         }

@@ -92,7 +92,7 @@ void Lil::Editor::DrawInspector() {
         
         for (auto& component : m_selected->Components()) {            
             ImGui::PushID(component);
-            if (ImGui::SmallButton("X")) {
+            if (ImGui::SmallButton(ICON_FA_TRASH)) {
                 m_selected->DeattachComponent(component);
                 Lil::GetWorld().DestroyComponent(component);
                 ImGui::PopID();
