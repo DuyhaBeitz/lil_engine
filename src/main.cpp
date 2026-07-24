@@ -26,10 +26,10 @@ int main() {
     InitWindow(1920, 1080, "game");
     SetTraceLogLevel(LOG_NONE);
     DisableCursor();
-    Lil::Resources().AddTexture("assets/heightmap.png");
-    Lil::Resources().AddModel("assets/Car.glb");
-    Lil::Resources().AddModel("assets/Earth.glb");
-    Lil::Resources().AddModel("assets/CesiumMan.glb");
+    // Lil::Resources().AddTexture("assets/heightmap.png");
+    // Lil::Resources().AddModel("assets/Car.glb");
+    // Lil::Resources().AddModel("assets/Earth.glb");
+    // Lil::Resources().AddModel("assets/CesiumMan.glb");
 
     {
     // auto car = Lil::GetWorld().CreateActor<Actor>();

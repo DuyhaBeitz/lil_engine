@@ -3,7 +3,7 @@
 #include "LilEngine.hpp"
 #include <tinyfiledialogs/tinyfiledialogs.h>
 
-inline void BrowseTexture() {   
+inline const char*  BrowseTexture() {   
     const char* filters[] = { "*.png", "*.jpeg", "*.jpg" };
     const char* outPath = tinyfd_openFileDialog(
         "Select Texture",           // Title
@@ -15,15 +15,15 @@ inline void BrowseTexture() {
     );
 
     if (outPath) {
-        std::string filename = outPath;
-        Lil::Resources().AddTexture(NameFromPath(filename), filename);
+        return outPath;
     }
     else {
         LOG_INFO("User pressed cancel or an error occurred.");
+        return nullptr;
     }
 }
 
-inline void BrowseModel() {
+inline const char* BrowseModel() {
     const char* filters[] = { "*.glb" };
     const char* outPath = tinyfd_openFileDialog(
         "Select Model",
@@ -35,10 +35,10 @@ inline void BrowseModel() {
     );
 
     if (outPath) {
-        std::string filename = outPath;
-        Lil::Resources().AddModel(NameFromPath(filename), filename);
+        return outPath;
     }
     else {
         LOG_INFO("User pressed cancel or an error occurred.");
+        return nullptr;
     }
 }

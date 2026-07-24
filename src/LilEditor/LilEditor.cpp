@@ -1,5 +1,6 @@
 #include "LilEditor.hpp"
 #include <utils/MeshHelper.hpp>
+#include <utils/FileHelper.hpp>
 #include "FileDialogHelper.hpp"
 
 Lil::Editor &Lil::Editor::Get() {
@@ -195,7 +196,11 @@ void Lil::Editor::DrawViewport() {
 void Lil::Editor::DrawResources() {
     ImGui::Begin("Models");
     if (ImGui::Button(ICON_FA_PLUS)) {
-        BrowseModel();
+        const char* source = BrowseModel();
+        if (source) {
+            Lil::Resources().AddModel(NameFromPath(source), source);
+            CopyAsset(source);
+        }
     }
 
     for (auto& [key, model] : Lil::Resources().Models()) {
@@ -206,7 +211,11 @@ void Lil::Editor::DrawResources() {
 
     ImGui::Begin("Textures");
     if (ImGui::Button(ICON_FA_PLUS)) {
-        BrowseTexture();
+        const char* source = BrowseTexture();
+        if (source) {
+            Lil::Resources().AddTexture(NameFromPath(source), source);
+            CopyAsset(source);
+        }
     }
 
     for (auto& [key, texture] : Lil::Resources().Textures()) {
