@@ -26,6 +26,16 @@ set(RAYLIB_DIR ${CMAKE_SOURCE_DIR}/include/external/raylib)
 
 target_link_libraries(lil_engine 
     ${RAYLIB_DIR}/libraylib.a
+    X11
+    Xrandr
+    Xi
+    Xcursor
+    Xinerama
+    GL
+    m
+    pthread
+    dl
+    rt
 )
 
 target_include_directories(lil_engine PUBLIC 

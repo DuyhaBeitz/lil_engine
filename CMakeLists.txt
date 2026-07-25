@@ -32,8 +32,6 @@ target_include_directories(lil_editor PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include/LilEditor
 )
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PLATFORM}.cmake)
-
 # -------------------------------
 # Game executable
 # -------------------------------
@@ -47,3 +45,5 @@ target_include_directories(game PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include/LilEngine
     ${CMAKE_CURRENT_SOURCE_DIR}/include/LilEditor
 )
+
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PLATFORM}.cmake)

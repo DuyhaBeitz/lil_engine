@@ -16,7 +16,6 @@ target_link_libraries(${PROJECT_NAME}
     imgui
 )
 
-
 # refl-cpp
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${CMAKE_SOURCE_DIR}/include/external/refl-cpp
@@ -80,14 +79,25 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     ${REACTPHYSICS_DIR}/include
 )
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -s ASYNCIFY -sMAX_WEBGL_VERSION=2 --preload-file assets --shell-file shell.html")
+# tinyfiledialogs
+set(TFD_DIR ${CMAKE_SOURCE_DIR}/include/external/tinyfiledialogs)
+add_library(tinyfiledialogs ${TFD_DIR}/tinyfiledialogs.c)
+target_include_directories(tinyfiledialogs PUBLIC 
+    ${TFD_DIR}
+)
 
-set_target_properties(lil_editor PROPERTIES
+target_link_libraries(${PROJECT_NAME} 
+    tinyfiledialogs
+)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -s ASYNCIFY -sMAX_WEBGL_VERSION=2 --preload-file assets --preload-file imgui.ini --shell-file shell.html")
+
+set_target_properties(game PROPERTIES
     OUTPUT_NAME "index"
     SUFFIX ".html"
 )
 
-#native file dialog
+#native file dialog (commented out for web)
 # set(NFD_DIR ${CMAKE_SOURCE_DIR}/include/external/nfd)
 
 # target_link_libraries(${PROJECT_NAME} 
