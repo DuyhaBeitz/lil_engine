@@ -76,14 +76,19 @@ target_link_libraries(lil_engine
 )
 
 # ReactPhysics3D
-set(REACTPHYSICS_DIR ${CMAKE_SOURCE_DIR}/include/external/reactphysics3d)
+# set(REACTPHYSICS_DIR ${CMAKE_SOURCE_DIR}/include/external/reactphysics3d)
 
+# target_link_libraries(lil_engine 
+#     ${REACTPHYSICS_DIR}/libreactphysics3d.a
+# )
+
+# target_include_directories(lil_engine PUBLIC 
+#     ${REACTPHYSICS_DIR}/include
+# )
+
+# JoltPhysics
 target_link_libraries(lil_engine 
-    ${REACTPHYSICS_DIR}/libreactphysics3d.a
-)
-
-target_include_directories(lil_engine PUBLIC 
-    ${REACTPHYSICS_DIR}/include
+    ${CMAKE_SOURCE_DIR}/include/external/Jolt/libjolt.a
 )
 
 # tinyfiledialogs
