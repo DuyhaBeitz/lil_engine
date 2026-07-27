@@ -263,6 +263,9 @@ public:
                         VisitObject(c->ElementType(), element);
                         ImGui::PopID();
                     });
+                    for (auto i : idx_to_erase) {
+                        c->Erase(ptr, i);
+                    }
 
                     ImGui::Unindent(Lil::UIStyle::STRUCT_INDENT_PADDING);
                 } else {
