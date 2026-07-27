@@ -14,4 +14,5 @@ public:
        
     rc::PhysicsCommon& GetCommon() { return m_physicsCommon; }
     rc::PhysicsWorld* GetWorld() { return m_world; }
+    void UpdateDebug();
 };

@@ -13,8 +13,9 @@ ColliderComponent::ColliderComponent(BodyType body_type)
     m_body->setType(GetBodyType(body_type));
 }
 
-void ColliderComponent::Clean() {
-    Lil::Physics().GetWorld()->destroyRigidBody(m_body);
+ColliderComponent::~ColliderComponent() {
+    m_shapes.clear();
+    if (m_body) Lil::Physics().GetWorld()->destroyRigidBody(m_body);
 }
 
 rc::RigidBody *ColliderComponent::GetBody() { return m_body; }
@@ -47,17 +48,11 @@ void ColliderComponent::SimulationUpdate(Actor &actor) {
 
 }
 
-void ColliderComponent::DebugDraw() {
-    rc::DebugRenderer& debugRenderer = Lil::Physics().GetWorld()->getDebugRenderer();
-    debugRenderer.reset();
+void ColliderComponent::DebugUpdate() {
     GetBody()->setIsDebugEnabled(true);
-    Lil::Physics().GetWorld()->setIsDebugRenderingEnabled(true);
-    debugRenderer.setIsDebugItemDisplayed(rc::DebugRenderer::DebugItem::COLLISION_SHAPE, true);
-    debugRenderer.setIsDebugItemDisplayed(rc::DebugRenderer::DebugItem::COLLIDER_AABB, true);
-    debugRenderer.setIsDebugItemDisplayed(rc::DebugRenderer::DebugItem::CONTACT_POINT, false);
-    debugRenderer.setIsDebugItemDisplayed(rc::DebugRenderer::DebugItem::CONTACT_NORMAL, false); 
-    debugRenderer.computeDebugRenderingPrimitives(*Lil::Physics().GetWorld());
-    
+}
+void ColliderComponent::DebugDraw() {
+    rc::DebugRenderer& debugRenderer = Lil::Physics().GetWorld()->getDebugRenderer();   
 
     rc::uint32 nbLines = debugRenderer.getNbLines();
     for (rc::uint32 i = 0; i < nbLines; i++) {
@@ -87,8 +82,8 @@ void ColliderComponent::DebugDraw() {
         Vector3 V = points[2]-points[0];
         Vector3 N = Vector3CrossProduct(U, V);
         N = Vector3Normalize(N);
-        for (int i = 0; i < 3; i++) {
-            points[i] = points[i] + N * 0.08f;
+        for (int j = 0; j < 3; j++) {
+            points[j] = points[j] + N * 0.08f;
         }
 
 
@@ -97,13 +92,13 @@ void ColliderComponent::DebugDraw() {
 }
 
 CollisionShape* ColliderComponent::AddShape(CollisionShape shape) {
-    m_shapes.push_back(shape);
+    m_shapes.emplace_back(shape);
     return &m_shapes.back();
 }
 
-void CollisionShape::Destroy()
-{
+void CollisionShape::Destroy() {
     if (m_collider) {
+        LIL_LOG_TRACE("CollisionShape::Destroy()");
         m_collider->getBody()->removeCollider(m_collider);
         m_collider = nullptr;
     }
@@ -125,41 +120,57 @@ void CollisionShape::Create(rc::RigidBody *body) {
             Image image = LoadImageFromTexture(*Lil::Resources().GetTexture(m_heightmap_texture_key));
             shape = CreateHeightmapShape(image, Vector3{1.0f, 1.0f, 1.0f});
             UnloadImage(image);
-        }        
+        }
+        break;
     }
     if (shape) m_collider = body->addCollider(shape, rc::Transform(RcVector3(m_local_position), RcQuaternion(m_local_rotation)));
 }
 
 void CollisionShape::Update(rc::RigidBody *body) {
     if (!m_collider) {
+        LIL_LOG_TRACE("Creating shape");
         Create(body);
+        LIL_LOG_TRACE("Creating shape DONE");
     }
     else {
         bool type_changed = false;
         if (rc::SphereShape* sphere = dynamic_cast<rc::SphereShape*>(m_collider->getCollisionShape())) {
             if (m_type == ::CollisionShapeType::SPHERE) {
+                LIL_LOG_TRACE("Updating sphere shape params");
                 sphere->setRadius(m_radius);
             }
             else type_changed = true;
         }
         else if (rc::BoxShape* box = dynamic_cast<rc::BoxShape*>(m_collider->getCollisionShape())) {
             if (m_type == ::CollisionShapeType::BOX) {
+                LIL_LOG_TRACE("Updating box shape params");
                 box->setHalfExtents(RcVector3(m_half_extends));
             }
             else type_changed = true;
         }
         else if (rc::HeightFieldShape* heightmap = dynamic_cast<rc::HeightFieldShape*>(m_collider->getCollisionShape())) {
             if (m_type == ::CollisionShapeType::HEIGHTMAP) {
+                LIL_LOG_TRACE("Updating heightmap shape params");
                 heightmap->setScale(RcVector3(m_map_size*Vector3{1.0f/128.0f, 1.0f/20.0f, 1.0f/128.0f}));
+                LIL_LOG_TRACE("Updating heightmap shape params DONE");
             }
             else type_changed = true;
         }
 
         if (type_changed) {
+            LIL_LOG_TRACE("Shape type changed");
             Destroy();
             Create(body);
         }
-
-        if (m_collider) m_collider->setLocalToBodyTransform(rc::Transform(RcVector3(m_local_position), RcQuaternion(m_local_rotation)));
+        else if (m_collider) {
+            LIL_LOG_TRACE("Updating collider local transform");
+            std::cout << m_collider << std::endl;
+            std::cout << m_collider->getBody() << std::endl;
+            std::cout << m_collider->getCollisionShape() << std::endl;
+            if (m_type != ::CollisionShapeType::HEIGHTMAP) {
+                m_collider->setLocalToBodyTransform(rc::Transform(RcVector3(m_local_position), RcQuaternion(m_local_rotation)));
+            }
+            LIL_LOG_TRACE("Updating collider local transform DONE");
+        }
     }
 }

@@ -3,6 +3,7 @@
 #include "Component.hpp"
 #include "utils/MathHelper.hpp"
 #include "ReflAttributes.hpp"
+#include <list>
 
 enum class CollisionShapeType : uint8_t {
     SPHERE = 0,
@@ -22,7 +23,7 @@ public:
 
     CollisionShape() = default;
 
-    ~CollisionShape() {
+    virtual ~CollisionShape() {
         Destroy();
     }
 
@@ -91,15 +92,26 @@ inline rc::BodyType GetBodyType(const BodyType body_type) {
 
 class ColliderComponent : public Component {
 private:
-    virtual void Clean() override;
     
     virtual void OnLayoutUpdate() override {
-        m_body->setTransform(RcTransform(GetTransform()));
-        m_body->setType(GetBodyType(m_type));
-        m_body->setLinearVelocity(RcVector3(m_linear_velocity));
-        m_body->setAngularVelocity(RcVector3(m_angular_velocity));
+        if (m_body) {
+            LIL_LOG_TRACE("Setting body params");
+            m_body->setTransform(RcTransform(GetTransform()));
+            LIL_LOG_TRACE("1");
+            m_body->setType(GetBodyType(m_type));
+            LIL_LOG_TRACE("2");
+            m_body->setLinearVelocity(RcVector3(m_linear_velocity));
+            LIL_LOG_TRACE("2");
+            m_body->setAngularVelocity(RcVector3(m_angular_velocity));
+            LIL_LOG_TRACE("Setting body params DONE");
 
-        for (auto& shape : m_shapes) shape.Update(m_body);
+            LIL_LOG_TRACE("ColliderComponent updating shapes");
+            for (auto& shape : m_shapes) shape.Update(m_body);
+            LIL_LOG_TRACE("ColliderComponent updating shapes DONE");
+        }
+        else {
+            LIL_LOG_TRACE("m_body null");
+        }
     }
 
 protected:
@@ -107,19 +119,22 @@ protected:
 public:
     LIL_REFLECTABLE()
     LIL_SERIALIZABLE()
-    std::vector<CollisionShape> m_shapes = {};
+    //std::vector<CollisionShape> m_shapes = {};
+    std::list<CollisionShape> m_shapes = {};
     BodyType m_type = BodyType::STATIC;
     Vector3 m_linear_velocity = Vector3{0.0f, 0.0f, 0.0f};
     Vector3 m_angular_velocity = Vector3{0.0f, 0.0f, 0.0f};
 
 public:
     ColliderComponent(BodyType body_type = BodyType::STATIC);
+    virtual ~ColliderComponent();
 
     rc::RigidBody* GetBody();
 
     void SetAngularLockAxisFactor(Vector3 lock_axis);
 
     virtual void SimulationUpdate(Actor& actor) override;
+    virtual void DebugUpdate() override;
     virtual void DebugDraw() override;
 
     CollisionShape* AddShape(CollisionShape shape);
@@ -132,6 +147,7 @@ public:
     }
 };
 LIL_REFLECT_EX(std::vector<CollisionShape>, bases<>, std_vector_CollisionShape)
+LIL_REFLECT_EX(std::list<CollisionShape>, bases<>, std_list_CollisionShape)
 LIL_REFLECT(ColliderComponent, bases<Component>,
     field(m_shapes),
     field(m_type),

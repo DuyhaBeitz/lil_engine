@@ -96,14 +96,3 @@ set_target_properties(game PROPERTIES
     OUTPUT_NAME "index"
     SUFFIX ".html"
 )
-
-#native file dialog (commented out for web)
-# set(NFD_DIR ${CMAKE_SOURCE_DIR}/include/external/nfd)
-
-# target_link_libraries(${PROJECT_NAME} 
-#     ${NFD_DIR}/libnfd.a
-# )
-
-# target_include_directories(${PROJECT_NAME} PUBLIC 
-#     ${NFD_DIR}/include
-# )

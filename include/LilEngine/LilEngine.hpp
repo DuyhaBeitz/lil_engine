@@ -8,11 +8,15 @@
 #include "imgui.h"
 #include "rlImGui.h"
 
+#include "Log.hpp"
+
 namespace Lil {
     class Engine {
     public:
         static Engine& Get();
         
+        void Init();
+
         PhysicsSystem& GetPhysics() { return m_physics; }
         ResourceManager& GetResources() { return m_resources; }
         World& GetWorld() { return m_world; }

@@ -10,7 +10,7 @@ void Heightmap::OnLayoutUpdate() {
     if (Lil::Resources().TextureExists(m_heightmap_texture_key)) {
         if (!Lil::Resources().ModelExists(heightmap_name)) {
             Image image = LoadImageFromTexture(*Lil::Resources().GetTexture(m_heightmap_texture_key));
-            Lil::Resources().AddModel(heightmap_name, HeightmapModel(image, Vector3{1.0f, 1.0f, 1.0f}));
+            Lil::Resources().ModelAdd(heightmap_name, HeightmapModel(image, Vector3{1.0f, 1.0f, 1.0f}));
             UnloadImage(image);
         }
         else {

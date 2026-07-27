@@ -24,13 +24,17 @@ public:
         SetRotation(QuaternionMultiply(parent_transform.rotation, m_local_transform.rotation));
         SetScale(m_local_transform.scale * parent_transform.scale);
 
+        LIL_LOG_TRACE("Component calling OnLayoutUpdate");
+        LIL_LOG_TRACE(GetTypeInfo().Name());
         OnLayoutUpdate();
+        LIL_LOG_TRACE("Component calling OnLayoutUpdate DONE");
     }
 
     Transform& Local() { return m_local_transform; }
 
     virtual void SimulationUpdate(Actor& actor) {};
     virtual void Draw() {};
+    virtual void DebugUpdate() {};
     virtual void DebugDraw() {};
 };
 LIL_REFLECT(Component, bases<GameObject>,

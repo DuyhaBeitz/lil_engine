@@ -32,6 +32,7 @@ private:
 
 public:
     World() = default;
+    void Clear();
 
     template<typename T = Actor, typename... Args>
     T* CreateActor(Args&&... args) {
@@ -53,12 +54,12 @@ public:
                 return ptr;
             }
             else {
-                LOG_ERROR("Failed to create Actor");
+                LIL_LOG_ERROR("Failed to create Actor");
                 return nullptr;
             }
         }
         else {
-            LOG_ERROR("Trying to create Actor type doesn't inherit from it");
+            LIL_LOG_ERROR("Trying to create Actor type doesn't inherit from it");
             return nullptr;
         }
     }
@@ -67,7 +68,9 @@ public:
         return m_actors.at(id).get();
     }
 
+    void DestroyActor(uuids::uuid id);
     void DestroyActor(Actor* actor);
+    void DestroyAllActors();
     bool IsActorAlive(Actor* actor) const;
 
     
@@ -91,12 +94,12 @@ public:
                 return ptr;
             }
             else {
-                LOG_ERROR("Failed to create Component");
+                LIL_LOG_ERROR("Failed to create Component");
                 return nullptr;
             }
         }
         else {
-            LOG_ERROR("Trying to create Component type doesn't inherit from it");
+            LIL_LOG_ERROR("Trying to create Component type doesn't inherit from it");
             return nullptr;
         }
     }
@@ -107,7 +110,9 @@ public:
 
     Actor* PickActor(Vector2 screen_pos, int render_w, int render_h, Camera camera);
 
+    void DestroyComponent(uuids::uuid id);
     void DestroyComponent(Component* component);
+    void DestroyAllComponents();
     bool IsComponentAlive(Component* component) const;
 
     void Draw();
@@ -132,7 +137,18 @@ public:
         
     template <class Archive>
     void load( Archive & ar ) {
+        Clear();
         ar(m_simulation_going, m_simulation_speed, m_physics_debug, m_render_mode);
+        // std::cout << m_simulation_going << std::endl;
+        // std::cout << m_simulation_speed << std::endl;
+        // std::cout << m_physics_debug << std::endl;
+        
+        // m_simulation_going = true;
+        // m_simulation_speed = 1.0f;
+        // m_physics_debug = false;
+        // m_render_mode = RenderMode::Unlit;
+
+
         ar(cereal::make_nvp("components", m_components));
         ar(cereal::make_nvp("actors", m_actors));
     }

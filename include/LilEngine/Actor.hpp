@@ -20,6 +20,8 @@ public:
     void SimulationUpdate();
 
     void Draw();
+
+    void DebugUpdate();
     void DebugDraw();
 
     void AttachComponent(Component* component);

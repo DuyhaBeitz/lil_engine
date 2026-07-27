@@ -9,6 +9,7 @@ inline void CopyFile(std::string source, std::string dest) {
     if (fileData == NULL) return;
 
     SaveFileData(dest.c_str(), fileData, dataSize);
+    UnloadFileData(fileData);
 }
 
 inline void CopyAsset(std::string source) {

@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <set>
+#include <list>
 #include <cassert>
 #include <iostream>
 #include <raylib.h>
@@ -38,6 +39,7 @@ public:
 class ContainerInfo {
 public:
     virtual size_t Size(const void* container) const = 0;
+    virtual void* GetFirstElement(void* container) const = 0;
     virtual void* GetElement(void* container, size_t index) const = 0;
     virtual const void* GetElement(const void* container, size_t index) const = 0;
     virtual const TypeInfo& ElementType() const = 0;
@@ -46,6 +48,9 @@ public:
     virtual void InsertDefault(void* container) const {}
     virtual void Erase(void* container, size_t index) const {}
 
+    // fn takes idx and void element pointer as params
+    virtual void ForEach(void* container, std::function<void(size_t, void*)> fn) const = 0;
+
     virtual ~ContainerInfo() = default;
 };
 
@@ -53,23 +58,47 @@ template<typename T>
 class VectorContainerInfo : public ContainerInfo {
 public:
     size_t Size(const void* c) const override;
+    void* GetFirstElement(void* container) const {return GetElement(container, 0);}
     void* GetElement(void* c, size_t i) const override;
     const void* GetElement(const void* container, size_t index) const override;
-    const TypeInfo& ElementType() const override;
+    const TypeInfo& ElementType() const;
+
     void Resize(void* c, size_t n) const override;
     void InsertDefault(void* c) const override;
     void Erase(void* c, size_t i) const override;
+
+    void ForEach(void* container, std::function<void(size_t, void*)> fn) const override;
+};
+
+template<typename T>
+class ListContainerInfo : public ContainerInfo {
+public:
+    size_t Size(const void* c) const override;
+    void* GetFirstElement(void* container) const;
+    void* GetElement(void* c, size_t i) const override;
+    const void* GetElement(const void* container, size_t index) const override;
+    const TypeInfo& ElementType() const override;
+
+    void Resize(void* c, size_t n) const override;
+    void InsertDefault(void* c) const override;
+    void Erase(void* c, size_t i) const override;
+
+    void ForEach(void* container, std::function<void(size_t, void*)> fn) const override;
 };
 
 template<typename T>
 struct is_vector : std::false_type {};
-
 template<typename T, typename A>
 struct is_vector<std::vector<T, A>> : std::true_type {};
-
 template<typename T, typename A>
 struct is_vector<const std::vector<T, A>> : std::true_type {};
 
+template<typename T>
+struct is_list : std::false_type {};
+template<typename T, typename A>
+struct is_list<std::list<T, A>> : std::true_type {};
+template<typename T, typename A>
+struct is_list<const std::list<T, A>> : std::true_type {};
 
 template<typename T>
 struct ValType {
@@ -156,6 +185,10 @@ private:
         if constexpr (is_vector<T>::value) {
             using Elem = typename T::value_type;
             m_container = std::make_unique<VectorContainerInfo<Elem>>();
+        }
+        else if constexpr (is_list<T>::value) {
+            using Elem = typename T::value_type;
+            m_container = std::make_unique<ListContainerInfo<Elem>>();
         }
         else {
             // populate bases
@@ -354,6 +387,76 @@ inline void VectorContainerInfo<T>::Erase(void *c, size_t i) const {
 }
 
 template <typename T>
+inline void VectorContainerInfo<T>::ForEach(void *c, std::function<void(size_t, void*)> fn) const {
+    auto& v = *static_cast<std::vector<T>*>(c);
+    for (size_t i = 0; i < v.size(); i++) {
+        fn(i, &v.at(i));
+    };
+}
+
+template <typename T>
 inline const TypeInfo *ValType<T *>::Get() {
     return &TypeInfo::Get<T>();
+}
+
+template <typename T>
+inline size_t ListContainerInfo<T>::Size(const void *c) const {
+    return static_cast<const std::list<T>*>(c)->size();
+}
+
+template <typename T>
+inline void *ListContainerInfo<T>::GetFirstElement(void *c) const {
+    return &(static_cast<std::list<T>*>(c)->front());
+}
+
+template <typename T>
+inline void *ListContainerInfo<T>::GetElement(void *c, size_t i) const {
+    if (!c) return nullptr;
+    auto& list = *static_cast<std::list<T>*>(c);
+    if (i >= list.size()) return nullptr;
+    auto it = std::next(list.begin(), i);
+    return std::addressof(*it); 
+}
+
+template <typename T>
+inline const void *ListContainerInfo<T>::GetElement(const void *c, size_t i) const {
+    if (!c) return nullptr;
+    auto& list = *static_cast<const std::list<T>*>(c);
+    if (i >= list.size()) return nullptr;
+    auto it = std::next(list.begin(), i);
+    return std::addressof(*it); 
+}
+
+template <typename T>
+inline const TypeInfo &ListContainerInfo<T>::ElementType() const {
+    return TypeInfo::Get<T>();
+}
+
+template <typename T>
+inline void ListContainerInfo<T>::Resize(void *c, size_t n) const
+{
+    static_cast<std::list<T>*>(c)->resize(n);
+}
+
+template <typename T>
+inline void ListContainerInfo<T>::InsertDefault(void *c) const {
+    static_cast<std::list<T>*>(c)->emplace_back();
+}
+
+template <typename T>
+inline void ListContainerInfo<T>::Erase(void *c, size_t i) const {
+    if (!c) return;
+    auto& list = *static_cast<std::list<T>*>(c);
+    if (i >= list.size()) return;
+    auto it = std::next(list.begin(), i);
+    list.erase(it);
+}
+
+template <typename T>
+inline void ListContainerInfo<T>::ForEach(void *c, std::function<void(size_t, void *)> fn) const {
+    auto& l = *static_cast<std::list<T>*>(c);
+    size_t i = 0;
+    for (auto& element : l) {
+        fn(i, static_cast<void*>(&element));
+    }
 }

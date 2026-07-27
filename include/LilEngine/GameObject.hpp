@@ -63,8 +63,7 @@ LIL_SERIALIZE_NO_BASE(Identifiable, m_id)
 class GameObject : public Identifiable, public Transformable {
 public:
     GameObject(Transform transform = TRANSFORM_EMPTY);
-
-    virtual void Clean() {};
+    virtual ~GameObject() = default;
 
     LIL_REFLECTABLE()
     LIL_SERIALIZABLE()

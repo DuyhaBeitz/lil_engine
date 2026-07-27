@@ -18,7 +18,7 @@ inline const char*  BrowseTexture() {
         return outPath;
     }
     else {
-        LOG_INFO("User pressed cancel or an error occurred.");
+        LIL_LOG_INFO("User pressed cancel or an error occurred.");
         return nullptr;
     }
 }
@@ -38,7 +38,7 @@ inline const char* BrowseModel() {
         return outPath;
     }
     else {
-        LOG_INFO("User pressed cancel or an error occurred.");
+        LIL_LOG_INFO("User pressed cancel or an error occurred.");
         return nullptr;
     }
 }

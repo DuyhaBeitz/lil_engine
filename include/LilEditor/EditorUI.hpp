@@ -3,6 +3,7 @@
 #include "LilEngine.hpp"
 #include "Components/ColliderComponent.hpp"
 #include "extras/IconsFontAwesome6.h"
+#include <set>
 
 // DPI scaling functions
 inline float ScaleToDPIF(float value) {
@@ -248,22 +249,20 @@ public:
                     ImGui::PopStyleColor(2);
                     ImGui::Indent(Lil::UIStyle::STRUCT_INDENT_PADDING);
                     size_t n = c->Size(ptr);
-                    for (size_t i = 0; i < n; ++i) {
-                        ImGui::PushID((int)i);
 
-                        auto* c = ti.Container();
+                    std::set<size_t> idx_to_erase = {};
+                    c->ForEach(ptr, [c, &idx_to_erase, this](size_t i, void* element){
+                        ImGui::PushID((int)i);
                         if (ImGui::Button(ICON_FA_TRASH)) {
-                            c->Erase(ptr, i);
-                            break;
+                            idx_to_erase.insert(i);
+                            return;
                         }
                         ImGui::SameLine();
-
-                        void* element = c->GetElement(ptr, i);
 
                         SetCurrentObjectName(TextFormat("element %d", i));
                         VisitObject(c->ElementType(), element);
                         ImGui::PopID();
-                    }
+                    });
 
                     ImGui::Unindent(Lil::UIStyle::STRUCT_INDENT_PADDING);
                 } else {

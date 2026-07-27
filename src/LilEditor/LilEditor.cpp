@@ -31,7 +31,7 @@ void Lil::Editor::InitUI() {
     ImFont* customFont = io.Fonts->AddFontFromFileTTF("assets/font/JetBrainsMono-Medium.ttf", fontSize);
     
     if (customFont == nullptr) {
-        LOG_WARN("ImGui failed to load custom font! Falling back to default.");
+        LIL_LOG_WARN("ImGui failed to load custom font! Falling back to default.");
     }
 
     io.FontDefault = customFont;
@@ -198,7 +198,7 @@ void Lil::Editor::DrawResources() {
     if (ImGui::Button(ICON_FA_PLUS)) {
         const char* source = BrowseModel();
         if (source) {
-            Lil::Resources().AddModel(NameFromPath(source), source);
+            Lil::Resources().ModelAdd(NameFromPath(source), source);
             CopyAsset(source);
         }
     }
@@ -213,7 +213,7 @@ void Lil::Editor::DrawResources() {
     if (ImGui::Button(ICON_FA_PLUS)) {
         const char* source = BrowseTexture();
         if (source) {
-            Lil::Resources().AddTexture(NameFromPath(source), source);
+            Lil::Resources().TextureAdd(NameFromPath(source), source);
             CopyAsset(source);
         }
     }
@@ -224,7 +224,7 @@ void Lil::Editor::DrawResources() {
             if (!Lil::Resources().ModelExists(heightmap_name)) {
                 if (ImGui::Button("Generate heightmap model")) {
                     Image image = LoadImageFromTexture(texture);
-                    Lil::Resources().AddModel(heightmap_name, HeightmapModel(image, Vector3{1.0f, 1.0f, 1.0f}));
+                    Lil::Resources().ModelAdd(heightmap_name, HeightmapModel(image, Vector3{1.0f, 1.0f, 1.0f}));
                     UnloadImage(image);
                 }
             }
@@ -254,13 +254,14 @@ void Lil::Editor::Draw() {
     if (ImGui::Button("save")) {
         std::ofstream os("out.json");
         ArchiveOut a_out(os);
-        a_out(Lil::GetWorld());            
+        a_out(Lil::GetWorld());
     }
     ImGui::SameLine();
     if (ImGui::Button("load")) {
         std::ifstream is("out.json");
         ArchiveIn a_in(is);
         a_in(Lil::GetWorld());
+        m_selected = nullptr;
     }
     static const std::unordered_map<std::string, RenderMode> renderModeMap = {
         {"Unlit", RenderMode::Unlit},

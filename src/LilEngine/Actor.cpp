@@ -3,17 +3,24 @@
 #include "LilEngine.hpp"
 
 void Actor::LayoutUpdate(){
+    LIL_LOG_TRACE("Actor detaching marked components");
     for (auto& component : m_marked_deattached) {
         std::erase_if(m_components, [this](Component* comp) {
             return m_marked_deattached.contains(comp);
         });
     }
-    m_marked_deattached.clear();    
+    m_marked_deattached.clear();
+    LIL_LOG_TRACE("Actor detaching marked components DONE");
 
+    LIL_LOG_TRACE("Actor updating layout on components");
     for (Component* component : m_components) {
         component->LayoutUpdate(GetTransform());
     }
+    LIL_LOG_TRACE("Actor updating layout on components DONE");
+
+    LIL_LOG_TRACE("Actor calling OnLayoutUpdate");
     OnLayoutUpdate();
+    LIL_LOG_TRACE("Actor calling OnLayoutUpdate DONE");
 }
 
 void Actor::SimulationUpdate(){
@@ -27,6 +34,13 @@ void Actor::Draw() {
     for (auto& component : m_components) {
         if (!IsComponentAttached(component)) continue;
         component->Draw();
+    }
+}
+
+void Actor::DebugUpdate() {
+    for (auto& component : m_components) {
+        if (!IsComponentAttached(component)) continue;
+        component->DebugUpdate();
     }
 }
 

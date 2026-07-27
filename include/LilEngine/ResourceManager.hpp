@@ -5,15 +5,22 @@
 
 class ResourceManager {
 public:
-    void AddTexture(std::string key, Texture2D texture);
-    void AddTexture(std::string key, std::string filename);
-    void AddTexture(std::string filename);
-    bool TextureExists(std::string key);
 
-    void AddModel(std::string key, Model model);
-    void AddModel(std::string key, std::string filename);
-    void AddModel(std::string filename);
+    void Unload();
+
+    void TextureAdd(std::string key, Texture2D texture);
+    void TextureAdd(std::string key, std::string filename);
+    void TextureAdd(std::string filename);
+    bool TextureExists(std::string key);
+    void TextureUnload(std::string key);
+    void TextureUnloadAll();
+
+    void ModelAdd(std::string key, Model model);
+    void ModelAdd(std::string key, std::string filename);
+    void ModelAdd(std::string filename);
     bool ModelExists(std::string key);
+    void ModelUnload(std::string key);
+    void ModelUnloadAll();
 
     Texture2D* GetTexture(std::string key) {
         if (m_textures.find(key) != m_textures.end()) return &m_textures[key];
