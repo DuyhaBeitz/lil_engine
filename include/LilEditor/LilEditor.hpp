@@ -12,6 +12,7 @@ Usage:
 
 int main() {
     void LoadMyResources();
+    Lil::Editor::Get().Init();
     if (with_editor) {
         Lil::Editor::Get().Init();
         while (!WindowShouldClose()) {
