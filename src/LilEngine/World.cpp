@@ -94,7 +94,7 @@ void World::Update() {
     }
 
     float time_step = GetFrameTime()*m_simulation_speed;
-    if (m_simulation_going && time_step > 0.0) Lil::Physics().GetWorld()->update(time_step);
+    if (m_simulation_going && time_step > 0.0) Lil::Physics().Step(time_step);
     if (m_simulation_going) for (auto& [key, actor] : m_actors) actor->SimulationUpdate();
     
     LIL_LOG_TRACE("World: updating actor layout");
@@ -110,15 +110,8 @@ void World::Update() {
 
 void World::DebugDraw(){
     LIL_LOG_TRACE("World debug drawing");
-    rc::DebugRenderer& debugRenderer = Lil::Physics().GetWorld()->getDebugRenderer();
-    debugRenderer.reset();
-    Lil::Physics().GetWorld()->setIsDebugRenderingEnabled(true);
-    debugRenderer.setIsDebugItemDisplayed(rc::DebugRenderer::DebugItem::COLLISION_SHAPE, true);
-    debugRenderer.setIsDebugItemDisplayed(rc::DebugRenderer::DebugItem::COLLIDER_AABB, true);
-    debugRenderer.setIsDebugItemDisplayed(rc::DebugRenderer::DebugItem::CONTACT_POINT, false);
-    debugRenderer.setIsDebugItemDisplayed(rc::DebugRenderer::DebugItem::CONTACT_NORMAL, false); 
+    Lil::Physics().DrawDebug();
 
     for (auto& [key, actor] : m_actors) actor->DebugUpdate();
-    Lil::Physics().UpdateDebug();
     for (auto& [key, actor] : m_actors) actor->DebugDraw();
 }

@@ -6,9 +6,5 @@ Lil::Engine &Lil::Engine::Get() {
 }
 
 void Lil::Engine::Init() {
-    rc::DebugRenderer& debugRenderer = Physics().GetWorld()->getDebugRenderer();
-    debugRenderer.setIsDebugItemDisplayed(rc::DebugRenderer::DebugItem::COLLISION_SHAPE, true);
-    debugRenderer.setIsDebugItemDisplayed(rc::DebugRenderer::DebugItem::COLLIDER_AABB, true);
-    debugRenderer.setIsDebugItemDisplayed(rc::DebugRenderer::DebugItem::CONTACT_POINT, false);
-    debugRenderer.setIsDebugItemDisplayed(rc::DebugRenderer::DebugItem::CONTACT_NORMAL, false); 
+    Physics().Init();
 }

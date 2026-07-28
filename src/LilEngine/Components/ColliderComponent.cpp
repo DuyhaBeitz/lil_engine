@@ -7,170 +7,116 @@
 #include "LilEngine.hpp"
 #include <utils/ColliderHelper.hpp>
 
-ColliderComponent::ColliderComponent(BodyType body_type)
-: Component(), m_body(Lil::Physics().GetWorld()->createRigidBody(RcTransform(GetTransform())))
-{
-    m_body->setType(GetBodyType(body_type));
+JPH::RefConst<JPH::Shape> CollisionShape::CreateJoltShape() const {
+    switch (m_type) {
+        case CollisionShapeType::SPHERE:
+            return new JPH::SphereShape(m_radius);
+            
+        case CollisionShapeType::BOX:
+            return new JPH::BoxShape(JphVector3(m_half_extends));
+            
+        //case CollisionShapeType::HEIGHTMAP: {
+            //if (Lil::Resources().TextureExists(m_heightmap_texture_key)) {
+                // In Jolt, provide a float array of height samples to HeightFieldShapeSettings
+                // Example skeleton of heightmap setup:
+                // JPH::HeightFieldShapeSettings settings(samples.data(), offset, scale, sampleCount);
+                // return settings.Create().Get();
+            //}
+            //break;
+    }
+    return new JPH::SphereShape(0.5f); // Fallback
+}
+
+ColliderComponent::ColliderComponent(BodyType body_type) : Component(), m_type(body_type) {
+    auto& body_interface = Lil::Physics().GetBodyInterface();
+    
+    // Create a default empty compound shape
+    JPH::StaticCompoundShapeSettings compound_settings;
+
+    compound_settings.AddShape(
+        JPH::Vec3::sZero(), 
+        JPH::Quat::sIdentity(), 
+        new JPH::BoxShapeSettings(JPH::Vec3(0.5f, 0.5f, 0.5f))
+    );
+
+    JPH::RefConst<JPH::Shape> default_shape = compound_settings.Create().Get();
+
+    JPH::EMotionType motion_type = GetJoltMotionType(body_type);
+    JPH::ObjectLayer layer = (motion_type == JPH::EMotionType::Static) ? JPH::Layers::NON_MOVING : JPH::Layers::MOVING;
+
+    JPH::BodyCreationSettings settings(
+        default_shape,
+        JphVector3(GetTransform().translation),
+        JphQuat(GetTransform().rotation),
+        motion_type,
+        layer
+    );
+    settings.mAllowDynamicOrKinematic = true;
+
+    const JPH::Body* body = body_interface.CreateBody(settings);
+    if (!body) {
+        LIL_LOG_ERROR("Failed to create Jolt Body (max bodies limit reached or invalid settings)!");
+        return;
+    }
+    m_body_id = body->GetID();
+    body_interface.AddBody(m_body_id, JPH::EActivation::Activate);
 }
 
 ColliderComponent::~ColliderComponent() {
-    m_shapes.clear();
-    if (m_body) Lil::Physics().GetWorld()->destroyRigidBody(m_body);
+    if (!m_body_id.IsInvalid()) {
+        auto& body_interface = Lil::Physics().GetBodyInterface();
+        body_interface.RemoveBody(m_body_id);
+        body_interface.DestroyBody(m_body_id);
+    }
 }
 
-rc::RigidBody *ColliderComponent::GetBody() { return m_body; }
+void ColliderComponent::RebuildShapes() {
+    if (m_body_id.IsInvalid() || m_shapes.empty()) return;
 
-void ColliderComponent::SetAngularLockAxisFactor(Vector3 lock_axis) {
-    m_body->setAngularLockAxisFactor(rc::Vector3(lock_axis.x, lock_axis.y, lock_axis.z));
-}
-
-void ColliderComponent::SimulationUpdate(Actor &actor) {
-    Transform t = GetTransform();
-    t.translation = RlVector3(m_body->getTransform().getPosition());
-    t.rotation = RlQuaternion(m_body->getTransform().getOrientation());
-    SetTransform(t); // Sets this collider's world transform from physics
-
-    Transform actorWorld = actor.GetTransform();
-
-    actorWorld.rotation = QuaternionMultiply(
-        m_transform.rotation,
-        QuaternionInvert(m_local_transform.rotation)
-    );
-
-    Vector3 rotatedLocalPos = Vector3RotateByQuaternion(m_local_transform.translation, actorWorld.rotation);
-    actorWorld.translation = m_transform.translation - m_local_transform.translation;
-    actorWorld.scale = GetScale() / Local().scale;
-
-    actor.SetTransform(actorWorld);
-
-    m_linear_velocity = RlVector3(m_body->getLinearVelocity());
-    m_angular_velocity = RlVector3(m_body->getAngularVelocity());
-
-}
-
-void ColliderComponent::DebugUpdate() {
-    GetBody()->setIsDebugEnabled(true);
-}
-void ColliderComponent::DebugDraw() {
-    rc::DebugRenderer& debugRenderer = Lil::Physics().GetWorld()->getDebugRenderer();   
-
-    rc::uint32 nbLines = debugRenderer.getNbLines();
-    for (rc::uint32 i = 0; i < nbLines; i++) {
-        const rc::DebugRenderer::DebugLine& line = debugRenderer.getLines()[i];
-
-        Color c = DARKBROWN;
-
-        DrawLine3D(
-            {line.point1.x, line.point1.y, line.point1.z},
-            {line.point2.x, line.point2.y, line.point2.z},
-            c
+    // In Jolt, combine all component shapes into a compound shape
+    JPH::StaticCompoundShapeSettings compound_settings;
+    for (const auto& shape : m_shapes) {
+        compound_settings.AddShape(
+            JphVector3(shape.m_local_position),
+            JphQuat(shape.m_local_rotation),
+            shape.CreateJoltShape()
         );
     }
 
-    nbLines = debugRenderer.getNbTriangles();
-    for (rc::uint32 i = 0; i < nbLines; i++) {
-        const rc::DebugRenderer::DebugTriangle& triangle = debugRenderer.getTriangles()[i];
-
-        Color c = Fade(RAYRED, 0.2);
-        Vector3 points[3] = {
-            {triangle.point1.x, triangle.point1.y+0.1f, triangle.point1.z},
-            {triangle.point2.x, triangle.point2.y+0.1f, triangle.point2.z},
-            {triangle.point3.x, triangle.point3.y+0.1f, triangle.point3.z}
-        };
-
-        Vector3 U = points[1]-points[0];
-        Vector3 V = points[2]-points[0];
-        Vector3 N = Vector3CrossProduct(U, V);
-        N = Vector3Normalize(N);
-        for (int j = 0; j < 3; j++) {
-            points[j] = points[j] + N * 0.08f;
-        }
-
-
-        DrawTriangleStrip3D(&points[0], 3, c);
-    }
+    auto shape_result = compound_settings.Create();
+    if (shape_result.IsValid()) {
+        Lil::Physics().GetBodyInterface().SetShape(m_body_id, shape_result.Get(), true, JPH::EActivation::Activate);
+    }    
 }
 
-CollisionShape* ColliderComponent::AddShape(CollisionShape shape) {
-    m_shapes.emplace_back(shape);
-    return &m_shapes.back();
+void ColliderComponent::OnLayoutUpdate() {
+    if (m_body_id.IsInvalid()) return;
+
+    auto& bi = Lil::Physics().GetBodyInterface();
+    bi.SetPositionAndRotation(m_body_id, JphVector3(GetTransform().translation), JphQuat(GetTransform().rotation), JPH::EActivation::Activate);
+    bi.SetMotionType(m_body_id, GetJoltMotionType(m_type), JPH::EActivation::Activate);
+    bi.SetLinearVelocity(m_body_id, JphVector3(m_linear_velocity));
+    bi.SetAngularVelocity(m_body_id, JphVector3(m_angular_velocity));
+
+    RebuildShapes();
 }
 
-void CollisionShape::Destroy() {
-    if (m_collider) {
-        LIL_LOG_TRACE("CollisionShape::Destroy()");
-        m_collider->getBody()->removeCollider(m_collider);
-        m_collider = nullptr;
-    }
-}
+void ColliderComponent::SimulationUpdate(Actor& actor) {
+    if (m_body_id.IsInvalid()) return;
 
-void CollisionShape::Create(rc::RigidBody *body) {
-    rc::CollisionShape* shape = nullptr;
-    switch (m_type) {
-    case ::CollisionShapeType::SPHERE:
-        shape =  Lil::Physics().GetCommon().createSphereShape(m_radius);
-        break;
-    
-    case ::CollisionShapeType::BOX:
-        shape =  Lil::Physics().GetCommon().createBoxShape(RcVector3(m_half_extends));
-        break;
-    
-    case ::CollisionShapeType::HEIGHTMAP:
-        if (Lil::Resources().TextureExists(m_heightmap_texture_key)) {
-            Image image = LoadImageFromTexture(*Lil::Resources().GetTexture(m_heightmap_texture_key));
-            shape = CreateHeightmapShape(image, Vector3{1.0f, 1.0f, 1.0f});
-            UnloadImage(image);
-        }
-        break;
-    }
-    if (shape) m_collider = body->addCollider(shape, rc::Transform(RcVector3(m_local_position), RcQuaternion(m_local_rotation)));
-}
+    auto& bi = Lil::Physics().GetBodyInterface();  
 
-void CollisionShape::Update(rc::RigidBody *body) {
-    if (!m_collider) {
-        LIL_LOG_TRACE("Creating shape");
-        Create(body);
-        LIL_LOG_TRACE("Creating shape DONE");
-    }
-    else {
-        bool type_changed = false;
-        if (rc::SphereShape* sphere = dynamic_cast<rc::SphereShape*>(m_collider->getCollisionShape())) {
-            if (m_type == ::CollisionShapeType::SPHERE) {
-                LIL_LOG_TRACE("Updating sphere shape params");
-                sphere->setRadius(m_radius);
-            }
-            else type_changed = true;
-        }
-        else if (rc::BoxShape* box = dynamic_cast<rc::BoxShape*>(m_collider->getCollisionShape())) {
-            if (m_type == ::CollisionShapeType::BOX) {
-                LIL_LOG_TRACE("Updating box shape params");
-                box->setHalfExtents(RcVector3(m_half_extends));
-            }
-            else type_changed = true;
-        }
-        else if (rc::HeightFieldShape* heightmap = dynamic_cast<rc::HeightFieldShape*>(m_collider->getCollisionShape())) {
-            if (m_type == ::CollisionShapeType::HEIGHTMAP) {
-                LIL_LOG_TRACE("Updating heightmap shape params");
-                heightmap->setScale(RcVector3(m_map_size*Vector3{1.0f/128.0f, 1.0f/20.0f, 1.0f/128.0f}));
-                LIL_LOG_TRACE("Updating heightmap shape params DONE");
-            }
-            else type_changed = true;
-        }
+    Transform t = GetTransform();
+    t.translation = RlVector3(bi.GetPosition(m_body_id));
+    t.rotation = RlQuat(bi.GetRotation(m_body_id));
+    SetTransform(t);
 
-        if (type_changed) {
-            LIL_LOG_TRACE("Shape type changed");
-            Destroy();
-            Create(body);
-        }
-        else if (m_collider) {
-            LIL_LOG_TRACE("Updating collider local transform");
-            std::cout << m_collider << std::endl;
-            std::cout << m_collider->getBody() << std::endl;
-            std::cout << m_collider->getCollisionShape() << std::endl;
-            if (m_type != ::CollisionShapeType::HEIGHTMAP) {
-                m_collider->setLocalToBodyTransform(rc::Transform(RcVector3(m_local_position), RcQuaternion(m_local_rotation)));
-            }
-            LIL_LOG_TRACE("Updating collider local transform DONE");
-        }
-    }
+    Transform actorWorld = actor.GetTransform();
+    actorWorld.rotation = QuaternionMultiply(m_transform.rotation, QuaternionInvert(m_local_transform.rotation));
+    actorWorld.translation = m_transform.translation - m_local_transform.translation;
+    actorWorld.scale = GetScale() / Local().scale;
+    actor.SetTransform(actorWorld);
+
+    m_linear_velocity = RlVector3(bi.GetLinearVelocity(m_body_id));
+    m_angular_velocity = RlVector3(bi.GetAngularVelocity(m_body_id));
 }

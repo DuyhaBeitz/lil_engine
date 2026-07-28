@@ -8,6 +8,9 @@
 #include <cassert>
 #include <iostream>
 #include <raylib.h>
+#include <unordered_map>
+#include <functional>
+
 #include "refl.hpp"
 
 class TypeInfo;

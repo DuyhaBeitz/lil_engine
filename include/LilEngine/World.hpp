@@ -9,7 +9,7 @@
 
 // #include "Pawn.hpp"
 // #include "Character.hpp"
-#include "Heightmap.hpp"
+//#include "Heightmap.hpp"
 
 enum class RenderMode : uint8_t {
     Unlit = 0,

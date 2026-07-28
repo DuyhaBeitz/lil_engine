@@ -4,7 +4,7 @@
 #include <raymath.h>
 #include <memory>
 #include "Log.hpp"
-#include "ReactPhysics3DWrapper.hpp"
+//#include "ReactPhysics3DWrapper.hpp"
 #include "utils/ColorHelper.hpp"
 
 inline std::string NameFromPath(std::string filename) {
