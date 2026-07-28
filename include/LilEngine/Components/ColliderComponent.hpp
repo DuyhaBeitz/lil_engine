@@ -55,6 +55,7 @@ public:
 
     JPH::BodyID GetBodyID() const { return m_body_id; }
     void RebuildShapes();
+    CollisionShape* AddShape(CollisionShape shape);
 
     virtual void SimulationUpdate(Actor& actor) override;
 

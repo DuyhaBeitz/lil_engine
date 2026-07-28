@@ -1,13 +1,13 @@
 {
     "value0": {
-        "value0": false,
+        "value0": true,
         "value1": 1.0,
         "value2": true,
         "value3": 0,
         "components": [
             {
                 "key": {
-                    "value0": "4ca1a07b-7fba-46fd-b389-82779e36fd48"
+                    "value0": "8b1e0972-e650-40bf-85d4-8df41582abfb"
                 },
                 "value": {
                     "polymorphic_id": 2147483649,
@@ -19,21 +19,21 @@
                                 "value0": {
                                     "value0": {
                                         "value0": {
-                                            "value0": "4ca1a07b-7fba-46fd-b389-82779e36fd48"
+                                            "value0": "8b1e0972-e650-40bf-85d4-8df41582abfb"
                                         }
                                     },
                                     "value1": {
                                         "value0": {
                                             "value0": {
-                                                "value0": 0.0,
-                                                "value1": 19.0,
-                                                "value2": 0.0
+                                                "value0": -0.02773919701576233,
+                                                "value1": 9.215938568115235,
+                                                "value2": -0.02153947949409485
                                             },
                                             "value1": {
-                                                "value0": 0.0,
-                                                "value1": 0.0,
-                                                "value2": 0.0,
-                                                "value3": 1.0
+                                                "value0": 0.048132773488759997,
+                                                "value1": -0.009016349911689759,
+                                                "value2": -0.030927177518606187,
+                                                "value3": 0.9983213543891907
                                             },
                                             "value2": {
                                                 "value0": 1.0,
@@ -92,14 +92,14 @@
                             ],
                             "value2": 2,
                             "value3": {
-                                "value0": 0.0,
-                                "value1": -26.517040252685548,
-                                "value2": 0.0
+                                "value0": -1.315138433710672e-7,
+                                "value1": -1.9431837797164918,
+                                "value2": 2.1166304264852444e-8
                             },
                             "value4": {
-                                "value0": 0.0,
-                                "value1": 0.0,
-                                "value2": 0.0
+                                "value0": 2.6054472357373016e-8,
+                                "value1": -2.5473099185546745e-8,
+                                "value2": 1.0582859744090456e-7
                             }
                         }
                     }
@@ -107,7 +107,7 @@
             },
             {
                 "key": {
-                    "value0": "0b429bff-89ed-43fb-a2ac-1e9084d36980"
+                    "value0": "c95dee38-89d4-45f8-8594-0b2436cd9959"
                 },
                 "value": {
                     "polymorphic_id": 2147483650,
@@ -119,21 +119,21 @@
                                 "value0": {
                                     "value0": {
                                         "value0": {
-                                            "value0": "0b429bff-89ed-43fb-a2ac-1e9084d36980"
+                                            "value0": "c95dee38-89d4-45f8-8594-0b2436cd9959"
                                         }
                                     },
                                     "value1": {
                                         "value0": {
                                             "value0": {
-                                                "value0": 0.0,
-                                                "value1": 19.0,
-                                                "value2": 0.0
+                                                "value0": -0.02773919701576233,
+                                                "value1": 9.215938568115235,
+                                                "value2": -0.02153947949409485
                                             },
                                             "value1": {
-                                                "value0": 0.0,
-                                                "value1": 0.0,
-                                                "value2": 0.0,
-                                                "value3": 1.0
+                                                "value0": 0.048132773488759997,
+                                                "value1": -0.009016349911689759,
+                                                "value2": -0.030927177518606187,
+                                                "value3": 0.9983213543891907
                                             },
                                             "value2": {
                                                 "value0": 1.0,
@@ -169,68 +169,7 @@
             },
             {
                 "key": {
-                    "value0": "1b67fb03-bc2f-438a-b84f-3f0fe6a28378"
-                },
-                "value": {
-                    "polymorphic_id": 2,
-                    "ptr_wrapper": {
-                        "valid": 1,
-                        "data": {
-                            "value0": {
-                                "value0": {
-                                    "value0": {
-                                        "value0": {
-                                            "value0": "1b67fb03-bc2f-438a-b84f-3f0fe6a28378"
-                                        }
-                                    },
-                                    "value1": {
-                                        "value0": {
-                                            "value0": {
-                                                "value0": -64.0,
-                                                "value1": 0.0,
-                                                "value2": -64.0
-                                            },
-                                            "value1": {
-                                                "value0": 0.0,
-                                                "value1": 0.0,
-                                                "value2": 0.0,
-                                                "value3": 1.0
-                                            },
-                                            "value2": {
-                                                "value0": 128.0,
-                                                "value1": 4.0,
-                                                "value2": 128.0
-                                            }
-                                        }
-                                    }
-                                },
-                                "value1": {
-                                    "value0": {
-                                        "value0": 0.0,
-                                        "value1": 0.0,
-                                        "value2": 0.0
-                                    },
-                                    "value1": {
-                                        "value0": 0.0,
-                                        "value1": 0.0,
-                                        "value2": 0.0,
-                                        "value3": 1.0
-                                    },
-                                    "value2": {
-                                        "value0": 1.0,
-                                        "value1": 1.0,
-                                        "value2": 1.0
-                                    }
-                                }
-                            },
-                            "value1": "Heightmap_heightmap.png"
-                        }
-                    }
-                }
-            },
-            {
-                "key": {
-                    "value0": "04b997b5-6de3-4e51-8ef1-403fe9cc31fa"
+                    "value0": "da15a219-5b6c-4a10-82de-e471acdc1089"
                 },
                 "value": {
                     "polymorphic_id": 1,
@@ -241,15 +180,15 @@
                                 "value0": {
                                     "value0": {
                                         "value0": {
-                                            "value0": "04b997b5-6de3-4e51-8ef1-403fe9cc31fa"
+                                            "value0": "da15a219-5b6c-4a10-82de-e471acdc1089"
                                         }
                                     },
                                     "value1": {
                                         "value0": {
                                             "value0": {
-                                                "value0": -64.0,
+                                                "value0": 0.0,
                                                 "value1": 0.0,
-                                                "value2": -64.0
+                                                "value2": 0.0
                                             },
                                             "value1": {
                                                 "value0": 0.0,
@@ -288,9 +227,9 @@
                                 {
                                     "value0": 2,
                                     "value1": {
-                                        "value0": 64.0,
+                                        "value0": 0.0,
                                         "value1": 0.0,
-                                        "value2": 64.0
+                                        "value2": 0.0
                                     },
                                     "value2": {
                                         "value0": 0.0,
@@ -326,12 +265,73 @@
                         }
                     }
                 }
+            },
+            {
+                "key": {
+                    "value0": "2e1aaad1-7d54-4bc5-852f-47917c82938f"
+                },
+                "value": {
+                    "polymorphic_id": 2,
+                    "ptr_wrapper": {
+                        "valid": 1,
+                        "data": {
+                            "value0": {
+                                "value0": {
+                                    "value0": {
+                                        "value0": {
+                                            "value0": "2e1aaad1-7d54-4bc5-852f-47917c82938f"
+                                        }
+                                    },
+                                    "value1": {
+                                        "value0": {
+                                            "value0": {
+                                                "value0": -64.0,
+                                                "value1": 0.0,
+                                                "value2": -64.0
+                                            },
+                                            "value1": {
+                                                "value0": 0.0,
+                                                "value1": 0.0,
+                                                "value2": 0.0,
+                                                "value3": 1.0
+                                            },
+                                            "value2": {
+                                                "value0": 128.0,
+                                                "value1": 4.0,
+                                                "value2": 128.0
+                                            }
+                                        }
+                                    }
+                                },
+                                "value1": {
+                                    "value0": {
+                                        "value0": -64.0,
+                                        "value1": 0.0,
+                                        "value2": -64.0
+                                    },
+                                    "value1": {
+                                        "value0": 0.0,
+                                        "value1": 0.0,
+                                        "value2": 0.0,
+                                        "value3": 1.0
+                                    },
+                                    "value2": {
+                                        "value0": 1.0,
+                                        "value1": 1.0,
+                                        "value2": 1.0
+                                    }
+                                }
+                            },
+                            "value1": "Heightmap_heightmap.png"
+                        }
+                    }
+                }
             }
         ],
         "actors": [
             {
                 "key": {
-                    "value0": "549a62b4-59bb-468c-9a3a-6d8e12f6faab"
+                    "value0": "c498683f-c403-43c2-8934-9677c4981e6a"
                 },
                 "value": {
                     "polymorphic_id": 1073741824,
@@ -341,21 +341,21 @@
                             "value0": {
                                 "value0": {
                                     "value0": {
-                                        "value0": "549a62b4-59bb-468c-9a3a-6d8e12f6faab"
+                                        "value0": "c498683f-c403-43c2-8934-9677c4981e6a"
                                     }
                                 },
                                 "value1": {
                                     "value0": {
                                         "value0": {
-                                            "value0": 0.0,
-                                            "value1": 19.0,
-                                            "value2": 0.0
+                                            "value0": -0.02773919701576233,
+                                            "value1": 9.215938568115235,
+                                            "value2": -0.02153947949409485
                                         },
                                         "value1": {
-                                            "value0": 0.0,
-                                            "value1": 0.0,
-                                            "value2": 0.0,
-                                            "value3": 1.0
+                                            "value0": 0.048132773488759997,
+                                            "value1": -0.009016349911689759,
+                                            "value2": -0.030927177518606187,
+                                            "value3": 0.9983213543891907
                                         },
                                         "value2": {
                                             "value0": 1.0,
@@ -367,10 +367,10 @@
                             },
                             "value1": [
                                 {
-                                    "value0": "0b429bff-89ed-43fb-a2ac-1e9084d36980"
+                                    "value0": "c95dee38-89d4-45f8-8594-0b2436cd9959"
                                 },
                                 {
-                                    "value0": "4ca1a07b-7fba-46fd-b389-82779e36fd48"
+                                    "value0": "8b1e0972-e650-40bf-85d4-8df41582abfb"
                                 }
                             ]
                         }
@@ -379,48 +379,52 @@
             },
             {
                 "key": {
-                    "value0": "1ad3d99c-cae0-468a-b1da-2ce080fb9b13"
+                    "value0": "b5a41343-7b01-45cc-9fe1-14c40eba8647"
                 },
                 "value": {
-                    "polymorphic_id": 1073741824,
+                    "polymorphic_id": 2147483651,
+                    "polymorphic_name": "Heightmap",
                     "ptr_wrapper": {
                         "valid": 1,
                         "data": {
                             "value0": {
                                 "value0": {
                                     "value0": {
-                                        "value0": "1ad3d99c-cae0-468a-b1da-2ce080fb9b13"
-                                    }
-                                },
-                                "value1": {
-                                    "value0": {
                                         "value0": {
-                                            "value0": -64.0,
-                                            "value1": 0.0,
-                                            "value2": -64.0
-                                        },
-                                        "value1": {
-                                            "value0": 0.0,
-                                            "value1": 0.0,
-                                            "value2": 0.0,
-                                            "value3": 1.0
-                                        },
-                                        "value2": {
-                                            "value0": 128.0,
-                                            "value1": 4.0,
-                                            "value2": 128.0
+                                            "value0": "b5a41343-7b01-45cc-9fe1-14c40eba8647"
+                                        }
+                                    },
+                                    "value1": {
+                                        "value0": {
+                                            "value0": {
+                                                "value0": 0.0,
+                                                "value1": 0.0,
+                                                "value2": 0.0
+                                            },
+                                            "value1": {
+                                                "value0": 0.0,
+                                                "value1": 0.0,
+                                                "value2": 0.0,
+                                                "value3": 1.0
+                                            },
+                                            "value2": {
+                                                "value0": 128.0,
+                                                "value1": 4.0,
+                                                "value2": 128.0
+                                            }
                                         }
                                     }
-                                }
-                            },
-                            "value1": [
-                                {
-                                    "value0": "04b997b5-6de3-4e51-8ef1-403fe9cc31fa"
                                 },
-                                {
-                                    "value0": "1b67fb03-bc2f-438a-b84f-3f0fe6a28378"
-                                }
-                            ]
+                                "value1": [
+                                    {
+                                        "value0": "2e1aaad1-7d54-4bc5-852f-47917c82938f"
+                                    },
+                                    {
+                                        "value0": "da15a219-5b6c-4a10-82de-e471acdc1089"
+                                    }
+                                ]
+                            },
+                            "value1": "heightmap.png"
                         }
                     }
                 }

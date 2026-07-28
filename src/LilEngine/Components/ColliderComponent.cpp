@@ -88,7 +88,12 @@ void ColliderComponent::RebuildShapes() {
     }    
 }
 
-void ColliderComponent::OnLayoutUpdate() {
+CollisionShape *ColliderComponent::AddShape(CollisionShape shape) {
+    m_shapes.emplace_back(shape);
+    return &(m_shapes.back());
+}
+void ColliderComponent::OnLayoutUpdate()
+{
     if (m_body_id.IsInvalid()) return;
 
     auto& bi = Lil::Physics().GetBodyInterface();
