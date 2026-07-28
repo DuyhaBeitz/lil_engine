@@ -22,22 +22,20 @@ public:
     void ModelUnload(std::string key);
     void ModelUnloadAll();
 
-    Texture2D* GetTexture(std::string key) {
-        if (m_textures.find(key) != m_textures.end()) return &m_textures[key];
-        else return nullptr;
-    }
+    bool ModelPreviewExists(std::string key);
+    void UnloadModelPreviews();
+    void UpdateModelPreviews();
 
-    Model* GetModel(std::string key) {
-        if (m_models.find(key) != m_models.end()) return &m_models[key];
-        else {
-            return nullptr;
-        };
-    }
+    Texture2D* GetTexture(std::string key);
+    Model* GetModel(std::string key);
+    RenderTexture2D* GetModelPreview(std::string key);
 
     std::unordered_map<std::string, Texture2D>& Textures() { return m_textures; }
     std::unordered_map<std::string, Model>& Models() { return m_models; }
 
 private:
     std::unordered_map<std::string, Texture2D> m_textures;
+
     std::unordered_map<std::string, Model> m_models;
+    std::unordered_map<std::string, RenderTexture2D> m_model_previews;
 };

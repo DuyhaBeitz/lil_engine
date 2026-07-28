@@ -139,7 +139,7 @@ void Lil::Editor::DrawInspector() {
 
 void Lil::Editor::Update() {
     if (!m_cursor_enabled) {UpdateCamera(&m_camera, CAMERA_FREE);}
-    Lil::GetWorld().Update();
+    Lil::Engine::Get().Update();
 
     if (IsKeyPressed(TOGGLE_SIMULATION_KEY)) {
         Lil::GetWorld().ToggleSimulationGoing();
@@ -203,7 +203,10 @@ void Lil::Editor::DrawResources() {
         }
     }
 
+    Lil::Resources().UpdateModelPreviews();
     for (auto& [key, model] : Lil::Resources().Models()) {
+        rlImGuiImageRenderTexture(Lil::Resources().GetModelPreview(key));
+        ImGui::SameLine();
         ImGui::Text(key.c_str());
     }
     ImGui::End();
@@ -219,6 +222,8 @@ void Lil::Editor::DrawResources() {
     }
 
     for (auto& [key, texture] : Lil::Resources().Textures()) {
+        rlImGuiImage(&texture);
+        ImGui::SameLine();
         if (ImGui::CollapsingHeader(key.c_str())) {
             std::string heightmap_name = HeightmapNameFromImageName(key);
             if (!Lil::Resources().ModelExists(heightmap_name)) {

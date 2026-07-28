@@ -59,7 +59,7 @@ int main() {
         }
         else {
             UpdateCamera(&camera, CAMERA_FREE);
-            Lil::GetWorld().Update();
+            Lil::Engine::Get().Update();
 
             BeginDrawing();
                 ClearBackground(RAYBLACK);

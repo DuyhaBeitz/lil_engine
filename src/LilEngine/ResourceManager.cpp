@@ -1,12 +1,21 @@
 #include "ResourceManager.hpp"
+#include <set>
+
+Camera3D model_preview_camera = {
+    .position = (Vector3){ 10.0f,10.0f, 10.0f },  // Camera position
+    .target = (Vector3){ 0.0f, 0.0f, 0.0f },      // Camera looking at point
+    .up = (Vector3){ 0.0f, 1.0f, 0.0f },          // Camera up vector (rotation towards target)
+    .fovy = 45.0f,                                // Camera field-of-view Y
+    .projection = CAMERA_PERSPECTIVE              // Camera mode type
+};
 
 void ResourceManager::Unload() {
+    UnloadModelPreviews();
     ModelUnloadAll();
     TextureUnloadAll();
 }
 
-void ResourceManager::TextureAdd(std::string key, Texture2D texture)
-{
+void ResourceManager::TextureAdd(std::string key, Texture2D texture) {
     if (m_textures.find(key) != m_textures.end()) {
         UnloadTexture(m_textures[key]);
     }
@@ -74,4 +83,64 @@ void ResourceManager::ModelUnloadAll() {
         UnloadModel(model);
     }
     m_models.clear();
+}
+
+Texture2D *ResourceManager::GetTexture(std::string key) {
+    if (m_textures.find(key) != m_textures.end()) return &m_textures[key];
+    else return nullptr;
+}
+
+Model *ResourceManager::GetModel(std::string key) {
+    if (ModelExists(key)) return &m_models[key];
+    else {
+        return nullptr;
+    };
+}
+
+bool ResourceManager::ModelPreviewExists(std::string key) {
+    return m_model_previews.find(key) != m_model_previews.end();
+}
+
+void ResourceManager::UnloadModelPreviews() {
+    for (auto& [key, preview] : m_model_previews) {
+        UnloadRenderTexture(preview);
+    }
+    m_model_previews.clear();
+}
+
+void ResourceManager::UpdateModelPreviews() {
+    std::set<std::string> keys_to_remove = {};
+    for (auto& [key, preview] : m_model_previews) {
+        if (!ModelExists(key)) {
+            UnloadRenderTexture(preview);
+            keys_to_remove.insert(key);
+        }
+    }
+    for (auto& key : keys_to_remove) {
+        m_model_previews.erase(key);
+    }
+
+    for (auto& [key, model] : m_models) {
+        if (!ModelPreviewExists(key)) {
+            m_model_previews[key] = LoadRenderTexture(100, 100);
+        }
+        
+        BoundingBox bb = GetModelBoundingBox(m_models.at(key));
+        float diam = Vector3Length(bb.max - bb.min);
+        
+        model_preview_camera.position = Vector3{diam*cosf(GetTime()), diam, diam*sinf(GetTime())};
+        BeginTextureMode(m_model_previews.at(key));
+            ClearBackground(RAYBLACK);
+            BeginMode3D(model_preview_camera);
+                DrawModel(m_models.at(key), Vector3{0.0f, 0.0f, 0.0f}, 1.0f, WHITE);
+            EndMode3D();
+        EndTextureMode();
+    }
+}
+
+RenderTexture2D *ResourceManager::GetModelPreview(std::string key) {
+    if (ModelPreviewExists(key)) return &m_model_previews[key];
+    else {
+        return nullptr;
+    };
 }

@@ -16,6 +16,7 @@ namespace Lil {
         static Engine& Get();
         
         void Init();
+        void Update();
 
         PhysicsSystem& GetPhysics() { return m_physics; }
         ResourceManager& GetResources() { return m_resources; }

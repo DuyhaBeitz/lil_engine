@@ -8,3 +8,8 @@ Lil::Engine &Lil::Engine::Get() {
 void Lil::Engine::Init() {
     Physics().Init();
 }
+
+void Lil::Engine::Update() {
+    GetWorld().Update();
+    GetResources().UpdateModelPreviews();
+}
