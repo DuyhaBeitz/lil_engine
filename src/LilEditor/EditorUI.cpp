@@ -388,6 +388,7 @@ void Lil::UIStyle::DrawCollisionShapeField(const std::string &name, CollisionSha
 
             case ::CollisionShapeType::HEIGHTMAP:
                 DrawTextureKeyField("heightmap texture key", &(value->m_heightmap_texture_key));
+                DrawVector3Field("map size", &(value->m_map_size));
                 break;
 
             default:

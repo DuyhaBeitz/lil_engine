@@ -15,14 +15,14 @@ JPH::RefConst<JPH::Shape> CollisionShape::CreateJoltShape() const {
         case CollisionShapeType::BOX:
             return new JPH::BoxShape(JphVector3(m_half_extends));
             
-        //case CollisionShapeType::HEIGHTMAP: {
-            //if (Lil::Resources().TextureExists(m_heightmap_texture_key)) {
-                // In Jolt, provide a float array of height samples to HeightFieldShapeSettings
-                // Example skeleton of heightmap setup:
-                // JPH::HeightFieldShapeSettings settings(samples.data(), offset, scale, sampleCount);
-                // return settings.Create().Get();
-            //}
-            //break;
+        case CollisionShapeType::HEIGHTMAP:
+            if (Lil::Resources().TextureExists(m_heightmap_texture_key)) {
+                Image image = LoadImageFromTexture(*Lil::Resources().GetTexture(m_heightmap_texture_key));
+                auto res = GetHeightmapShapeSettings(image, m_map_size).Create().Get();
+                UnloadImage(image);
+                return res;
+            }
+            break;
     }
     return new JPH::SphereShape(0.5f); // Fallback
 }
@@ -30,7 +30,6 @@ JPH::RefConst<JPH::Shape> CollisionShape::CreateJoltShape() const {
 ColliderComponent::ColliderComponent(BodyType body_type) : Component(), m_type(body_type) {
     auto& body_interface = Lil::Physics().GetBodyInterface();
     
-    // Create a default empty compound shape
     JPH::StaticCompoundShapeSettings compound_settings;
 
     compound_settings.AddShape(
@@ -71,7 +70,7 @@ ColliderComponent::~ColliderComponent() {
 }
 
 void ColliderComponent::RebuildShapes() {
-    if (m_body_id.IsInvalid() || m_shapes.empty()) return;
+    if (m_body_id.IsInvalid() || m_shapes.empty() || IsKeyDown(KEY_B)) return;
 
     // In Jolt, combine all component shapes into a compound shape
     JPH::StaticCompoundShapeSettings compound_settings;
@@ -93,11 +92,19 @@ void ColliderComponent::OnLayoutUpdate() {
     if (m_body_id.IsInvalid()) return;
 
     auto& bi = Lil::Physics().GetBodyInterface();
+
+    JPH::EMotionType motion_type = GetJoltMotionType(m_type);
+    JPH::ObjectLayer layer = (motion_type == JPH::EMotionType::Static) ? JPH::Layers::NON_MOVING : JPH::Layers::MOVING;
+
+    bi.SetObjectLayer(m_body_id, layer);
     bi.SetPositionAndRotation(m_body_id, JphVector3(GetTransform().translation), JphQuat(GetTransform().rotation), JPH::EActivation::Activate);
     bi.SetMotionType(m_body_id, GetJoltMotionType(m_type), JPH::EActivation::Activate);
-    bi.SetLinearVelocity(m_body_id, JphVector3(m_linear_velocity));
-    bi.SetAngularVelocity(m_body_id, JphVector3(m_angular_velocity));
-
+    
+    if (motion_type != JPH::EMotionType::Static) {
+        bi.SetLinearVelocity(m_body_id, JphVector3(m_linear_velocity));
+        bi.SetAngularVelocity(m_body_id, JphVector3(m_angular_velocity));
+    }
+    
     RebuildShapes();
 }
 

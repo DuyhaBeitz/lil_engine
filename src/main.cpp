@@ -29,10 +29,10 @@ int main() {
 
     Lil::Engine().Get().Init();
 
-    // Lil::Resources().TextureAdd("assets/heightmap.png");
-    // Lil::Resources().ModelAdd("assets/Car.glb");
-    // Lil::Resources().ModelAdd("assets/Earth.glb");
-    // Lil::Resources().ModelAdd("assets/CesiumMan.glb");
+    Lil::Resources().TextureAdd("assets/heightmap.png");
+    Lil::Resources().ModelAdd("assets/Car.glb");
+    Lil::Resources().ModelAdd("assets/Earth.glb");
+    Lil::Resources().ModelAdd("assets/CesiumMan.glb");
 
     {
     // auto car = Lil::GetWorld().CreateActor<Actor>();
