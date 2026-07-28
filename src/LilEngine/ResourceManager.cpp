@@ -5,7 +5,7 @@ Camera3D model_preview_camera = {
     .position = (Vector3){ 10.0f,10.0f, 10.0f },  // Camera position
     .target = (Vector3){ 0.0f, 0.0f, 0.0f },      // Camera looking at point
     .up = (Vector3){ 0.0f, 1.0f, 0.0f },          // Camera up vector (rotation towards target)
-    .fovy = 45.0f,                                // Camera field-of-view Y
+    .fovy = 60.0f,                                // Camera field-of-view Y
     .projection = CAMERA_PERSPECTIVE              // Camera mode type
 };
 
