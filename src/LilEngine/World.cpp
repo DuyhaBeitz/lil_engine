@@ -11,7 +11,10 @@ void World::Clear() {
     m_update_ready = false;
 }
 
-void World::DestroyActor(uuids::uuid id) {
+std::unordered_map<uuids::uuid, std::unique_ptr<Actor>> &World::Actors() {return m_actors;}
+
+void World::DestroyActor(uuids::uuid id)
+{
     LIL_LOG_TRACE("Destroying actor");
     auto it = m_actors.find(id);
     if (it != m_actors.end()) {
@@ -57,7 +60,10 @@ Actor *World::PickActor(Vector2 screen_pos, int render_w, int render_h, Camera c
     return a;
 }
 
-void World::DestroyComponent(uuids::uuid id) {
+std::unordered_map<uuids::uuid, std::unique_ptr<Component>> &World::Components() {return m_components;}
+
+void World::DestroyComponent(uuids::uuid id)
+{
     LIL_LOG_TRACE("Destroying component");
     auto it = m_components.find(id);
     if (it != m_components.end()) {

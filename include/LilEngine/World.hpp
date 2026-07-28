@@ -68,6 +68,7 @@ public:
         return m_actors.at(id).get();
     }
 
+    std::unordered_map<uuids::uuid, std::unique_ptr<Actor>>& Actors();
     void DestroyActor(uuids::uuid id);
     void DestroyActor(Actor* actor);
     void DestroyAllActors();
@@ -110,6 +111,7 @@ public:
 
     Actor* PickActor(Vector2 screen_pos, int render_w, int render_h, Camera camera);
 
+    std::unordered_map<uuids::uuid, std::unique_ptr<Component>>& Components();
     void DestroyComponent(uuids::uuid id);
     void DestroyComponent(Component* component);
     void DestroyAllComponents();

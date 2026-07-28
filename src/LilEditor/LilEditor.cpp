@@ -298,7 +298,7 @@ void Lil::Editor::Draw() {
 
     ImGui::End();
 
-    ImGui::Begin("Actors");
+    ImGui::Begin("Creation");
     for (auto& [name, ti] : Lil::Reflection::Get().Types()) {
         if (ti->IsA<Actor>()) {
             const char* typeName = name.c_str();
@@ -312,6 +312,17 @@ void Lil::Editor::Draw() {
                 }
             }
         }        
+    }
+    ImGui::End();
+
+    ImGui::Begin("Actors");
+    for (auto& [id, actor] : Lil::GetWorld().Actors()) {
+        std::string typeName = actor->GetTypeInfo().Name();
+
+        bool isSelected = (m_selected == actor.get());
+        if (ImGui::Selectable((typeName+"__"+actor->GetIDString()).c_str(), isSelected)) {
+            m_selected = actor.get();
+        }
     }
     ImGui::End();
 
