@@ -1,11 +1,8 @@
 #include "Physics.hpp"
 
 void PhysicsSystem::Init() {
-    // Register allocation hook. In this example we'll just let Jolt use malloc / free but you can override these if you want (see Memory.h).
-	// This needs to be done before any other Jolt function is called.
 	JPH::RegisterDefaultAllocator();
 
-	// Install trace and assert callbacks
 	JPH::Trace = TraceImpl;
 	JPH_IF_ENABLE_ASSERTS(JPH::AssertFailed = AssertFailedImpl;)
 

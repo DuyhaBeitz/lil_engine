@@ -461,5 +461,6 @@ inline void ListContainerInfo<T>::ForEach(void *c, std::function<void(size_t, vo
     size_t i = 0;
     for (auto& element : l) {
         fn(i, static_cast<void*>(&element));
+        i++;
     }
 }

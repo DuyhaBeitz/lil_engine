@@ -347,7 +347,7 @@ void Lil::UIStyle::DrawCollisionShapeField(const std::string &name, CollisionSha
         ImGui::PushStyleColor(ImGuiCol_Header, COLOR_HEADER_BG);
         ImGui::PushStyleColor(ImGuiCol_HeaderHovered, COLOR_HEADER_BG_HOVER);
         
-        std::string compositeHeaderName = std::string(ICON_FA_ARROWS_UP_DOWN_LEFT_RIGHT) + "  " + name  + " " + ICON_FA_LOCK;
+        std::string compositeHeaderName = name;
         bool isOpen = ImGui::CollapsingHeader(compositeHeaderName.c_str());
         ImGui::PopStyleColor(2);
 

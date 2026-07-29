@@ -81,7 +81,7 @@ bool Actor::IsComponentAttached(const Component *component) const {
 }
 
 void Actor::CreateComponentFromId(uuids::uuid id) {
-    if (Component* component = Lil::GetWorld().GetComponent(id)) {
+    if (Component* component = Lil::World().GetComponent(id)) {
         m_components.push_back(component);
     }
 }

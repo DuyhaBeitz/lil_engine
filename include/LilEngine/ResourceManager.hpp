@@ -4,6 +4,12 @@
 #include <unordered_map>
 
 class ResourceManager {
+private:
+    std::unordered_map<std::string, Texture2D> m_textures;
+
+    std::unordered_map<std::string, Model> m_models;
+    std::unordered_map<std::string, RenderTexture2D> m_model_previews;
+
 public:
 
     void Unload();
@@ -32,10 +38,4 @@ public:
 
     std::unordered_map<std::string, Texture2D>& Textures() { return m_textures; }
     std::unordered_map<std::string, Model>& Models() { return m_models; }
-
-private:
-    std::unordered_map<std::string, Texture2D> m_textures;
-
-    std::unordered_map<std::string, Model> m_models;
-    std::unordered_map<std::string, RenderTexture2D> m_model_previews;
 };

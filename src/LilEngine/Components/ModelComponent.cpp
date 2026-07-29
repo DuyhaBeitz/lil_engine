@@ -12,7 +12,7 @@ void ModelComponent::Draw() {
     Vector3 axis = GetAxisAngle(angle);
     Model* m = GetModel();
     if (m) {
-    switch (Lil::GetWorld().GetRenderMode()) {
+    switch (Lil::World().GetRenderMode()) {
         case RenderMode::Unlit:
             DrawModelEx(*m, GetPosition(), axis, angle*RAD2DEG, GetScale(), WHITE);
             break;

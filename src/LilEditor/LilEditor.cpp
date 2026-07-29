@@ -61,8 +61,8 @@ void Lil::Editor::DrawTarget() {
         ClearBackground(RAYBLACK);
         
         BeginMode3D(m_camera);
-            Lil::GetWorld().Draw();
-            if (Lil::GetWorld().m_physics_debug) Lil::GetWorld().DebugDraw();
+            Lil::World().Draw();
+            if (Lil::World().m_physics_debug) Lil::World().DebugDraw();
             if (m_selected) {
                 Transform t = m_selected->GetTransform();
                 DrawGizmo3D(m_gizmo_mode | m_gizmo_space, &t);
@@ -94,7 +94,7 @@ void Lil::Editor::DrawInspector() {
             ImGui::PushID(component);
             if (ImGui::SmallButton(ICON_FA_TRASH)) {
                 m_selected->DeattachComponent(component);
-                Lil::GetWorld().DestroyComponent(component);
+                Lil::World().DestroyComponent(component);
                 ImGui::PopID();
                 continue;
             }
@@ -120,7 +120,7 @@ void Lil::Editor::DrawInspector() {
                     }
                     
                     if (!exists && ImGui::MenuItem(name.c_str())) {
-                        Component* component = Lil::GetWorld().CreateComponent(ti);
+                        Component* component = Lil::World().CreateComponent(ti);
                         if (component) {
                             m_selected->AttachComponent(component);
                         }                        
@@ -142,10 +142,10 @@ void Lil::Editor::Update() {
     Lil::Engine::Get().Update();
 
     if (IsKeyPressed(TOGGLE_SIMULATION_KEY)) {
-        Lil::GetWorld().ToggleSimulationGoing();
+        Lil::World().ToggleSimulationGoing();
     }
     if (IsKeyPressed(TOGGLE_DEBUG_KEY)) {
-        Lil::GetWorld().m_physics_debug = !Lil::GetWorld().m_physics_debug;
+        Lil::World().m_physics_debug = !Lil::World().m_physics_debug;
     }
 
     if (IsKeyPressed(TOGGLE_FULLSCREEN_KEY)) {
@@ -166,7 +166,7 @@ void Lil::Editor::HandleViewportInput() {
     if (IsKeyPressed(KEY_THREE)) m_gizmo_mode = GIZMO_SCALE;
 
     if (m_cursor_enabled && IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-        Actor* pick = Lil::GetWorld().PickActor(GetMousePosition(), m_render_target.texture.width, m_render_target.texture.height, m_camera);
+        Actor* pick = Lil::World().PickActor(GetMousePosition(), m_render_target.texture.width, m_render_target.texture.height, m_camera);
         if (pick) m_selected = pick;
     }
 }
@@ -257,15 +257,11 @@ void Lil::Editor::Draw() {
 
     ImGui::SameLine();
     if (ImGui::Button("save")) {
-        std::ofstream os("out.json");
-        ArchiveOut a_out(os);
-        a_out(Lil::GetWorld());
+        Lil::SceneManager().SaveScene("out.json");
     }
     ImGui::SameLine();
     if (ImGui::Button("load")) {
-        std::ifstream is("out.json");
-        ArchiveIn a_in(is);
-        a_in(Lil::GetWorld());
+        Lil::SceneManager().LoadScene("out.json");
         m_selected = nullptr;
     }
     static const std::unordered_map<std::string, RenderMode> renderModeMap = {
@@ -283,16 +279,14 @@ void Lil::Editor::Draw() {
         }
     }
 
-    ImGui::SameLine();
-    if (ImGui::BeginCombo("Render Mode", currentName.c_str()))
-    {
+    if (ImGui::BeginCombo("Render Mode", currentName.c_str())) {
         for (const auto& [name, mode] : renderModeMap)
         {
             bool isSelected = (mode == currentMode);
             if (ImGui::Selectable(name.c_str(), isSelected))
             {
                 currentMode = mode;
-                Lil::GetWorld().SetRenderMode(mode);
+                Lil::World().SetRenderMode(mode);
             }
             if (isSelected) {
                 ImGui::SetItemDefaultFocus();
@@ -310,7 +304,7 @@ void Lil::Editor::Draw() {
 
             if (ImGui::Selectable(typeName, false, ImGuiSelectableFlags_AllowDoubleClick)) {
                 if (ImGui::IsMouseDoubleClicked(0)) {
-                    Actor* actor = Lil::GetWorld().CreateActor(ti);
+                    Actor* actor = Lil::World().CreateActor(ti);
                     if (actor) {
                         m_selected = actor;
                     }
@@ -321,7 +315,7 @@ void Lil::Editor::Draw() {
     ImGui::End();
 
     ImGui::Begin("Actors");
-    for (auto& [id, actor] : Lil::GetWorld().Actors()) {
+    for (auto& [id, actor] : Lil::World().Actors()) {
         std::string typeName = actor->GetTypeInfo().Name();
 
         bool isSelected = (m_selected == actor.get());

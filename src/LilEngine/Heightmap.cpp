@@ -33,12 +33,12 @@ void Heightmap::TryInitialize() {
 
     // components might be already loaded
     if (!m_model) {
-        m_model = Lil::GetWorld().CreateComponent<ModelComponent>();
+        m_model = Lil::World().CreateComponent<ModelComponent>();
         AttachComponent(m_model);
     }
 
     if (!m_collider) {
-        m_collider = Lil::GetWorld().CreateComponent<ColliderComponent>(BodyType::STATIC);
+        m_collider = Lil::World().CreateComponent<ColliderComponent>(BodyType::STATIC);
         CollisionShape shape;
         shape.m_type = CollisionShapeType::HEIGHTMAP;
         m_shape = m_collider->AddShape(shape);
