@@ -70,7 +70,7 @@ ColliderComponent::~ColliderComponent() {
 }
 
 void ColliderComponent::RebuildShapes() {
-    if (m_body_id.IsInvalid() || m_shapes.empty() || IsKeyDown(KEY_B)) return;
+    if (m_body_id.IsInvalid() || m_shapes.empty()) return;
 
     // In Jolt, combine all component shapes into a compound shape
     JPH::StaticCompoundShapeSettings compound_settings;
