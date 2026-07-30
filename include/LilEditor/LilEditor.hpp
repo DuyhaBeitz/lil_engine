@@ -1,6 +1,7 @@
 #pragma once
 
 #include "LilEngine.hpp"
+#include "Notification.hpp"
 #include "EditorUI.hpp"
 
 #include "raygizmo.h"
@@ -44,6 +45,7 @@ namespace Lil {
         void Draw();
 
     private:
+        std::vector<Notification> m_notifications;
         Camera m_camera = {
             .position = (Vector3){ 10.0f,10.0f, 10.0f },  // Camera position
             .target = (Vector3){ 0.0f, 0.0f, 0.0f },      // Camera looking at point
@@ -73,5 +75,8 @@ namespace Lil {
         void DrawViewport();
 
         void DrawResources();
+
+        void Notify(const std::string& message, float duration = 3.0f, const ImVec4& color = ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+        void DrawNotifications();
     };
 }

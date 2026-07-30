@@ -14,18 +14,19 @@ Lil::Editor &Lil::Editor::Get() {
 #define TOGGLE_FULLSCREEN_KEY KEY_F11
 
 void Lil::Editor::LoadScene() {
-    const char* filename = "scene.json";
+    std::string filename = "scene.json";
     Lil::SceneManager().LoadScene(filename);
     m_selected = nullptr;
+    Notify("Loaded file: " + filename);
 }
 
 void Lil::Editor::SaveScene() {
-    const char* filename = "scene.json";
+    std::string filename = "scene.json";
     Lil::SceneManager().SaveScene(filename);
+    Notify("Saved file: " + filename);
 }
 
-void Lil::Editor::InitUI()
-{
+void Lil::Editor::InitUI() {
     rlImGuiBeginInitImGui();
     ImGui::StyleColorsDark();
 
@@ -63,40 +64,7 @@ void Lil::Editor::DrawMenuBar() {
             if (ImGui::MenuItem("Save Scene", "Ctrl+S")) SaveScene();
             ImGui::EndMenu();
         }
-    
-        static const std::unordered_map<std::string, RenderMode> renderModeMap = {
-            {"Unlit", RenderMode::Unlit},
-            {"Wireframe", RenderMode::Wireframe}
-        };
 
-        static RenderMode currentMode = RenderMode::Unlit;
-        
-        std::string currentName = "Unlit";
-        for (const auto& [name, mode] : renderModeMap) {
-            if (mode == currentMode) {
-                currentName = name;
-                break;
-            }
-        }
-
-        ImGui::SetNextItemWidth(300.0f);
-        if (ImGui::BeginCombo("##Render Mode", currentName.c_str())) {
-            for (const auto& [name, mode] : renderModeMap)
-            {
-                bool isSelected = (mode == currentMode);
-                if (ImGui::Selectable(name.c_str(), isSelected))
-                {
-                    currentMode = mode;
-                    Lil::World().SetRenderMode(mode);
-                }
-                if (isSelected) {
-                    ImGui::SetItemDefaultFocus();
-                }
-            }
-            ImGui::EndCombo();
-        }
-
-    
        ImGui::EndMainMenuBar();
     }
 }
@@ -253,6 +221,39 @@ void Lil::Editor::DrawViewport() {
         ImGui::PopStyleColor();
         ImGui::SameLine();
 
+
+        static const std::unordered_map<std::string, RenderMode> renderModeMap = {
+            {"Unlit", RenderMode::Unlit},
+            {"Wireframe", RenderMode::Wireframe}
+        };
+
+        static RenderMode currentMode = RenderMode::Unlit;
+        
+        std::string currentName = "Unlit";
+        for (const auto& [name, mode] : renderModeMap) {
+            if (mode == currentMode) {
+                currentName = name;
+                break;
+            }
+        }
+
+        ImGui::SetNextItemWidth(300.0f);
+        if (ImGui::BeginCombo("##Render Mode", currentName.c_str())) {
+            for (const auto& [name, mode] : renderModeMap)
+            {
+                bool isSelected = (mode == currentMode);
+                if (ImGui::Selectable(name.c_str(), isSelected))
+                {
+                    currentMode = mode;
+                    Lil::World().SetRenderMode(mode);
+                }
+                if (isSelected) {
+                    ImGui::SetItemDefaultFocus();
+                }
+            }
+            ImGui::EndCombo();
+        }
+
         ImGui::SameLine(ImGui::GetWindowWidth() - 230.0f);
         ImGui::Text("FPS: %d", GetFPS());
 
@@ -324,6 +325,60 @@ void Lil::Editor::DrawResources() {
     ImGui::End();
 }
 
+void Lil::Editor::Notify(const std::string &message, float duration, const ImVec4 &color) {
+    if (m_notifications.size() > 5) m_notifications.erase(m_notifications.begin());
+    m_notifications.emplace_back(message, duration, color);
+}
+
+void Lil::Editor::DrawNotifications() {
+    if (m_notifications.empty()) return;
+
+    ImGuiViewport* viewport = ImGui::GetMainViewport();
+    ImVec2 screenPos = ImVec2(viewport->Size.x - 20.0f, viewport->Size.y - 20.0f); 
+
+    for (int i = (int)m_notifications.size() - 1; i >= 0; --i) {
+        Notification& notif = m_notifications[i];
+
+        float alpha = 1.0f;
+        if (notif.lifetime < 0.5f) alpha = notif.lifetime / 0.5f;
+
+        ImVec2 windowPos = ImVec2(screenPos.x, screenPos.y - (i * 65.0f)); 
+        ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always, ImVec2(1.0f, 1.0f));
+        
+        ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar |
+                                 ImGuiWindowFlags_NoResize |
+                                 ImGuiWindowFlags_NoMove |
+                                 ImGuiWindowFlags_NoScrollbar |
+                                 ImGuiWindowFlags_NoSavedSettings |
+                                 ImGuiWindowFlags_NoFocusOnAppearing |
+                                 ImGuiWindowFlags_NoNav |
+                                 ImGuiWindowFlags_NoInputs;
+
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 5.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 1.0f);
+        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.1f, 0.1f, 0.15f, 0.85f * alpha));
+        ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(notif.color.x, notif.color.y, notif.color.z, alpha));
+
+        if (ImGui::Begin(("##notification_" + std::to_string(i)).c_str(), nullptr, flags)) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(notif.color.x, notif.color.y, notif.color.z, alpha));
+            ImGui::TextUnformatted(notif.message.c_str());
+            ImGui::PopStyleColor();
+        }
+        ImGui::End();
+
+        ImGui::PopStyleColor(2);
+        ImGui::PopStyleVar(2);
+
+        notif.lifetime -= GetFrameTime();
+    }
+
+    m_notifications.erase(
+        std::remove_if(m_notifications.begin(), m_notifications.end(),
+            [](const Notification& n) { return n.lifetime <= 0.0f; }),
+        m_notifications.end()
+    );
+}
+
 void Lil::Editor::Draw() {
     ClearBackground(RAYBLACK);
     rlImGuiBegin();
@@ -363,6 +418,8 @@ void Lil::Editor::Draw() {
         }
     }
     ImGui::End();
+    
+    DrawNotifications();
 
     rlImGuiEnd();
 }
