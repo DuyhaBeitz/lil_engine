@@ -19,8 +19,12 @@ inline std::string NameFromObject(std::string object) {
     return name;
 }
 
+inline bool IsAssetGenerated(std::string asset_key) {
+    return asset_key.length() >= 4 && (asset_key.substr(0, 4) == "Gen_");
+}
+
 inline std::string HeightmapNameFromImageName(std::string image_name) {
-    return "Heightmap_" + image_name;
+    return "Gen_Heightmap_From_" + image_name;
 }
 
 // namespaces raylib and reactphysics3d conflict with color definitions
