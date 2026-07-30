@@ -121,6 +121,8 @@ public:
     void Update();
     void DebugDraw();
     void ToggleSimulationGoing() { m_simulation_going = !m_simulation_going; }
+    bool IsSumulationGoing() { return m_simulation_going; }
+    void SetSimulationGoing(bool going) { m_simulation_going = going; }
 
     RenderMode GetRenderMode() { return m_render_mode; }
     void SetRenderMode(RenderMode render_mode) { m_render_mode = render_mode; }

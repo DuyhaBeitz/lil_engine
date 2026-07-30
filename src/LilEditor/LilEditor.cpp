@@ -8,12 +8,24 @@ Lil::Editor &Lil::Editor::Get() {
     return instance;
 }
 
-#define TOGGLE_CURSOR_KEY KEY_L
+#define TOGGLE_CURSOR_KEY KEY_P
 #define TOGGLE_SIMULATION_KEY KEY_F
 #define TOGGLE_DEBUG_KEY KEY_V
 #define TOGGLE_FULLSCREEN_KEY KEY_F11
 
-void Lil::Editor::InitUI() {
+void Lil::Editor::LoadScene() {
+    const char* filename = "scene.json";
+    Lil::SceneManager().LoadScene(filename);
+    m_selected = nullptr;
+}
+
+void Lil::Editor::SaveScene() {
+    const char* filename = "scene.json";
+    Lil::SceneManager().SaveScene(filename);
+}
+
+void Lil::Editor::InitUI()
+{
     rlImGuiBeginInitImGui();
     ImGui::StyleColorsDark();
 
@@ -42,6 +54,51 @@ void Lil::Editor::InitUI() {
 
 void Lil::Editor::LoadTarget(int w, int h) {
     m_render_target = LoadRenderTexture(w, h);
+}
+
+void Lil::Editor::DrawMenuBar() {
+    if (ImGui::BeginMainMenuBar()) {
+        if (ImGui::BeginMenu("File")) {
+            if (ImGui::MenuItem("Load Scene", "Ctrl+L")) LoadScene();
+            if (ImGui::MenuItem("Save Scene", "Ctrl+S")) SaveScene();
+            ImGui::EndMenu();
+        }
+    
+        static const std::unordered_map<std::string, RenderMode> renderModeMap = {
+            {"Unlit", RenderMode::Unlit},
+            {"Wireframe", RenderMode::Wireframe}
+        };
+
+        static RenderMode currentMode = RenderMode::Unlit;
+        
+        std::string currentName = "Unlit";
+        for (const auto& [name, mode] : renderModeMap) {
+            if (mode == currentMode) {
+                currentName = name;
+                break;
+            }
+        }
+
+        ImGui::SetNextItemWidth(300.0f);
+        if (ImGui::BeginCombo("##Render Mode", currentName.c_str())) {
+            for (const auto& [name, mode] : renderModeMap)
+            {
+                bool isSelected = (mode == currentMode);
+                if (ImGui::Selectable(name.c_str(), isSelected))
+                {
+                    currentMode = mode;
+                    Lil::World().SetRenderMode(mode);
+                }
+                if (isSelected) {
+                    ImGui::SetItemDefaultFocus();
+                }
+            }
+            ImGui::EndCombo();
+        }
+
+    
+       ImGui::EndMainMenuBar();
+    }
 }
 
 void Lil::Editor::TryResizeTarget(int w, int h) {
@@ -151,6 +208,10 @@ void Lil::Editor::Update() {
     if (IsKeyPressed(TOGGLE_FULLSCREEN_KEY)) {
         ToggleFullscreen();
     }
+    if (IsKeyDown(KEY_LEFT_CONTROL)) {
+        if (IsKeyPressed(KEY_S)) SaveScene();
+        else if (IsKeyPressed(KEY_L)) LoadScene();
+    }
 }
 
 void Lil::Editor::HandleViewportInput() {
@@ -172,7 +233,33 @@ void Lil::Editor::HandleViewportInput() {
 }
 
 void Lil::Editor::DrawViewport() {
-    ImGui::Begin("Viewport");
+    ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_MenuBar);
+
+    if (ImGui::BeginMenuBar())  {
+        static bool isLocalGizmo = true; 
+        if (ImGui::Button(isLocalGizmo ? "Local" : "World")) {
+            isLocalGizmo = !isLocalGizmo;
+            if (!isLocalGizmo) m_gizmo_space = GIZMO_DISABLED; 
+            else m_gizmo_space = GIZMO_LOCAL; 
+        }
+        ImGui::SameLine();
+
+        static bool isSimulating = Lil::World().IsSumulationGoing();
+        ImGui::PushStyleColor(ImGuiCol_Button, isSimulating ? IM_COL32(255, 80, 80, 255) : IM_COL32(80, 180, 80, 255));
+        if (ImGui::Button(isSimulating ? "Stop" : "Play")) {
+            isSimulating = !isSimulating;
+            Lil::World().SetSimulationGoing(isSimulating);
+        }
+        ImGui::PopStyleColor();
+        ImGui::SameLine();
+
+        ImGui::SameLine(ImGui::GetWindowWidth() - 230.0f);
+        ImGui::Text("FPS: %d", GetFPS());
+
+        ImGui::EndMenuBar();
+    }
+
+
     ImVec2 contentSize = ImGui::GetContentRegionAvail();
     ImVec2 viewerTopLeft = ImGui::GetCursorScreenPos();
     
@@ -188,7 +275,6 @@ void Lil::Editor::DrawViewport() {
     rlImGuiImageRenderTexture(&m_render_target);
     
     SetMouseOffset(0, 0);
-   
     
     ImGui::End();
 }
@@ -248,54 +334,7 @@ void Lil::Editor::Draw() {
     DrawInspector();
     DrawResources();
     DrawViewport();
-
-    ImGui::Begin("Panel");
-    if (m_gizmo_space == GIZMO_LOCAL) {
-        if (ImGui::Button("global")) m_gizmo_space = GIZMO_DISABLED; 
-    }
-    else if (ImGui::Button("local")) m_gizmo_space = GIZMO_LOCAL; 
-
-    ImGui::SameLine();
-    if (ImGui::Button("save")) {
-        Lil::SceneManager().SaveScene("out.json");
-    }
-    ImGui::SameLine();
-    if (ImGui::Button("load")) {
-        Lil::SceneManager().LoadScene("out.json");
-        m_selected = nullptr;
-    }
-    static const std::unordered_map<std::string, RenderMode> renderModeMap = {
-        {"Unlit", RenderMode::Unlit},
-        {"Wireframe", RenderMode::Wireframe}
-    };
-
-    static RenderMode currentMode = RenderMode::Unlit;
-    
-    std::string currentName = "Unlit";
-    for (const auto& [name, mode] : renderModeMap) {
-        if (mode == currentMode) {
-            currentName = name;
-            break;
-        }
-    }
-
-    if (ImGui::BeginCombo("Render Mode", currentName.c_str())) {
-        for (const auto& [name, mode] : renderModeMap)
-        {
-            bool isSelected = (mode == currentMode);
-            if (ImGui::Selectable(name.c_str(), isSelected))
-            {
-                currentMode = mode;
-                Lil::World().SetRenderMode(mode);
-            }
-            if (isSelected) {
-                ImGui::SetItemDefaultFocus();
-            }
-        }
-        ImGui::EndCombo();
-    }
-
-    ImGui::End();
+    DrawMenuBar();
 
     ImGui::Begin("Creation");
     for (auto& [name, ti] : Lil::Reflection::Get().Types()) {

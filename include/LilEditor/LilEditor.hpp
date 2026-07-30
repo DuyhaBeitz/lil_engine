@@ -57,10 +57,14 @@ namespace Lil {
         EditorUIVisitor m_editor;
         GizmoFlags m_gizmo_mode = GIZMO_TRANSLATE;
         GizmoFlags m_gizmo_space = GIZMO_DISABLED;
-        
+
+        void LoadScene();
+        void SaveScene();
+
         void InitUI();
         void TryResizeTarget(int w, int h);
         void LoadTarget(int w, int h);
+        void DrawMenuBar();
         void DrawTarget();
 
         void DrawInspector();
