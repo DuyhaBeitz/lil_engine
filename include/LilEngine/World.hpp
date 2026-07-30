@@ -127,7 +127,7 @@ public:
     RenderMode GetRenderMode() { return m_render_mode; }
     void SetRenderMode(RenderMode render_mode) { m_render_mode = render_mode; }
 
-    bool m_simulation_going = true;
+    bool m_simulation_going = false;
     float m_simulation_speed = 1.0f;
     bool m_physics_debug = false;
     RenderMode m_render_mode = RenderMode::Unlit;

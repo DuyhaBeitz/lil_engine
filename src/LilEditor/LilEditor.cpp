@@ -244,7 +244,7 @@ void Lil::Editor::DrawViewport() {
         }
         ImGui::SameLine();
 
-        static bool isSimulating = Lil::World().IsSumulationGoing();
+        bool isSimulating = Lil::World().IsSumulationGoing();
         ImGui::PushStyleColor(ImGuiCol_Button, isSimulating ? IM_COL32(255, 80, 80, 255) : IM_COL32(80, 180, 80, 255));
         if (ImGui::Button(isSimulating ? "Stop" : "Play")) {
             isSimulating = !isSimulating;
