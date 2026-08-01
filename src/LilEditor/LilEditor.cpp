@@ -204,7 +204,7 @@ void Lil::Editor::DrawViewport() {
     ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_MenuBar);
 
     if (ImGui::BeginMenuBar())  {
-        static bool isLocalGizmo = true; 
+        bool isLocalGizmo = (m_gizmo_space == GIZMO_LOCAL); 
         if (ImGui::Button(isLocalGizmo ? "Local" : "World")) {
             isLocalGizmo = !isLocalGizmo;
             if (!isLocalGizmo) m_gizmo_space = GIZMO_DISABLED; 
