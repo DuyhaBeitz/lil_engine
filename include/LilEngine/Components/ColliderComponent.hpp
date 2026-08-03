@@ -33,6 +33,7 @@ public:
     Vector3 m_map_size = Vector3{1.0f, 1.0f, 1.0f};
 
     JPH::RefConst<JPH::Shape> CreateJoltShape() const;
+    bool m_needs_rebuild = true;
 };
 
 class ColliderComponent : public Component {

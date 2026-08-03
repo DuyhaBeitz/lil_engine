@@ -94,54 +94,60 @@ ImVec4 Lil::UIStyle::GetNumericColor(const std::string &name) {
     return COLOR_TYPE_NUMBER;
 }
 
-void Lil::UIStyle::DrawBoolField(const std::string &name, bool *value) {
+bool Lil::UIStyle::DrawBoolField(const std::string &name, bool *value) {
     BeginPropertyRow(name, COLOR_TYPE_BOOL);
     ImGui::PushStyleColor(ImGuiCol_FrameBg, COLOR_INPUT_BG);
     ImGui::PushStyleColor(ImGuiCol_CheckMark, COLOR_TYPE_BOOL);
     
-    ImGui::Checkbox(("##" + name).c_str(), value);
+    bool res = ImGui::Checkbox(("##" + name).c_str(), value);
     
     ImGui::PopStyleColor(2);
     EndPropertyRow();
+
+    return res;
 }
 
-void Lil::UIStyle::DrawIntField(const std::string &name, int *value) {
+bool Lil::UIStyle::DrawIntField(const std::string &name, int *value) {
     ImVec4 fieldColor = GetNumericColor(name);
     BeginPropertyRow(name, fieldColor);
     ImGui::PushStyleColor(ImGuiCol_FrameBg, COLOR_INPUT_BG);
     ImGui::PushStyleColor(ImGuiCol_Text, fieldColor);
     
-    ImGui::InputInt(("##" + name).c_str(), value, 0, 0);
+    bool res = ImGui::InputInt(("##" + name).c_str(), value, 0, 0);
     
     ImGui::PopStyleColor(2);
     EndPropertyRow();
+
+    return res;
 }
 
-void Lil::UIStyle::DrawUInt32Field(const std::string &name, uint32_t *value) {
+bool Lil::UIStyle::DrawUInt32Field(const std::string &name, uint32_t *value) {
     BeginPropertyRow(name, COLOR_TYPE_NUMBER);
     ImGui::PushStyleColor(ImGuiCol_FrameBg, COLOR_INPUT_BG);
     ImGui::PushStyleColor(ImGuiCol_Text, COLOR_TYPE_NUMBER);
     
-    ImGui::InputScalar(("##" + name).c_str(), ImGuiDataType_U32, value, nullptr, nullptr, "%u");
+    bool res = ImGui::InputScalar(("##" + name).c_str(), ImGuiDataType_U32, value, nullptr, nullptr, "%u");
     
     ImGui::PopStyleColor(2);
     EndPropertyRow();
+    return res;
 }
 
-void Lil::UIStyle::DrawFloatField(const std::string &name, float *value) {
+bool Lil::UIStyle::DrawFloatField(const std::string &name, float *value) {
     ImVec4 fieldColor = GetNumericColor(name);
     BeginPropertyRow(name, fieldColor);
     ImGui::PushStyleColor(ImGuiCol_FrameBg, COLOR_INPUT_BG);
     ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, COLOR_INPUT_BG_HOVER);
     ImGui::PushStyleColor(ImGuiCol_Text, fieldColor);
     
-    ImGui::DragFloat(("##" + name).c_str(), value, DRAG_FLOAT_SPEED, DRAG_FLOAT_MIN, DRAG_FLOAT_MAX, "%.3f");
+    bool res = ImGui::DragFloat(("##" + name).c_str(), value, DRAG_FLOAT_SPEED, DRAG_FLOAT_MIN, DRAG_FLOAT_MAX, "%.3f");
     
     ImGui::PopStyleColor(3);
     EndPropertyRow();
+    return res;
 }
 
-void Lil::UIStyle::DrawStringField(const std::string &name, std::string *value) {
+bool Lil::UIStyle::DrawStringField(const std::string &name, std::string *value) {
     BeginPropertyRow(name, COLOR_TYPE_STRING);
     ImGui::PushStyleColor(ImGuiCol_FrameBg, COLOR_INPUT_BG);
     ImGui::PushStyleColor(ImGuiCol_Text, COLOR_TYPE_STRING);
@@ -150,15 +156,16 @@ void Lil::UIStyle::DrawStringField(const std::string &name, std::string *value) 
     strncpy(buffer, value->c_str(), sizeof(buffer) - 1);
     buffer[sizeof(buffer) - 1] = '\0';
     
-    if (ImGui::InputText(("##" + name).c_str(), buffer, sizeof(buffer))) {
-        *value = buffer;
-    }
+    bool res = ImGui::InputText(("##" + name).c_str(), buffer, sizeof(buffer));
+    if (res) *value = buffer;
     
     ImGui::PopStyleColor(2);
     EndPropertyRow();
+
+    return res;
 }
 
-void Lil::UIStyle::DrawVector2Field(const std::string &name, ::Vector2 *values) {
+bool Lil::UIStyle::DrawVector2Field(const std::string &name, ::Vector2 *values) {
     BeginPropertyRow(name, COLOR_TYPE_NUMBER);
     ImGui::PopItemWidth(); 
     ImGui::PushID(values);
@@ -174,11 +181,12 @@ void Lil::UIStyle::DrawVector2Field(const std::string &name, ::Vector2 *values) 
     ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, COLOR_INPUT_BG_HOVER);
     ImGui::PushStyleColor(ImGuiCol_Text, COLOR_TEXT_WHITE);
 
+    bool res = false;
     for (int i = 0; i < 2; ++i) {
         ImGui::SetNextItemWidth(singleItemWidth);
         
         // Render a clean, blank label so the field spans the full calculated space
-        ImGui::DragFloat((std::string("##Field") + labels[i]).c_str(), dataRefs[i], DRAG_FLOAT_SPEED, DRAG_FLOAT_MIN, DRAG_FLOAT_MAX, "%.2f");
+        res |= ImGui::DragFloat((std::string("##Field") + labels[i]).c_str(), dataRefs[i], DRAG_FLOAT_SPEED, DRAG_FLOAT_MIN, DRAG_FLOAT_MAX, "%.2f");
         
         // Calculate the bounding box of the box we just rendered to draw our accent line
         ImVec2 minBound = ImGui::GetItemRectMin();
@@ -195,9 +203,11 @@ void Lil::UIStyle::DrawVector2Field(const std::string &name, ::Vector2 *values) 
     ImGui::PopID();
     ImGui::PushItemWidth(-1.0f);
     EndPropertyRow();
+
+    return res;
 }
 
-void Lil::UIStyle::DrawVector3Field(const std::string &name, ::Vector3 *values) {
+bool Lil::UIStyle::DrawVector3Field(const std::string &name, ::Vector3 *values) {
     BeginPropertyRow(name, COLOR_TYPE_NUMBER);
     ImGui::PopItemWidth(); 
     ImGui::PushID(values);
@@ -213,9 +223,10 @@ void Lil::UIStyle::DrawVector3Field(const std::string &name, ::Vector3 *values) 
     ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, COLOR_INPUT_BG_HOVER);
     ImGui::PushStyleColor(ImGuiCol_Text, COLOR_TEXT_WHITE);
 
+    bool res = false;
     for (int i = 0; i < 3; ++i) {
         ImGui::SetNextItemWidth(singleItemWidth);
-        ImGui::DragFloat((std::string("##Field") + labels[i]).c_str(), dataRefs[i], DRAG_FLOAT_SPEED, DRAG_FLOAT_MIN, DRAG_FLOAT_MAX, "%.2f");
+        res |= ImGui::DragFloat((std::string("##Field") + labels[i]).c_str(), dataRefs[i], DRAG_FLOAT_SPEED, DRAG_FLOAT_MIN, DRAG_FLOAT_MAX, "%.2f");
         
         ImVec2 minBound = ImGui::GetItemRectMin();
         ImVec2 maxBound = ImGui::GetItemRectMax();
@@ -230,9 +241,11 @@ void Lil::UIStyle::DrawVector3Field(const std::string &name, ::Vector3 *values) 
     ImGui::PopID();
     ImGui::PushItemWidth(-1.0f);
     EndPropertyRow();
+
+    return res;
 }
 
-void Lil::UIStyle::DrawVector4Field(const std::string &name, ::Vector4 *values) {
+bool Lil::UIStyle::DrawVector4Field(const std::string &name, ::Vector4 *values) {
     BeginPropertyRow(name, COLOR_TYPE_NUMBER);
     ImGui::PopItemWidth(); 
     ImGui::PushID(values);
@@ -248,9 +261,10 @@ void Lil::UIStyle::DrawVector4Field(const std::string &name, ::Vector4 *values) 
     ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, COLOR_INPUT_BG_HOVER);
     ImGui::PushStyleColor(ImGuiCol_Text, COLOR_TEXT_WHITE);
 
+    bool res = false;
     for (int i = 0; i < 4; ++i) {
         ImGui::SetNextItemWidth(singleItemWidth);
-        ImGui::DragFloat((std::string("##Field") + labels[i]).c_str(), dataRefs[i], DRAG_FLOAT_SPEED, DRAG_FLOAT_MIN, DRAG_FLOAT_MAX, "%.2f");
+        res |= ImGui::DragFloat((std::string("##Field") + labels[i]).c_str(), dataRefs[i], DRAG_FLOAT_SPEED, DRAG_FLOAT_MIN, DRAG_FLOAT_MAX, "%.2f");
         
         ImVec2 minBound = ImGui::GetItemRectMin();
         ImVec2 maxBound = ImGui::GetItemRectMax();
@@ -265,9 +279,11 @@ void Lil::UIStyle::DrawVector4Field(const std::string &name, ::Vector4 *values) 
     ImGui::PopID();
     ImGui::PushItemWidth(-1.0f);
     EndPropertyRow();
+
+    return res;
 }
 
-void Lil::UIStyle::DrawTransformBlock(const std::string &name, ::Transform *value) {
+bool Lil::UIStyle::DrawTransformBlock(const std::string &name, ::Transform *value) {
     RowSpacingGuard spacing;
     ImGui::PushID(value);
 
@@ -279,21 +295,23 @@ void Lil::UIStyle::DrawTransformBlock(const std::string &name, ::Transform *valu
     bool isOpen = ImGui::CollapsingHeader(compositeHeaderName.c_str());
     ImGui::PopStyleColor(2);
 
+    bool res = false;
     if (isOpen) {
         ImGui::Indent(STRUCT_INDENT_PADDING);
         
-        DrawVector3Field("Position", &value->translation);
-        DrawVector4Field("Rotation", &value->rotation);
-        DrawVector3Field("Scale",    &value->scale);
+        res |= DrawVector3Field("Position", &value->translation);
+        res |= DrawVector4Field("Rotation", &value->rotation);
+        res |= DrawVector3Field("Scale",    &value->scale);
         
         ImGui::Unindent(STRUCT_INDENT_PADDING);
         ImGui::Spacing();
     }
 
     ImGui::PopID();
+    return res;
 }
 
-void Lil::UIStyle::DrawModelKeyField(const std::string &name, std::string *value) {
+bool Lil::UIStyle::DrawModelKeyField(const std::string &name, std::string *value) {
     Lil::UIStyle::BeginPropertyRow(name, Lil::UIStyle::COLOR_TYPE_STRING, ICON_FA_CAR);
     ImGui::PushStyleColor(ImGuiCol_FrameBg, Lil::UIStyle::COLOR_COMBO_BG);
     
@@ -304,19 +322,25 @@ void Lil::UIStyle::DrawModelKeyField(const std::string &name, std::string *value
         if (key == *value) currentIndex = modelKeys.size() - 1;
     }
 
+    bool res = false;
     if (ImGui::BeginCombo(("##" + name).c_str(), (*value).c_str())) {
         for (size_t i = 0; i < modelKeys.size(); i++) {
             bool isSelected = (static_cast<int>(i) == currentIndex);
-            if (ImGui::Selectable(modelKeys[i].c_str(), isSelected)) *value = modelKeys[i];
+            if (ImGui::Selectable(modelKeys[i].c_str(), isSelected)) {
+                if (*value != modelKeys[i]) res = true;
+                *value = modelKeys[i];
+            }
             if (isSelected) ImGui::SetItemDefaultFocus();
         }
         ImGui::EndCombo();
     }
     ImGui::PopStyleColor();
     Lil::UIStyle::EndPropertyRow();
+
+    return res;
 }
 
-void Lil::UIStyle::DrawTextureKeyField(const std::string &name, std::string *value) {
+bool Lil::UIStyle::DrawTextureKeyField(const std::string &name, std::string *value) {
     Lil::UIStyle::BeginPropertyRow(name, Lil::UIStyle::COLOR_TYPE_STRING, ICON_FA_MAP);
     ImGui::PushStyleColor(ImGuiCol_FrameBg, Lil::UIStyle::COLOR_COMBO_BG);
     
@@ -327,19 +351,25 @@ void Lil::UIStyle::DrawTextureKeyField(const std::string &name, std::string *val
         if (key == *value) currentIndex = textureKeys.size() - 1;
     }
 
+    bool res = false;
     if (ImGui::BeginCombo(("##" + name).c_str(), (*value).c_str())) {
         for (size_t i = 0; i < textureKeys.size(); i++) {
             bool isSelected = (static_cast<int>(i) == currentIndex);
-            if (ImGui::Selectable(textureKeys[i].c_str(), isSelected)) *value = textureKeys[i];
+            if (ImGui::Selectable(textureKeys[i].c_str(), isSelected)) {
+                if (*value != textureKeys[i]) res = true;
+                *value = textureKeys[i];
+            }
             if (isSelected) ImGui::SetItemDefaultFocus();
         }
         ImGui::EndCombo();
     }
     ImGui::PopStyleColor();
     Lil::UIStyle::EndPropertyRow();
+
+    return res;
 }
 
-void Lil::UIStyle::DrawCollisionShapeField(const std::string &name, CollisionShape *value) {
+bool Lil::UIStyle::DrawCollisionShapeField(const std::string &name, CollisionShape *value) {
     if (value) {
         RowSpacingGuard spacing;
         ImGui::PushID(value);
@@ -351,11 +381,12 @@ void Lil::UIStyle::DrawCollisionShapeField(const std::string &name, CollisionSha
         bool isOpen = ImGui::CollapsingHeader(compositeHeaderName.c_str());
         ImGui::PopStyleColor(2);
 
+        bool res = false;
         if (isOpen) {
             ImGui::Indent(STRUCT_INDENT_PADDING);
             
-            DrawVector3Field("local position", &(value->m_local_position));
-            DrawVector4Field("local rotation", &(value->m_local_rotation));
+            res |= DrawVector3Field("local position", &(value->m_local_position));
+            res |= DrawVector4Field("local rotation", &(value->m_local_rotation));
 
             std::string labels[] = {"Sphere", "Box", "Heightmap"};
             ::CollisionShapeType types[] = {::CollisionShapeType::SPHERE, ::CollisionShapeType::BOX, ::CollisionShapeType::HEIGHTMAP};
@@ -379,16 +410,16 @@ void Lil::UIStyle::DrawCollisionShapeField(const std::string &name, CollisionSha
 
             switch (value->m_type) {
             case ::CollisionShapeType::SPHERE:
-                DrawFloatField("radius", &(value->m_radius));
+                res |= DrawFloatField("radius", &(value->m_radius));
                 break;
             
             case ::CollisionShapeType::BOX:
-                DrawVector3Field("half extends", &(value->m_half_extends));
+                res |= DrawVector3Field("half extends", &(value->m_half_extends));
                 break;
 
             case ::CollisionShapeType::HEIGHTMAP:
-                DrawTextureKeyField("heightmap texture key", &(value->m_heightmap_texture_key));
-                DrawVector3Field("map size", &(value->m_map_size));
+                res |= DrawTextureKeyField("heightmap texture key", &(value->m_heightmap_texture_key));
+                res |= DrawVector3Field("map size", &(value->m_map_size));
                 break;
 
             default:
@@ -400,10 +431,13 @@ void Lil::UIStyle::DrawCollisionShapeField(const std::string &name, CollisionSha
         }
 
         ImGui::PopID();
+        //if (res) value->m_needs_rebuild = true;
+        return res;
     }
+    return false;
 }
 
-void Lil::UIStyle::DrawBodyTypeField(const std::string &name, BodyType *value) {
+bool Lil::UIStyle::DrawBodyTypeField(const std::string &name, BodyType *value) {
     Lil::UIStyle::BeginPropertyRow(name, Lil::UIStyle::COLOR_TYPE_STRING, ICON_FA_MAP);
     ImGui::PushStyleColor(ImGuiCol_FrameBg, Lil::UIStyle::COLOR_COMBO_BG);
     
@@ -417,10 +451,14 @@ void Lil::UIStyle::DrawBodyTypeField(const std::string &name, BodyType *value) {
         }
     }
 
+    bool res = false;
     if (ImGui::BeginCombo(("##" + name).c_str(), labels[currentIndex].c_str())) {
         for (size_t i = 0; i < (int)::CollisionShapeType::COUNT; i++) {
             bool isSelected = (static_cast<int>(i) == currentIndex);
-            if (ImGui::Selectable(labels[i].c_str(), isSelected)) *value = types[i];
+            if (ImGui::Selectable(labels[i].c_str(), isSelected)) {
+                if (*value != types[i]) res = true;
+                *value = types[i];
+            }
             if (isSelected) ImGui::SetItemDefaultFocus();
         }
         ImGui::EndCombo();
@@ -428,6 +466,8 @@ void Lil::UIStyle::DrawBodyTypeField(const std::string &name, BodyType *value) {
 
     ImGui::PopStyleColor();
     Lil::UIStyle::EndPropertyRow();
+
+    return res;
 }
 
 void Lil::UIStyle::DrawConstBoolField(const std::string &name, const bool *value) {

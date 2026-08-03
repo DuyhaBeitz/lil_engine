@@ -118,7 +118,13 @@ void ColliderComponent::OnLayoutUpdate() {
         bi.SetAngularVelocity(m_body_id, JphVector3(m_angular_velocity));
     }
     
-    RebuildShapes();
+    bool rebuild = false;
+    for (auto& shape : m_shapes) {
+        rebuild |= shape.m_needs_rebuild;
+        shape.m_needs_rebuild = false;
+    }
+    
+    if (rebuild) RebuildShapes();
 }
 
 void ColliderComponent::SimulationUpdate(Actor& actor) {

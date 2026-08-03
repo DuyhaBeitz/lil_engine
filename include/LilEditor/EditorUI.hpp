@@ -126,19 +126,19 @@ namespace Lil {
         // ==========================================
         // Reusable Editable Draw Elements
         // ==========================================
-        static void DrawBoolField(const std::string& name, bool* value);
-        static void DrawIntField(const std::string& name, int* value);
-        static void DrawUInt32Field(const std::string& name, uint32_t* value);
-        static void DrawFloatField(const std::string& name, float* value);
-        static void DrawStringField(const std::string& name, std::string* value);
-        static void DrawVector2Field(const std::string& name, ::Vector2* values);
-        static void DrawVector3Field(const std::string& name, ::Vector3* values);
-        static void DrawVector4Field(const std::string& name, ::Vector4* values);
-        static void DrawTransformBlock(const std::string& name, ::Transform* value);
-        static void DrawModelKeyField(const std::string& name, std::string* value);
-        static void DrawTextureKeyField(const std::string& name, std::string* value);
-        static void DrawCollisionShapeField(const std::string& name, CollisionShape* value);
-        static void DrawBodyTypeField(const std::string& name, BodyType* value);
+        static bool DrawBoolField(const std::string& name, bool* value);
+        static bool DrawIntField(const std::string& name, int* value);
+        static bool DrawUInt32Field(const std::string& name, uint32_t* value);
+        static bool DrawFloatField(const std::string& name, float* value);
+        static bool DrawStringField(const std::string& name, std::string* value);
+        static bool DrawVector2Field(const std::string& name, ::Vector2* values);
+        static bool DrawVector3Field(const std::string& name, ::Vector3* values);
+        static bool DrawVector4Field(const std::string& name, ::Vector4* values);
+        static bool DrawTransformBlock(const std::string& name, ::Transform* value);
+        static bool DrawModelKeyField(const std::string& name, std::string* value);
+        static bool DrawTextureKeyField(const std::string& name, std::string* value);
+        static bool DrawCollisionShapeField(const std::string& name, CollisionShape* value);
+        static bool DrawBodyTypeField(const std::string& name, BodyType* value);
 
         // ==========================================
         // Reusable Read-Only (Const) Draw Elements
