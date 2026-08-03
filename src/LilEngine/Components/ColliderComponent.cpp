@@ -26,7 +26,7 @@ JPH::RefConst<JPH::Shape> CollisionShape::CreateJoltShape() const {
         default:
             break;
     }
-    return new JPH::SphereShape(0.5f); // Fallback
+    return new JPH::SphereShape(0.5f);
 }
 
 ColliderComponent::ColliderComponent(BodyType body_type) : Component(), m_type(body_type) {
@@ -72,7 +72,7 @@ ColliderComponent::~ColliderComponent() {
 }
 
 void ColliderComponent::RebuildShapes() {
-    if (m_body_id.IsInvalid() || m_shapes.empty()) return;
+    if (m_body_id.IsInvalid()) return;
 
     // In Jolt, combine all component shapes into a compound shape
     JPH::StaticCompoundShapeSettings compound_settings;
@@ -83,19 +83,25 @@ void ColliderComponent::RebuildShapes() {
             shape.CreateJoltShape()
         );
     }
+    if (m_shapes.empty()) {
+        compound_settings.AddShape(
+            JPH::Vec3(0, 0, 0),
+            JPH::Quat(0, 0, 0, 0),
+            new JPH::SphereShape(0.5f));
+    }
 
     auto shape_result = compound_settings.Create();
     if (shape_result.IsValid()) {
         Lil::Physics().GetBodyInterface().SetShape(m_body_id, shape_result.Get(), true, JPH::EActivation::Activate);
-    }    
+    }
 }
 
 CollisionShape *ColliderComponent::AddShape(CollisionShape shape) {
     m_shapes.emplace_back(shape);
     return &(m_shapes.back());
 }
-void ColliderComponent::OnLayoutUpdate()
-{
+
+void ColliderComponent::OnLayoutUpdate() {
     if (m_body_id.IsInvalid()) return;
 
     auto& bi = Lil::Physics().GetBodyInterface();

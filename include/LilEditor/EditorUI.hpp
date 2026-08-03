@@ -255,6 +255,7 @@ public:
                         ImGui::PushID((int)i);
                         if (ImGui::Button(ICON_FA_TRASH)) {
                             idx_to_erase.insert(i);
+                            ImGui::PopID();
                             return;
                         }
                         ImGui::SameLine();
