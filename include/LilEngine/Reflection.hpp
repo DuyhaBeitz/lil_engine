@@ -61,10 +61,10 @@ template<typename T>
 class VectorContainerInfo : public ContainerInfo {
 public:
     size_t Size(const void* c) const override;
-    void* GetFirstElement(void* container) const {return GetElement(container, 0);}
+    void* GetFirstElement(void* container) const override {return GetElement(container, 0);}
     void* GetElement(void* c, size_t i) const override;
     const void* GetElement(const void* container, size_t index) const override;
-    const TypeInfo& ElementType() const;
+    const TypeInfo& ElementType() const override;
 
     void Resize(void* c, size_t n) const override;
     void InsertDefault(void* c) const override;
@@ -77,7 +77,7 @@ template<typename T>
 class ListContainerInfo : public ContainerInfo {
 public:
     size_t Size(const void* c) const override;
-    void* GetFirstElement(void* container) const;
+    void* GetFirstElement(void* container) const override;
     void* GetElement(void* c, size_t i) const override;
     const void* GetElement(const void* container, size_t index) const override;
     const TypeInfo& ElementType() const override;

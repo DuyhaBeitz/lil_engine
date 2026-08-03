@@ -294,7 +294,7 @@ void Lil::Editor::DrawResources() {
     for (auto& [key, model] : Lil::Resources().Models()) {
         rlImGuiImageRenderTexture(Lil::Resources().GetModelPreview(key));
         ImGui::SameLine();
-        ImGui::Text(key.c_str());
+        ImGui::Text("%s", key.c_str());
     }
     ImGui::End();
 

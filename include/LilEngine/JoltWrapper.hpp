@@ -37,7 +37,7 @@ static void TraceImpl(const char *inFMT, ...) {
 
 
 #ifdef JPH_ENABLE_ASSERTS
-static bool AssertFailedImpl(const char *inExpression, const char *inMessage, const char *inFile, uint inLine) {
+static bool AssertFailedImpl(const char *inExpression, const char *inMessage, const char *inFile, JPH::uint inLine) {
 	// std::cout << inFile << ":" << inLine << ": (" << inExpression << ") " << (inMessage != nullptr? inMessage : "") << std::endl;
 	return true;
 };
@@ -78,7 +78,7 @@ public:
 namespace JPH::BroadPhaseLayers {
 	static constexpr JPH::BroadPhaseLayer NON_MOVING(0);
 	static constexpr JPH::BroadPhaseLayer MOVING(1);
-	static constexpr uint NUM_LAYERS(2);
+	static constexpr JPH::uint NUM_LAYERS(2);
 };
 
 
@@ -92,7 +92,7 @@ public:
 		mObjectToBroadPhase[JPH::Layers::MOVING] = JPH::BroadPhaseLayers::MOVING;
 	}
 
-	virtual uint GetNumBroadPhaseLayers() const override
+	virtual JPH::uint GetNumBroadPhaseLayers() const override
 	{
 		return JPH::BroadPhaseLayers::NUM_LAYERS;
 	}

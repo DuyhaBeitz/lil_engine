@@ -23,6 +23,8 @@ JPH::RefConst<JPH::Shape> CollisionShape::CreateJoltShape() const {
                 return res;
             }
             break;
+        default:
+            break;
     }
     return new JPH::SphereShape(0.5f); // Fallback
 }

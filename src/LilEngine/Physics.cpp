@@ -14,10 +14,10 @@ void PhysicsSystem::Init() {
 
 	m_job_system = std::make_unique<JPH::JobSystemThreadPool>(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers, 1);
 
-	const uint cMaxBodies = 1024;
-	const uint cNumBodyMutexes = 0;
-	const uint cMaxBodyPairs = 1024;
-	const uint cMaxContactConstraints = 1024;
+	const JPH::uint cMaxBodies = 1024;
+	const JPH::uint cNumBodyMutexes = 0;
+	const JPH::uint cMaxBodyPairs = 1024;
+	const JPH::uint cMaxContactConstraints = 1024;
 	m_broad_phase_layer_interface = std::make_unique<BPLayerInterfaceImpl>();
     m_object_vs_broadphase_layer_filter = std::make_unique<ObjectVsBroadPhaseLayerFilterImpl>();
     m_object_vs_object_layer_filter = std::make_unique<ObjectLayerPairFilterImpl>();
