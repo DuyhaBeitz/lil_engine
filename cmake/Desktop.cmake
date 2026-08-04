@@ -74,17 +74,6 @@ target_link_libraries(lil_engine PUBLIC
     rlImGui
 )
 
-# ReactPhysics3D
-# set(REACTPHYSICS_DIR ${CMAKE_SOURCE_DIR}/include/external/reactphysics3d)
-
-# target_link_libraries(lil_engine 
-#     ${REACTPHYSICS_DIR}/libreactphysics3d.a
-# )
-
-# target_include_directories(lil_engine PUBLIC 
-#     ${REACTPHYSICS_DIR}/include
-# )
-
 # JoltPhysics
 set(TARGET_UNIT_TESTS OFF CACHE BOOL "" FORCE)
 set(TARGET_HELLO_WORLD OFF CACHE BOOL "" FORCE)

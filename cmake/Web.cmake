@@ -10,28 +10,18 @@ set(IMGUI_SOURCES
 
 add_library(imgui STATIC ${IMGUI_SOURCES})
 target_include_directories(imgui PUBLIC ${IMGUI_DIR})
-target_include_directories(${PROJECT_NAME} PUBLIC ${IMGUI_DIR})
-
-target_link_libraries(${PROJECT_NAME}
-    imgui
-)
+target_include_directories(lil_engine PUBLIC ${IMGUI_DIR})
+target_link_libraries(lil_engine PUBLIC imgui)
 
 # refl-cpp
-target_include_directories(${PROJECT_NAME} PUBLIC
+target_include_directories(lil_engine PUBLIC
     ${CMAKE_SOURCE_DIR}/include/external/refl-cpp
 )
 
 # raylib
 set(RAYLIB_DIR ${CMAKE_SOURCE_DIR}/include/external/raylib)
-set(RAYLIB_LIB ${CMAKE_SOURCE_DIR}/web/libraylib.a)
 
-target_link_libraries(${PROJECT_NAME} ${RAYLIB_LIB})
-
-target_include_directories(${PROJECT_NAME} PRIVATE
-    "${RAYLIB_DIR}"
-)
-
-target_include_directories(${PROJECT_NAME} PUBLIC 
+target_include_directories(lil_engine PUBLIC 
     ${RAYLIB_DIR}/include
 )
 
@@ -42,11 +32,11 @@ target_include_directories(raylib-gizmo PUBLIC
     ${RAYLIB_DIR}/include
 )
 
-target_include_directories(${PROJECT_NAME}  PUBLIC
+target_include_directories(lil_engine  PUBLIC
     ${CMAKE_SOURCE_DIR}/include/external/raylib-gizmo/include
 )
 
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(lil_engine PUBLIC
     raylib-gizmo
 )
 
@@ -58,35 +48,53 @@ target_include_directories(rlImGui PUBLIC
     ${IMGUI_DIR}
 )
 
-target_link_libraries(rlImGui ${RAYLIB_LIB} imgui)
+target_link_libraries(rlImGui PUBLIC
+    ${CMAKE_SOURCE_DIR}/web/libraylib.web.a imgui
+)
 
-target_include_directories(${PROJECT_NAME}  PUBLIC
+target_include_directories(lil_engine PUBLIC
     ${CMAKE_SOURCE_DIR}/include/external/rlImGui-Raylib/include
 )
 
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(lil_engine PUBLIC
     rlImGui
 )
 
-# ReactPhysics3D
-set(REACTPHYSICS_DIR ${CMAKE_SOURCE_DIR}/include/external/reactphysics3d)
+# JoltPhysics
+set(TARGET_UNIT_TESTS OFF CACHE BOOL "" FORCE)
+set(TARGET_HELLO_WORLD OFF CACHE BOOL "" FORCE)
+set(TARGET_PERFORMANCE_TEST OFF CACHE BOOL "" FORCE)
+set(TARGET_SAMPLES OFF CACHE BOOL "" FORCE)
+set(TARGET_VIEWER OFF CACHE BOOL "" FORCE)
 
-target_link_libraries(${PROJECT_NAME} 
-    ${CMAKE_SOURCE_DIR}/web/libreactphysics3d.a
-)
+set(DOUBLE_PRECISION OFF CACHE BOOL "" FORCE)
+set(GENERATE_DEBUG_SYMBOLS ON CACHE BOOL "" FORCE)
+set(OVERRIDE_CXX_FLAGS ON CACHE BOOL "" FORCE)
+set(CROSS_PLATFORM_DETERMINISTIC OFF CACHE BOOL "" FORCE)
+set(INTERPROCEDURAL_OPTIMIZATION ON CACHE BOOL "" FORCE)
+set(FLOATING_POINT_EXCEPTIONS_ENABLED OFF CACHE BOOL "" FORCE)
+set(CPP_EXCEPTIONS_ENABLED OFF CACHE BOOL "" FORCE)
+set(CPP_RTTI_ENABLED ON CACHE BOOL "" FORCE)
+set(OBJECT_LAYER_BITS 16 CACHE BOOL "" FORCE)
 
-target_include_directories(${PROJECT_NAME} PUBLIC 
-    ${REACTPHYSICS_DIR}/include
+set(DEBUG_RENDERER_IN_DEBUG_AND_RELEASE ON CACHE BOOL "" FORCE)
+
+set(JOLT_DIR ${CMAKE_SOURCE_DIR}/include/external/JoltPhysics)
+add_subdirectory(${JOLT_DIR}/Build ${CMAKE_BINARY_DIR}/JoltBuild EXCLUDE_FROM_ALL)
+target_include_directories(lil_engine PUBLIC 
+    ${JOLT_DIR}
 )
+target_link_libraries(lil_engine PUBLIC Jolt)
+target_compile_definitions(lil_engine PUBLIC JPH_DEBUG_RENDERER)
 
 # tinyfiledialogs
 set(TFD_DIR ${CMAKE_SOURCE_DIR}/include/external/tinyfiledialogs)
 add_library(tinyfiledialogs ${TFD_DIR}/tinyfiledialogs.c)
 target_include_directories(tinyfiledialogs PUBLIC 
-    ${TFD_DIR}
+    TFD_DIR
 )
 
-target_link_libraries(${PROJECT_NAME} 
+target_link_libraries(lil_engine PUBLIC
     tinyfiledialogs
 )
 
