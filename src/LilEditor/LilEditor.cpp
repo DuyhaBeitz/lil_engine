@@ -323,6 +323,32 @@ void Lil::Editor::DrawResources() {
         }
     }
     ImGui::End();
+
+    ImGui::Begin("Sounds");
+    if (ImGui::Button(ICON_FA_PLUS)) {
+        const char* source = BrowseSound();
+        if (source) {
+            Lil::Resources().SoundAdd(NameFromPath(source), source);
+            CopyAsset(source);
+        }
+    }
+
+    for (auto& [name, sound] : Lil::Resources().Sounds()) {
+        ImGui::PushID(&sound);
+        if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+            auto& volume = sound.volume_multiplier;
+
+            ImGui::SetNextItemWidth(120.0f);
+            if (ImGui::Button("Play " ICON_FA_PLAY)) {
+                sound.Play();
+            }
+
+            ImGui::SetNextItemWidth(300.0f);
+            ImGui::DragFloat("Volume", &volume, 0.01f, 0.0f, 1.0f, "%.2f");
+        }
+        ImGui::PopID();
+    }
+    ImGui::End();
 }
 
 void Lil::Editor::Notify(const std::string &message, float duration, const ImVec4 &color) {

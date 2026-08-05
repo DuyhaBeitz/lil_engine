@@ -24,7 +24,8 @@ void DrawGame() {
 
 int main() {
     InitWindow(1920, 1080, "game");
-    SetTraceLogLevel(LOG_NONE);
+    InitAudioDevice();
+    SetTraceLogLevel(LOG_ALL);
     DisableCursor();
 
     Lil::Engine().Get().Init();
@@ -49,6 +50,7 @@ int main() {
     }
 
     Lil::Resources().Unload();
+    CloseAudioDevice();
     CloseWindow();
 
     return 0;

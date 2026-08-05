@@ -16,9 +16,7 @@ void ResourceManager::Unload() {
 }
 
 void ResourceManager::TextureAdd(std::string key, Texture2D texture) {
-    if (m_textures.find(key) != m_textures.end()) {
-        UnloadTexture(m_textures[key]);
-    }
+    if (TextureExists(key)) UnloadTexture(m_textures[key]);
     m_textures[key] = texture;
 }
 
@@ -44,16 +42,12 @@ void ResourceManager::TextureUnload(std::string key) {
 }
 
 void ResourceManager::TextureUnloadAll() {
-    for (auto& [key, texture] : m_textures) {
-        UnloadTexture(texture);
-    }
+    for (auto& [key, texture] : m_textures) UnloadTexture(texture);
     m_textures.clear();
 }
 
 void ResourceManager::ModelAdd(std::string key, Model model) {
-    if (m_models.find(key) != m_models.end()) {
-        UnloadModel(m_models[key]);
-    }
+    if (ModelExists(key)) UnloadModel(m_models[key]);
     m_models[key] = model;
 }
 
@@ -92,9 +86,7 @@ Texture2D *ResourceManager::GetTexture(std::string key) {
 
 Model *ResourceManager::GetModel(std::string key) {
     if (ModelExists(key)) return &m_models[key];
-    else {
-        return nullptr;
-    };
+    else return nullptr;
 }
 
 bool ResourceManager::ModelPreviewExists(std::string key) {
@@ -140,7 +132,46 @@ void ResourceManager::UpdateModelPreviews() {
 
 RenderTexture2D *ResourceManager::GetModelPreview(std::string key) {
     if (ModelPreviewExists(key)) return &m_model_previews[key];
-    else {
-        return nullptr;
-    };
+    else return nullptr;
+}
+
+LilSound *ResourceManager::GetSound(std::string key) {
+    if (SoundExists(key)) return &m_sounds[key];
+    else return nullptr;
+}
+
+void ResourceManager::SoundAdd(std::string key, LilSound sound) {
+    if (m_sounds.find(key) != m_sounds.end()) {
+        m_sounds[key].Unload();
+    }
+    m_sounds[key] = sound;
+}
+
+void ResourceManager::SoundAdd(std::string key, std::string filename) {
+    LilSound sound;
+    sound.Load(filename);
+    SoundAdd(key, sound);
+}
+
+void ResourceManager::SoundAdd(std::string filename) {
+    std::string key = NameFromPath(filename);
+    SoundAdd(key, filename);
+}
+
+bool ResourceManager::SoundExists(std::string key) {
+    return m_sounds.find(key) != m_sounds.end();
+}
+
+void ResourceManager::SoundUnload(std::string key) {
+    if (SoundExists(key)) {
+        GetSound(key)->Unload();
+        m_sounds.erase(key);
+    }
+}
+
+void ResourceManager::SoundUnloadAll() {
+    for (auto& [key, sound] : m_sounds) {
+        sound.Unload();
+    }
+    m_sounds.clear();
 }

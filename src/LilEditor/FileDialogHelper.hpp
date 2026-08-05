@@ -42,3 +42,23 @@ inline const char* BrowseModel() {
         return nullptr;
     }
 }
+
+inline const char* BrowseSound() {
+    const char* filters[] = { "*.wav", "*.ogg", "*.mp3" };
+    const char* outPath = tinyfd_openFileDialog(
+        "Select Sound",
+        "",
+        1,
+        filters,
+        "Sound files",
+        0
+    );
+
+    if (outPath) {
+        return outPath;
+    }
+    else {
+        LIL_LOG_INFO("User pressed cancel or an error occurred.");
+        return nullptr;
+    }
+}

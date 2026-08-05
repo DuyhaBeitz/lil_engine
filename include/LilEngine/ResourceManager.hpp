@@ -2,6 +2,7 @@
 
 #include "CommonIncludes.hpp"
 #include "Serialization.hpp"
+#include "Sound.hpp"
 #include <unordered_map>
 
 class ResourceManager {
@@ -10,6 +11,8 @@ private:
 
     std::unordered_map<std::string, Model> m_models;
     std::unordered_map<std::string, RenderTexture2D> m_model_previews;
+
+    std::unordered_map<std::string, LilSound> m_sounds;
 
 public:
     void Unload();
@@ -32,12 +35,21 @@ public:
     void UnloadModelPreviews();
     void UpdateModelPreviews();
 
+    void SoundAdd(std::string key, LilSound sound);
+    void SoundAdd(std::string key, std::string filename);
+    void SoundAdd(std::string filename);
+    bool SoundExists(std::string key);
+    void SoundUnload(std::string key);
+    void SoundUnloadAll();
+
     Texture2D* GetTexture(std::string key);
     Model* GetModel(std::string key);
     RenderTexture2D* GetModelPreview(std::string key);
+    LilSound* GetSound(std::string key);
 
     std::unordered_map<std::string, Texture2D>& Textures() { return m_textures; }
     std::unordered_map<std::string, Model>& Models() { return m_models; }
+    std::unordered_map<std::string, LilSound>& Sounds() { return m_sounds; }
 
 
     template <class Archive>
@@ -56,7 +68,14 @@ public:
             model_keys.push_back(key);
         }
 
-        ar(texture_keys, model_keys);
+        std::vector<std::string> sound_keys = {};
+        sound_keys.reserve(m_sounds.size());
+        for (auto& [key, sound] : m_sounds) {
+            if (IsAssetGenerated(key)) continue;
+            sound_keys.push_back(key);
+        }
+
+        ar(texture_keys, model_keys, sound_keys);
     }
         
     template <class Archive>
@@ -64,11 +83,13 @@ public:
         Unload();
         std::vector<std::string> texture_keys = {};
         std::vector<std::string> model_keys = {};
+        std::vector<std::string> sound_keys = {};
 
-        ar(texture_keys, model_keys);
+        ar(texture_keys, model_keys, sound_keys);
         for (auto& key : texture_keys) TextureAdd("assets/" + key);
         for (auto& key : model_keys) ModelAdd("assets/" + key);
         UpdateModelPreviews();
+        for (auto& key : sound_keys) SoundAdd("assets/" + key);
     }
 
 };
