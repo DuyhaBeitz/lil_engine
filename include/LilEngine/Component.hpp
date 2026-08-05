@@ -32,7 +32,7 @@ public:
 
     Transform& Local() { return m_local_transform; }
 
-    virtual void SimulationUpdate(Actor& actor) {};
+    virtual void SimulationUpdate(Actor& actor, float delta_time) {};
     virtual void Draw() {};
     virtual void DebugUpdate() {};
     virtual void DebugDraw() {};

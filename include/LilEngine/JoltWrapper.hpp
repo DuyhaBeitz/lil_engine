@@ -8,15 +8,19 @@
 #include <Jolt/Core/Memory.h>
 #include <Jolt/Core/IssueReporting.h>
 #include <Jolt/Core/JobSystemThreadPool.h>
+#include <Jolt/Core/Reference.h>
 
 #include <Jolt/Physics/PhysicsSettings.h>
 #include <Jolt/Physics/PhysicsSystem.h>
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>
 #include <Jolt/Physics/Collision/Shape/SphereShape.h>
+#include <Jolt/Physics/Collision/Shape/CapsuleShape.h>
 #include <Jolt/Physics/Collision/Shape/HeightFieldShape.h>
 #include <Jolt/Physics/Collision/Shape/StaticCompoundShape.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 #include <Jolt/Physics/Body/BodyActivationListener.h>
+
+#include <Jolt/Physics/Character/CharacterVirtual.h>
 
 #include <Jolt/Renderer/DebugRendererSimple.h>
 #include <Jolt/Physics/Body/MotionType.h>

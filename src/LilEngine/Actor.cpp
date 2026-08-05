@@ -23,11 +23,12 @@ void Actor::LayoutUpdate(){
     LIL_LOG_TRACE("Actor calling OnLayoutUpdate DONE");
 }
 
-void Actor::SimulationUpdate(){
+void Actor::SimulationUpdate(float delta_time){
     for (auto& component : m_components) {
         if (!IsComponentAttached(component)) continue;
-        component->SimulationUpdate(*this);
+        component->SimulationUpdate(*this, delta_time);
     }
+    OnSimulationUpdate(delta_time);
 }
 
 void Actor::Draw() {

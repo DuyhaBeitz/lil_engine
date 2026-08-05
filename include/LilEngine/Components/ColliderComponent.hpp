@@ -58,7 +58,7 @@ public:
     void RebuildShapes();
     CollisionShape* AddShape(CollisionShape shape);
 
-    virtual void SimulationUpdate(Actor& actor) override;
+    virtual void SimulationUpdate(Actor& actor, float delta_time) override;
 
     CollisionShape* GetFirstShape(CollisionShapeType type) {
         for (auto& shape : m_shapes) {

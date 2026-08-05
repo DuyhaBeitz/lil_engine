@@ -127,7 +127,7 @@ void ColliderComponent::OnLayoutUpdate() {
     if (rebuild) RebuildShapes();
 }
 
-void ColliderComponent::SimulationUpdate(Actor& actor) {
+void ColliderComponent::SimulationUpdate(Actor& actor, float delta_time) {
     if (m_body_id.IsInvalid()) return;
 
     auto& bi = Lil::Physics().GetBodyInterface();  

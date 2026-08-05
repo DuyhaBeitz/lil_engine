@@ -10,6 +10,7 @@ public:
     std::vector<Component*> m_components;
     std::set<const Component*> m_marked_deattached;
     virtual void OnLayoutUpdate() {};
+    virtual void OnSimulationUpdate(float delta_time) {};
 
 public:
     LIL_REFLECTABLE()
@@ -17,7 +18,7 @@ public:
     Actor() = default;
     
     void LayoutUpdate();
-    void SimulationUpdate();
+    void SimulationUpdate(float delta_time);
 
     void Draw();
 

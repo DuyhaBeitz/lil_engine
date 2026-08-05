@@ -101,7 +101,7 @@ void World::Update() {
 
     float time_step = GetFrameTime()*m_simulation_speed;
     if (m_simulation_going && time_step > 0.0) Lil::Physics().Step(time_step);
-    if (m_simulation_going) for (auto& [key, actor] : m_actors) actor->SimulationUpdate();
+    if (m_simulation_going) for (auto& [key, actor] : m_actors) actor->SimulationUpdate(time_step);
     
     LIL_LOG_TRACE("World: updating actor layout");
     UpdateActorLayout();
