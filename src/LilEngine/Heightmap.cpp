@@ -19,8 +19,13 @@ void Heightmap::OnLayoutUpdate() {
                 m_model->Local().translation = GetScale() * Vector3{-0.5f, 0.0f, -0.5f};
             }
             if (m_collider && m_shape) {
+                std::string old_key = m_shape->m_heightmap_texture_key;
                 m_shape->m_heightmap_texture_key = m_heightmap_texture_key;
+                if (old_key != m_shape->m_heightmap_texture_key) m_shape->m_needs_rebuild = true;
+
+                Vector3 old_scale = m_shape->m_map_size;
                 m_shape->m_map_size = GetScale();
+                if (old_scale != m_shape->m_map_size) m_shape->m_needs_rebuild = true;
             }
         }
     }

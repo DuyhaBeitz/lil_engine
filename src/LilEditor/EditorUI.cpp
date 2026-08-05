@@ -401,7 +401,10 @@ bool Lil::UIStyle::DrawCollisionShapeField(const std::string &name, CollisionSha
             if (ImGui::BeginCombo(("##" + name).c_str(), labels[currentIndex].c_str())) {
                 for (size_t i = 0; i < (int)::CollisionShapeType::COUNT; i++) {
                     bool isSelected = (static_cast<int>(i) == currentIndex);
-                    if (ImGui::Selectable(labels[i].c_str(), isSelected)) value->m_type = types[i];
+                    if (ImGui::Selectable(labels[i].c_str(), isSelected)) {
+                        if (value->m_type != types[i]) res = true;
+                        value->m_type = types[i];
+                    }
                     if (isSelected) ImGui::SetItemDefaultFocus();
                 }
                 ImGui::EndCombo();
@@ -431,7 +434,10 @@ bool Lil::UIStyle::DrawCollisionShapeField(const std::string &name, CollisionSha
         }
 
         ImGui::PopID();
-        //if (res) value->m_needs_rebuild = true;
+        if (res) {
+            value->m_needs_rebuild = true;
+            std::cout << "Set to true" << std::endl;
+        }
         return res;
     }
     return false;
