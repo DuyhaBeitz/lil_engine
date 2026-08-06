@@ -9,6 +9,10 @@ class Component : public GameObject {
 private:
     virtual void OnLayoutUpdate() {};
 
+    // required components cannot be detached, they are native for actor that uses them
+    // e.g. specifically setup model component for heightmap actor
+    bool m_is_required = false;
+
 public:
     LIL_REFLECTABLE()
     LIL_SERIALIZABLE()
@@ -36,6 +40,9 @@ public:
     virtual void Draw() {};
     virtual void DebugUpdate() {};
     virtual void DebugDraw() {};
+
+    void MarkRequired() { m_is_required = true; }
+    bool IsRequired() { return m_is_required; }
 };
 LIL_REFLECT(Component, bases<GameObject>,
     field(m_local_transform)
@@ -43,4 +50,5 @@ LIL_REFLECT(Component, bases<GameObject>,
 LIL_SER_BEGIN(Component)
 LIL_SER_BASE(GameObject)
 LIL_SER_FIELD(m_local_transform)
+LIL_SER_FIELD(m_is_required)
 LIL_SER_END()

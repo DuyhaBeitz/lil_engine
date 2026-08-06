@@ -41,6 +41,7 @@ public:
         auto actor = std::make_unique<T>(std::forward<Args>(args)...);
         T* ptr = actor.get();
         m_actors[ptr->GetID()] = std::move(actor);
+        ptr->SetupComponents();
         return ptr;
     }
 
@@ -51,6 +52,7 @@ public:
                 auto actor = std::unique_ptr<Actor>(static_cast<Actor*>(p));
                 Actor* ptr = actor.get();
                 m_actors[ptr->GetID()] = std::move(actor);
+                ptr->SetupComponents();
                 return ptr;
             }
             else {

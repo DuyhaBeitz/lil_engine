@@ -7,133 +7,10 @@
         "components": [
             {
                 "key": {
-                    "value0": "fb7e6efb-fef0-4d8a-a173-76781a03041c"
+                    "value0": "00b378e3-0a2a-464f-b09b-6dbdffc0fdc4"
                 },
                 "value": {
                     "polymorphic_id": 2147483649,
-                    "polymorphic_name": "ModelComponent",
-                    "ptr_wrapper": {
-                        "valid": 1,
-                        "data": {
-                            "value0": {
-                                "value0": {
-                                    "value0": {
-                                        "value0": {
-                                            "value0": "fb7e6efb-fef0-4d8a-a173-76781a03041c"
-                                        }
-                                    },
-                                    "value1": {
-                                        "value0": {
-                                            "value0": {
-                                                "value0": 0.0,
-                                                "value1": 8.406030654907227,
-                                                "value2": 0.0
-                                            },
-                                            "value1": {
-                                                "value0": 0.0,
-                                                "value1": 0.0,
-                                                "value2": 0.0,
-                                                "value3": 1.0
-                                            },
-                                            "value2": {
-                                                "value0": 1.0,
-                                                "value1": 1.0,
-                                                "value2": 1.0
-                                            }
-                                        }
-                                    }
-                                },
-                                "value1": {
-                                    "value0": {
-                                        "value0": 0.0,
-                                        "value1": 0.0,
-                                        "value2": 0.0
-                                    },
-                                    "value1": {
-                                        "value0": 0.0,
-                                        "value1": 0.0,
-                                        "value2": 0.0,
-                                        "value3": 1.0
-                                    },
-                                    "value2": {
-                                        "value0": 1.0,
-                                        "value1": 1.0,
-                                        "value2": 1.0
-                                    }
-                                }
-                            },
-                            "value1": "Car.glb"
-                        }
-                    }
-                }
-            },
-            {
-                "key": {
-                    "value0": "ff87f5fd-a365-4a29-8b22-96726e311688"
-                },
-                "value": {
-                    "polymorphic_id": 1,
-                    "ptr_wrapper": {
-                        "valid": 1,
-                        "data": {
-                            "value0": {
-                                "value0": {
-                                    "value0": {
-                                        "value0": {
-                                            "value0": "ff87f5fd-a365-4a29-8b22-96726e311688"
-                                        }
-                                    },
-                                    "value1": {
-                                        "value0": {
-                                            "value0": {
-                                                "value0": -64.0,
-                                                "value1": 0.0,
-                                                "value2": -64.0
-                                            },
-                                            "value1": {
-                                                "value0": 0.0,
-                                                "value1": 0.0,
-                                                "value2": 0.0,
-                                                "value3": 1.0
-                                            },
-                                            "value2": {
-                                                "value0": 128.0,
-                                                "value1": 5.0,
-                                                "value2": 128.0
-                                            }
-                                        }
-                                    }
-                                },
-                                "value1": {
-                                    "value0": {
-                                        "value0": -64.0,
-                                        "value1": 0.0,
-                                        "value2": -64.0
-                                    },
-                                    "value1": {
-                                        "value0": 0.0,
-                                        "value1": 0.0,
-                                        "value2": 0.0,
-                                        "value3": 1.0
-                                    },
-                                    "value2": {
-                                        "value0": 1.0,
-                                        "value1": 1.0,
-                                        "value2": 1.0
-                                    }
-                                }
-                            },
-                            "value1": "Gen_Heightmap_From_heightmap.png"
-                        }
-                    }
-                }
-            },
-            {
-                "key": {
-                    "value0": "aed04476-a844-4eb8-a9cb-8c7fa69ccd63"
-                },
-                "value": {
-                    "polymorphic_id": 2147483650,
                     "polymorphic_name": "ColliderComponent",
                     "ptr_wrapper": {
                         "valid": 1,
@@ -142,7 +19,7 @@
                                 "value0": {
                                     "value0": {
                                         "value0": {
-                                            "value0": "aed04476-a844-4eb8-a9cb-8c7fa69ccd63"
+                                            "value0": "00b378e3-0a2a-464f-b09b-6dbdffc0fdc4"
                                         }
                                     },
                                     "value1": {
@@ -183,7 +60,8 @@
                                         "value1": 1.0,
                                         "value2": 1.0
                                     }
-                                }
+                                },
+                                "value2": true
                             },
                             "value1": [
                                 {
@@ -227,16 +105,14 @@
                         }
                     }
                 }
-            }
-        ],
-        "actors": [
+            },
             {
                 "key": {
-                    "value0": "d44664f6-f124-48ec-bc12-257d128ed22f"
+                    "value0": "633be199-6aa1-42bf-8333-e5bdfd668f74"
                 },
                 "value": {
-                    "polymorphic_id": 2147483651,
-                    "polymorphic_name": "Character",
+                    "polymorphic_id": 2147483650,
+                    "polymorphic_name": "ModelComponent",
                     "ptr_wrapper": {
                         "valid": 1,
                         "data": {
@@ -244,15 +120,15 @@
                                 "value0": {
                                     "value0": {
                                         "value0": {
-                                            "value0": "d44664f6-f124-48ec-bc12-257d128ed22f"
+                                            "value0": "633be199-6aa1-42bf-8333-e5bdfd668f74"
                                         }
                                     },
                                     "value1": {
                                         "value0": {
                                             "value0": {
-                                                "value0": 0.0,
-                                                "value1": 8.406030654907227,
-                                                "value2": 0.0
+                                                "value0": -64.0,
+                                                "value1": 0.0,
+                                                "value2": -64.0
                                             },
                                             "value1": {
                                                 "value0": 0.0,
@@ -261,34 +137,46 @@
                                                 "value3": 1.0
                                             },
                                             "value2": {
-                                                "value0": 1.0,
-                                                "value1": 1.0,
-                                                "value2": 1.0
+                                                "value0": 128.0,
+                                                "value1": 5.0,
+                                                "value2": 128.0
                                             }
                                         }
                                     }
                                 },
-                                "value1": [
-                                    {
-                                        "value0": "fb7e6efb-fef0-4d8a-a173-76781a03041c"
+                                "value1": {
+                                    "value0": {
+                                        "value0": -64.0,
+                                        "value1": 0.0,
+                                        "value2": -64.0
+                                    },
+                                    "value1": {
+                                        "value0": 0.0,
+                                        "value1": 0.0,
+                                        "value2": 0.0,
+                                        "value3": 1.0
+                                    },
+                                    "value2": {
+                                        "value0": 1.0,
+                                        "value1": 1.0,
+                                        "value2": 1.0
                                     }
-                                ]
+                                },
+                                "value2": true
                             },
-                            "value1": 2.0,
-                            "value2": 1.0,
-                            "value3": 6.0,
-                            "value4": 7.0,
-                            "value5": -9.8100004196167
+                            "value1": "Gen_Heightmap_From_heightmap.png"
                         }
                     }
                 }
-            },
+            }
+        ],
+        "actors": [
             {
                 "key": {
-                    "value0": "589fa697-8a84-4ffd-8431-60a1ad30fb43"
+                    "value0": "06c119d4-6d17-4bbe-8fff-6f2644f94688"
                 },
                 "value": {
-                    "polymorphic_id": 2147483652,
+                    "polymorphic_id": 2147483651,
                     "polymorphic_name": "Heightmap",
                     "ptr_wrapper": {
                         "valid": 1,
@@ -297,7 +185,7 @@
                                 "value0": {
                                     "value0": {
                                         "value0": {
-                                            "value0": "589fa697-8a84-4ffd-8431-60a1ad30fb43"
+                                            "value0": "06c119d4-6d17-4bbe-8fff-6f2644f94688"
                                         }
                                     },
                                     "value1": {
@@ -323,10 +211,10 @@
                                 },
                                 "value1": [
                                     {
-                                        "value0": "ff87f5fd-a365-4a29-8b22-96726e311688"
+                                        "value0": "633be199-6aa1-42bf-8333-e5bdfd668f74"
                                     },
                                     {
-                                        "value0": "aed04476-a844-4eb8-a9cb-8c7fa69ccd63"
+                                        "value0": "00b378e3-0a2a-464f-b09b-6dbdffc0fdc4"
                                     }
                                 ]
                             },
@@ -341,9 +229,7 @@
         "value0": [
             "heightmap.png"
         ],
-        "value1": [
-            "Car.glb"
-        ],
+        "value1": [],
         "value2": []
     }
 }

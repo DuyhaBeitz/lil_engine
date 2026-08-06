@@ -9,8 +9,6 @@ class Heightmap : public Actor {
 private:
     virtual void OnLayoutUpdate() override;
 
-    void TryInitialize();
-
 public:
     // void Setup(Image heightmap_image, Vector3 map_size);
     LIL_REFLECTABLE()
@@ -19,10 +17,11 @@ public:
 
     ModelComponent* m_model = nullptr;
     ColliderComponent* m_collider = nullptr;
-    CollisionShape* m_shape = nullptr;
 
 public:
     Heightmap() = default;
+
+    virtual void SetupComponents() override;
 
     template <class Archive>
     void save( Archive & ar ) const {
@@ -36,9 +35,6 @@ public:
         ar(m_heightmap_texture_key);
         m_model = GetFirst<ModelComponent>();
         m_collider = GetFirst<ColliderComponent>();
-        if (m_collider) {
-            m_shape = m_collider->GetFirstShape(CollisionShapeType::HEIGHTMAP);
-        }
     }
 };
 LIL_REFLECT(Heightmap, bases<Actor>,

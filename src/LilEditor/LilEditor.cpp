@@ -117,12 +117,23 @@ void Lil::Editor::DrawInspector() {
         
         for (auto& component : m_selected->Components()) {            
             ImGui::PushID(component);
-            if (ImGui::SmallButton(ICON_FA_TRASH)) {
-                m_selected->DeattachComponent(component);
-                Lil::World().DestroyComponent(component);
-                ImGui::PopID();
-                continue;
+
+            if (component->IsRequired()) {
+                ImGui::BeginDisabled(true);
+                ImGui::SmallButton(ICON_FA_LOCK);
+                ImGui::EndDisabled();
+                if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) {
+                    ImGui::SetTooltip("This component is required");
+                }
+            } else {
+                if (ImGui::SmallButton(ICON_FA_TRASH)) {
+                    m_selected->DeattachComponent(component);
+                    Lil::World().DestroyComponent(component);
+                    ImGui::PopID();
+                    continue;
+                }
             }
+
             ImGui::SameLine();
             m_editor.SetCurrentObjectName(component->GetTypeInfo().Name());
             m_editor.VisitObject(component->GetTypeInfo(), component);

@@ -70,6 +70,7 @@ void Actor::AttachComponent(Component *component) {
 
 void Actor::DeattachComponent(Component *component) {
     if (!component) return;
+    if (component->IsRequired()) LIL_LOG_ERROR("Trying to deattach required component");
     auto it = std::find(m_components.begin(), m_components.end(), component);
     if (it != m_components.end()) m_marked_deattached.insert(component);
 }
@@ -81,7 +82,7 @@ bool Actor::IsComponentAttached(const Component *component) const {
     return component && exists && not_deattached;
 }
 
-void Actor::CreateComponentFromId(uuids::uuid id) {
+void Actor::AttachComponentFromId(uuids::uuid id) {
     if (Component* component = Lil::World().GetComponent(id)) {
         m_components.push_back(component);
     }

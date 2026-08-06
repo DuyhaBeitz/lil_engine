@@ -17,6 +17,8 @@ public:
 
     Actor() = default;
     
+    virtual void SetupComponents() {}
+
     void LayoutUpdate();
     void SimulationUpdate(float delta_time);
 
@@ -33,7 +35,7 @@ public:
 
     const std::vector<Component*>& Components() const {return m_components;}
 
-    void CreateComponentFromId(uuids::uuid id);
+    void AttachComponentFromId(uuids::uuid id);
 
     template <class Archive>
     void save( Archive & ar ) const {
@@ -52,7 +54,7 @@ public:
         std::vector<uuids::uuid> component_ids = {};
         ar(component_ids);
         for (uuids::uuid id : component_ids) {
-            CreateComponentFromId(id);
+            AttachComponentFromId(id);
         }        
     }
 
