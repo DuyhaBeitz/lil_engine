@@ -8,12 +8,16 @@
 
 struct Notification {
     std::string message;
-    float lifetime;
-    float maxLifetime;
+    double lifetime;
+    double start_time;
     ImVec4 color;
 
-    Notification(const std::string& msg, float duration, const ImVec4& col)
-        : message(msg), lifetime(duration), maxLifetime(duration), color(col) {}
+    double TimeLeft() const {
+        return start_time + lifetime - GetTime();
+    }
+
+    Notification(const std::string& msg, double duration, const ImVec4& col)
+        : message(msg), lifetime(duration), start_time(GetTime()), color(col) {}
 };
 
 

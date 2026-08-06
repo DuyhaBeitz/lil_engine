@@ -14,16 +14,38 @@ Lil::Editor &Lil::Editor::Get() {
 #define TOGGLE_FULLSCREEN_KEY KEY_F11
 
 void Lil::Editor::LoadScene() {
-    std::string filename = "scene.json";
-    Lil::SceneManager().LoadScene(filename);
-    m_selected = nullptr;
-    Notify("Loaded file: " + filename);
+    const char* source = BrowseSceneDialog();
+    if (source) {
+        try {
+            std::string filename = source;
+            Lil::SceneManager().LoadScene(filename);
+            m_selected = nullptr;
+            Notify("Loaded file: " + filename);
+        }
+        catch (const cereal::Exception& e) {
+            Notify(std::string("Failed to load: ") + e.what());
+        }
+    }
+    else {
+        Notify("Aborted");
+    }
 }
 
 void Lil::Editor::SaveScene() {
-    std::string filename = "scene.json";
-    Lil::SceneManager().SaveScene(filename);
-    Notify("Saved file: " + filename);
+    const char* source = SaveSceneDialog();
+    if (source) {
+        try {
+            std::string filename = source;
+            Lil::SceneManager().SaveScene(filename);
+            Notify("Saved file: " + filename);
+        }
+        catch (const cereal::Exception& e) {
+            Notify(std::string("Failed to save: ") + e.what());
+        }
+    }
+    else {
+        Notify("Aborted");
+    }
 }
 
 void Lil::Editor::InitUI() {
@@ -294,7 +316,7 @@ void Lil::Editor::DrawViewport() {
 void Lil::Editor::DrawResources() {
     ImGui::Begin("Models");
     if (ImGui::Button(ICON_FA_PLUS)) {
-        const char* source = BrowseModel();
+        const char* source = BrowseModelDialog();
         if (source) {
             Lil::Resources().ModelAdd(NameFromPath(source), source);
             CopyAsset(source);
@@ -312,7 +334,7 @@ void Lil::Editor::DrawResources() {
 
     ImGui::Begin("Textures");
     if (ImGui::Button(ICON_FA_PLUS)) {
-        const char* source = BrowseTexture();
+        const char* source = BrowseTextureDialog();
         if (source) {
             Lil::Resources().TextureAdd(NameFromPath(source), source);
             CopyAsset(source);
@@ -337,7 +359,7 @@ void Lil::Editor::DrawResources() {
 
     ImGui::Begin("Sounds");
     if (ImGui::Button(ICON_FA_PLUS)) {
-        const char* source = BrowseSound();
+        const char* source = BrowseSoundDialog();
         if (source) {
             Lil::Resources().SoundAdd(NameFromPath(source), source);
             CopyAsset(source);
@@ -377,7 +399,7 @@ void Lil::Editor::DrawNotifications() {
         Notification& notif = m_notifications[i];
 
         float alpha = 1.0f;
-        if (notif.lifetime < 0.5f) alpha = notif.lifetime / 0.5f;
+        if (notif.TimeLeft() < 0.5f) alpha = notif.TimeLeft() / 0.5f;
 
         ImVec2 windowPos = ImVec2(screenPos.x, screenPos.y - (i * 65.0f)); 
         ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always, ImVec2(1.0f, 1.0f));
@@ -405,13 +427,11 @@ void Lil::Editor::DrawNotifications() {
 
         ImGui::PopStyleColor(2);
         ImGui::PopStyleVar(2);
-
-        notif.lifetime -= GetFrameTime();
     }
 
     m_notifications.erase(
         std::remove_if(m_notifications.begin(), m_notifications.end(),
-            [](const Notification& n) { return n.lifetime <= 0.0f; }),
+            [](const Notification& n) { return n.TimeLeft() <= 0; }),
         m_notifications.end()
     );
 }
