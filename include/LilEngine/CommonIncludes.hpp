@@ -2,6 +2,9 @@
 
 #include <raylib.h>
 #include <raymath.h>
+
+#include <r3d/r3d.h>
+
 #include <memory>
 #include "Log.hpp"
 //#include "ReactPhysics3DWrapper.hpp"

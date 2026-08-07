@@ -46,13 +46,13 @@ void ResourceManager::TextureUnloadAll() {
     m_textures.clear();
 }
 
-void ResourceManager::ModelAdd(std::string key, Model model) {
-    if (ModelExists(key)) UnloadModel(m_models[key]);
+void ResourceManager::ModelAdd(std::string key, R3D_Model model) {
+    if (ModelExists(key)) R3D_UnloadModel(m_models[key], true);
     m_models[key] = model;
 }
 
 void ResourceManager::ModelAdd(std::string key, std::string filename) {
-    Model model = LoadModel(filename.c_str());
+    R3D_Model model = R3D_LoadModelEx(filename.c_str(), R3D_IMPORT_MESH_DATA);
     ModelAdd(key, model);
 }
 
@@ -67,14 +67,14 @@ bool ResourceManager::ModelExists(std::string key) {
 
 void ResourceManager::ModelUnload(std::string key) {
     if (ModelExists(key)) {
-        UnloadModel(*GetModel(key));
+        R3D_UnloadModel(*GetModel(key), true);
         m_models.erase(key);
     }
 }
 
 void ResourceManager::ModelUnloadAll() {
     for (auto& [key, model] : m_models) {
-        UnloadModel(model);
+        R3D_UnloadModel(model, true);
     }
     m_models.clear();
 }
@@ -84,7 +84,7 @@ Texture2D *ResourceManager::GetTexture(std::string key) {
     else return nullptr;
 }
 
-Model *ResourceManager::GetModel(std::string key) {
+R3D_Model *ResourceManager::GetModel(std::string key) {
     if (ModelExists(key)) return &m_models[key];
     else return nullptr;
 }
@@ -117,15 +117,15 @@ void ResourceManager::UpdateModelPreviews() {
             m_model_previews[key] = LoadRenderTexture(100, 100);
         }
         
-        BoundingBox bb = GetModelBoundingBox(m_models.at(key));
+        BoundingBox bb = m_models.at(key).aabb;
         float diam = Vector3Length(bb.max - bb.min);
         
         model_preview_camera.position = Vector3{diam*cosf(GetTime()), diam, diam*sinf(GetTime())};
         BeginTextureMode(m_model_previews.at(key));
             ClearBackground(RAYBLACK);
-            BeginMode3D(model_preview_camera);
-                DrawModel(m_models.at(key), Vector3{0.0f, 0.0f, 0.0f}, 1.0f, WHITE);
-            EndMode3D();
+            R3D_Begin(model_preview_camera);
+                R3D_DrawModel(m_models.at(key), Vector3{0.0f, 0.0f, 0.0f}, 1.0f);
+            R3D_End();
         EndTextureMode();
     }
 }

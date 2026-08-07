@@ -20,7 +20,7 @@ public:
 
     void SetModel(std::string model_key);
 
-    Model* GetModel() const;
+    R3D_Model* GetModel() const;
     std::string& ModelKey();
 
     RayCollision Raycast(Ray ray) const;

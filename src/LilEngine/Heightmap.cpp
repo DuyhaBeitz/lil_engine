@@ -14,7 +14,7 @@ void Heightmap::OnLayoutUpdate() {
 
         if (m_model) {
             m_model->SetModel(heightmap_name);
-            m_model->Local().translation = GetScale() * Vector3{-0.5f, 0.0f, -0.5f};
+            //m_model->Local().translation = GetScale() * Vector3{-0.5f, 0.0f, -0.5f};
         }
         if (m_collider && m_collider->m_shapes.size() > 0) {
             CollisionShape* shape = &m_collider->m_shapes.front();

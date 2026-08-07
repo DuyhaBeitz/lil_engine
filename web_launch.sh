@@ -1,1 +1,0 @@
-emrun build/index.html --browser firefox

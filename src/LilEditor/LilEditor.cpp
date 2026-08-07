@@ -107,8 +107,11 @@ void Lil::Editor::DrawTarget() {
     BeginTextureMode(m_render_target);
         ClearBackground(RAYBLACK);
         
-        BeginMode3D(m_camera);
+        R3D_Begin(m_camera);
             Lil::World().Draw();
+        R3D_End();
+
+        BeginMode3D(m_camera);
             if (Lil::World().m_physics_debug) Lil::World().DebugDraw();
             if (m_selected) {
                 Transform t = m_selected->GetTransform();
@@ -311,10 +314,42 @@ void Lil::Editor::DrawViewport() {
     if (ImGui::IsWindowHovered() || ImGui::IsWindowFocused() || !m_cursor_enabled) HandleViewportInput();
 
     TryResizeTarget(contentSize.x, contentSize.y);
-    SetGizmoRenderSize(contentSize.x, contentSize.y);
+    
 
-    DrawTarget();
+
+
+
+
+
+    // DrawTarget();
+    
+    ClearBackground(RAYBLACK);
+    
+    R3D_View view = {
+        .camera = R3D_CameraFromRL(m_camera),
+        .target = m_render_target,
+        .viewport = {0, 0, contentSize.x, contentSize.y}
+    };
+    R3D_BeginPro(view);
+        Lil::World().Draw();
+    R3D_End();
+
+    BeginTextureMode(m_render_target);
+        BeginMode3D(m_camera);
+
+            if (Lil::World().m_physics_debug) Lil::World().DebugDraw();
+            if (m_selected) {
+                Transform t = m_selected->GetTransform();
+                SetGizmoRenderSize(contentSize.x, contentSize.y);
+                DrawGizmo3D(m_gizmo_mode | m_gizmo_space, &t);
+                m_selected->SetTransform(t);
+            }
+        EndMode3D();
+    EndTextureMode();
+
+
     rlImGuiImageRenderTexture(&m_render_target);
+
     
     SetMouseOffset(0, 0);
     

@@ -9,7 +9,7 @@ class ResourceManager {
 private:
     std::unordered_map<std::string, Texture2D> m_textures;
 
-    std::unordered_map<std::string, Model> m_models;
+    std::unordered_map<std::string, R3D_Model> m_models;
     std::unordered_map<std::string, RenderTexture2D> m_model_previews;
 
     std::unordered_map<std::string, LilSound> m_sounds;
@@ -24,7 +24,7 @@ public:
     void TextureUnload(std::string key);
     void TextureUnloadAll();
 
-    void ModelAdd(std::string key, Model model);
+    void ModelAdd(std::string key, R3D_Model model);
     void ModelAdd(std::string key, std::string filename);
     void ModelAdd(std::string filename);
     bool ModelExists(std::string key);
@@ -43,12 +43,12 @@ public:
     void SoundUnloadAll();
 
     Texture2D* GetTexture(std::string key);
-    Model* GetModel(std::string key);
+    R3D_Model* GetModel(std::string key);
     RenderTexture2D* GetModelPreview(std::string key);
     LilSound* GetSound(std::string key);
 
     std::unordered_map<std::string, Texture2D>& Textures() { return m_textures; }
-    std::unordered_map<std::string, Model>& Models() { return m_models; }
+    std::unordered_map<std::string, R3D_Model>& Models() { return m_models; }
     std::unordered_map<std::string, LilSound>& Sounds() { return m_sounds; }
 
 

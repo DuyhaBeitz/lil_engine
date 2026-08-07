@@ -1,4 +1,5 @@
 #include "Physics.hpp"
+#include <thread>
 
 void PhysicsSystem::Init() {
 	JPH::RegisterDefaultAllocator();
@@ -12,7 +13,7 @@ void PhysicsSystem::Init() {
 
     m_temp_allocator = std::make_unique<JPH::TempAllocatorImpl>(10 * 1024 * 1024);
 
-	m_job_system = std::make_unique<JPH::JobSystemThreadPool>(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers, 1);
+	m_job_system = std::make_unique<JPH::JobSystemThreadPool>(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers, std::thread::hardware_concurrency() - 1);
 
 	const JPH::uint cMaxBodies = 1024;
 	const JPH::uint cNumBodyMutexes = 0;

@@ -39,6 +39,19 @@ target_include_directories(lil_engine PUBLIC
     ${RAYLIB_DIR}/include
 )
 
+# r3d
+set(R3D_DIR ${CMAKE_SOURCE_DIR}/include/external/r3d)
+find_package(assimp REQUIRED)
+target_link_libraries(lil_engine PUBLIC
+    ${R3D_DIR}/libr3d.a
+    assimp
+)
+
+target_include_directories(lil_engine PUBLIC 
+    ${R3D_DIR}/include
+    ${R3D_DIR}/include/generated
+)
+
 #raylib-gizmo
 add_library(raylib-gizmo STATIC ${CMAKE_SOURCE_DIR}/include/external/raylib-gizmo/raygizmo.c)
 target_include_directories(raylib-gizmo PUBLIC
