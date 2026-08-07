@@ -11,5 +11,4 @@ void Lil::Engine::Init() {
 
 void Lil::Engine::Update() {
     GetWorld().Update();
-    GetResources().UpdateModelPreviews();
 }

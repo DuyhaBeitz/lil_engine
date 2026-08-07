@@ -115,18 +115,16 @@ void ResourceManager::UpdateModelPreviews() {
     for (auto& [key, model] : m_models) {
         if (!ModelPreviewExists(key)) {
             m_model_previews[key] = LoadRenderTexture(100, 100);
-        }
-        
-        BoundingBox bb = m_models.at(key).aabb;
-        float diam = Vector3Length(bb.max - bb.min);
-        
-        model_preview_camera.position = Vector3{diam*cosf(GetTime()), diam, diam*sinf(GetTime())};
-        BeginTextureMode(m_model_previews.at(key));
-            ClearBackground(RAYBLACK);
-            R3D_Begin(model_preview_camera);
+
+            BoundingBox bb = m_models.at(key).aabb;
+            float diam = Vector3Length(bb.max - bb.min);
+            
+            model_preview_camera.position = Vector3{diam, diam, diam};
+            R3D_View view = {.camera = R3D_CameraFromRL(model_preview_camera), .target = m_model_previews.at(key)};
+            R3D_BeginPro(view);
                 R3D_DrawModel(m_models.at(key), Vector3{0.0f, 0.0f, 0.0f}, 1.0f);
             R3D_End();
-        EndTextureMode();
+        }
     }
 }
 
