@@ -30,16 +30,6 @@ int main() {
 
     Lil::Editor::Get().Init();
 
-    //Create directional light with shadows
-    R3D_Light light = R3D_CreateLight(R3D_LIGHT_DIR);
-    R3D_SetLightDirection(light, (Vector3){ -1, -0.5, -1 });
-    R3D_SetShadowUpdateMode(light, R3D_SHADOW_UPDATE_INTERVAL);
-    R3D_SetLightActive(light, true);
-    R3D_SetLightRange(light, 500.0f);
-    R3D_SetShadowSoftness(light, 3.2f);
-    R3D_SetShadowDepthBias(light, 0.001f);
-    R3D_EnableShadow(light);
-
     bool editor = true;
 
     while (!WindowShouldClose()) {

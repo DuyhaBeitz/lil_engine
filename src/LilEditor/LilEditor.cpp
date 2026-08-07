@@ -238,7 +238,7 @@ void Lil::Editor::HandleViewportInput() {
     if (IsKeyPressed(KEY_TWO)) m_gizmo_mode = GIZMO_ROTATE;
     if (IsKeyPressed(KEY_THREE)) m_gizmo_mode = GIZMO_SCALE;
 
-    if (m_cursor_enabled && IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+    if (m_cursor_enabled && IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
         Actor* pick = Lil::World().PickActor(GetMousePosition(), m_render_target.texture.width, m_render_target.texture.height, m_camera);
         if (pick) m_selected = pick;
     }
@@ -321,6 +321,15 @@ void Lil::Editor::DrawViewport() {
     
     SetMouseOffset(0, 0);
     
+    ImGui::End();
+}
+
+void Lil::Editor::DrawEnvironment() {
+    ImGui::Begin("Environment");
+
+    m_editor.SetCurrentObjectName("Environment");
+    m_editor.VisitObject(Lil::Environment().GetTypeInfo(), &Lil::Environment());
+
     ImGui::End();
 }
 
@@ -456,6 +465,7 @@ void Lil::Editor::Draw() {
 #endif
     DrawInspector();
     DrawResources();
+    DrawEnvironment();
     DrawViewport();
     DrawMenuBar();
 

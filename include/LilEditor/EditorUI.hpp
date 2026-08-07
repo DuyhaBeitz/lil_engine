@@ -126,6 +126,51 @@ namespace Lil {
         // ==========================================
         // Reusable Editable Draw Elements
         // ==========================================
+
+
+        template <typename EnumType, size_t N>
+        static bool DrawEnumComboField(
+            const std::string& name,
+            EnumType* value,
+            const std::array<EnumType, N>& enumValues,
+            const std::array<const char*, N>& enumLabels
+        ) {
+            Lil::UIStyle::BeginPropertyRow(name, Lil::UIStyle::COLOR_TYPE_STRING);
+            ImGui::PushStyleColor(ImGuiCol_FrameBg, Lil::UIStyle::COLOR_COMBO_BG);
+
+            const char* previewLabel = "Unknown";
+            for (size_t i = 0; i < N; ++i) {
+                if (*value == enumValues[i]) {
+                    previewLabel = enumLabels[i];
+                    break;
+                }
+            }
+
+            bool res = false;
+            if (ImGui::BeginCombo(("##" + name).c_str(), previewLabel)) {
+                for (size_t i = 0; i < N; i++) {
+                    bool isSelected = (*value == enumValues[i]);
+
+                    if (ImGui::Selectable(enumLabels[i], isSelected)) {
+                        if (*value != enumValues[i]) {
+                            *value = enumValues[i];
+                            res = true;
+                        }
+                    }
+
+                    if (isSelected) {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+
+            ImGui::PopStyleColor();
+            Lil::UIStyle::EndPropertyRow();
+
+            return res;
+        }
+
         static bool DrawBoolField(const std::string& name, bool* value);
         static bool DrawIntField(const std::string& name, int* value);
         static bool DrawUInt32Field(const std::string& name, uint32_t* value);

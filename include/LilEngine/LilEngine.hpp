@@ -5,6 +5,7 @@
 #include "ResourceManager.hpp"
 #include "Audio.hpp"
 #include "SceneManager.hpp"
+#include "Environment.hpp"
 #include "World.hpp"
 
 #include "imgui.h"
@@ -25,6 +26,7 @@ namespace Lil {
         World& GetWorld() { return m_world; }
         SceneManager& GetSceneManager() { return m_scene_manager; }
         Audio& GetAudio() { return m_audio; }
+        Environment& GetEnvironment() { return m_environment; }
         
     private:
         PhysicsSystem m_physics;
@@ -32,6 +34,7 @@ namespace Lil {
         World m_world;
         SceneManager m_scene_manager;
         Audio m_audio;
+        Environment m_environment;
     };
     
     // Convenience functions
@@ -40,4 +43,5 @@ namespace Lil {
     inline World& World() { return Engine::Get().GetWorld(); }
     inline SceneManager& SceneManager() { return Engine::Get().GetSceneManager(); }
     inline Audio& Audio() { return Engine::Get().GetAudio(); }
+    inline Environment& Environment() { return Engine::Get().GetEnvironment(); }
 }

@@ -74,6 +74,7 @@ namespace Lil {
         void HandleViewportInput();
         void DrawViewport();
 
+        void DrawEnvironment();
         void DrawResources();
 
         void Notify(const std::string& message, float duration = 3.0f, const ImVec4& color = ImVec4(1.0f, 1.0f, 1.0f, 1.0f));

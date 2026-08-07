@@ -7,9 +7,9 @@
 
 #include "Actor.hpp"
 
-// #include "Pawn.hpp"
 #include "Character.hpp"
 #include "Heightmap.hpp"
+#include "Components/LightComponent.hpp"
 
 class World {
 private:
