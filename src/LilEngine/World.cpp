@@ -45,7 +45,6 @@ Actor *World::PickActor(Vector2 screen_pos, int render_w, int render_h, Camera c
     float closest = INFINITY;
     Actor* a = nullptr;
     
-    DrawRay(ray, RED);
     for (auto& [key, actor] : m_actors) {
         for (auto& component : actor->Components()) {
             if (ModelComponent* m = dynamic_cast<ModelComponent*>(component)) {

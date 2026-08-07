@@ -24,6 +24,7 @@ int main() {
     InitAudioDevice();
     SetTraceLogLevel(LOG_ALL);
     DisableCursor();
+    SetWindowState(FLAG_WINDOW_RESIZABLE);
 
     Lil::Engine().Get().Init();
 
