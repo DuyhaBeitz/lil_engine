@@ -123,73 +123,81 @@ void Lil::Editor::DrawInspector() {
     ImGui::Begin("Inspector");
 
     if (m_selected) {
-        m_editor.SetCurrentObjectName(m_selected->GetTypeInfo().Name());
-        m_editor.VisitObject(m_selected->GetTypeInfo(), m_selected);
-        
-        ImGui::Spacing();
-        
-        float availWidth = ImGui::GetContentRegionAvail().x;
-        ImGui::Begin("Components");
-        ImGui::SameLine(availWidth - 30.0f);
-        
-        if (ImGui::Button(ICON_FA_PLUS)) {
-            ImGui::OpenPopup("AddComponentPopup");
+        if (ImGui::SmallButton(ICON_FA_TRASH)) {
+            Lil::World().DestroyActor(m_selected);
+            m_selected = nullptr;
         }
-        ImGui::Separator();
-        
-        for (auto& component : m_selected->Components()) {            
-            ImGui::PushID(component);
-
-            if (component->IsRequired()) {
-                ImGui::BeginDisabled(true);
-                ImGui::SmallButton(ICON_FA_LOCK);
-                ImGui::EndDisabled();
-                if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) {
-                    ImGui::SetTooltip("This component is required");
-                }
-            } else {
-                if (ImGui::SmallButton(ICON_FA_TRASH)) {
-                    m_selected->DeattachComponent(component);
-                    Lil::World().DestroyComponent(component);
-                    ImGui::PopID();
-                    continue;
-                }
-            }
-
+        else {
             ImGui::SameLine();
-            m_editor.SetCurrentObjectName(component->GetTypeInfo().Name());
-            m_editor.VisitObject(component->GetTypeInfo(), component);
+
+            m_editor.SetCurrentObjectName(m_selected->GetTypeInfo().Name());
+            m_editor.VisitObject(m_selected->GetTypeInfo(), m_selected);
             
-            ImGui::PopID();
-        }
-        
-        if (ImGui::BeginPopup("AddComponentPopup")) {
-            ImGui::Text("Available components:");
+            ImGui::Spacing();
+            
+            float availWidth = ImGui::GetContentRegionAvail().x;
+            ImGui::Begin("Components");
+            ImGui::SameLine(availWidth - 30.0f);
+            
+            if (ImGui::Button(ICON_FA_PLUS)) {
+                ImGui::OpenPopup("AddComponentPopup");
+            }
             ImGui::Separator();
             
-            for (auto& [name, ti] : Lil::Reflection::Get().Types()) {
-                if (ti->IsA<Component>() && *ti != TypeInfo::Get<Component>()) {
-                    bool exists = false;
-                    for (auto& component : m_selected->Components()) {
-                        if (component->GetTypeInfo().Name() == name) {
-                            exists = true;
-                            break;
-                        }
+            for (auto& component : m_selected->Components()) {            
+                ImGui::PushID(component);
+
+                if (component->IsRequired()) {
+                    ImGui::BeginDisabled(true);
+                    ImGui::SmallButton(ICON_FA_LOCK);
+                    ImGui::EndDisabled();
+                    if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) {
+                        ImGui::SetTooltip("This component is required");
                     }
-                    
-                    if (!exists && ImGui::MenuItem(name.c_str())) {
-                        Component* component = Lil::World().CreateComponent(ti);
-                        if (component) {
-                            m_selected->AttachComponent(component);
-                        }                        
-                        ImGui::CloseCurrentPopup();
+                } else {
+                    if (ImGui::SmallButton(ICON_FA_TRASH)) {
+                        m_selected->DeattachComponent(component);
+                        Lil::World().DestroyComponent(component);
+                        ImGui::PopID();
+                        continue;
                     }
                 }
+
+                ImGui::SameLine();
+                m_editor.SetCurrentObjectName(component->GetTypeInfo().Name());
+                m_editor.VisitObject(component->GetTypeInfo(), component);
+                
+                ImGui::PopID();
             }
             
-            ImGui::EndPopup();
+            if (ImGui::BeginPopup("AddComponentPopup")) {
+                ImGui::Text("Available components:");
+                ImGui::Separator();
+                
+                for (auto& [name, ti] : Lil::Reflection::Get().Types()) {
+                    if (ti->IsA<Component>() && *ti != TypeInfo::Get<Component>()) {
+                        bool exists = false;
+                        for (auto& component : m_selected->Components()) {
+                            if (component->GetTypeInfo().Name() == name) {
+                                exists = true;
+                                break;
+                            }
+                        }
+                        
+                        if (!exists && ImGui::MenuItem(name.c_str())) {
+                            Component* component = Lil::World().CreateComponent(ti);
+                            if (component) {
+                                m_selected->AttachComponent(component);
+                            }                        
+                            ImGui::CloseCurrentPopup();
+                        }
+                    }
+                }
+                
+                ImGui::EndPopup();
+            }
+            ImGui::End();
         }
-        ImGui::End();
     }
 
     ImGui::End();
