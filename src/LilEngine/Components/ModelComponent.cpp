@@ -26,10 +26,7 @@ void ModelComponent::Draw() {
 }
 
 
-void ModelComponent::SetModel(std::string model_key) {
-    m_model_key = model_key;
-}
-
+void ModelComponent::SetModel(std::string model_key) {m_model_key = model_key;}
 Model *ModelComponent::GetModel() const { return Lil::Resources().GetModel(m_model_key); }
 std::string &ModelComponent::ModelKey() { return m_model_key; }
 

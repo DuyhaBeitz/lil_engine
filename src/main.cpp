@@ -4,10 +4,6 @@
 #include "LilEngine.hpp"
 #include "LilEditor.hpp"
 
-#include "utils/ColliderHelper.hpp"
-#include "Components/ModelComponent.hpp"
-#include "Components/ColliderComponent.hpp"
-
 static Camera camera = {
     .position = (Vector3){ 10.0f,10.0f, 10.0f },  // Camera position
     .target = (Vector3){ 0.0f, 0.0f, 0.0f },      // Camera looking at point
