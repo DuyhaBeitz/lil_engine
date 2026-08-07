@@ -10,17 +10,7 @@ ModelComponent::ModelComponent(std::string model_key)
 
 void ModelComponent::Draw() {
     R3D_Model* m = GetModel();
-    if (m) {
-    switch (Lil::World().GetRenderMode()) {
-        case RenderMode::Unlit:
-            R3D_DrawModelEx(*m, GetPosition(), GetRotation(), GetScale());
-            break;
-        
-        case RenderMode::Wireframe:
-            DrawR3DModelWiresEx(*m, GetPosition(), GetRotation(), GetScale());
-            break;
-        }
-    }
+    if (m) R3D_DrawModelEx(*m, GetPosition(), GetRotation(), GetScale());
     else DrawSphere(GetPosition(), 2.f, RAYRED);
 }
 

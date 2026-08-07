@@ -11,11 +11,6 @@
 #include "Character.hpp"
 #include "Heightmap.hpp"
 
-enum class RenderMode : uint8_t {
-    Unlit = 0,
-    Wireframe
-};
-
 class World {
 private:
     std::unordered_map<uuids::uuid, std::unique_ptr<Actor>> m_actors;
@@ -126,17 +121,14 @@ public:
     bool IsSumulationGoing() { return m_simulation_going; }
     void SetSimulationGoing(bool going) { m_simulation_going = going; }
 
-    RenderMode GetRenderMode() { return m_render_mode; }
-    void SetRenderMode(RenderMode render_mode) { m_render_mode = render_mode; }
 
     bool m_simulation_going = false;
     float m_simulation_speed = 1.0f;
     bool m_physics_debug = false;
-    RenderMode m_render_mode = RenderMode::Unlit;
 
     template <class Archive>
     void save( Archive & ar ) const {
-        ar(m_simulation_going, m_simulation_speed, m_physics_debug, m_render_mode);
+        ar(m_simulation_going, m_simulation_speed, m_physics_debug);
         ar(cereal::make_nvp("components", m_components));
         ar(cereal::make_nvp("actors", m_actors));
     }
@@ -144,17 +136,8 @@ public:
     template <class Archive>
     void load( Archive & ar ) {
         Clear();
-        ar(m_simulation_going, m_simulation_speed, m_physics_debug, m_render_mode);
-        // std::cout << m_simulation_going << std::endl;
-        // std::cout << m_simulation_speed << std::endl;
-        // std::cout << m_physics_debug << std::endl;
+        ar(m_simulation_going, m_simulation_speed, m_physics_debug);
         
-        // m_simulation_going = true;
-        // m_simulation_speed = 1.0f;
-        // m_physics_debug = false;
-        // m_render_mode = RenderMode::Unlit;
-
-
         ar(cereal::make_nvp("components", m_components));
         ar(cereal::make_nvp("actors", m_actors));
     }

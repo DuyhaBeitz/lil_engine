@@ -265,39 +265,6 @@ void Lil::Editor::DrawViewport() {
         ImGui::PopStyleColor();
         ImGui::SameLine();
 
-
-        static const std::unordered_map<std::string, RenderMode> renderModeMap = {
-            {"Unlit", RenderMode::Unlit},
-            {"Wireframe", RenderMode::Wireframe}
-        };
-
-        static RenderMode currentMode = RenderMode::Unlit;
-        
-        std::string currentName = "Unlit";
-        for (const auto& [name, mode] : renderModeMap) {
-            if (mode == currentMode) {
-                currentName = name;
-                break;
-            }
-        }
-
-        ImGui::SetNextItemWidth(300.0f);
-        if (ImGui::BeginCombo("##Render Mode", currentName.c_str())) {
-            for (const auto& [name, mode] : renderModeMap)
-            {
-                bool isSelected = (mode == currentMode);
-                if (ImGui::Selectable(name.c_str(), isSelected))
-                {
-                    currentMode = mode;
-                    Lil::World().SetRenderMode(mode);
-                }
-                if (isSelected) {
-                    ImGui::SetItemDefaultFocus();
-                }
-            }
-            ImGui::EndCombo();
-        }
-
         ImGui::SameLine(ImGui::GetWindowWidth() - 230.0f);
         ImGui::Text("FPS: %d", GetFPS());
 

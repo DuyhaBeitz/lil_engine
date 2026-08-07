@@ -42,15 +42,3 @@ R3D_Model HeightmapModel(Image &image, Vector3 size) {
     //model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture; // Set map diffuse texture
     return model;
 }
-
-void DrawR3DModelWiresEx(R3D_Model model, Vector3 position, Quaternion rotation, Vector3 scale) {
-    rlEnableWireMode();
-    R3D_DrawModelEx(model, position, rotation, scale);
-    rlDisableWireMode();
-}
-
-void DrawR3DModelWires(R3D_Model model, Vector3 position, float scale) {
-    rlEnableWireMode();
-    R3D_DrawModel(model, position, scale);
-    rlDisableWireMode();
-}
