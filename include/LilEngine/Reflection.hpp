@@ -12,6 +12,7 @@
 #include <functional>
 #include <any>
 #include <typeindex>
+#include <tuple>
 
 #include "refl.hpp"
 
@@ -239,15 +240,16 @@ private:
                         return &(obj->*Member::pointer);
                     };
 
-                    refl::util::for_each(refl::descriptor::get_attribute_types(member), [&info, &member](auto t) {
-                        using AttributeType = std::decay_t<decltype(t)>;
-                        
-                        const AttributeType& attr = refl::descriptor::get_attribute<AttributeType>(member);
-                        info.attributes.emplace(
-                            std::type_index(typeid(AttributeType)),
-                            attr
-                        );
-                    });
+                    std::apply([&info](auto&&... attrs) {
+                        auto process = [&info](auto&& attr) {
+                            using AttributeType = std::decay_t<decltype(attr)>;
+                            info.attributes.emplace(
+                                std::type_index(typeid(AttributeType)),
+                                attr
+                            );
+                        };
+                        (process(attrs), ...);
+                    }, refl::descriptor::get_attributes(member));
 
                     m_fields.push_back(std::move(info));
                 }

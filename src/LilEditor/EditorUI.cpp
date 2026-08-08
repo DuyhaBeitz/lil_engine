@@ -94,7 +94,24 @@ ImVec4 Lil::UIStyle::GetNumericColor(const std::string &name) {
     return COLOR_TYPE_NUMBER;
 }
 
-bool Lil::UIStyle::DrawBoolField(const std::string &name, bool *value) {
+bool Lil::UIStyle::DrawAttributeEnumCombo(const std::string &name, int *value, const EnumAttribute &attr) {
+    std::vector<int> values;
+    values.reserve(attr.count);
+    for (int v : attr.get_values()) {
+        values.push_back(v);
+    }
+
+    std::vector<const char*> labels;
+    labels.reserve(attr.count);
+    for (std::string_view sv : attr.get_labels()) {
+        labels.push_back(sv.data());
+    }
+
+    return DrawEnumComboField<int>(name, value, values, labels);
+}
+
+bool Lil::UIStyle::DrawBoolField(const std::string &name, bool *value)
+{
     BeginPropertyRow(name, COLOR_TYPE_BOOL);
     ImGui::PushStyleColor(ImGuiCol_FrameBg, COLOR_INPUT_BG);
     ImGui::PushStyleColor(ImGuiCol_CheckMark, COLOR_TYPE_BOOL);
