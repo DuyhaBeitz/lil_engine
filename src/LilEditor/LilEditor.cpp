@@ -232,7 +232,8 @@ void Lil::Editor::DrawLayout() {
         BeginMode3D(m_layout_camera);
             if (m_selected_actor) {
                 Transform old_actor_transform = m_selected_actor->GetTransform();
-                m_selected_actor->SetTransform(TRANSFORM_EMPTY);
+                m_selected_actor->SetPosition(Vector3{0.0, 0.0f, 0.0f});
+                m_selected_actor->SetRotation(QuaternionIdentity());
                 m_selected_actor->LayoutUpdate();
 
                 m_selected_actor->Draw();
