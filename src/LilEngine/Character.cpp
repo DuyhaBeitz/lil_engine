@@ -45,7 +45,13 @@ Character::Character() {
     }
 }
 
-Character::~Character() {}
+Character::~Character() {
+    if (!mPhysicsPresenceID.IsInvalid()) {
+        Lil::Physics().GetSystem()->GetBodyInterface().RemoveBody(mPhysicsPresenceID);
+        Lil::Physics().GetSystem()->GetBodyInterface().DestroyBody(mPhysicsPresenceID);
+        mPhysicsPresenceID = JPH::BodyID();
+    }
+}
 
 bool Character::IsOnGround() const { return mCharacter->IsSupported(); }
 bool Character::IsOnSteepSlope() const { return mCharacter->GetGroundState() == JPH::CharacterVirtual::EGroundState::OnSteepGround; }
