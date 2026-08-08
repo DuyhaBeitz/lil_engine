@@ -15,7 +15,7 @@ void ResizeTarget(RenderTexture2D& target, int w, int h) {
     }
 }
 
-void BeginTaretMode(RenderTexture2D& target, int topleftX, int topleftY, int width, int height) {
+void BeginTargetMode(RenderTexture2D& target, int topleftX, int topleftY, int width, int height) {
     SetMouseOffset(-topleftX, -topleftY);
     ResizeTarget(target, width, height);
     SetGizmoRenderSize(width, height);
@@ -227,7 +227,7 @@ void Lil::Editor::DrawLayout() {
     ImVec2 viewerTopLeft = ImGui::GetCursorScreenPos();
 
     int size = fmin(contentSize.x, contentSize.y);
-    BeginTaretMode(m_layout_render_target, viewerTopLeft.x, viewerTopLeft.y, size, size);
+    BeginTargetMode(m_layout_render_target, viewerTopLeft.x, viewerTopLeft.y, size, size);
         ClearBackground(RAYBLACK);   
         BeginMode3D(m_layout_camera);
             if (m_selected_actor) {
@@ -367,7 +367,7 @@ void Lil::Editor::DrawViewport() {
     ImVec2 contentSize = ImGui::GetContentRegionAvail();
     ImVec2 viewerTopLeft = ImGui::GetCursorScreenPos();
 
-    BeginTaretMode(m_viewport_render_target, viewerTopLeft.x, viewerTopLeft.y, contentSize.x, contentSize.y);
+    BeginTargetMode(m_viewport_render_target, viewerTopLeft.x, viewerTopLeft.y, contentSize.x, contentSize.y);
         ImGuiIO& io = ImGui::GetIO();
         if (ImGui::IsWindowHovered() || ImGui::IsWindowFocused() || !m_cursor_enabled) HandleViewportInput();
         ClearBackground(RAYBLACK);   
