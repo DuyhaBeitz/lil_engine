@@ -453,7 +453,6 @@ bool Lil::UIStyle::DrawCollisionShapeField(const std::string &name, CollisionSha
         ImGui::PopID();
         if (res) {
             value->m_needs_rebuild = true;
-            std::cout << "Set to true" << std::endl;
         }
         return res;
     }

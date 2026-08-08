@@ -46,31 +46,45 @@ namespace Lil {
 
     private:
         std::vector<Notification> m_notifications;
-        Camera m_camera = {
-            .position = (Vector3){ 10.0f,10.0f, 10.0f },  // Camera position
-            .target = (Vector3){ 0.0f, 0.0f, 0.0f },      // Camera looking at point
-            .up = (Vector3){ 0.0f, 1.0f, 0.0f },          // Camera up vector (rotation towards target)
-            .fovy = 60.0f,                                // Camera field-of-view Y
-            .projection = CAMERA_PERSPECTIVE              // Camera mode type
+        Camera m_viewport_camera = {
+            .position = (Vector3){ 10.0f,10.0f, 10.0f },
+            .target = (Vector3){ 0.0f, 0.0f, 0.0f },
+            .up = (Vector3){ 0.0f, 1.0f, 0.0f },
+            .fovy = 60.0f,
+            .projection = CAMERA_PERSPECTIVE
         };
+        Camera m_layout_camera = {
+            .position = (Vector3){ 10.0f,10.0f, 10.0f },
+            .target = (Vector3){ 0.0f, 0.0f, 0.0f },
+            .up = (Vector3){ 0.0f, 1.0f, 0.0f },
+            .fovy = 60.0f,
+            .projection = CAMERA_PERSPECTIVE
+        };
+
         bool m_cursor_enabled = true;
-        Actor* m_selected = nullptr;
-        RenderTexture2D m_render_target;
+        Actor* m_selected_actor = nullptr;
+        Component* m_selected_component = nullptr;
+
+        RenderTexture2D m_viewport_render_target;
+        RenderTexture2D m_layout_render_target;
+
         EditorUIVisitor m_editor;
         GizmoFlags m_gizmo_mode = GIZMO_TRANSLATE;
         GizmoFlags m_gizmo_space = GIZMO_DISABLED;
+
+        void DropSelectedActor();
+        void SelectActor(Actor* actor);
 
         void LoadScene();
         void SaveScene();
 
         void InitUI();
-        void TryResizeTarget(int w, int h);
-        void LoadTarget(int w, int h);
         void DrawMenuBar();
-        void DrawTarget();
 
         void DrawInspector();
+        void DrawLayout();
 
+        void UpdateGizmoMode();
         void HandleViewportInput();
         void DrawViewport();
 
