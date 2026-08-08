@@ -30,4 +30,5 @@ public:
     JPH::PhysicsSystem* GetSystem() { return m_physics_system.get(); }
     JPH::BodyInterface& GetBodyInterface() { return m_physics_system->GetBodyInterface(); }
     JPH::TempAllocator* GetTempAllocator() { return m_temp_allocator.get(); }
+    JPH::DebugRenderer* GetDebugRender() { return m_debug_renderer.get(); }
 };

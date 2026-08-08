@@ -115,7 +115,6 @@ void World::Update() {
 
 void World::DebugDraw(){
     LIL_LOG_TRACE("World debug drawing");
-    Lil::Physics().DrawDebug();
 
     for (auto& [key, actor] : m_actors) actor->DebugUpdate();
     for (auto& [key, actor] : m_actors) actor->DebugDraw();

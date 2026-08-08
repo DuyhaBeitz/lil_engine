@@ -8,10 +8,41 @@ Lil::Editor &Lil::Editor::Get() {
     return instance;
 }
 
+void ResizeTarget(RenderTexture2D& target, int w, int h) {
+    if (target.texture.width != w || target.texture.height != h) {
+        UnloadRenderTexture(target);
+        target = LoadRenderTexture(w, h);
+    }
+}
+
+void BeginTaretMode(RenderTexture2D& target, int topleftX, int topleftY, int width, int height) {
+    SetMouseOffset(-topleftX, -topleftY);
+    ResizeTarget(target, width, height);
+    SetGizmoRenderSize(width, height);
+    BeginTextureMode(target);
+}
+
+void EndTargetMode() {
+    EndTextureMode();
+    SetMouseOffset(0, 0);
+}
+
 #define TOGGLE_CURSOR_KEY KEY_P
 #define TOGGLE_SIMULATION_KEY KEY_F
 #define TOGGLE_DEBUG_KEY KEY_V
 #define TOGGLE_FULLSCREEN_KEY KEY_F11
+
+void Lil::Editor::DropSelectedActor() {
+    m_selected_actor = nullptr;
+    m_selected_component = nullptr;
+}
+
+void Lil::Editor::SelectActor(Actor *actor) {
+    if (!actor) return;
+    if (actor == m_selected_actor) return;
+    m_selected_component = nullptr;
+    m_selected_actor = actor;
+}
 
 void Lil::Editor::LoadScene() {
     const char* source = BrowseSceneDialog();
@@ -19,7 +50,7 @@ void Lil::Editor::LoadScene() {
         try {
             std::string filename = source;
             Lil::SceneManager().LoadScene(filename);
-            m_selected = nullptr;
+            DropSelectedActor();
             Notify("Loaded file: " + filename);
         }
         catch (const cereal::Exception& e) {
@@ -75,10 +106,6 @@ void Lil::Editor::InitUI() {
     Lil::UIStyle::InitGlobalTheme();
 }
 
-void Lil::Editor::LoadTarget(int w, int h) {
-    m_render_target = LoadRenderTexture(w, h);
-}
-
 void Lil::Editor::DrawMenuBar() {
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
@@ -91,50 +118,26 @@ void Lil::Editor::DrawMenuBar() {
     }
 }
 
-void Lil::Editor::TryResizeTarget(int w, int h) {
-    if (m_render_target.texture.width != w || m_render_target.texture.height != h) {
-        LoadTarget(w, h);
-    }
-}
-
 void Lil::Editor::Init() {
-    LoadTarget(GetScreenWidth(), GetScreenHeight());
+    m_viewport_render_target = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
+    m_layout_render_target = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
     InitUI();
     SetExitKey(KEY_NULL);
-}
-
-void Lil::Editor::DrawTarget() {
-    BeginTextureMode(m_render_target);
-        ClearBackground(RAYBLACK);
-        
-        R3D_Begin(m_camera);
-            Lil::World().Draw();
-        R3D_End();
-
-        BeginMode3D(m_camera);
-            if (Lil::World().m_physics_debug) Lil::World().DebugDraw();
-            if (m_selected) {
-                Transform t = m_selected->GetTransform();
-                DrawGizmo3D(m_gizmo_mode | m_gizmo_space, &t);
-                m_selected->SetTransform(t);
-            }
-        EndMode3D();
-    EndTextureMode();
 }
 
 void Lil::Editor::DrawInspector() {
     ImGui::Begin("Inspector");
 
-    if (m_selected) {
+    if (m_selected_actor) {
         if (ImGui::SmallButton(ICON_FA_TRASH)) {
-            Lil::World().DestroyActor(m_selected);
-            m_selected = nullptr;
+            Lil::World().DestroyActor(m_selected_actor);
+            DropSelectedActor();
         }
         else {
             ImGui::SameLine();
 
-            m_editor.SetCurrentObjectName(m_selected->GetTypeInfo().Name());
-            m_editor.VisitObject(m_selected->GetTypeInfo(), m_selected);
+            m_editor.SetCurrentObjectName(m_selected_actor->GetTypeInfo().Name());
+            m_editor.VisitObject(m_selected_actor->GetTypeInfo(), m_selected_actor);
             
             ImGui::Spacing();
             
@@ -147,7 +150,7 @@ void Lil::Editor::DrawInspector() {
             }
             ImGui::Separator();
             
-            for (auto& component : m_selected->Components()) {            
+            for (auto& component : m_selected_actor->Components()) {            
                 ImGui::PushID(component);
 
                 if (component->IsRequired()) {
@@ -159,7 +162,7 @@ void Lil::Editor::DrawInspector() {
                     }
                 } else {
                     if (ImGui::SmallButton(ICON_FA_TRASH)) {
-                        m_selected->DeattachComponent(component);
+                        m_selected_actor->DeattachComponent(component);
                         Lil::World().DestroyComponent(component);
                         ImGui::PopID();
                         continue;
@@ -168,8 +171,19 @@ void Lil::Editor::DrawInspector() {
 
                 ImGui::SameLine();
                 m_editor.SetCurrentObjectName(component->GetTypeInfo().Name());
+
+                ImVec2 min = ImGui::GetCursorScreenPos();
                 m_editor.VisitObject(component->GetTypeInfo(), component);
+                ImVec2 max = ImGui::GetCursorScreenPos();
+
+                float height = max.y - min.y;
+                float width = ImGui::GetContentRegionAvail().x;
+                ImVec2 rectMax(min.x + width, max.y);
                 
+                if (ImGui::IsMouseHoveringRect(min, rectMax) && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+                    m_selected_component = component;
+                }
+
                 ImGui::PopID();
             }
             
@@ -180,7 +194,7 @@ void Lil::Editor::DrawInspector() {
                 for (auto& [name, ti] : Lil::Reflection::Get().Types()) {
                     if (ti->IsA<Component>() && *ti != TypeInfo::Get<Component>()) {
                         bool exists = false;
-                        for (auto& component : m_selected->Components()) {
+                        for (auto& component : m_selected_actor->Components()) {
                             if (component->GetTypeInfo().Name() == name) {
                                 exists = true;
                                 break;
@@ -190,7 +204,7 @@ void Lil::Editor::DrawInspector() {
                         if (!exists && ImGui::MenuItem(name.c_str())) {
                             Component* component = Lil::World().CreateComponent(ti);
                             if (component) {
-                                m_selected->AttachComponent(component);
+                                m_selected_actor->AttachComponent(component);
                             }                        
                             ImGui::CloseCurrentPopup();
                         }
@@ -206,10 +220,70 @@ void Lil::Editor::DrawInspector() {
     ImGui::End();
 }
 
+void Lil::Editor::DrawLayout() {
+    ImGui::Begin("Layout");
+
+    ImVec2 contentSize = ImGui::GetContentRegionAvail();
+    ImVec2 viewerTopLeft = ImGui::GetCursorScreenPos();
+
+    int size = fmin(contentSize.x, contentSize.y);
+    ResizeTarget(m_layout_render_target, size, size);
+
+    BeginTextureMode(m_layout_render_target);
+    ClearBackground(RAYBLACK);
+    EndTextureMode();
+
+    R3D_View view = {
+        .camera = R3D_CameraFromRL(m_layout_camera),
+        .target = m_layout_render_target,
+        .viewport = {0, 0, float(size), float(size)}
+    };
+    R3D_BeginPro(view);
+        if (m_selected_actor) {
+            Transform old_actor_transform = m_selected_actor->GetTransform();
+            m_selected_actor->SetPosition(Vector3{0.0f, 0.0f, 0.0f});
+            m_selected_actor->SetRotation(QuaternionIdentity());
+            m_selected_actor->LayoutUpdate();
+            m_selected_actor->Draw();
+            m_selected_actor->SetTransform(old_actor_transform);
+            m_selected_actor->LayoutUpdate();
+        }
+    R3D_End();
+
+    BeginTaretMode(m_layout_render_target, viewerTopLeft.x, viewerTopLeft.y, size, size);
+        if (m_selected_actor) {
+            Transform old_actor_transform = m_selected_actor->GetTransform();
+            m_selected_actor->SetPosition(Vector3{0.0f, 0.0f, 0.0f});
+            m_selected_actor->SetRotation(QuaternionIdentity());
+            m_selected_actor->LayoutUpdate();
+
+            BeginMode3D(m_layout_camera);
+                if (Lil::World().m_physics_debug) {
+                    m_selected_actor->DebugUpdate();
+                    m_selected_actor->DebugDraw();
+                }
+                if (m_selected_component) {
+                    Transform t = m_selected_component->GetTransform();
+                    DrawGizmo3D(m_gizmo_mode | m_gizmo_space, &t);
+                    m_selected_component->Local() = GetLocalTransform(m_selected_actor->GetTransform(), t);
+                }
+            EndMode3D();
+            m_selected_actor->SetTransform(old_actor_transform);
+            m_selected_actor->LayoutUpdate();
+        }
+    EndTargetMode();
+    
+    rlImGuiImageRenderTexture(&m_layout_render_target);
+
+    ImGui::End();
+}
+
 void Lil::Editor::Update() {
-    if (!m_cursor_enabled) {UpdateCamera(&m_camera, CAMERA_FREE);}
+    if (!m_cursor_enabled) {UpdateCamera(&m_viewport_camera, CAMERA_FREE);}
     Lil::Engine::Get().Update();
 
+    UpdateGizmoMode();
+    
     if (IsKeyPressed(TOGGLE_SIMULATION_KEY)) {
         Lil::World().ToggleSimulationGoing();
     }
@@ -226,21 +300,26 @@ void Lil::Editor::Update() {
     }
 }
 
+void Lil::Editor::UpdateGizmoMode() {
+    if (IsKeyPressed(KEY_ONE)) m_gizmo_mode = GIZMO_TRANSLATE;
+    if (IsKeyPressed(KEY_TWO)) m_gizmo_mode = GIZMO_ROTATE;
+    if (IsKeyPressed(KEY_THREE)) m_gizmo_mode = GIZMO_SCALE;
+}
+
 void Lil::Editor::HandleViewportInput() {
+    ImGuiIO& io = ImGui::GetIO();
+
+    if (IsKeyPressed(KEY_ESCAPE)) DropSelectedActor();
+
     if (IsKeyPressed(TOGGLE_CURSOR_KEY)) {
         if (m_cursor_enabled) DisableCursor();
         else EnableCursor();
         m_cursor_enabled = !m_cursor_enabled;
     }
-    
-    if (IsKeyPressed(KEY_ESCAPE)) m_selected = nullptr;
-    if (IsKeyPressed(KEY_ONE)) m_gizmo_mode = GIZMO_TRANSLATE;
-    if (IsKeyPressed(KEY_TWO)) m_gizmo_mode = GIZMO_ROTATE;
-    if (IsKeyPressed(KEY_THREE)) m_gizmo_mode = GIZMO_SCALE;
 
     if (m_cursor_enabled && IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-        Actor* pick = Lil::World().PickActor(GetMousePosition(), m_render_target.texture.width, m_render_target.texture.height, m_camera);
-        if (pick) m_selected = pick;
+        Actor* pick = Lil::World().PickActor(GetMousePosition(), m_viewport_render_target.texture.width, m_viewport_render_target.texture.height, m_viewport_camera);
+        if (pick) SelectActor(pick);
     }
 }
 
@@ -274,62 +353,39 @@ void Lil::Editor::DrawViewport() {
 
     ImVec2 contentSize = ImGui::GetContentRegionAvail();
     ImVec2 viewerTopLeft = ImGui::GetCursorScreenPos();
-    
-    SetMouseOffset(-viewerTopLeft.x, -viewerTopLeft.y);
 
-    ImGuiIO& io = ImGui::GetIO();
-    if (ImGui::IsWindowHovered() || ImGui::IsWindowFocused() || !m_cursor_enabled) HandleViewportInput();
+    ResizeTarget(m_viewport_render_target, contentSize.x, contentSize.y);
 
-    TryResizeTarget(contentSize.x, contentSize.y);
-    
-
-
-
-
-
-
-    // DrawTarget();
-    
+    BeginTextureMode(m_viewport_render_target);
     ClearBackground(RAYBLACK);
-    
+    EndTextureMode();
+
     R3D_View view = {
-        .camera = R3D_CameraFromRL(m_camera),
-        .target = m_render_target,
+        .camera = R3D_CameraFromRL(m_viewport_camera),
+        .target = m_viewport_render_target,
         .viewport = {0, 0, contentSize.x, contentSize.y}
     };
     R3D_BeginPro(view);
         Lil::World().Draw();
     R3D_End();
+    
+    BeginTaretMode(m_viewport_render_target, viewerTopLeft.x, viewerTopLeft.y, contentSize.x, contentSize.y);
+        ImGuiIO& io = ImGui::GetIO();
+        if (ImGui::IsWindowHovered() || ImGui::IsWindowFocused() || !m_cursor_enabled) HandleViewportInput();
 
-    BeginTextureMode(m_render_target);
-        BeginMode3D(m_camera);
-
+        BeginMode3D(m_viewport_camera);
             if (Lil::World().m_physics_debug) Lil::World().DebugDraw();
-            if (m_selected) {
-                Transform t = m_selected->GetTransform();
-                SetGizmoRenderSize(contentSize.x, contentSize.y);
+            if (m_selected_actor) {
+                Transform t = m_selected_actor->GetTransform();
                 DrawGizmo3D(m_gizmo_mode | m_gizmo_space, &t);
-                m_selected->SetTransform(t);
+                m_selected_actor->SetTransform(t);
             }
         EndMode3D();
 
-    EndTextureMode();
-
-
-    rlImGuiImageRenderTexture(&m_render_target);
-
+    EndTargetMode();
     
-    SetMouseOffset(0, 0);
+    rlImGuiImageRenderTexture(&m_viewport_render_target);
     
-    ImGui::End();
-}
-
-void Lil::Editor::DrawEnvironment() {
-    ImGui::Begin("Environment");
-
-    m_editor.SetCurrentObjectName("Environment");
-    m_editor.VisitObject(Lil::Environment().GetTypeInfo(), &Lil::Environment());
-
     ImGui::End();
 }
 
@@ -465,8 +521,8 @@ void Lil::Editor::Draw() {
 #endif
     DrawInspector();
     DrawResources();
-    DrawEnvironment();
     DrawViewport();
+    DrawLayout();
     DrawMenuBar();
 
     ImGui::Begin("Creation");
@@ -478,7 +534,7 @@ void Lil::Editor::Draw() {
                 if (ImGui::IsMouseDoubleClicked(0)) {
                     Actor* actor = Lil::World().CreateActor(ti);
                     if (actor) {
-                        m_selected = actor;
+                        SelectActor(actor);
                     }
                 }
             }
@@ -490,9 +546,9 @@ void Lil::Editor::Draw() {
     for (auto& [id, actor] : Lil::World().Actors()) {
         std::string typeName = actor->GetTypeInfo().Name();
 
-        bool isSelected = (m_selected == actor.get());
+        bool isSelected = (m_selected_actor == actor.get());
         if (ImGui::Selectable((typeName+"__"+actor->GetIDString()).c_str(), isSelected)) {
-            m_selected = actor.get();
+            SelectActor(actor.get());
         }
     }
     ImGui::End();

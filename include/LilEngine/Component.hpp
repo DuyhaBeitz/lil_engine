@@ -2,6 +2,7 @@
 
 #include "Reflection.hpp"
 #include "GameObject.hpp"
+#include "utils/MathHelper.hpp"
 
 class Actor;
 
@@ -23,10 +24,7 @@ public:
     Component(Transform local_transform) : m_local_transform(local_transform), GameObject() {}
 
     void LayoutUpdate(Transform parent_transform) {
-        Vector3 rotated = Vector3RotateByQuaternion(m_local_transform.translation, parent_transform.rotation);
-        SetPosition(parent_transform.translation + rotated);
-        SetRotation(QuaternionMultiply(parent_transform.rotation, m_local_transform.rotation));
-        SetScale(m_local_transform.scale * parent_transform.scale);
+        SetTransform(ApplyLocalTransform(parent_transform, m_local_transform));
 
         LIL_LOG_TRACE("Component calling OnLayoutUpdate");
         LIL_LOG_TRACE(GetTypeInfo().Name());
