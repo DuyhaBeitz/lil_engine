@@ -163,10 +163,10 @@ class EditorUIVisitor : public IVisitor {
     std::string m_object_name = "";
 
     void HandleField(const FieldInfo& field, void* ptr) {
-        if (field.HasAttribute("ModelKeyAttribute")) {
+        if (field.HasAttribute<ModelKeyAttribute>()) {
             Lil::UIStyle::DrawModelKeyField(field.name, static_cast<std::string*>(field.GetPtr(ptr)));
         }
-        else if (field.HasAttribute("TextureKeyAttribute")) {
+        else if (field.HasAttribute<TextureKeyAttribute>()) {
             Lil::UIStyle::DrawTextureKeyField(field.name, static_cast<std::string*>(field.GetPtr(ptr)));
         }
         else {
@@ -182,10 +182,10 @@ class EditorUIVisitor : public IVisitor {
 
     // here THE OBJECT is const, the field only follows
     void HandleFieldConst(const FieldInfo& field, const void* ptr) {
-        if (field.HasAttribute("ModelKeyAttribute")) {
+        if (field.HasAttribute<ModelKeyAttribute>()) {
             Lil::UIStyle::DrawConstModelKeyField(field.name, static_cast<const std::string*>(field.GetPtrConst(ptr)));
         }
-        else if (field.HasAttribute("TextureKeyAttribute")) {
+        else if (field.HasAttribute<TextureKeyAttribute>()) {
             Lil::UIStyle::DrawConstTextureKeyField(field.name, static_cast<const std::string*>(field.GetPtrConst(ptr)));
         }
         else {

@@ -10,6 +10,8 @@
 #include <raylib.h>
 #include <unordered_map>
 #include <functional>
+#include <any>
+#include <typeindex>
 
 #include "refl.hpp"
 
@@ -19,14 +21,22 @@ struct FieldInfo {
     std::string parent_type_name;
     std::string name;
     const TypeInfo& type;
-    std::set<std::string> attributes;
+    std::unordered_map<std::type_index, std::any> attributes;
+
+    template <typename T>
+    const T* GetAttribute() const {
+        auto it = attributes.find(std::type_index(typeid(T)));
+        if (it != attributes.end()) {
+            return std::any_cast<T>(&it->second);
+        }
+        return nullptr;
+    }
+
+    template <typename T>
+    bool HasAttribute() const {return GetAttribute<T>() != nullptr;}
 
     void* (*GetPtr)(void*);
     const void* (*GetPtrConst)(const void*);
-
-    bool HasAttribute(std::string attribute) const {
-        return attributes.find(attribute) != attributes.end();
-    }
 
     FieldInfo(const TypeInfo& type_) : type(type_) {}
 };
@@ -229,11 +239,15 @@ private:
                         return &(obj->*Member::pointer);
                     };
 
-                    refl::util::for_each(refl::descriptor::get_attribute_types(member), [&info](auto t) {
-                            using AttributeType = decltype(t);
-                            const TypeInfo& ti = TypeInfo::Get<AttributeType>();
-                            info.attributes.insert(ti.Name());
-                        });
+                    refl::util::for_each(refl::descriptor::get_attribute_types(member), [&info, &member](auto t) {
+                        using AttributeType = std::decay_t<decltype(t)>;
+                        
+                        const AttributeType& attr = refl::descriptor::get_attribute<AttributeType>(member);
+                        info.attributes.emplace(
+                            std::type_index(typeid(AttributeType)),
+                            attr
+                        );
+                    });
 
                     m_fields.push_back(std::move(info));
                 }
