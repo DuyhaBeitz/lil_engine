@@ -227,18 +227,7 @@ void Lil::Editor::DrawLayout() {
     ImVec2 viewerTopLeft = ImGui::GetCursorScreenPos();
 
     int size = fmin(contentSize.x, contentSize.y);
-<<<<<<< HEAD
     ResizeTarget(m_layout_render_target, size, size);
-=======
-    BeginTargetMode(m_layout_render_target, viewerTopLeft.x, viewerTopLeft.y, size, size);
-        ClearBackground(RAYBLACK);   
-        BeginMode3D(m_layout_camera);
-            if (m_selected_actor) {
-                Transform old_actor_transform = m_selected_actor->GetTransform();
-                m_selected_actor->SetPosition(Vector3{0.0, 0.0f, 0.0f});
-                m_selected_actor->SetRotation(QuaternionIdentity());
-                m_selected_actor->LayoutUpdate();
->>>>>>> master
 
     BeginTextureMode(m_layout_render_target);
     ClearBackground(RAYBLACK);
