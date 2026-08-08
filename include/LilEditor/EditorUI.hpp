@@ -127,19 +127,18 @@ namespace Lil {
         // Reusable Editable Draw Elements
         // ==========================================
 
-
-        template <typename EnumType, size_t N>
+        template <typename EnumType>
         static bool DrawEnumComboField(
             const std::string& name,
             EnumType* value,
-            const std::array<EnumType, N>& enumValues,
-            const std::array<const char*, N>& enumLabels
+            const std::vector<EnumType>& enumValues,
+            const std::vector<const char*>& enumLabels
         ) {
             Lil::UIStyle::BeginPropertyRow(name, Lil::UIStyle::COLOR_TYPE_STRING);
             ImGui::PushStyleColor(ImGuiCol_FrameBg, Lil::UIStyle::COLOR_COMBO_BG);
 
             const char* previewLabel = "Unknown";
-            for (size_t i = 0; i < N; ++i) {
+            for (size_t i = 0; i < enumValues.size(); ++i) {
                 if (*value == enumValues[i]) {
                     previewLabel = enumLabels[i];
                     break;
@@ -148,7 +147,7 @@ namespace Lil {
 
             bool res = false;
             if (ImGui::BeginCombo(("##" + name).c_str(), previewLabel)) {
-                for (size_t i = 0; i < N; i++) {
+                for (size_t i = 0; i < enumValues.size(); i++) {
                     bool isSelected = (*value == enumValues[i]);
 
                     if (ImGui::Selectable(enumLabels[i], isSelected)) {
@@ -170,6 +169,8 @@ namespace Lil {
 
             return res;
         }
+
+        static bool DrawAttributeEnumCombo(const std::string& name, int* value, const EnumAttribute& attr);
 
         static bool DrawBoolField(const std::string& name, bool* value);
         static bool DrawIntField(const std::string& name, int* value);
@@ -208,11 +209,15 @@ class EditorUIVisitor : public IVisitor {
     std::string m_object_name = "";
 
     void HandleField(const FieldInfo& field, void* ptr) {
-        if (field.HasAttribute("ModelKeyAttribute")) {
+        if (field.HasAttribute<ModelKeyAttribute>()) {
             Lil::UIStyle::DrawModelKeyField(field.name, static_cast<std::string*>(field.GetPtr(ptr)));
         }
-        else if (field.HasAttribute("TextureKeyAttribute")) {
+        else if (field.HasAttribute<TextureKeyAttribute>()) {
             Lil::UIStyle::DrawTextureKeyField(field.name, static_cast<std::string*>(field.GetPtr(ptr)));
+        }
+        else if (field.HasAttribute<EnumAttribute>()) {
+            const auto* attr = field.GetAttribute<EnumAttribute>();
+            Lil::UIStyle::DrawAttributeEnumCombo(field.name, static_cast<int*>(field.GetPtr(ptr)), *attr);
         }
         else {
             SetCurrentObjectName(field.name);
@@ -227,10 +232,10 @@ class EditorUIVisitor : public IVisitor {
 
     // here THE OBJECT is const, the field only follows
     void HandleFieldConst(const FieldInfo& field, const void* ptr) {
-        if (field.HasAttribute("ModelKeyAttribute")) {
+        if (field.HasAttribute<ModelKeyAttribute>()) {
             Lil::UIStyle::DrawConstModelKeyField(field.name, static_cast<const std::string*>(field.GetPtrConst(ptr)));
         }
-        else if (field.HasAttribute("TextureKeyAttribute")) {
+        else if (field.HasAttribute<TextureKeyAttribute>()) {
             Lil::UIStyle::DrawConstTextureKeyField(field.name, static_cast<const std::string*>(field.GetPtrConst(ptr)));
         }
         else {
