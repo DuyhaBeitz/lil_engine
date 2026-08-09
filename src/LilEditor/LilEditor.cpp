@@ -344,6 +344,43 @@ void Lil::Editor::DrawViewport() {
         ImGui::PopStyleColor();
         ImGui::SameLine();
 
+        static const std::unordered_map<std::string, R3D_OutputMode> renderModeMap = {
+            {"SCENE", R3D_OUTPUT_SCENE},
+            {"ALBEDO", R3D_OUTPUT_ALBEDO},
+            {"NORMAL", R3D_OUTPUT_NORMAL},
+            {"ORM", R3D_OUTPUT_ORM},
+            {"DIFFUSE", R3D_OUTPUT_DIFFUSE},
+            {"SPECULAR", R3D_OUTPUT_SPECULAR},
+            {"SSAO", R3D_OUTPUT_SSAO},
+            {"SSIL", R3D_OUTPUT_SSIL},
+            {"SSGI", R3D_OUTPUT_SSGI},
+            {"SSR", R3D_OUTPUT_SSR},
+            {"BLOOM", R3D_OUTPUT_BLOOM},
+            {"DOF", R3D_OUTPUT_DOF}
+        };
+        static R3D_OutputMode currentMode = R3D_OUTPUT_SCENE;
+        std::string currentName = "SCENE";
+
+        for (const auto& [name, mode] : renderModeMap) {
+            if (mode == currentMode) {
+                currentName = name;
+                break;
+            }
+        }
+
+        ImGui::SetNextItemWidth(300.0f);
+        if (ImGui::BeginCombo("##Render Mode", currentName.c_str())) {
+            for (const auto& [name, mode] : renderModeMap) {
+                bool isSelected = (mode == currentMode);
+                if (ImGui::Selectable(name.c_str(), isSelected)) {
+                    currentMode = mode;
+                    R3D_SetOutputMode(mode);
+                }
+                if (isSelected) ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndCombo();
+        }
+        
         ImGui::SameLine(ImGui::GetWindowWidth() - 230.0f);
         ImGui::Text("FPS: %d", GetFPS());
 
