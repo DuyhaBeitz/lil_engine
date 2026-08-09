@@ -3,9 +3,9 @@
 void LightComponent::UpdateLight() {
     R3D_SetLightActive(m_light, m_active);
     
-    if (m_type != R3D_GetLightType(m_light)) {
+    if (m_type != int(R3D_GetLightType(m_light))) {
         R3D_DestroyLight(m_light);
-        m_light = R3D_CreateLight(m_type);
+        m_light = R3D_CreateLight(R3D_LightType(m_type));
     }
 
     if (m_cast_shadows) R3D_EnableShadow(m_light);
