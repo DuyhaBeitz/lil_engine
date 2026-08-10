@@ -497,6 +497,13 @@ void Lil::Editor::DrawResources() {
     ImGui::End();
 }
 
+void Lil::Editor::DrawEnvironment() {
+    ImGui::Begin("Environment");
+    m_editor.SetCurrentObjectName("");
+    m_editor.VisitObject(Lil::Environment().GetTypeInfo(), &Lil::Environment());
+    ImGui::End();
+}
+
 void Lil::Editor::Notify(const std::string &message, float duration, const ImVec4 &color) {
     if (m_notifications.size() > 5) m_notifications.erase(m_notifications.begin());
     m_notifications.emplace_back(message, duration, color);
@@ -560,6 +567,7 @@ void Lil::Editor::Draw() {
     DrawResources();
     DrawViewport();
     DrawLayout();
+    DrawEnvironment();
     DrawMenuBar();
 
     ImGui::Begin("Creation");

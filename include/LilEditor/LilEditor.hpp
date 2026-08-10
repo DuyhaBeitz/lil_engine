@@ -90,6 +90,8 @@ namespace Lil {
 
         void DrawResources();
 
+        void DrawEnvironment();
+
         void Notify(const std::string& message, float duration = 3.0f, const ImVec4& color = ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
         void DrawNotifications();
     };
