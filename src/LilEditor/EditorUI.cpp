@@ -300,6 +300,34 @@ bool Lil::UIStyle::DrawVector4Field(const std::string &name, ::Vector4 *values) 
     return res;
 }
 
+bool Lil::UIStyle::DrawColorField(const std::string &name, ::Color *value) {
+    BeginPropertyRow(name, COLOR_TYPE_STRING);
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, COLOR_INPUT_BG);
+    ImGui::PushStyleColor(ImGuiCol_CheckMark, COLOR_TYPE_BOOL);
+    
+    ImVec4 col (value->r/255.f, value->g/255.f, value->b/255.f, value->a/255.f);
+    bool res = ImGui::ColorButton(("##" + name).c_str(), col);
+
+    if (res) {
+        ImGui::OpenPopup("ColorPickerPopup");
+    }
+
+    if (ImGui::BeginPopup("ColorPickerPopup")) {
+        if (ImGui::ColorPicker4("##picker", &col.x)) {
+            value->r = static_cast<unsigned char>(col.x * 255.0f);
+            value->g = static_cast<unsigned char>(col.y * 255.0f);
+            value->b = static_cast<unsigned char>(col.z * 255.0f);
+            value->a = static_cast<unsigned char>(col.w * 255.0f);
+        }
+        ImGui::EndPopup();
+    }
+    
+    ImGui::PopStyleColor(2);
+    EndPropertyRow();
+
+    return res;
+}
+
 bool Lil::UIStyle::DrawTransformBlock(const std::string &name, ::Transform *value) {
     RowSpacingGuard spacing;
     ImGui::PushID(value);
@@ -644,6 +672,15 @@ void Lil::UIStyle::DrawConstVector4Field(const std::string &name, const ::Vector
     
     ImGui::PopID();
     ImGui::PushItemWidth(-1.0f);
+    EndPropertyRow();
+}
+
+void Lil::UIStyle::DrawConstColorField(const std::string &name, const ::Color *value) {
+    BeginPropertyRow(name + " " + ICON_FA_LOCK, COLOR_TYPE_STRING);
+    
+    ImVec4 col (value->r/255.f, value->g/255.f, value->b/255.f, value->a/255.f);
+    ImGui::ColorButton(("##" + name).c_str(), col);
+    
     EndPropertyRow();
 }
 

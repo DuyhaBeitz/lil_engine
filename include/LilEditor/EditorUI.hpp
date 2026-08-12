@@ -180,6 +180,7 @@ namespace Lil {
         static bool DrawVector2Field(const std::string& name, ::Vector2* values);
         static bool DrawVector3Field(const std::string& name, ::Vector3* values);
         static bool DrawVector4Field(const std::string& name, ::Vector4* values);
+        static bool DrawColorField(const std::string& name, ::Color* value);
         static bool DrawTransformBlock(const std::string& name, ::Transform* value);
         static bool DrawModelKeyField(const std::string& name, std::string* value);
         static bool DrawTextureKeyField(const std::string& name, std::string* value);
@@ -198,6 +199,7 @@ namespace Lil {
         static void DrawConstVector2Field(const std::string& name, const ::Vector2* values);
         static void DrawConstVector3Field(const std::string& name, const ::Vector3* values);
         static void DrawConstVector4Field(const std::string& name, const ::Vector4* values);
+        static void DrawConstColorField(const std::string& name, const ::Color* value);
         static void DrawConstTransformBlock(const std::string& name, const ::Transform* value);
         static void DrawConstModelKeyField(const std::string& name, const std::string* value);
         static void DrawConstTextureKeyField(const std::string& name, const std::string* value);
@@ -276,6 +278,9 @@ public:
             }
             else if (ti == TypeInfo::Get<Vector4>()) {
                 Lil::UIStyle::DrawVector4Field(m_object_name, static_cast<Vector4*>(ptr));
+            }
+            else if (ti == TypeInfo::Get<Color>()) {
+                Lil::UIStyle::DrawColorField(m_object_name, static_cast<Color*>(ptr));
             }
             else if (ti == TypeInfo::Get<Transform>()) {
                 Lil::UIStyle::DrawTransformBlock(m_object_name, static_cast<Transform*>(ptr));
@@ -374,6 +379,9 @@ public:
             }
             else if (ti == TypeInfo::Get<Vector4>()) {
                 Lil::UIStyle::DrawConstVector4Field(m_object_name, static_cast<const Vector4*>(ptr));
+            }
+            else if (ti == TypeInfo::Get<Color>()) {
+                Lil::UIStyle::DrawConstColorField(m_object_name, static_cast<const Color*>(ptr));
             }
             else if (ti == TypeInfo::Get<Transform>()) {
                 Lil::UIStyle::DrawConstTransformBlock(m_object_name, static_cast<const Transform*>(ptr));
