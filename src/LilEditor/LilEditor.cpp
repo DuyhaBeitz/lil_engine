@@ -281,6 +281,7 @@ void Lil::Editor::DrawLayout() {
 void Lil::Editor::Update() {
     if (!m_cursor_enabled) {UpdateCamera(&m_viewport_camera, CAMERA_FREE);}
     Lil::Engine::Get().Update();
+    Lil::Environment().Update();
 
     UpdateGizmoMode();
     

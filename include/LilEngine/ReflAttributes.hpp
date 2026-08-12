@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Reflection.hpp"
+#include <span>
 
 struct Attribute : refl::attr::usage::field {}; 
 

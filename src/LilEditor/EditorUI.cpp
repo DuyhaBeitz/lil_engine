@@ -334,6 +334,7 @@ bool Lil::UIStyle::DrawModelKeyField(const std::string &name, std::string *value
     
     int currentIndex = -1;
     std::vector<std::string> modelKeys;
+    modelKeys.push_back("None");
     for (const auto& [key, model] : Lil::Resources().Models()) {
         modelKeys.push_back(key);
         if (key == *value) currentIndex = modelKeys.size() - 1;
@@ -363,6 +364,7 @@ bool Lil::UIStyle::DrawTextureKeyField(const std::string &name, std::string *val
     
     int currentIndex = -1;
     std::vector<std::string> textureKeys;
+    textureKeys.push_back("None");
     for (const auto& [key, texture] : Lil::Resources().Textures()) {
         textureKeys.push_back(key);
         if (key == *value) currentIndex = textureKeys.size() - 1;
