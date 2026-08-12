@@ -462,7 +462,7 @@ void Lil::Editor::DrawResources() {
                 ImGui::TextUnformatted(key.c_str());
             }
             else {
-                rlImGuiImage(&texture);
+                rlImGuiImageSize(&texture, 128, 128);
                 ImGui::SameLine();                
                 if (ImGui::CollapsingHeader(key.c_str())) {
                     std::string heightmap_name = HeightmapNameFromImageName(key);
