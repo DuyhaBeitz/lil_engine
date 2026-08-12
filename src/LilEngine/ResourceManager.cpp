@@ -54,6 +54,13 @@ void ResourceManager::ModelAdd(std::string key, R3D_Model model) {
 void ResourceManager::ModelAdd(std::string key, std::string filename) {
     R3D_Model model = R3D_LoadModelEx(filename.c_str(), R3D_IMPORT_RETAIN_MESH_DATA);
     ModelAdd(key, model);
+
+    for (int i = 0; i < model.materialCount; i++) {
+        TextureAdd("albedo_" + key, model.materials[i].albedo.texture);
+        TextureAdd("normal_" + key, model.materials[i].normal.texture);
+        TextureAdd("emission_" + key, model.materials[i].emission.texture);
+        TextureAdd("orm_" + key, model.materials[i].orm.texture);
+    }
 }
 
 void ResourceManager::ModelAdd(std::string filename) {
