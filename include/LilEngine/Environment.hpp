@@ -8,6 +8,7 @@ struct EnvBackground {
     Color color;
     float energy;
     float skyBlur;
+    std::string old_sky_texture;
     std::string sky_texture;
     Quaternion rotation;
 };
@@ -98,6 +99,11 @@ LIL_REFLECT(EnvTonemap, bases<>,
     field(white)
 )
 
+LIL_REFLECT(R3D_EnvAmbient, bases<>,
+    field(color),
+    field(energy)
+)
+
 LIL_REFLECT(R3D_EnvSSAO, bases<>,
     field(sampleCount),
     field(intensity),
@@ -184,6 +190,7 @@ public:
     EnvTonemap          tonemap;
     EnvFog              fog;
 
+    R3D_EnvAmbient      ambient;
     R3D_EnvSSAO         ssao;
     R3D_EnvSSIL         ssil;
     R3D_EnvSSGI         ssgi;

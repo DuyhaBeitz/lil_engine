@@ -1,4 +1,5 @@
 #include "Environment.hpp"
+#include "LilEngine.hpp"
 
 void Environment::PopulateDefaultValues() {
     background = {
@@ -37,11 +38,10 @@ void Environment::PopulateDefaultValues() {
         .skyAffect = 0.5f,
     };
 
-    // ambient = {
-    //     .color = BLACK,
-    //     .energy = 1.0f,
-    //     .map = {0},
-    // };
+    ambient = {
+        .color = BLACK,
+        .energy = 1.0f
+    };
     ssao = {
         .sampleCount = 16,
         .intensity = 1.0f,
@@ -106,13 +106,28 @@ void Environment::PopulateDefaultValues() {
 }
 
 void Environment::Update() {
-    R3D_ENVIRONMENT_SET(background, R3D_EnvBackground(
-        background.color,
-        background.energy,
-        background.skyBlur,
-        {0},
-        background.rotation
-    ));
+    
+    if (background.old_sky_texture != background.sky_texture) {
+        background.old_sky_texture = background.sky_texture;
+
+        if (Lil::Resources().TextureExists(background.sky_texture)) {
+            R3D_ENVIRONMENT_SET(background.color, background.color);
+            Image image = LoadImageFromTexture(*Lil::Resources().GetTexture(background.sky_texture));
+            R3D_Cubemap cubemap = R3D_LoadCubemapFromImage(image, R3D_CUBEMAP_LAYOUT_AUTO_DETECT);
+            UnloadImage(image);
+            R3D_ENVIRONMENT_SET(background.sky, cubemap);
+
+            R3D_AmbientMap ambient_map = R3D_GenAmbientMap(cubemap, R3D_AMBIENT_ILLUMINATION | R3D_AMBIENT_REFLECTION);
+            R3D_ENVIRONMENT_SET(ambient.map, ambient_map);
+        }
+    }
+    R3D_ENVIRONMENT_SET(background.color, background.color);
+    R3D_ENVIRONMENT_SET(background.energy, background.energy);
+    R3D_ENVIRONMENT_SET(background.skyBlur, background.skyBlur);
+    R3D_ENVIRONMENT_SET(background.rotation, background.rotation);
+
+    R3D_ENVIRONMENT_SET(ambient.color, ambient.color);
+    R3D_ENVIRONMENT_SET(ambient.energy, ambient.energy);
 
     R3D_ENVIRONMENT_SET(dof, R3D_EnvDoF(R3D_DoF(dof.mode), dof.focusPoint, dof.focusScale, dof.nearScale, dof.maxBlurSize));
     R3D_ENVIRONMENT_SET(bloom, R3D_EnvBloom(R3D_Bloom(bloom.mode), bloom.levels, bloom.intensity, bloom.threshold, bloom.softThreshold, bloom.filterRadius));
