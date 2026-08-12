@@ -50,9 +50,10 @@ typedef enum R3D_ProbeUpdateMode {
 /**
  * @brief Unique identifier for an R3D probe.
  *
- * Negative values indicate an invalid probe.
+ * ID type used to reference a probe.
+ * A zero value indicates an invalid probe.
  */
-typedef int32_t R3D_Probe;
+typedef uint32_t R3D_Probe;
 
 // ========================================
 // PUBLIC API
@@ -81,12 +82,12 @@ R3DAPI R3D_Probe R3D_CreateProbe(R3D_ProbeFlags flags);
 R3DAPI void R3D_DestroyProbe(R3D_Probe id);
 
 /**
- * @brief Returns whether a probe exists.
+ * @brief Returns whether a probe ID is valid and allocated.
  *
  * @param id Probe ID.
- * @return true if the probe is valid and allocated, otherwise false.
+ * @return true if the probe exists, otherwise false.
  */
-R3DAPI bool R3D_IsProbeExist(R3D_Probe id);
+R3DAPI bool R3D_IsProbeValid(R3D_Probe id);
 
 /**
  * @brief Returns the probe flags.
@@ -97,22 +98,42 @@ R3DAPI bool R3D_IsProbeExist(R3D_Probe id);
 R3DAPI R3D_ProbeFlags R3D_GetProbeFlags(R3D_Probe id);
 
 /**
- * @brief Returns whether a probe is currently active.
+ * @brief Returns whether a probe is currently enabled.
  *
- * Inactive probes do not contribute to lighting.
+ * Disabled probes do not contribute to lighting.
  *
  * @param id Probe ID.
- * @return true if active, otherwise false.
+ * @return true if the probe is enabled, otherwise false.
  */
-R3DAPI bool R3D_IsProbeActive(R3D_Probe id);
+R3DAPI bool R3D_IsProbeEnabled(R3D_Probe id);
 
 /**
- * @brief Enables or disables a probe.
+ * @brief Toggles a probe between enabled and disabled states.
+ *
+ * Re-enabling a probe schedules a scene capture on the next frame.
  *
  * @param id Probe ID.
- * @param active Set to true to enable the probe.
  */
-R3DAPI void R3D_SetProbeActive(R3D_Probe id, bool active);
+R3DAPI void R3D_ToggleProbe(R3D_Probe id);
+
+/**
+ * @brief Enables a probe.
+ *
+ * Schedules a scene capture on the next frame.
+ * Has no effect if the probe is already enabled.
+ *
+ * @param id Probe ID.
+ */
+R3DAPI void R3D_EnableProbe(R3D_Probe id);
+
+/**
+ * @brief Disables a probe.
+ *
+ * Has no effect if the probe is already disabled.
+ *
+ * @param id Probe ID.
+ */
+R3DAPI void R3D_DisableProbe(R3D_Probe id);
 
 /**
  * @brief Gets the probe update mode.
@@ -132,6 +153,8 @@ R3DAPI R3D_ProbeUpdateMode R3D_GetProbeUpdateMode(R3D_Probe id);
  *
  * Controls when the probe capture is refreshed.
  *
+ * Default: R3D_PROBE_UPDATE_ONCE
+ *
  * @param id Probe ID.
  * @param mode Update mode to apply.
  */
@@ -150,6 +173,8 @@ R3DAPI bool R3D_GetProbeInterior(R3D_Probe id);
 
 /**
  * @brief Enables or disables indoor mode for the probe.
+ *
+ * Default: false
  */
 R3DAPI void R3D_SetProbeInterior(R3D_Probe id, bool active);
 
@@ -163,6 +188,8 @@ R3DAPI bool R3D_GetProbeShadows(R3D_Probe id);
 
 /**
  * @brief Enables or disables shadow rendering during probe capture.
+ *
+ * Default: false
  */
 R3DAPI void R3D_SetProbeShadows(R3D_Probe id, bool active);
 
@@ -173,6 +200,8 @@ R3DAPI Vector3 R3D_GetProbePosition(R3D_Probe id);
 
 /**
  * @brief Sets the world position of the probe.
+ *
+ * Default: (Vector3) {0.0f, 0.0f, 0.0f}
  */
 R3DAPI void R3D_SetProbePosition(R3D_Probe id, Vector3 position);
 
@@ -188,6 +217,8 @@ R3DAPI float R3D_GetProbeRange(R3D_Probe id);
  * @brief Sets the effective range of the probe.
  *
  * @param range Radius in world units. Must be > 0.
+ *
+ * Default: 16.0f
  */
 R3DAPI void R3D_SetProbeRange(R3D_Probe id, float range);
 
@@ -210,6 +241,8 @@ R3DAPI float R3D_GetProbeFalloff(R3D_Probe id);
  * @brief Sets the falloff factor used for distance attenuation.
  *
  * Larger values make the probe feel more localized.
+ *
+ * Default: 1.0f
  */
 R3DAPI void R3D_SetProbeFalloff(R3D_Probe id, float falloff);
 

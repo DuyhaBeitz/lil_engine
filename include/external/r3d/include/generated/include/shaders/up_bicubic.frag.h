@@ -6,10 +6,10 @@ extern "C" {
 #endif
 
 static const char UP_BICUBIC_FRAG[] =
-    "#version 330 core\nnoperspective in vec2 vTexCoord;uniform sampler2D uSourceTex;uniform vec2 uSourceTexel;out vec4 FragColor;void main(){vec2 samplePos=vTexCoord*vec2(textureSize(uSourceTex,0));vec2 texPos1=floor(samplePos-.5)+.5;vec2 f=samplePos-texPos1;vec2 w0=f*(-.5+f*(1.-.5*f));vec2 w1=1.+f*f*(-2.5+1.5*f);vec2 w2=f*(.5+f*(2.-1.5*f));vec2 w3=f*f*(-.5+.5*f);vec2 w12=w1+w2;vec2 offset12=w2/(w1+w2);vec2 texPos0=texPos1-1.;vec2 texPos3=texPos1+2.;vec2 texPos12=texPos1+offset12;texPos0*=uSourceTexel;texPos3*=uSourceTexel;texPos12*=uSourceTexel;vec4 result=vec4(0.);result+=texture(uSourceTex,vec2(texPos0.x,texPos0.y))*w0.x*w0.y;result+=texture(uSourceTex,vec2(texPos12.x,texPos0.y))*w12.x*w0.y;result+=texture(uSourceTex,vec2(texPos3.x,texPos0.y))*w3.x*w0.y;result+=texture(uSourceTex,vec2(texPos0.x,texPos12.y))*w0.x*w12.y;result+=texture(uSourceTex,vec2(texPos12.x,texPos12.y))*w12.x*w12.y;result+=texture(uSourceTex,vec2(texPos3.x,texPos12.y))*w3.x*w12.y;result+=texture(uSourceTex,vec2(texPos0.x,texPos3.y))*w0.x*w3.y;result+=texture(uSourceTex,vec2(texPos12.x,texPos3.y))*w12.x*w3.y;result+=texture(uSourceTex,vec2(texPos3.x,texPos3.y))*w3.x*w3.y;FragColor=result;}"
+    "#version 330 core\nnoperspective in vec2 vTexCoord;uniform sampler2D uSourceTex;uniform sampler2D uDepthTex;out vec4 FragColor;vec4 SampleBicubic(sampler2D tex,vec2 uv){vec2 texSize=vec2(textureSize(tex,0));vec2 texel=1./texSize;vec2 pos=uv*texSize;vec2 tc=floor(pos-.5)+.5;vec2 f=pos-tc;vec2 f2=f*f;vec2 f3=f2*f;vec2 w0=f2-.5*(f3+f);vec2 w1=1.5*f3-2.5*f2+1.;vec2 w3=.5*(f3-f2);vec2 w2=1.-w0-w1-w3;vec2 w12=w1+w2;vec2 tc0=(tc-1.)*texel;vec2 tc3=(tc+2.)*texel;vec2 tc12=(tc+w2/w12)*texel;vec4 c=vec4(0.);c+=textureLod(tex,vec2(tc0.x,tc0.y),0.)*w0.x*w0.y;c+=textureLod(tex,vec2(tc12.x,tc0.y),0.)*w12.x*w0.y;c+=textureLod(tex,vec2(tc3.x,tc0.y),0.)*w3.x*w0.y;c+=textureLod(tex,vec2(tc0.x,tc12.y),0.)*w0.x*w12.y;c+=textureLod(tex,vec2(tc12.x,tc12.y),0.)*w12.x*w12.y;c+=textureLod(tex,vec2(tc3.x,tc12.y),0.)*w3.x*w12.y;c+=textureLod(tex,vec2(tc0.x,tc3.y),0.)*w0.x*w3.y;c+=textureLod(tex,vec2(tc12.x,tc3.y),0.)*w12.x*w3.y;c+=textureLod(tex,vec2(tc3.x,tc3.y),0.)*w3.x*w3.y;return c;}void main(){FragColor=SampleBicubic(uSourceTex,vTexCoord);gl_FragDepth=texture(uDepthTex,vTexCoord).r;}"
 ;
 
-#define UP_BICUBIC_FRAG_SIZE 1174
+#define UP_BICUBIC_FRAG_SIZE 1077
 
 #ifdef __cplusplus
 }
