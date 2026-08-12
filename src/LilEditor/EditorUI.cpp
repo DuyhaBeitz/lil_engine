@@ -542,11 +542,24 @@ bool Lil::UIStyle::DrawMaterialField(const std::string &name, R3D_Material *valu
     ImGui::PushID(value);
     bool res = false;   
 
+    res |= DrawVector2Field("UV scale", &(value->uvScale));
+    res |= DrawVector2Field("UV offset", &(value->uvOffset));
+
     if (ImGui::CollapsingHeader(name.c_str())) {
         res |= DrawTextureFieldToKey("albedo", &(value->albedo.texture));
+        res |= DrawColorField("albedo color", &(value->albedo.color));
+
         res |= DrawTextureFieldToKey("normal", &(value->normal.texture));
+        res |= DrawFloatField("normal scale", &(value->normal.scale));
+
         res |= DrawTextureFieldToKey("emission", &(value->emission.texture));
+        res |= DrawFloatField("emission energy", &(value->emission.energy));
+
         res |= DrawTextureFieldToKey("orm", &(value->orm.texture));
+        res |= DrawFloatField("orm occlusion", &(value->orm.occlusion));
+        res |= DrawFloatField("orm roughness", &(value->orm.roughness));
+        res |= DrawFloatField("orm metalness", &(value->orm.metalness));
+        res |= DrawFloatField("orm specular", &(value->orm.specular));
     }
 
     ImGui::PopID();
