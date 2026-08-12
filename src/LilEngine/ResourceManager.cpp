@@ -52,7 +52,7 @@ void ResourceManager::ModelAdd(std::string key, R3D_Model model) {
 }
 
 void ResourceManager::ModelAdd(std::string key, std::string filename) {
-    R3D_Model model = R3D_LoadModelEx(filename.c_str(), R3D_IMPORT_MESH_DATA);
+    R3D_Model model = R3D_LoadModelEx(filename.c_str(), R3D_IMPORT_RETAIN_MESH_DATA);
     ModelAdd(key, model);
 }
 

@@ -1,8 +1,6 @@
 #include "Components/LightComponent.hpp"
 
-void LightComponent::UpdateLight() {
-    R3D_SetLightActive(m_light, m_active);
-    
+void LightComponent::UpdateLight() {    
     if (m_type != int(R3D_GetLightType(m_light))) {
         R3D_DestroyLight(m_light);
         m_light = R3D_CreateLight(R3D_LightType(m_type));
