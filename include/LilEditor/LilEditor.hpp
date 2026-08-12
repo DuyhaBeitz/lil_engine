@@ -82,6 +82,7 @@ namespace Lil {
         void DrawMenuBar();
 
         void DrawInspector();
+        void DrawComponents();
         void DrawLayout();
 
         void UpdateGizmoMode();
