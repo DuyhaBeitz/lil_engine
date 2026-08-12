@@ -544,9 +544,9 @@ bool Lil::UIStyle::DrawMaterialField(const std::string &name, R3D_Material *valu
 
     if (ImGui::CollapsingHeader(name.c_str())) {
         res |= DrawTextureFieldToKey("albedo", &(value->albedo.texture));
-        // res |= DrawTextureFieldToKey("normal", &(value->normal.texture));
-        // res |= DrawTextureFieldToKey("emission", &(value->emission.texture));
-        // res |= DrawTextureFieldToKey("orm", &(value->orm.texture));
+        res |= DrawTextureFieldToKey("normal", &(value->normal.texture));
+        res |= DrawTextureFieldToKey("emission", &(value->emission.texture));
+        res |= DrawTextureFieldToKey("orm", &(value->orm.texture));
     }
 
     ImGui::PopID();
