@@ -187,6 +187,9 @@ namespace Lil {
         static bool DrawCollisionShapeField(const std::string& name, CollisionShape* value);
         static bool DrawBodyTypeField(const std::string& name, BodyType* value);
 
+        static bool DrawMaterialField(const std::string& name, R3D_Material* value);
+        static bool DrawModelField(const std::string& name, R3D_Model* value);
+
         // ==========================================
         // Reusable Read-Only (Const) Draw Elements
         // ==========================================
@@ -290,6 +293,12 @@ public:
             }
             else if (ti == TypeInfo::Get<BodyType>()) {
                 Lil::UIStyle::DrawBodyTypeField(m_object_name, static_cast<BodyType*>(ptr));
+            }
+            else if (ti == TypeInfo::Get<R3D_Material>()) {
+                Lil::UIStyle::DrawMaterialField(m_object_name, static_cast<R3D_Material*>(ptr));
+            }
+            else if (ti == TypeInfo::Get<R3D_Model>()) {
+                Lil::UIStyle::DrawModelField(m_object_name, static_cast<R3D_Model*>(ptr));
             }
             else if (ti.IsContainer()) {
                 ImGui::PushStyleColor(ImGuiCol_Header, Lil::UIStyle::COLOR_HEADER_BG);

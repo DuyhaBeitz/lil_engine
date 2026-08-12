@@ -389,6 +389,7 @@ bool Lil::UIStyle::DrawModelKeyField(const std::string &name, std::string *value
 bool Lil::UIStyle::DrawTextureKeyField(const std::string &name, std::string *value) {
     Lil::UIStyle::BeginPropertyRow(name, Lil::UIStyle::COLOR_TYPE_STRING, ICON_FA_MAP);
     ImGui::PushStyleColor(ImGuiCol_FrameBg, Lil::UIStyle::COLOR_COMBO_BG);
+    ImGui::PushID(value);
     
     int currentIndex = -1;
     std::vector<std::string> textureKeys;
@@ -412,6 +413,7 @@ bool Lil::UIStyle::DrawTextureKeyField(const std::string &name, std::string *val
     }
     ImGui::PopStyleColor();
     Lil::UIStyle::EndPropertyRow();
+    ImGui::PopID();
 
     return res;
 }
@@ -518,6 +520,49 @@ bool Lil::UIStyle::DrawBodyTypeField(const std::string &name, BodyType *value) {
 
     ImGui::PopStyleColor();
     Lil::UIStyle::EndPropertyRow();
+
+    return res;
+}
+
+bool DrawTextureFieldToKey(std::string name, Texture2D* texture) {
+    std::string texture_key = "None";
+    for (auto& [key, t] : Lil::Resources().Textures()) {
+        if (t.id != 0 && texture->id == t.id) {
+            texture_key = key;
+            break;
+        }
+    }
+    bool res = Lil::UIStyle::DrawTextureKeyField(name, &texture_key);
+    Texture2D* tex = Lil::Resources().GetTexture(texture_key);
+    if (tex) *texture = *tex;
+    return res;
+}
+
+bool Lil::UIStyle::DrawMaterialField(const std::string &name, R3D_Material *value) {
+    ImGui::PushID(value);
+    bool res = false;   
+
+    if (ImGui::CollapsingHeader(name.c_str())) {
+        res |= DrawTextureFieldToKey("albedo", &(value->albedo.texture));
+        // res |= DrawTextureFieldToKey("normal", &(value->normal.texture));
+        // res |= DrawTextureFieldToKey("emission", &(value->emission.texture));
+        // res |= DrawTextureFieldToKey("orm", &(value->orm.texture));
+    }
+
+    ImGui::PopID();
+    return res;
+}
+
+bool Lil::UIStyle::DrawModelField(const std::string &name, R3D_Model *value) {
+    ImGui::PushID(value);
+    bool res = false;
+    
+    if (ImGui::CollapsingHeader(name.c_str())) {
+        for (int i = 0; i < value->materialCount; i++) {
+            res |= DrawMaterialField(TextFormat("material_%d", i), &(value->materials[i]));
+        }
+    }
+    ImGui::PopID();
 
     return res;
 }

@@ -369,6 +369,16 @@ LIL_REFLECT(
     field(height)
 )
 
+LIL_REFLECT(
+    R3D_Material,
+    bases<>
+)
+
+LIL_REFLECT(
+    R3D_Model,
+    bases<>
+)
+
 template <typename T>
 inline size_t VectorContainerInfo<T>::Size(const void *c) const {
     return static_cast<const std::vector<T>*>(c)->size();
