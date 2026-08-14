@@ -6,6 +6,8 @@ void SceneManager::LoadScene(std::string filename) {
     std::ifstream is(filename);
     ArchiveIn a_in(is);
     a_in(Lil::World(), Lil::Resources(), Lil::Environment());
+    Lil::World().UpdateActorLayout();
+    Lil::Resources().ApplyModelSettings();
 }
 
 void SceneManager::SaveScene(std::string filename) {

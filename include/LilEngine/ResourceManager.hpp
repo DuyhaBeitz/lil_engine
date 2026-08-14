@@ -216,6 +216,7 @@ public:
             ModelAdd("assets/" + key);
             settings.Apply(GetModel(key));
         }
+        ApplyModelSettings();
         UpdateModelPreviews();        
     }
 

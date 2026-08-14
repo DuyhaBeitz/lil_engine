@@ -113,6 +113,10 @@ void World::Update() {
     // TODO: FIX PHYSICS DEBUG SLOW WHEN NO UPDATING
 }
 
+void World::UpdateActorLayout() {
+    for (auto& [key, actor] : m_actors) actor->LayoutUpdate();
+}
+
 void World::DebugDraw(){
     LIL_LOG_TRACE("World debug drawing");
 

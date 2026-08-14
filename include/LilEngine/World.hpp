@@ -17,10 +17,6 @@ private:
     std::unordered_map<uuids::uuid, std::unique_ptr<Component>> m_components;
     bool m_update_ready = false;
 
-    void UpdateActorLayout() {
-        for (auto& [key, actor] : m_actors) actor->LayoutUpdate();
-    }
-
     void PrepareUpdate() {
         UpdateActorLayout();
     }
@@ -121,6 +117,7 @@ public:
     bool IsSumulationGoing() { return m_simulation_going; }
     void SetSimulationGoing(bool going) { m_simulation_going = going; }
 
+    void UpdateActorLayout();
 
     bool m_simulation_going = false;
     float m_simulation_speed = 1.0f;
