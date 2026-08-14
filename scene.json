@@ -6,7 +6,7 @@
         "components": [
             {
                 "key": {
-                    "value0": "30da73d7-a242-4be0-ac35-27f5e9848446"
+                    "value0": "4af97d7b-099f-49fd-9246-0f08f31d5ffd"
                 },
                 "value": {
                     "polymorphic_id": 2147483649,
@@ -18,7 +18,7 @@
                                 "value0": {
                                     "value0": {
                                         "value0": {
-                                            "value0": "30da73d7-a242-4be0-ac35-27f5e9848446"
+                                            "value0": "4af97d7b-099f-49fd-9246-0f08f31d5ffd"
                                         }
                                     },
                                     "value1": {
@@ -74,7 +74,7 @@
             },
             {
                 "key": {
-                    "value0": "04ec2c9e-53ba-4d92-81d7-1831674b3bb7"
+                    "value0": "f77e87a5-a3f1-477c-b1f1-33c6c3e4933c"
                 },
                 "value": {
                     "polymorphic_id": 2147483650,
@@ -86,7 +86,7 @@
                                 "value0": {
                                     "value0": {
                                         "value0": {
-                                            "value0": "04ec2c9e-53ba-4d92-81d7-1831674b3bb7"
+                                            "value0": "f77e87a5-a3f1-477c-b1f1-33c6c3e4933c"
                                         }
                                     },
                                     "value1": {
@@ -139,7 +139,7 @@
         "actors": [
             {
                 "key": {
-                    "value0": "5855a923-0a43-449b-bc42-713fd98f5a14"
+                    "value0": "5d70efd4-b65a-40e2-bad3-ecece159d220"
                 },
                 "value": {
                     "polymorphic_id": 1073741824,
@@ -149,7 +149,7 @@
                             "value0": {
                                 "value0": {
                                     "value0": {
-                                        "value0": "5855a923-0a43-449b-bc42-713fd98f5a14"
+                                        "value0": "5d70efd4-b65a-40e2-bad3-ecece159d220"
                                     }
                                 },
                                 "value1": {
@@ -175,7 +175,7 @@
                             },
                             "value1": [
                                 {
-                                    "value0": "30da73d7-a242-4be0-ac35-27f5e9848446"
+                                    "value0": "4af97d7b-099f-49fd-9246-0f08f31d5ffd"
                                 }
                             ]
                         }
@@ -184,7 +184,7 @@
             },
             {
                 "key": {
-                    "value0": "557b94bc-f740-4ea1-a121-281bd6fa7498"
+                    "value0": "d0cd348c-450b-4856-8f14-c50c3c2edef1"
                 },
                 "value": {
                     "polymorphic_id": 1073741824,
@@ -194,7 +194,7 @@
                             "value0": {
                                 "value0": {
                                     "value0": {
-                                        "value0": "557b94bc-f740-4ea1-a121-281bd6fa7498"
+                                        "value0": "d0cd348c-450b-4856-8f14-c50c3c2edef1"
                                     }
                                 },
                                 "value1": {
@@ -220,7 +220,7 @@
                             },
                             "value1": [
                                 {
-                                    "value0": "04ec2c9e-53ba-4d92-81d7-1831674b3bb7"
+                                    "value0": "f77e87a5-a3f1-477c-b1f1-33c6c3e4933c"
                                 }
                             ]
                         }
@@ -247,7 +247,28 @@
                                 "value1": 0.0
                             },
                             "value2": {
-                                "value0": "Gen_albedo_Car.glb"
+                                "value0": "None",
+                                "value1": {
+                                    "value0": 255,
+                                    "value1": 255,
+                                    "value2": 255,
+                                    "value3": 255
+                                }
+                            },
+                            "value3": {
+                                "value0": "None",
+                                "value1": 1.0
+                            },
+                            "value4": {
+                                "value0": "None",
+                                "value1": 0.0
+                            },
+                            "value5": {
+                                "value0": "None",
+                                "value1": 1.0,
+                                "value2": 0.8945907354354858,
+                                "value3": 0.0,
+                                "value4": 0.5
                             }
                         }
                     ]

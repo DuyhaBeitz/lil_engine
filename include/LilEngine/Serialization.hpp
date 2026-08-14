@@ -122,6 +122,12 @@ namespace cereal {
     }
 
     template <class Archive>
+    void serialize(Archive& ar, ::Color& c) {
+        ar(c.r, c.g, c.b, c.a);
+    }
+
+
+    template <class Archive>
     void serialize(Archive& ar, ::Transform& t) {
         ar(t.translation, t.rotation, t.scale);
     }

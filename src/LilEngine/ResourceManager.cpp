@@ -14,14 +14,43 @@ MaterialSettings MaterialSettings::GenerateFrom(const R3D_Material &material) {
     MaterialSettings settings;
     settings.uvOffset = material.uvOffset;
     settings.uvScale = material.uvScale;
+
     settings.albedo.texture_key = Lil::Resources().KeyFromTexture(material.albedo.texture);
+    settings.albedo.color = material.albedo.color;
+
+    settings.normal.texture_key = Lil::Resources().KeyFromTexture(material.normal.texture);
+    settings.normal.scale = material.normal.scale;
+
+    settings.emission.texture_key = Lil::Resources().KeyFromTexture(material.emission.texture);
+    settings.emission.energy = material.emission.energy;
+
+    settings.orm.texture_key = Lil::Resources().KeyFromTexture(material.orm.texture);
+    settings.orm.occlusion = material.orm.occlusion;
+    settings.orm.roughness = material.orm.roughness;
+    settings.orm.metalness = material.orm.metalness;
+    settings.orm.specular = material.orm.specular;
+
     return settings;
 }
 
 void MaterialSettings::Apply(R3D_Material *material) const {
     material->uvOffset = uvOffset;
     material->uvScale = uvScale;
+
     if (Texture2D* t = Lil::Resources().GetTexture(albedo.texture_key)) material->albedo.texture = *t;
+    material->albedo.color = albedo.color;
+
+    if (Texture2D* t = Lil::Resources().GetTexture(normal.texture_key)) material->normal.texture = *t;
+    material->normal.scale = normal.scale;
+
+    if (Texture2D* t = Lil::Resources().GetTexture(emission.texture_key)) material->emission.texture = *t;
+    material->emission.energy = emission.energy;
+
+    if (Texture2D* t = Lil::Resources().GetTexture(orm.texture_key)) material->orm.texture = *t;
+    material->orm.occlusion = orm.occlusion;
+    material->orm.roughness = orm.roughness;
+    material->orm.metalness = orm.metalness;
+    material->orm.specular = orm.specular;
 }
 
 ModelSettings ModelSettings::GenerateFrom(const R3D_Model &model) {
@@ -29,8 +58,7 @@ ModelSettings ModelSettings::GenerateFrom(const R3D_Model &model) {
 
     for (int i = 0; i < model.materialCount; i++) {
         settings.material_settings.emplace_back(MaterialSettings::GenerateFrom(model.materials[i]));
-    }
-    
+    }    
     return settings;
 }
 
