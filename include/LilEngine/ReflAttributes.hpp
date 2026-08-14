@@ -4,14 +4,10 @@
 #include <span>
 
 struct Attribute : refl::attr::usage::field {}; 
-
-struct ModelKeyAttribute : Attribute
-{
-};
-
-struct TextureKeyAttribute : Attribute
-{
-};
+struct ModelKeyAttribute : Attribute {};
+struct TextureKeyAttribute : Attribute {};
+struct ContainerNoAddAttribute : Attribute {};
+struct ContainerNoEraseAttribute : Attribute {};
 
 struct EnumAttrItem {
     std::string_view label;

@@ -212,8 +212,15 @@ namespace Lil {
 class EditorUIVisitor : public IVisitor {
 
     std::string m_object_name = "";
-
+    bool m_container_no_add = false;
+    bool m_container_no_erase = false;
+    
     void HandleField(const FieldInfo& field, void* ptr) {
+        if (field.type.IsContainer()) {
+            m_container_no_add = field.HasAttribute<ContainerNoAddAttribute>();
+            m_container_no_erase = field.HasAttribute<ContainerNoEraseAttribute>();
+        }
+
         if (field.HasAttribute<ModelKeyAttribute>()) {
             Lil::UIStyle::DrawModelKeyField(field.name, static_cast<std::string*>(field.GetPtr(ptr)));
         }
@@ -305,10 +312,10 @@ public:
                 ImGui::PushStyleColor(ImGuiCol_HeaderHovered, Lil::UIStyle::COLOR_HEADER_BG_HOVER);
                 
                 auto* c = ti.Container();
-                if (ImGui::Button(ICON_FA_PLUS)) {
-                    c->InsertDefault(ptr);
-                }
-                ImGui::SameLine();
+                if (!m_container_no_add) {
+                    if (ImGui::Button(ICON_FA_PLUS)) c->InsertDefault(ptr);
+                    ImGui::SameLine();
+                }                
                 if (ImGui::CollapsingHeader(m_object_name.c_str(), 0)) {
                     ImGui::PopStyleColor(2);
                     ImGui::Indent(Lil::UIStyle::STRUCT_INDENT_PADDING);
@@ -317,12 +324,14 @@ public:
                     std::set<size_t> idx_to_erase = {};
                     c->ForEach(ptr, [c, &idx_to_erase, this](size_t i, void* element){
                         ImGui::PushID((int)i);
-                        if (ImGui::Button(ICON_FA_TRASH)) {
-                            idx_to_erase.insert(i);
-                            ImGui::PopID();
-                            return;
+                        if (!m_container_no_erase) {
+                            if (ImGui::Button(ICON_FA_TRASH)) {
+                                idx_to_erase.insert(i);
+                                ImGui::PopID();
+                                return;
+                            }
+                            ImGui::SameLine();
                         }
-                        ImGui::SameLine();
 
                         SetCurrentObjectName(TextFormat("element %d", i));
                         VisitObject(c->ElementType(), element);

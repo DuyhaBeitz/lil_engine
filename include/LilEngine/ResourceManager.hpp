@@ -122,7 +122,7 @@ struct ModelSettings : Reflectable {
 };
 LIL_REFLECT_EX(std::list<MaterialSettings>, bases<>, std_list_MaterialSettings)
 LIL_REFLECT(ModelSettings, bases<>,
-    field(material_settings)
+    field(material_settings, ContainerNoAddAttribute{}, ContainerNoEraseAttribute{})
 )
 LIL_SER_BEGIN(ModelSettings)
 LIL_SER_FIELD(material_settings)
