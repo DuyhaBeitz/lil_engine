@@ -17,6 +17,8 @@ private:
 public:
     R3D_Light m_light;
     bool m_enabled = true;
+    float m_lumen = 1.0f;
+    Color m_color = Color{255, 255, 255, 255};
     int m_type = int(R3D_LIGHT_DIR);
     bool m_cast_shadows = true;
     float m_range = 500.0f;
@@ -44,6 +46,8 @@ LIL_REFLECT(LightComponent, bases<Component>,
         EnumAttrItem{"Sphere", 2},
     }),
     field(m_enabled),
+    field(m_lumen),
+    field(m_color),
     field(m_cast_shadows),
     field(m_range),
     field(m_shadow_softness),
@@ -53,6 +57,8 @@ LIL_REFLECT(LightComponent, bases<Component>,
 LIL_SER_BEGIN(LightComponent)
 LIL_SER_BASE(Component)
 LIL_SER_FIELD(m_enabled)
+LIL_SER_FIELD(m_lumen)
+LIL_SER_FIELD(m_color)
 LIL_SER_FIELD(m_type)
 LIL_SER_FIELD(m_cast_shadows)
 LIL_SER_FIELD(m_range)

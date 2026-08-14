@@ -12,6 +12,8 @@ void LightComponent::UpdateLight() {
     if (m_cast_shadows) R3D_EnableShadow(m_light);
     else R3D_DisableShadow(m_light);
 
+    R3D_SetLightLumen(m_light, m_lumen);
+    R3D_SetLightColor(m_light, m_color);
     R3D_SetLightRange(m_light, m_range);
     R3D_SetShadowSoftness(m_light, m_shadow_softness);
     R3D_SetShadowDepthBias(m_light, m_depth_bias);
