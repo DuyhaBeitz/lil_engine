@@ -440,12 +440,13 @@ void Lil::Editor::DrawResources() {
         Lil::Resources().UpdateModelPreviews();
         for (auto& [key, model] : Lil::Resources().Models()) {
             m_editor.SetCurrentObjectName(key);
-            m_editor.VisitObject(TypeInfo::Get<R3D_Model>(), &model);
+            m_editor.VisitObject(TypeInfo::Get<ModelSettings>(), Lil::Resources().GetModelSettings(key));
 
             // rlImGuiImageRenderTexture(Lil::Resources().GetModelPreview(key));
             // ImGui::SameLine();
             // ImGui::Text("%s", key.c_str());
         }
+        Lil::Resources().ApplyModelSettings();
     }
 
     ImGui::End();

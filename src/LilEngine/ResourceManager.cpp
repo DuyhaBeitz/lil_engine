@@ -1,4 +1,5 @@
 #include "ResourceManager.hpp"
+#include "LilEngine.hpp"
 #include <set>
 
 Camera3D model_preview_camera = {
@@ -8,6 +9,38 @@ Camera3D model_preview_camera = {
     .fovy = 60.0f,                                // Camera field-of-view Y
     .projection = CAMERA_PERSPECTIVE              // Camera mode type
 };
+
+MaterialSettings MaterialSettings::GenerateFrom(const R3D_Material &material) {
+    MaterialSettings settings;
+    settings.uvOffset = material.uvOffset;
+    settings.uvScale = material.uvScale;
+    settings.albedo.texture_key = Lil::Resources().KeyFromTexture(material.albedo.texture);
+    return settings;
+}
+
+void MaterialSettings::Apply(R3D_Material *material) const {
+    material->uvOffset = uvOffset;
+    material->uvScale = uvScale;
+    if (Texture2D* t = Lil::Resources().GetTexture(albedo.texture_key)) material->albedo.texture = *t;
+}
+
+ModelSettings ModelSettings::GenerateFrom(const R3D_Model &model) {
+    ModelSettings settings;
+
+    for (int i = 0; i < model.materialCount; i++) {
+        settings.material_settings.emplace_back(MaterialSettings::GenerateFrom(model.materials[i]));
+    }
+    
+    return settings;
+}
+
+void ModelSettings::Apply(R3D_Model *model) const {
+    assert(model->materialCount == material_settings.size() && "materialCount and material_settings.size() don't match");
+    for (int i = 0; i < model->materialCount; i++) {
+        auto it = std::next(material_settings.begin(), i);
+        it->Apply(&(model->materials[i]));
+    }
+}
 
 void ResourceManager::Unload() {
     UnloadModelPreviews();
@@ -49,6 +82,7 @@ void ResourceManager::TextureUnloadAll() {
 void ResourceManager::ModelAdd(std::string key, R3D_Model model) {
     if (ModelExists(key)) R3D_UnloadModel(m_models[key], true);
     m_models[key] = model;
+    if (m_model_settings.find(key) == m_model_settings.end()) m_model_settings[key] = ModelSettings::GenerateFrom(m_models.at(key));
 }
 
 void ResourceManager::ModelAdd(std::string key, std::string filename) {
@@ -56,10 +90,11 @@ void ResourceManager::ModelAdd(std::string key, std::string filename) {
     ModelAdd(key, model);
 
     for (int i = 0; i < model.materialCount; i++) {
-        TextureAdd("albedo_" + key, model.materials[i].albedo.texture);
-        TextureAdd("normal_" + key, model.materials[i].normal.texture);
-        TextureAdd("emission_" + key, model.materials[i].emission.texture);
-        TextureAdd("orm_" + key, model.materials[i].orm.texture);
+        R3D_Material& mat = model.materials[i];
+        if (mat.albedo.texture.id != 0)   TextureAdd("Gen_albedo_"   + key, mat.albedo.texture);
+        if (mat.normal.texture.id != 0)   TextureAdd("Gen_normal_"   + key, mat.normal.texture);
+        if (mat.emission.texture.id != 0) TextureAdd("Gen_emission_" + key, mat.emission.texture);
+        if (mat.orm.texture.id != 0)      TextureAdd("Gen_orm_"      + key, mat.orm.texture);
     }
 }
 
@@ -70,6 +105,10 @@ void ResourceManager::ModelAdd(std::string filename) {
 
 bool ResourceManager::ModelExists(std::string key) {
     return m_models.find(key) != m_models.end();
+}
+
+bool ResourceManager::ModelSettingsExists(std::string key) {
+    return m_model_settings.find(key) != m_model_settings.end();
 }
 
 void ResourceManager::ModelUnload(std::string key) {
@@ -86,6 +125,24 @@ void ResourceManager::ModelUnloadAll() {
     m_models.clear();
 }
 
+void ResourceManager::ApplyModelSettings() {
+    for (auto& [key, model] : m_models) {
+        m_model_settings.at(key).Apply(&model);
+    }
+}
+
+std::string ResourceManager::KeyFromTexture(Texture2D texture) {
+    std::string res = "None";
+    for (auto& [key, t] : m_textures) {
+        if (t.id != 0 && t.id == texture.id) {
+            res = key;
+            break;
+        }
+    }
+    return res;
+}
+
+
 Texture2D *ResourceManager::GetTexture(std::string key) {
     if (m_textures.find(key) != m_textures.end()) return &m_textures[key];
     else return nullptr;
@@ -93,6 +150,11 @@ Texture2D *ResourceManager::GetTexture(std::string key) {
 
 R3D_Model *ResourceManager::GetModel(std::string key) {
     if (ModelExists(key)) return &m_models[key];
+    else return nullptr;
+}
+
+ModelSettings *ResourceManager::GetModelSettings(std::string key) {
+    if (ModelSettingsExists(key)) return &m_model_settings[key];
     else return nullptr;
 }
 

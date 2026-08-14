@@ -2,14 +2,69 @@
 
 #include "CommonIncludes.hpp"
 #include "Serialization.hpp"
+#include "Reflection.hpp"
+#include "ReflAttributes.hpp"
 #include "Sound.hpp"
 #include <unordered_map>
+
+struct AlbedoMap : Reflectable {
+    LIL_REFLECTABLE()
+    LIL_SERIALIZABLE()
+
+    std::string texture_key = "None";
+};
+LIL_REFLECT(AlbedoMap, bases<>,
+    field(texture_key, TextureKeyAttribute{})
+)
+LIL_SER_BEGIN(AlbedoMap)
+LIL_SER_FIELD(texture_key)
+LIL_SER_END()
+
+struct MaterialSettings : Reflectable {
+    LIL_REFLECTABLE()
+    LIL_SERIALIZABLE()
+    
+    static MaterialSettings GenerateFrom(const R3D_Material& material);
+    void Apply(R3D_Material* material) const;
+
+    Vector2 uvScale;
+    Vector2 uvOffset;
+    AlbedoMap albedo;
+};
+LIL_REFLECT(MaterialSettings, bases<>,
+    field(uvScale),
+    field(uvOffset),
+    field(albedo)
+)
+LIL_SER_BEGIN(MaterialSettings)
+LIL_SER_FIELD(uvScale)
+LIL_SER_FIELD(uvOffset)
+LIL_SER_FIELD(albedo)
+LIL_SER_END()
+
+struct ModelSettings : Reflectable {
+    LIL_REFLECTABLE()
+    LIL_SERIALIZABLE()
+    std::list<MaterialSettings> material_settings;
+
+    static ModelSettings GenerateFrom(const R3D_Model& model);
+    void Apply(R3D_Model* model) const;
+};
+LIL_REFLECT_EX(std::list<MaterialSettings>, bases<>, std_list_MaterialSettings)
+LIL_REFLECT(ModelSettings, bases<>,
+    field(material_settings)
+)
+LIL_SER_BEGIN(ModelSettings)
+LIL_SER_FIELD(material_settings)
+LIL_SER_END()
+
 
 class ResourceManager {
 private:
     std::unordered_map<std::string, Texture2D> m_textures;
 
     std::unordered_map<std::string, R3D_Model> m_models;
+    std::unordered_map<std::string, ModelSettings> m_model_settings;
     std::unordered_map<std::string, RenderTexture2D> m_model_previews;
 
     std::unordered_map<std::string, LilSound> m_sounds;
@@ -28,8 +83,11 @@ public:
     void ModelAdd(std::string key, std::string filename);
     void ModelAdd(std::string filename);
     bool ModelExists(std::string key);
+    bool ModelSettingsExists(std::string key);
     void ModelUnload(std::string key);
     void ModelUnloadAll();
+
+    void ApplyModelSettings();
 
     bool ModelPreviewExists(std::string key);
     void UnloadModelPreviews();
@@ -42,8 +100,10 @@ public:
     void SoundUnload(std::string key);
     void SoundUnloadAll();
 
+    std::string KeyFromTexture(Texture2D texture);
     Texture2D* GetTexture(std::string key);
     R3D_Model* GetModel(std::string key);
+    ModelSettings* GetModelSettings(std::string key);
     RenderTexture2D* GetModelPreview(std::string key);
     LilSound* GetSound(std::string key);
 
@@ -61,13 +121,6 @@ public:
             texture_keys.push_back(key);
         }
 
-        std::vector<std::string> model_keys = {};
-        model_keys.reserve(m_models.size());
-        for (auto& [key, model] : m_models) {
-            if (IsAssetGenerated(key)) continue;
-            model_keys.push_back(key);
-        }
-
         std::vector<std::string> sound_keys = {};
         sound_keys.reserve(m_sounds.size());
         for (auto& [key, sound] : m_sounds) {
@@ -75,21 +128,24 @@ public:
             sound_keys.push_back(key);
         }
 
-        ar(texture_keys, model_keys, sound_keys);
+        ar(texture_keys, sound_keys, m_model_settings);
     }
         
     template <class Archive>
     void load( Archive & ar ) {
         Unload();
         std::vector<std::string> texture_keys = {};
-        std::vector<std::string> model_keys = {};
         std::vector<std::string> sound_keys = {};
 
-        ar(texture_keys, model_keys, sound_keys);
+        ar(texture_keys, sound_keys, m_model_settings);
         for (auto& key : texture_keys) TextureAdd("assets/" + key);
-        for (auto& key : model_keys) ModelAdd("assets/" + key);
-        UpdateModelPreviews();
         for (auto& key : sound_keys) SoundAdd("assets/" + key);
+
+        for (auto& [key, settings] : m_model_settings) {
+            ModelAdd("assets/" + key);
+            settings.Apply(GetModel(key));
+        }
+        UpdateModelPreviews();        
     }
 
 };
