@@ -293,6 +293,7 @@ void Lil::Editor::Update() {
     }
 
     if (IsKeyPressed(TOGGLE_FULLSCREEN_KEY)) {
+        SetWindowSize(GetMonitorWidth(GetCurrentMonitor()), GetMonitorHeight(GetCurrentMonitor()));
         ToggleFullscreen();
     }
     if (IsKeyDown(KEY_LEFT_CONTROL)) {
@@ -513,7 +514,7 @@ void Lil::Editor::DrawResources() {
 
 void Lil::Editor::DrawEnvironment() {
     if (ImGui::Begin("Environment")) {
-        m_editor.SetCurrentObjectName("");
+        m_editor.SetCurrentObjectName("Environment");
         m_editor.VisitObject(Lil::Environment().GetTypeInfo(), &Lil::Environment());
     }
     ImGui::End();

@@ -3,6 +3,7 @@
 #include "CommonIncludes.hpp"
 #include "Reflection.hpp"
 #include "ReflAttributes.hpp"
+#include "Serialization.hpp"
 
 struct EnvBackground {
     Color color;
@@ -103,7 +104,6 @@ LIL_REFLECT(R3D_EnvAmbient, bases<>,
     field(color),
     field(energy)
 )
-
 LIL_REFLECT(R3D_EnvSSAO, bases<>,
     field(sampleCount),
     field(intensity),
@@ -113,7 +113,6 @@ LIL_REFLECT(R3D_EnvSSAO, bases<>,
     field(bias),
     field(enabled)
 )
-
 LIL_REFLECT(R3D_EnvSSIL, bases<>,
     field(sampleCount),
     field(giIntensity),
@@ -124,7 +123,6 @@ LIL_REFLECT(R3D_EnvSSIL, bases<>,
     field(bias),
     field(enabled)
 )
-
 LIL_REFLECT(R3D_EnvSSGI, bases<>,
     field(sliceCount),
     field(edgeFade),
@@ -134,7 +132,6 @@ LIL_REFLECT(R3D_EnvSSGI, bases<>,
     field(denoiseSteps),
     field(enabled)
 )
-
 LIL_REFLECT(R3D_EnvSSR, bases<>,
     field(maxRaySteps),
     field(binarySteps),
@@ -144,7 +141,6 @@ LIL_REFLECT(R3D_EnvSSR, bases<>,
     field(edgeFade),
     field(enabled)
 )
-
 LIL_REFLECT(R3D_VolumetricFog, bases<>,
     field(scatteringDensity),
     field(absortionDensity),
@@ -178,6 +174,7 @@ public:
     Environment() {PopulateDefaultValues();};
 
     LIL_REFLECTABLE()
+    LIL_SERIALIZABLE()
     
     void Update();
     void Reset();
@@ -201,6 +198,7 @@ public:
 };
 LIL_REFLECT(Environment, bases<>,
     field(background),
+    field(ambient),
     field(ssao),
     field(ssil),
     field(ssgi),
@@ -213,3 +211,41 @@ LIL_REFLECT(Environment, bases<>,
     field(tonemap),
     field(color)
 )
+LIL_SER_BEGIN(Environment)
+    LIL_SER_FIELD(background)
+    LIL_SER_FIELD(ambient)
+    LIL_SER_FIELD(ssao)
+    LIL_SER_FIELD(ssil)
+    LIL_SER_FIELD(ssgi)
+    LIL_SER_FIELD(ssr)
+    LIL_SER_FIELD(fog)
+    LIL_SER_FIELD(volumetricFog)
+    LIL_SER_FIELD(dof)
+    LIL_SER_FIELD(bloom)
+    LIL_SER_FIELD(autoExposure)
+    LIL_SER_FIELD(tonemap)
+    LIL_SER_FIELD(color)
+LIL_SER_END()
+
+#define SER(typename) \
+    template <class Archive> \
+    void serialize(Archive& ar, typename& v)
+
+namespace cereal {
+    SER(EnvBackground) {ar(v.color, v.energy, v.rotation, v.sky_texture, v.skyBlur);}
+    SER(EnvDoF) {ar(v.focusPoint, v.focusScale, v.maxBlurSize, v.mode, v.nearScale);}
+    SER(EnvBloom) {ar(v.filterRadius, v.intensity, v.levels, v.mode, v.softThreshold, v.threshold);}
+    SER(EnvTonemap) {ar(v.exposure, v.mode, v.white);}
+    SER(EnvFog) {ar(v.color, v.density, v.end, v.mode, v.skyAffect, v.start);}
+    
+    SER(R3D_AmbientMap) {ar(v.flags, v.irradiance, v.prefilter);}
+    SER(R3D_EnvAmbient) {ar(v.color, v.energy, v.map);}
+
+    SER(R3D_EnvSSAO) {ar(v.bias, v.enabled, v.intensity, v.maxRadius, v.power, v.radius, v.sampleCount);}
+    SER(R3D_EnvSSIL) {ar(v.aoIntensity, v.aoPower, v.bias, v.enabled, v.giIntensity, v.maxRadius, v.radius, v.sampleCount);}
+    SER(R3D_EnvSSGI) {ar(v.denoiseSteps, v.distanceFalloff, v.edgeFade, v.enabled, v.intensity, v.normalRejection, v.sliceCount);}
+    SER(R3D_EnvSSR) {ar(v.binarySteps, v.edgeFade, v.enabled, v.maxDistance, v.maxRaySteps, v.stepSize, v.thickness);}
+    SER(R3D_VolumetricFog) {ar(v.absortionDensity, v.anisotropy, v.emissionColor, v.emissionEnergy, v.enabled, v.length, v.scatteringColor, v.scatteringDensity, v.skyAffect, v.stepSize);}
+    SER(R3D_EnvAutoExposure) {ar(v.adaptationToBright, v.adaptationToDark, v.enabled, v.exposureCompensation, v.maxEV, v.minEV);}
+    SER(R3D_EnvColor) {ar(v.brightness, v.contrast, v.saturation);}
+}

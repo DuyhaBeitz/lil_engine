@@ -117,8 +117,8 @@ void Environment::Update() {
             UnloadImage(image);
             R3D_ENVIRONMENT_SET(background.sky, cubemap);
 
-            R3D_AmbientMap ambient_map = R3D_GenAmbientMap(cubemap, R3D_AMBIENT_ILLUMINATION | R3D_AMBIENT_REFLECTION);
-            R3D_ENVIRONMENT_SET(ambient.map, ambient_map);
+            ambient.map = R3D_GenAmbientMap(cubemap, 0); // R3D_AMBIENT_ILLUMINATION | R3D_AMBIENT_REFLECTION
+            R3D_ENVIRONMENT_SET(ambient.map, ambient.map);
         }
     }
     R3D_ENVIRONMENT_SET(background.color, background.color);

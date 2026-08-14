@@ -212,6 +212,7 @@ public:
         for (auto& key : sound_keys) SoundAdd("assets/" + key);
 
         for (auto& [key, settings] : m_model_settings) {
+            if (IsAssetGenerated(key)) continue;
             ModelAdd("assets/" + key);
             settings.Apply(GetModel(key));
         }
