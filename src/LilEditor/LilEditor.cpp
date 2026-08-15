@@ -109,8 +109,8 @@ void Lil::Editor::InitUI() {
 void Lil::Editor::DrawMenuBar() {
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
-            if (ImGui::MenuItem("Load Scene", "Ctrl+L")) LoadScene();
-            if (ImGui::MenuItem("Save Scene", "Ctrl+S")) SaveScene();
+            if (ImGui::MenuItem("Load Scene", "Ctrl+Shift+L")) LoadScene();
+            if (ImGui::MenuItem("Save Scene", "Ctrl+Shift+S")) SaveScene();
             ImGui::EndMenu();
         }
 
@@ -296,7 +296,7 @@ void Lil::Editor::Update() {
         SetWindowSize(GetMonitorWidth(GetCurrentMonitor()), GetMonitorHeight(GetCurrentMonitor()));
         ToggleFullscreen();
     }
-    if (IsKeyDown(KEY_LEFT_CONTROL)) {
+    if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyDown(KEY_LEFT_SHIFT)) {
         if (IsKeyPressed(KEY_S)) SaveScene();
         else if (IsKeyPressed(KEY_L)) LoadScene();
     }
