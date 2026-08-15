@@ -36,26 +36,33 @@ public:
     const std::vector<Component*>& Components() const {return m_components;}
 
     void AttachComponentFromId(uuids::uuid id);
+    void AttachComponents(std::vector<uuids::uuid> component_ids);
 
     template <class Archive>
     void save( Archive & ar ) const {
-        LIL_SAVE_BASE(GameObject)
         std::vector<uuids::uuid> component_ids = {};
         for (Component* component : m_components) {
             if (!IsComponentAttached(component)) continue;
             component_ids.push_back(component->GetID());
         }
         ar(component_ids);
+        LIL_SAVE_BASE(GameObject)
     }
-        
+       
     template <class Archive>
     void load( Archive & ar ) {
-        LIL_LOAD_BASE(GameObject)
         std::vector<uuids::uuid> component_ids = {};
         ar(component_ids);
-        for (uuids::uuid id : component_ids) {
-            AttachComponentFromId(id);
-        }        
+        LIL_LOAD_BASE(GameObject)
+        AttachComponents(component_ids);
+    }
+
+    template <class Archive>
+    std::vector<uuids::uuid> load_no_attaching_components( Archive & ar ) {
+        std::vector<uuids::uuid> component_ids = {};
+        ar(component_ids);
+        LIL_LOAD_BASE(GameObject)
+        return component_ids;
     }
 
     template <class Comp>

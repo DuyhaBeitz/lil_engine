@@ -56,6 +56,8 @@ public:
             return nullptr;
         }
     }
+    Actor* CopyActor(uuids::uuid original_id);
+    
     Actor* GetActor(uuids::uuid id) {
         if (m_actors.find(id) == m_actors.end()) return nullptr;
         return m_actors.at(id).get();
@@ -97,6 +99,8 @@ public:
             return nullptr;
         }
     }
+    Component* CopyComponent(uuids::uuid original_id);
+
     Component* GetComponent(uuids::uuid id) {
         if (m_components.find(id) == m_components.end()) return nullptr;
         return m_components.at(id).get();

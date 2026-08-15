@@ -38,7 +38,74 @@ bool World::IsActorAlive(Actor *actor) const {
     return actor && m_actors.find(actor->GetID()) != m_actors.end();
 }
 
-Actor *World::PickActor(Vector2 screen_pos, int render_w, int render_h, Camera camera) {
+Actor* World::CopyActor(uuids::uuid original_id) {
+    Actor* original = GetActor(original_id);
+    if (!original) return nullptr;
+    
+    std::unique_ptr<Actor> copy = std::make_unique<Actor>();
+    std::stringstream ss;
+
+    {
+        ArchiveOut out(ss);
+        original->save(out);
+    }
+
+    std::vector<uuids::uuid> original_component_ids;
+    {
+        ArchiveIn in(ss);
+        original_component_ids = copy->load_no_attaching_components(in);
+    }
+
+    std::vector<uuids::uuid> new_component_ids;
+    new_component_ids.reserve(original_component_ids.size());
+
+    for (const auto& old_id : original_component_ids) {
+        Component* new_component = CopyComponent(old_id);
+        if (!new_component) {
+            // abort copying, destroy all copied components
+            for (const auto& new_id : new_component_ids) {
+                DestroyComponent(new_id);
+            }
+            return nullptr;
+        }
+        new_component_ids.push_back(new_component->GetID());
+    }
+    copy->AttachComponents(new_component_ids);
+
+    const uuids::uuid new_id = Identifiable::GenerateID();
+    copy->SetID(new_id);
+    Actor* result = copy.get();
+    m_actors.emplace(new_id, std::move(copy));
+    return result;
+}
+
+Component *World::CopyComponent(uuids::uuid original_id) {
+    auto it = m_components.find(original_id);
+    if (it == m_components.end()) return nullptr;
+
+    std::stringstream ss;
+    
+    {
+        ArchiveOut out(ss);
+        out(cereal::make_nvp("component", it->second));
+    }
+    
+    std::unique_ptr<Component> copy;
+   
+    {
+        ArchiveIn in(ss);
+        in(cereal::make_nvp("component", copy));
+    }
+    
+    const uuids::uuid new_id = Identifiable::GenerateID();
+    copy->SetID(new_id);
+    Component* result = copy.get();
+    m_components.emplace(new_id, std::move(copy));
+    return result;
+}
+
+Actor *World::PickActor(Vector2 screen_pos, int render_w, int render_h, Camera camera)
+{
     LIL_LOG_TRACE("Picking actor");
     Ray ray = GetScreenToWorldRayEx(screen_pos, camera, render_w, render_h);
 

@@ -40,14 +40,6 @@ class Identifiable : public Reflectable {
 private:
     uuids::uuid m_id;
 
-    static uuids::uuid GenerateID() {
-        std::random_device rd;
-        std::mt19937 engine(rd());
-       
-        uuids::uuid_random_generator gen{engine};
-        return gen();
-    }
-
 public:
     LIL_REFLECTABLE()
     LIL_SERIALIZABLE()
@@ -56,6 +48,15 @@ public:
 
     const uuids::uuid& GetID() const {return m_id;}
     std::string GetIDString() const {return uuids::to_string(m_id);}
+    void SetID(uuids::uuid id){m_id = id;}
+
+    static uuids::uuid GenerateID() {
+        std::random_device rd;
+        std::mt19937 engine(rd());
+       
+        uuids::uuid_random_generator gen{engine};
+        return gen();
+    }
 };
 LIL_REFLECT(Identifiable, bases<>)
 LIL_SERIALIZE_NO_BASE(Identifiable, m_id)

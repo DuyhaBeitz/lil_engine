@@ -300,6 +300,15 @@ void Lil::Editor::Update() {
         if (IsKeyPressed(KEY_S)) SaveScene();
         else if (IsKeyPressed(KEY_L)) LoadScene();
     }
+    if (IsKeyPressed(KEY_U) && m_selected_actor) {
+        if (Actor* copy = Lil::World().CopyActor(m_selected_actor->GetID())) {
+            SelectActor(copy);
+            Notify("Copied actor");
+        }
+        else {
+            Notify("Failed to copy actor");
+        }
+    }
 }
 
 void Lil::Editor::UpdateGizmoMode() {

@@ -87,3 +87,9 @@ void Actor::AttachComponentFromId(uuids::uuid id) {
         m_components.push_back(component);
     }
 }
+
+void Actor::AttachComponents(std::vector<uuids::uuid> component_ids) {
+    for (uuids::uuid id : component_ids) {
+        AttachComponentFromId(id);
+    }
+}
