@@ -1,6 +1,6 @@
-# Lil Engine
+# Lil Engine - Advanced Rendering Branch
 ## C++ game engine with an editor
-![huh](https://github.com/DuyhaBeitz/lil_engine/blob/master/assets/Screenshot_2026-07-31_13-01-11.png)
+![huh](https://github.com/DuyhaBeitz/lil_engine/blob/advanced_rendering/assets/screenshot_advanced_render.png)
 ## Features:
 - Reflection system (write your class, specify reflected fields and use it in the editor)
 - Serialization (load/save your objects or scenes)
@@ -16,4 +16,3 @@ Right now I use precompiled lib binaries (*.a) for quick builds, they are only f
 
 ## TODO:
 - networking (Probably desktop only)
-- there will be a continuation of this project (or just a separate branch, or maybe a module) that uses R3D library for advanced rendering (desktop only)
