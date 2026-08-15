@@ -166,18 +166,17 @@ void World::Update() {
     }
 
     float time_step = GetFrameTime()*m_simulation_speed;
+    LIL_LOG_TRACE("World: physics step");
     if (m_simulation_going && time_step > 0.0) Lil::Physics().Step(time_step);
+    LIL_LOG_TRACE("World: physics step DONE");
+
+    LIL_LOG_TRACE("World: simulation update");
     if (m_simulation_going) for (auto& [key, actor] : m_actors) actor->SimulationUpdate(time_step);
+    LIL_LOG_TRACE("World: simulation update DONE");
     
     LIL_LOG_TRACE("World: updating actor layout");
     UpdateActorLayout();
     LIL_LOG_TRACE("World: updating actor layout DONE");
-
-    // IF YOU WANT TO DRAW DEBUG WHILE PAUSING THE SIMULATION, SET TIMESTEP TO 0 (INSTEAD OF NOT CALLING UPDATE AT ALL)
-    // WITHOUT UPDATING THE PHYSICS WORLD DEBUG DRAW IS VERY SLOW
-
-    // ACTUALLY, PROVIDING 0 IS ILLEGAL HERE, SO
-    // TODO: FIX PHYSICS DEBUG SLOW WHEN NO UPDATING
 }
 
 void World::UpdateActorLayout() {

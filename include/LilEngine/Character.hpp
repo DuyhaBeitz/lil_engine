@@ -15,7 +15,7 @@ public:
 class Character : public Actor {
 public:
     Character();
-    ~Character();
+    virtual ~Character();
 
     virtual void CharacterUpdate(float delta_time) {
         Vector3 vel = GetVelocity();

@@ -9,6 +9,7 @@
 
 #include "Character.hpp"
 #include "Heightmap.hpp"
+#include "Vehicle.hpp"
 #include "Components/LightComponent.hpp"
 
 class World {

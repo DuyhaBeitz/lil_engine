@@ -11,11 +11,14 @@ public:
     std::set<const Component*> m_marked_deattached;
     virtual void OnLayoutUpdate() {};
     virtual void OnSimulationUpdate(float delta_time) {};
+    virtual void OnDebugDraw() {};
+    virtual void OnDraw() {};
 
 public:
     LIL_REFLECTABLE()
 
     Actor() = default;
+    virtual ~Actor() = default;
     
     virtual void SetupComponents() {}
 

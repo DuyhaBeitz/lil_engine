@@ -36,6 +36,7 @@ void Actor::Draw() {
         if (!IsComponentAttached(component)) continue;
         component->Draw();
     }
+    OnDraw();
 }
 
 void Actor::DebugUpdate() {
@@ -60,6 +61,7 @@ void Actor::DebugDraw() {
     for (int i = 0; i < 3; i++) {
         DrawLine3D(GetPosition(), GetPosition()+Vector3RotateByQuaternion(v[i], GetRotation())*10.0f, c[i]);
     }
+    OnDebugDraw();
 };
 
 void Actor::AttachComponent(Component *component) {

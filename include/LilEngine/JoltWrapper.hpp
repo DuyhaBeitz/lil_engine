@@ -21,6 +21,7 @@
 #include <Jolt/Physics/Body/BodyActivationListener.h>
 
 #include <Jolt/Physics/Character/CharacterVirtual.h>
+#include <Jolt/Physics/Vehicle/VehicleConstraint.h>
 
 #include <Jolt/Renderer/DebugRendererSimple.h>
 #include <Jolt/Physics/Body/MotionType.h>
