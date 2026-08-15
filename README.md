@@ -4,7 +4,7 @@
 ## Features:
 - Reflection system (write your class, specify reflected fields and use it in the editor)
 - Serialization (load/save your objects or scenes)
-- Crossplatform
+- Crossplatform (advanced rendering is Desktop only, for more platforms see master branch)
 
 ## Usage:
 You still write your regular raylib code + Lil::api
