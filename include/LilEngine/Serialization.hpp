@@ -86,18 +86,21 @@ int main() {
 #include <cereal/archives/json.hpp>
 #include <fstream>
 
+#define LIL_SER_FIELD_OBJECT(object_name, field_name) \
+ar(cereal::make_nvp(#field_name, object_name.field_name));
+
 namespace cereal {
 
     template <class Archive>
-    void save(Archive& archive, const uuids::uuid& id) {
+    void save(Archive& ar, const uuids::uuid& id) {
         std::string uuid_str = uuids::to_string(id);
-        archive(uuid_str);
+        ar(uuid_str);
     }
     
     template <class Archive>
-    void load(Archive& archive, uuids::uuid& id) {
+    void load(Archive& ar, uuids::uuid& id) {
         std::string uuid_str;
-        archive(uuid_str);
+        ar(uuid_str);
         auto result = uuids::uuid::from_string(uuid_str);
         if (result.has_value()) {
             id = result.value();
@@ -108,50 +111,59 @@ namespace cereal {
 
     template <class Archive>
     void serialize(Archive& ar, ::Vector2& v) {
-        ar(v.x, v.y);
+        LIL_SER_FIELD_OBJECT(v, x);
+        LIL_SER_FIELD_OBJECT(v, y);
     }
 
     template <class Archive>
     void serialize(Archive& ar, ::Vector3& v) {
-        ar(v.x, v.y, v.z);
+        LIL_SER_FIELD_OBJECT(v, x);
+        LIL_SER_FIELD_OBJECT(v, y);
+        LIL_SER_FIELD_OBJECT(v, z);
     }
 
     template <class Archive>
     void serialize(Archive& ar, ::Vector4& v) {
-        ar(v.x, v.y, v.z, v.w);
+        LIL_SER_FIELD_OBJECT(v, x);
+        LIL_SER_FIELD_OBJECT(v, y);
+        LIL_SER_FIELD_OBJECT(v, z);
+        LIL_SER_FIELD_OBJECT(v, w);
     }
 
     template <class Archive>
     void serialize(Archive& ar, ::Color& c) {
-        ar(c.r, c.g, c.b, c.a);
+        LIL_SER_FIELD_OBJECT(c, r);
+        LIL_SER_FIELD_OBJECT(c, g);
+        LIL_SER_FIELD_OBJECT(c, b);
+        LIL_SER_FIELD_OBJECT(c, a);
     }
 
 
     template <class Archive>
     void serialize(Archive& ar, ::Transform& t) {
-        ar(t.translation, t.rotation, t.scale);
+        LIL_SER_FIELD_OBJECT(t, translation);
+        LIL_SER_FIELD_OBJECT(t, rotation);
+        LIL_SER_FIELD_OBJECT(t, scale);
     }
 
     template <class Archive>
     void serialize(Archive& ar, ::Matrix& m) {
-        ar(
-            m.m0,
-            m.m1,
-            m.m2,
-            m.m3,
-            m.m4,
-            m.m5,
-            m.m6,
-            m.m7,
-            m.m8,
-            m.m9,
-            m.m10,
-            m.m11,
-            m.m12,
-            m.m13,
-            m.m14,
-            m.m15
-        );
+        LIL_SER_FIELD_OBJECT(m, m0);
+        LIL_SER_FIELD_OBJECT(m, m1);
+        LIL_SER_FIELD_OBJECT(m, m2);
+        LIL_SER_FIELD_OBJECT(m, m3);
+        LIL_SER_FIELD_OBJECT(m, m4);
+        LIL_SER_FIELD_OBJECT(m, m5);
+        LIL_SER_FIELD_OBJECT(m, m6);
+        LIL_SER_FIELD_OBJECT(m, m7);
+        LIL_SER_FIELD_OBJECT(m, m8);
+        LIL_SER_FIELD_OBJECT(m, m9);
+        LIL_SER_FIELD_OBJECT(m, m10);
+        LIL_SER_FIELD_OBJECT(m, m11);
+        LIL_SER_FIELD_OBJECT(m, m12);
+        LIL_SER_FIELD_OBJECT(m, m13);
+        LIL_SER_FIELD_OBJECT(m, m14);
+        LIL_SER_FIELD_OBJECT(m, m15);
     }
 }
 
@@ -209,5 +221,5 @@ ar(cereal::base_class<base_typename>(this));
 
 //LIL_REGISTER_POLYMORPHIC(base_typename, std::remove_pointer<decltype(this)>::type);
 
-#define LIL_SER_FIELD(name) ar(name);
+#define LIL_SER_FIELD(name) ar(cereal::make_nvp(#name, name));
 #define LIL_SER_END() }

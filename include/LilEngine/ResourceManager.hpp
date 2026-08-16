@@ -198,7 +198,9 @@ public:
             sound_keys.push_back(key);
         }
 
-        ar(texture_keys, sound_keys, m_model_settings);
+        LIL_SER_FIELD(texture_keys);
+        LIL_SER_FIELD(sound_keys);
+        LIL_SER_FIELD(m_model_settings);
     }
         
     template <class Archive>
@@ -207,7 +209,10 @@ public:
         std::vector<std::string> texture_keys = {};
         std::vector<std::string> sound_keys = {};
 
-        ar(texture_keys, sound_keys, m_model_settings);
+        LIL_SER_FIELD(texture_keys);
+        LIL_SER_FIELD(sound_keys);
+        LIL_SER_FIELD(m_model_settings);
+        
         for (auto& key : texture_keys) TextureAdd("assets/" + key);
         for (auto& key : sound_keys) SoundAdd("assets/" + key);
 

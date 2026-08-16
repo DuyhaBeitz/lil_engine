@@ -130,18 +130,21 @@ public:
 
     template <class Archive>
     void save( Archive & ar ) const {
-        ar(m_simulation_going, m_simulation_speed, m_physics_debug);
-        ar(cereal::make_nvp("components", m_components));
-        ar(cereal::make_nvp("actors", m_actors));
+        LIL_SER_FIELD(m_simulation_going);
+        LIL_SER_FIELD(m_simulation_speed);
+        LIL_SER_FIELD(m_physics_debug);
+        LIL_SER_FIELD(m_components);
+        LIL_SER_FIELD(m_actors);
     }
         
     template <class Archive>
     void load( Archive & ar ) {
         Clear();
-        ar(m_simulation_going, m_simulation_speed, m_physics_debug);
-        
-        ar(cereal::make_nvp("components", m_components));
-        ar(cereal::make_nvp("actors", m_actors));
+        LIL_SER_FIELD(m_simulation_going);
+        LIL_SER_FIELD(m_simulation_speed);
+        LIL_SER_FIELD(m_physics_debug);
+        LIL_SER_FIELD(m_components);
+        LIL_SER_FIELD(m_actors);
     }
 };
 LIL_DISAMBIGUATE_LOAD_SAVE(World)

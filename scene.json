@@ -1,16 +1,16 @@
 {
     "value0": {
-        "value0": false,
-        "value1": 1.0,
-        "value2": false,
-        "components": [
+        "m_simulation_going": false,
+        "m_simulation_speed": 1.0,
+        "m_physics_debug": false,
+        "m_components": [
             {
                 "key": {
-                    "value0": "c23e48a9-6c65-4510-96bd-6bcc6e3f4cd3"
+                    "value0": "76bc6b32-29e2-43b4-9f81-7e2d73ab3edf"
                 },
                 "value": {
                     "polymorphic_id": 2147483649,
-                    "polymorphic_name": "ModelComponent",
+                    "polymorphic_name": "LightComponent",
                     "ptr_wrapper": {
                         "valid": 1,
                         "data": {
@@ -18,120 +18,70 @@
                                 "value0": {
                                     "value0": {
                                         "value0": {
-                                            "value0": "c23e48a9-6c65-4510-96bd-6bcc6e3f4cd3"
+                                            "value0": "76bc6b32-29e2-43b4-9f81-7e2d73ab3edf"
                                         }
                                     },
                                     "value1": {
                                         "value0": {
-                                            "value0": {
-                                                "value0": 0.0,
-                                                "value1": 7.061044692993164,
-                                                "value2": 0.0
+                                            "translation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0
                                             },
-                                            "value1": {
-                                                "value0": 0.0,
-                                                "value1": 0.0,
-                                                "value2": 0.0,
-                                                "value3": 1.0
+                                            "rotation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0,
+                                                "w": 1.0
                                             },
-                                            "value2": {
-                                                "value0": 1.0,
-                                                "value1": 1.0,
-                                                "value2": 1.0
+                                            "scale": {
+                                                "x": 1.0,
+                                                "y": 1.0,
+                                                "z": 1.0
                                             }
                                         }
                                     }
                                 },
-                                "value1": {
-                                    "value0": {
-                                        "value0": 0.0,
-                                        "value1": 0.0,
-                                        "value2": 0.0
+                                "m_local_transform": {
+                                    "translation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
-                                    "value1": {
-                                        "value0": 0.0,
-                                        "value1": 0.0,
-                                        "value2": 0.0,
-                                        "value3": 1.0
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0,
+                                        "w": 1.0
                                     },
-                                    "value2": {
-                                        "value0": 1.0,
-                                        "value1": 1.0,
-                                        "value2": 1.0
+                                    "scale": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
                                     }
                                 },
-                                "value2": false
+                                "m_is_required": false
                             },
-                            "value1": "Car.glb"
+                            "m_enabled": true,
+                            "m_lumen": 15.0,
+                            "m_color": {
+                                "r": 255,
+                                "g": 255,
+                                "b": 255,
+                                "a": 255
+                            },
+                            "m_type": 0,
+                            "m_cast_shadows": true,
+                            "m_range": 500.0,
+                            "m_shadow_softness": 3.200000047683716,
+                            "m_depth_bias": 0.0010000000474974514
                         }
                     }
                 }
             },
             {
                 "key": {
-                    "value0": "3d537855-b0d1-430d-a8b7-9f2cdd204184"
-                },
-                "value": {
-                    "polymorphic_id": 1,
-                    "ptr_wrapper": {
-                        "valid": 1,
-                        "data": {
-                            "value0": {
-                                "value0": {
-                                    "value0": {
-                                        "value0": {
-                                            "value0": "3d537855-b0d1-430d-a8b7-9f2cdd204184"
-                                        }
-                                    },
-                                    "value1": {
-                                        "value0": {
-                                            "value0": {
-                                                "value0": 0.0,
-                                                "value1": 0.0,
-                                                "value2": 0.0
-                                            },
-                                            "value1": {
-                                                "value0": 0.0,
-                                                "value1": 0.0,
-                                                "value2": 0.0,
-                                                "value3": 1.0
-                                            },
-                                            "value2": {
-                                                "value0": 128.0,
-                                                "value1": 5.0,
-                                                "value2": 128.0
-                                            }
-                                        }
-                                    }
-                                },
-                                "value1": {
-                                    "value0": {
-                                        "value0": 0.0,
-                                        "value1": 0.0,
-                                        "value2": 0.0
-                                    },
-                                    "value1": {
-                                        "value0": 0.0,
-                                        "value1": 0.0,
-                                        "value2": 0.0,
-                                        "value3": 1.0
-                                    },
-                                    "value2": {
-                                        "value0": 1.0,
-                                        "value1": 1.0,
-                                        "value2": 1.0
-                                    }
-                                },
-                                "value2": true
-                            },
-                            "value1": "Gen_Heightmap_From_heightmap.png"
-                        }
-                    }
-                }
-            },
-            {
-                "key": {
-                    "value0": "5bbca2d4-2250-49fe-8d0b-6c0e4f30296f"
+                    "value0": "d3779ea2-76df-4ec0-b702-733213eb52c6"
                 },
                 "value": {
                     "polymorphic_id": 2147483650,
@@ -143,88 +93,88 @@
                                 "value0": {
                                     "value0": {
                                         "value0": {
-                                            "value0": "5bbca2d4-2250-49fe-8d0b-6c0e4f30296f"
+                                            "value0": "d3779ea2-76df-4ec0-b702-733213eb52c6"
                                         }
                                     },
                                     "value1": {
                                         "value0": {
-                                            "value0": {
-                                                "value0": 0.0,
-                                                "value1": 0.0,
-                                                "value2": 0.0
+                                            "translation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0
                                             },
-                                            "value1": {
-                                                "value0": 0.0,
-                                                "value1": 0.0,
-                                                "value2": 0.0,
-                                                "value3": 1.0
+                                            "rotation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0,
+                                                "w": 1.0
                                             },
-                                            "value2": {
-                                                "value0": 128.0,
-                                                "value1": 5.0,
-                                                "value2": 128.0
+                                            "scale": {
+                                                "x": 128.0,
+                                                "y": 5.0,
+                                                "z": 128.0
                                             }
                                         }
                                     }
                                 },
-                                "value1": {
-                                    "value0": {
-                                        "value0": 0.0,
-                                        "value1": 0.0,
-                                        "value2": 0.0
+                                "m_local_transform": {
+                                    "translation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
-                                    "value1": {
-                                        "value0": 0.0,
-                                        "value1": 0.0,
-                                        "value2": 0.0,
-                                        "value3": 1.0
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0,
+                                        "w": 1.0
                                     },
-                                    "value2": {
-                                        "value0": 1.0,
-                                        "value1": 1.0,
-                                        "value2": 1.0
+                                    "scale": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
                                     }
                                 },
-                                "value2": true
+                                "m_is_required": true
                             },
-                            "value1": [
+                            "m_shapes": [
                                 {
-                                    "value0": 2,
-                                    "value1": {
-                                        "value0": 0.0,
-                                        "value1": 0.0,
-                                        "value2": 0.0
+                                    "m_type": 2,
+                                    "m_local_position": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
-                                    "value2": {
-                                        "value0": 0.0,
-                                        "value1": 0.0,
-                                        "value2": 0.0,
-                                        "value3": 1.0
+                                    "m_local_rotation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0,
+                                        "w": 1.0
                                     },
-                                    "value3": 1.0,
-                                    "value4": {
-                                        "value0": 0.0,
-                                        "value1": 0.0,
-                                        "value2": 0.0
+                                    "m_radius": 1.0,
+                                    "m_half_extends": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
-                                    "value5": "heightmap.png",
-                                    "value6": {
-                                        "value0": 128.0,
-                                        "value1": 5.0,
-                                        "value2": 128.0
+                                    "m_heightmap_texture_key": "heightmap.png",
+                                    "m_map_size": {
+                                        "x": 128.0,
+                                        "y": 5.0,
+                                        "z": 128.0
                                     }
                                 }
                             ],
-                            "value2": 0,
-                            "value3": {
-                                "value0": 0.0,
-                                "value1": 0.0,
-                                "value2": 0.0
+                            "m_type": 0,
+                            "m_linear_velocity": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
                             },
-                            "value4": {
-                                "value0": 0.0,
-                                "value1": 0.0,
-                                "value2": 0.0
+                            "m_angular_velocity": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
                             }
                         }
                     }
@@ -232,11 +182,11 @@
             },
             {
                 "key": {
-                    "value0": "fee3dca5-703a-4d6c-ac55-3b6b009f9374"
+                    "value0": "56e2d2e9-0641-40b6-acb7-d8e0bc014ca4"
                 },
                 "value": {
                     "polymorphic_id": 2147483651,
-                    "polymorphic_name": "LightComponent",
+                    "polymorphic_name": "ModelComponent",
                     "ptr_wrapper": {
                         "valid": 1,
                         "data": {
@@ -244,106 +194,94 @@
                                 "value0": {
                                     "value0": {
                                         "value0": {
-                                            "value0": "fee3dca5-703a-4d6c-ac55-3b6b009f9374"
+                                            "value0": "56e2d2e9-0641-40b6-acb7-d8e0bc014ca4"
                                         }
                                     },
                                     "value1": {
                                         "value0": {
-                                            "value0": {
-                                                "value0": 0.0,
-                                                "value1": 0.0,
-                                                "value2": 0.0
+                                            "translation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0
                                             },
-                                            "value1": {
-                                                "value0": 0.0,
-                                                "value1": 0.0,
-                                                "value2": 0.0,
-                                                "value3": 1.0
+                                            "rotation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0,
+                                                "w": 1.0
                                             },
-                                            "value2": {
-                                                "value0": 1.0,
-                                                "value1": 1.0,
-                                                "value2": 1.0
+                                            "scale": {
+                                                "x": 128.0,
+                                                "y": 5.0,
+                                                "z": 128.0
                                             }
                                         }
                                     }
                                 },
-                                "value1": {
-                                    "value0": {
-                                        "value0": 0.0,
-                                        "value1": 0.0,
-                                        "value2": 0.0
+                                "m_local_transform": {
+                                    "translation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
                                     },
-                                    "value1": {
-                                        "value0": 0.0,
-                                        "value1": 0.0,
-                                        "value2": 0.0,
-                                        "value3": 1.0
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0,
+                                        "w": 1.0
                                     },
-                                    "value2": {
-                                        "value0": 1.0,
-                                        "value1": 1.0,
-                                        "value2": 1.0
+                                    "scale": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
                                     }
                                 },
-                                "value2": false
+                                "m_is_required": true
                             },
-                            "value1": true,
-                            "value2": 14.699999809265137,
-                            "value3": {
-                                "value0": 255,
-                                "value1": 255,
-                                "value2": 255,
-                                "value3": 255
-                            },
-                            "value4": 0,
-                            "value5": true,
-                            "value6": 500.0,
-                            "value7": 3.200000047683716,
-                            "value8": 0.0010000000474974514
+                            "m_model_key": "Gen_Heightmap_From_heightmap.png"
                         }
                     }
                 }
             }
         ],
-        "actors": [
+        "m_actors": [
             {
                 "key": {
-                    "value0": "8a841805-4ea8-40c3-a0cc-26142d0b1d7b"
+                    "value0": "14d6c070-9276-4de0-830b-68fc1eb1ab49"
                 },
                 "value": {
                     "polymorphic_id": 1073741824,
                     "ptr_wrapper": {
                         "valid": 1,
                         "data": {
-                            "value0": [
+                            "component_ids": [
                                 {
-                                    "value0": "c23e48a9-6c65-4510-96bd-6bcc6e3f4cd3"
+                                    "value0": "76bc6b32-29e2-43b4-9f81-7e2d73ab3edf"
                                 }
                             ],
-                            "value1": {
+                            "value0": {
                                 "value0": {
                                     "value0": {
-                                        "value0": "8a841805-4ea8-40c3-a0cc-26142d0b1d7b"
+                                        "value0": "14d6c070-9276-4de0-830b-68fc1eb1ab49"
                                     }
                                 },
                                 "value1": {
                                     "value0": {
-                                        "value0": {
-                                            "value0": 0.0,
-                                            "value1": 7.061044692993164,
-                                            "value2": 0.0
+                                        "translation": {
+                                            "x": 0.0,
+                                            "y": 0.0,
+                                            "z": 0.0
                                         },
-                                        "value1": {
-                                            "value0": 0.0,
-                                            "value1": 0.0,
-                                            "value2": 0.0,
-                                            "value3": 1.0
+                                        "rotation": {
+                                            "x": 0.0,
+                                            "y": 0.0,
+                                            "z": 0.0,
+                                            "w": 1.0
                                         },
-                                        "value2": {
-                                            "value0": 1.0,
-                                            "value1": 1.0,
-                                            "value2": 1.0
+                                        "scale": {
+                                            "x": 1.0,
+                                            "y": 1.0,
+                                            "z": 1.0
                                         }
                                     }
                                 }
@@ -354,7 +292,7 @@
             },
             {
                 "key": {
-                    "value0": "7c405d53-b27a-4c57-8d83-b362752f0757"
+                    "value0": "098d1b91-3f56-49ff-8b99-952f9bf7045c"
                 },
                 "value": {
                     "polymorphic_id": 2147483652,
@@ -363,88 +301,43 @@
                         "valid": 1,
                         "data": {
                             "value0": {
-                                "value0": [
+                                "component_ids": [
                                     {
-                                        "value0": "3d537855-b0d1-430d-a8b7-9f2cdd204184"
+                                        "value0": "56e2d2e9-0641-40b6-acb7-d8e0bc014ca4"
                                     },
                                     {
-                                        "value0": "5bbca2d4-2250-49fe-8d0b-6c0e4f30296f"
+                                        "value0": "d3779ea2-76df-4ec0-b702-733213eb52c6"
                                     }
                                 ],
-                                "value1": {
+                                "value0": {
                                     "value0": {
                                         "value0": {
-                                            "value0": "7c405d53-b27a-4c57-8d83-b362752f0757"
+                                            "value0": "098d1b91-3f56-49ff-8b99-952f9bf7045c"
                                         }
                                     },
                                     "value1": {
                                         "value0": {
-                                            "value0": {
-                                                "value0": 0.0,
-                                                "value1": 0.0,
-                                                "value2": 0.0
+                                            "translation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0
                                             },
-                                            "value1": {
-                                                "value0": 0.0,
-                                                "value1": 0.0,
-                                                "value2": 0.0,
-                                                "value3": 1.0
+                                            "rotation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0,
+                                                "w": 1.0
                                             },
-                                            "value2": {
-                                                "value0": 128.0,
-                                                "value1": 5.0,
-                                                "value2": 128.0
+                                            "scale": {
+                                                "x": 128.0,
+                                                "y": 5.0,
+                                                "z": 128.0
                                             }
                                         }
                                     }
                                 }
                             },
-                            "value1": "heightmap.png"
-                        }
-                    }
-                }
-            },
-            {
-                "key": {
-                    "value0": "ca380e17-a4a6-4201-ac57-8ca740286d24"
-                },
-                "value": {
-                    "polymorphic_id": 1073741824,
-                    "ptr_wrapper": {
-                        "valid": 1,
-                        "data": {
-                            "value0": [
-                                {
-                                    "value0": "fee3dca5-703a-4d6c-ac55-3b6b009f9374"
-                                }
-                            ],
-                            "value1": {
-                                "value0": {
-                                    "value0": {
-                                        "value0": "ca380e17-a4a6-4201-ac57-8ca740286d24"
-                                    }
-                                },
-                                "value1": {
-                                    "value0": {
-                                        "value0": {
-                                            "value0": 0.0,
-                                            "value1": 0.0,
-                                            "value2": 0.0
-                                        },
-                                        "value1": {
-                                            "value0": 0.0,
-                                            "value1": 0.0,
-                                            "value2": 0.0,
-                                            "value3": 1.0
-                                        },
-                                        "value2": {
-                                            "value0": 1.0,
-                                            "value1": 1.0,
-                                            "value2": 1.0
-                                        }
-                                    }
-                                }
-                            }
+                            "m_heightmap_texture_key": "heightmap.png"
                         }
                     }
                 }
@@ -452,91 +345,50 @@
         ]
     },
     "value1": {
-        "value0": [
-            "heightmap.png",
-            "GroundSand005_COL_1K.jpg",
+        "texture_keys": [
             "skybox_1.png",
-            "GroundSand005_NRM_1K.jpg"
+            "GroundSand005_COL_1K.jpg",
+            "GroundSand005_NRM_1K.jpg",
+            "heightmap.png"
         ],
-        "value1": [],
-        "value2": [
-            {
-                "key": "Car.glb",
-                "value": {
-                    "value0": [
-                        {
-                            "value0": {
-                                "value0": 1.0,
-                                "value1": 1.0
-                            },
-                            "value1": {
-                                "value0": 0.0,
-                                "value1": 0.0
-                            },
-                            "value2": {
-                                "value0": "None",
-                                "value1": {
-                                    "value0": 255,
-                                    "value1": 255,
-                                    "value2": 255,
-                                    "value3": 255
-                                }
-                            },
-                            "value3": {
-                                "value0": "None",
-                                "value1": 1.0
-                            },
-                            "value4": {
-                                "value0": "None",
-                                "value1": 0.0
-                            },
-                            "value5": {
-                                "value0": "None",
-                                "value1": 1.0,
-                                "value2": 0.8945907354354858,
-                                "value3": 0.0,
-                                "value4": 0.5
-                            }
-                        }
-                    ]
-                }
-            },
+        "sound_keys": [],
+        "m_model_settings": [
             {
                 "key": "Gen_Heightmap_From_heightmap.png",
                 "value": {
-                    "value0": [
+                    "material_settings": [
                         {
-                            "value0": {
-                                "value0": 5.0,
-                                "value1": 5.0
+                            "uvScale": {
+                                "x": 5.0,
+                                "y": 5.0
                             },
-                            "value1": {
-                                "value0": 0.0,
-                                "value1": 0.0
+                            "uvOffset": {
+                                "x": 0.0,
+                                "y": 0.0
                             },
-                            "value2": {
-                                "value0": "GroundSand005_COL_1K.jpg",
-                                "value1": {
-                                    "value0": 255,
-                                    "value1": 255,
-                                    "value2": 255,
-                                    "value3": 255
+                            "albedo": {
+                                "texture_key": "GroundSand005_COL_1K.jpg",
+                                "color": {
+                                    "r": 255,
+                                    "g": 255,
+                                    "b": 255,
+                                    "a": 255
                                 }
                             },
-                            "value3": {
-                                "value0": "GroundSand005_NRM_1K.jpg",
-                                "value1": 2.0999999046325685
+                            "normal": {
+                                "texture_key": "GroundSand005_NRM_1K.jpg",
+                                "scale": 2.0
                             },
-                            "value4": {
-                                "value0": "None",
-                                "value1": 0.0
+                            "emission": {
+                                "texture_key": "None",
+                                "energy": 0.0
                             },
-                            "value5": {
-                                "value0": "None",
-                                "value1": 1.0,
-                                "value2": 1.0,
-                                "value3": 0.0,
-                                "value4": 0.5
+                            "orm": {
+                                "texture_key": "None",
+                                "occlusion": 1.0,
+                                "roughness": 1.0,
+                                "metalness": 0.0,
+                                "specular": 0.5
                             }
                         }
                     ]
@@ -545,29 +397,29 @@
         ]
     },
     "value2": {
-        "value0": {
+        "background": {
             "value0": {
-                "value0": 130,
-                "value1": 130,
-                "value2": 130,
-                "value3": 255
+                "r": 130,
+                "g": 130,
+                "b": 130,
+                "a": 255
             },
             "value1": 1.0,
             "value2": {
-                "value0": 0.0,
-                "value1": 0.0,
-                "value2": 0.0,
-                "value3": 1.0
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
             },
             "value3": "skybox_1.png",
             "value4": 0.0
         },
-        "value1": {
+        "ambient": {
             "value0": {
-                "value0": 0,
-                "value1": 0,
-                "value2": 0,
-                "value3": 255
+                "r": 0,
+                "g": 0,
+                "b": 0,
+                "a": 255
             },
             "value1": 1.0,
             "value2": {
@@ -576,7 +428,7 @@
                 "value2": 0
             }
         },
-        "value2": {
+        "ssao": {
             "value0": 0.029999999329447748,
             "value1": false,
             "value2": 1.0,
@@ -585,7 +437,7 @@
             "value5": 1.0,
             "value6": 16
         },
-        "value3": {
+        "ssil": {
             "value0": 1.0,
             "value1": 1.0,
             "value2": 0.029999999329447748,
@@ -595,7 +447,7 @@
             "value6": 4.0,
             "value7": 16
         },
-        "value4": {
+        "ssgi": {
             "value0": 4,
             "value1": 1.0,
             "value2": 0.10000000149011612,
@@ -604,7 +456,7 @@
             "value5": 0.0,
             "value6": 4
         },
-        "value5": {
+        "ssr": {
             "value0": 4,
             "value1": 0.25,
             "value2": false,
@@ -613,12 +465,12 @@
             "value5": 0.125,
             "value6": 0.20000000298023225
         },
-        "value6": {
+        "fog": {
             "value0": {
-                "value0": 255,
-                "value1": 255,
-                "value2": 255,
-                "value3": 255
+                "r": 255,
+                "g": 255,
+                "b": 255,
+                "a": 255
             },
             "value1": 0.05000000074505806,
             "value2": 50.0,
@@ -626,36 +478,36 @@
             "value4": 0.5,
             "value5": 1.0
         },
-        "value7": {
+        "volumetricFog": {
             "value0": 0.029999999329447748,
             "value1": 0.5,
             "value2": {
-                "value0": 255,
-                "value1": 255,
-                "value2": 255,
-                "value3": 255
+                "r": 255,
+                "g": 255,
+                "b": 255,
+                "a": 255
             },
             "value3": 0.0,
             "value4": false,
             "value5": 50.0,
             "value6": {
-                "value0": 255,
-                "value1": 255,
-                "value2": 255,
-                "value3": 255
+                "r": 255,
+                "g": 255,
+                "b": 255,
+                "a": 255
             },
             "value7": 0.009999999776482582,
             "value8": 0.5,
             "value9": 1.0
         },
-        "value8": {
+        "dof": {
             "value0": 10.0,
             "value1": 1.0,
             "value2": 20.0,
             "value3": 0,
             "value4": 1.0
         },
-        "value9": {
+        "bloom": {
             "value0": 1.0,
             "value1": 0.05000000074505806,
             "value2": 0.5,
@@ -663,7 +515,7 @@
             "value4": 0.5,
             "value5": 0.0
         },
-        "value10": {
+        "autoExposure": {
             "value0": 0.5,
             "value1": 1.0,
             "value2": false,
@@ -671,12 +523,12 @@
             "value4": 1.0,
             "value5": -1.0
         },
-        "value11": {
+        "tonemap": {
             "value0": 1.0,
             "value1": 0,
             "value2": 1.0
         },
-        "value12": {
+        "color": {
             "value0": 1.0,
             "value1": 1.0,
             "value2": 1.0

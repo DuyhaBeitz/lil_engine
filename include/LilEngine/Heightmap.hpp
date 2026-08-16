@@ -26,13 +26,13 @@ public:
     template <class Archive>
     void save( Archive & ar ) const {
         LIL_SAVE_BASE(Actor)
-        ar(m_heightmap_texture_key);
+        LIL_SER_FIELD(m_heightmap_texture_key);
     }
         
     template <class Archive>
     void load( Archive & ar ) {
         LIL_LOAD_BASE(Actor)
-        ar(m_heightmap_texture_key);
+        LIL_SER_FIELD(m_heightmap_texture_key);
         m_model = GetFirst<ModelComponent>();
         m_collider = GetFirst<ColliderComponent>();
     }
