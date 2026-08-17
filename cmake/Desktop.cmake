@@ -118,7 +118,7 @@ target_compile_definitions(lil_engine PUBLIC JPH_DEBUG_RENDERER)
 set(TFD_DIR ${CMAKE_SOURCE_DIR}/include/external/tinyfiledialogs)
 add_library(tinyfiledialogs ${TFD_DIR}/tinyfiledialogs.c)
 target_include_directories(tinyfiledialogs PUBLIC 
-    TFD_DIR
+    ${TFD_DIR}
 )
 
 target_link_libraries(lil_engine PUBLIC
