@@ -449,12 +449,18 @@ void Lil::Editor::DrawResources() {
 
         Lil::Resources().UpdateModelPreviews();
         for (auto& [key, model] : Lil::Resources().Models()) {
+            ImGui::PushID(&model);
+            if (!Lil::Resources().AnimationLibExists(key)) {
+                if (ImGui::Button("Load animations")) Lil::Resources().AnimationLibAdd("assets/" + key);
+                ImGui::SameLine();
+            }
             m_editor.SetCurrentObjectName(key);
             m_editor.VisitObject(TypeInfo::Get<ModelSettings>(), Lil::Resources().GetModelSettings(key));
 
             // rlImGuiImageRenderTexture(Lil::Resources().GetModelPreview(key));
             // ImGui::SameLine();
             // ImGui::Text("%s", key.c_str());
+            ImGui::PopID();
         }
         Lil::Resources().ApplyModelSettings();
     }

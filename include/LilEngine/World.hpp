@@ -11,6 +11,7 @@
 #include "Heightmap.hpp"
 #include "Vehicle.hpp"
 #include "Components/LightComponent.hpp"
+#include "Components/AnimatedModelComponent.hpp"
 
 class World {
 private:

@@ -9,6 +9,7 @@ class AnimatedModelComponent : public Component {
 public:
     std::string m_model_key = "None";
     int m_anim_idx = 0;
+    bool m_playing = false;
     bool m_looping = true;
     float m_speed = 1.0f;
 
@@ -33,10 +34,25 @@ public:
 
     R3D_Model* GetModel() const;
     std::string& ModelKey();
+
+    void SetPlaying(bool playing) { m_playing = playing; }
+    bool IsPlaying() { return m_playing; }
+    void TogglePlaying() {m_playing = !m_playing;}
+
+    void SetLooping(bool looping) { m_looping = looping; }
+    bool IsLooping() { return m_looping; }
+    void ToggleLooping() {m_looping = !m_looping;}
+
+    void SetSpeed(float speed) { m_speed = speed; }
+    float GetSpeed() { return m_speed; }
+
+    int GetAnimIndex() { return m_anim_idx; }
+    void SetAnimIndex(int anim_idx) { m_anim_idx = anim_idx; }
 };
 LIL_REFLECT(AnimatedModelComponent, bases<Component>,
     field(m_model_key, ModelKeyAttribute()),
     field(m_anim_idx),
+    field(m_playing),
     field(m_looping),
     field(m_speed)
 )
@@ -44,6 +60,7 @@ LIL_SER_BEGIN(AnimatedModelComponent)
 LIL_SER_BASE(Component)
 LIL_SER_FIELD(m_model_key)
 LIL_SER_FIELD(m_anim_idx)
+LIL_SER_FIELD(m_playing)
 LIL_SER_FIELD(m_looping)
 LIL_SER_FIELD(m_speed)
 LIL_SER_END()

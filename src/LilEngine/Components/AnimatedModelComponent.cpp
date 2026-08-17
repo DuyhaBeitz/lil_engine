@@ -33,12 +33,14 @@ void AnimatedModelComponent::OnLayoutUpdate() {
         }
         m_animation_player = R3D_LoadAnimationPlayer(m->skeleton, *l);
         m_animation_player_loaded = true;
-    }
-    m_old_model_key = m_model_key;
+        m_old_model_key = m_model_key;
+    }    
 
     // update
     if (m_animation_player_loaded) {
         R3D_SetAnimationLoop(&m_animation_player, m_anim_idx, m_looping);
+        if (m_playing) R3D_PlayAnimation(&m_animation_player, m_anim_idx);
+        else R3D_StopAnimation(&m_animation_player);
     }
 }
 void AnimatedModelComponent::SimulationUpdate(Actor &actor, float delta_time) {
