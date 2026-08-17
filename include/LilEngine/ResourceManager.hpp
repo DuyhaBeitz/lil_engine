@@ -134,6 +134,7 @@ private:
     std::unordered_map<std::string, Texture2D> m_textures;
 
     std::unordered_map<std::string, R3D_Model> m_models;
+    std::unordered_map<std::string, R3D_AnimationLib> m_animation_libs;
     std::unordered_map<std::string, ModelSettings> m_model_settings;
     std::unordered_map<std::string, RenderTexture2D> m_model_previews;
 
@@ -157,6 +158,11 @@ public:
     void ModelUnload(std::string key);
     void ModelUnloadAll();
 
+    bool AnimationLibExists(std::string key);
+    void AnimationLibAdd(std::string key, R3D_AnimationLib animation_lib);
+    void AnimationLibAdd(std::string key, std::string filename);
+    void AnimationLibAdd(std::string filename);
+
     void ApplyModelSettings();
 
     bool ModelPreviewExists(std::string key);
@@ -173,6 +179,7 @@ public:
     std::string KeyFromTexture(Texture2D texture);
     Texture2D* GetTexture(std::string key);
     R3D_Model* GetModel(std::string key);
+    R3D_AnimationLib* GetAnimationLib(std::string key);
     ModelSettings* GetModelSettings(std::string key);
     RenderTexture2D* GetModelPreview(std::string key);
     LilSound* GetSound(std::string key);
@@ -198,9 +205,17 @@ public:
             sound_keys.push_back(key);
         }
 
+        std::vector<std::string> animation_lib_keys = {};
+        animation_lib_keys.reserve(m_animation_libs.size());
+        for (auto& [key, animation_lib] : m_animation_libs) {
+            if (IsAssetGenerated(key)) continue;
+            animation_lib_keys.push_back(key);
+        }
+
         LIL_SER_FIELD(texture_keys);
         LIL_SER_FIELD(sound_keys);
         LIL_SER_FIELD(m_model_settings);
+        LIL_SER_FIELD(animation_lib_keys);
     }
         
     template <class Archive>
@@ -208,13 +223,16 @@ public:
         Unload();
         std::vector<std::string> texture_keys = {};
         std::vector<std::string> sound_keys = {};
+        std::vector<std::string> animation_lib_keys = {};
 
         LIL_SER_FIELD(texture_keys);
         LIL_SER_FIELD(sound_keys);
         LIL_SER_FIELD(m_model_settings);
+        LIL_SER_FIELD(animation_lib_keys);
         
         for (auto& key : texture_keys) TextureAdd("assets/" + key);
         for (auto& key : sound_keys) SoundAdd("assets/" + key);
+        for (auto& key : animation_lib_keys) AnimationLibAdd("assets/" + key);
 
         for (auto& [key, settings] : m_model_settings) {
             if (IsAssetGenerated(key)) continue;

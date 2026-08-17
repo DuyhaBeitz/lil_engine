@@ -1,10 +1,10 @@
 {
     "value0": {
         "texture_keys": [
-            "skybox_1.png",
-            "GroundSand005_COL_1K.jpg",
+            "heightmap.png",
             "GroundSand005_NRM_1K.jpg",
-            "heightmap.png"
+            "skybox_1.png",
+            "GroundSand005_COL_1K.jpg"
         ],
         "sound_keys": [],
         "m_model_settings": [
@@ -32,7 +32,7 @@
                             },
                             "normal": {
                                 "texture_key": "GroundSand005_NRM_1K.jpg",
-                                "scale": 1.5
+                                "scale": 1.0
                             },
                             "emission": {
                                 "texture_key": "None",
@@ -49,7 +49,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "animation_lib_keys": []
     },
     "value1": {
         "background": {
@@ -196,7 +197,7 @@
         "m_components": [
             {
                 "key": {
-                    "value0": "3ccd168f-d014-497d-84e3-623808b51156"
+                    "value0": "a8e51774-49f2-4a34-89e7-4caa8675a8de"
                 },
                 "value": {
                     "polymorphic_id": 2147483649,
@@ -208,7 +209,7 @@
                                 "value0": {
                                     "value0": {
                                         "value0": {
-                                            "value0": "3ccd168f-d014-497d-84e3-623808b51156"
+                                            "value0": "a8e51774-49f2-4a34-89e7-4caa8675a8de"
                                         }
                                     },
                                     "value1": {
@@ -253,7 +254,7 @@
                                 "m_is_required": false
                             },
                             "m_enabled": true,
-                            "m_lumen": 14.0,
+                            "m_lumen": 15.0,
                             "m_color": {
                                 "r": 255,
                                 "g": 255,
@@ -271,7 +272,7 @@
             },
             {
                 "key": {
-                    "value0": "67749bf9-d233-4be3-b5b4-b66bd486412c"
+                    "value0": "c8b39b84-2785-475d-9d73-2856d34f825c"
                 },
                 "value": {
                     "polymorphic_id": 2147483650,
@@ -283,7 +284,7 @@
                                 "value0": {
                                     "value0": {
                                         "value0": {
-                                            "value0": "67749bf9-d233-4be3-b5b4-b66bd486412c"
+                                            "value0": "c8b39b84-2785-475d-9d73-2856d34f825c"
                                         }
                                     },
                                     "value1": {
@@ -372,7 +373,7 @@
             },
             {
                 "key": {
-                    "value0": "1cd5037f-353c-4cf7-b4c9-849e6d4b0be4"
+                    "value0": "de3f18da-0a2f-47ff-ac23-f662f1b2da17"
                 },
                 "value": {
                     "polymorphic_id": 2147483651,
@@ -384,7 +385,7 @@
                                 "value0": {
                                     "value0": {
                                         "value0": {
-                                            "value0": "1cd5037f-353c-4cf7-b4c9-849e6d4b0be4"
+                                            "value0": "de3f18da-0a2f-47ff-ac23-f662f1b2da17"
                                         }
                                     },
                                     "value1": {
@@ -437,7 +438,7 @@
         "m_actors": [
             {
                 "key": {
-                    "value0": "60e4a5f4-d373-4b79-a931-5397e4cf5647"
+                    "value0": "df282bfa-511f-4278-8449-ad094f047de1"
                 },
                 "value": {
                     "polymorphic_id": 1073741824,
@@ -446,13 +447,13 @@
                         "data": {
                             "component_ids": [
                                 {
-                                    "value0": "3ccd168f-d014-497d-84e3-623808b51156"
+                                    "value0": "a8e51774-49f2-4a34-89e7-4caa8675a8de"
                                 }
                             ],
                             "value0": {
                                 "value0": {
                                     "value0": {
-                                        "value0": "60e4a5f4-d373-4b79-a931-5397e4cf5647"
+                                        "value0": "df282bfa-511f-4278-8449-ad094f047de1"
                                     }
                                 },
                                 "value1": {
@@ -482,7 +483,7 @@
             },
             {
                 "key": {
-                    "value0": "343a325c-2273-49cf-83fa-7e505472a91b"
+                    "value0": "d6f4bbd5-a7c6-407e-969e-b5031b974b23"
                 },
                 "value": {
                     "polymorphic_id": 2147483652,
@@ -493,16 +494,16 @@
                             "value0": {
                                 "component_ids": [
                                     {
-                                        "value0": "1cd5037f-353c-4cf7-b4c9-849e6d4b0be4"
+                                        "value0": "de3f18da-0a2f-47ff-ac23-f662f1b2da17"
                                     },
                                     {
-                                        "value0": "67749bf9-d233-4be3-b5b4-b66bd486412c"
+                                        "value0": "c8b39b84-2785-475d-9d73-2856d34f825c"
                                     }
                                 ],
                                 "value0": {
                                     "value0": {
                                         "value0": {
-                                            "value0": "343a325c-2273-49cf-83fa-7e505472a91b"
+                                            "value0": "d6f4bbd5-a7c6-407e-969e-b5031b974b23"
                                         }
                                     },
                                     "value1": {

@@ -7,7 +7,7 @@
 
 class ModelComponent : public Component {
 public:
-    std::string m_model_key;
+    std::string m_model_key = "None";
 
 public:
     LIL_REFLECTABLE()

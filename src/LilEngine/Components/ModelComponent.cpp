@@ -9,8 +9,7 @@ ModelComponent::ModelComponent(std::string model_key)
 }
 
 void ModelComponent::Draw() {
-    R3D_Model* m = GetModel();
-    if (m) R3D_DrawModelEx(*m, GetPosition(), GetRotation(), GetScale());
+    if (R3D_Model* m = GetModel()) R3D_DrawModelEx(*m, GetPosition(), GetRotation(), GetScale());
     else DrawSphere(GetPosition(), 2.f, RAYRED);
 }
 
@@ -21,11 +20,9 @@ std::string &ModelComponent::ModelKey() { return m_model_key; }
 
 
 RayCollision ModelComponent::Raycast(Ray ray) const {
-    R3D_Model* m = GetModel();
-    
     RayCollision res = { 0 };
     
-    if (m) {
+    if (R3D_Model* m = GetModel()) {
         Vector3 s = GetScale();
         Matrix matScale = MatrixScale(s.x, s.y, s.z);
 

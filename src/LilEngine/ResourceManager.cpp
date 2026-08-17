@@ -153,6 +153,25 @@ void ResourceManager::ModelUnloadAll() {
     m_models.clear();
 }
 
+bool ResourceManager::AnimationLibExists(std::string key) {
+    return m_animation_libs.find(key) != m_animation_libs.end();
+}
+
+void ResourceManager::AnimationLibAdd(std::string key, R3D_AnimationLib animation_lib) {
+    if (AnimationLibExists(key)) R3D_UnloadAnimationLib(m_animation_libs[key]);
+    m_animation_libs[key] = animation_lib;
+}
+
+void ResourceManager::AnimationLibAdd(std::string key, std::string filename) {
+    R3D_AnimationLib animation_lib = R3D_LoadAnimationLib(filename.c_str());
+    AnimationLibAdd(key, animation_lib);
+}
+
+void ResourceManager::AnimationLibAdd(std::string filename) {
+    std::string key = NameFromPath(filename);
+    AnimationLibAdd(key, filename);
+}
+
 void ResourceManager::ApplyModelSettings() {
     for (auto& [key, model] : m_models) {
         m_model_settings.at(key).Apply(&model);
@@ -178,6 +197,11 @@ Texture2D *ResourceManager::GetTexture(std::string key) {
 
 R3D_Model *ResourceManager::GetModel(std::string key) {
     if (ModelExists(key)) return &m_models[key];
+    else return nullptr;
+}
+
+R3D_AnimationLib *ResourceManager::GetAnimationLib(std::string key) {
+    if (AnimationLibExists(key)) return &m_animation_libs[key];
     else return nullptr;
 }
 
