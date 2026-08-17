@@ -46,6 +46,13 @@ target_include_directories(game PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include/LilEditor
 )
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PLATFORM}.cmake)
+if(WIN32)
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/windows.cmake)
+elseif(UNIX AND NOT APPLE)
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/linux.cmake)
+else()
+    message(FATAL_ERROR "Unsupported platform for prebuilt libs")
+endif()
+
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -g -O1")
 # set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address")
