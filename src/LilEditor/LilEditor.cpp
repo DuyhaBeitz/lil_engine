@@ -440,10 +440,10 @@ void Lil::Editor::DrawViewport() {
 void Lil::Editor::DrawResources() {
     if (ImGui::Begin("Models")) {
         if (ImGui::Button(ICON_FA_PLUS)) {
-            const char* source = BrowseModelDialog();
-            if (source) {
-                Lil::Resources().ModelAdd(NameFromPath(source), source);
-                CopyAsset(source);
+            std::vector<std::string> paths = BrowseModelDialog();
+            for (auto& path : paths) {
+                Lil::Resources().ModelAdd(NameFromPath(path), path);
+                CopyAsset(path);
             }
         }
 
@@ -464,10 +464,10 @@ void Lil::Editor::DrawResources() {
 
     if (ImGui::Begin("Textures")) {
         if (ImGui::Button(ICON_FA_PLUS)) {
-            const char* source = BrowseTextureDialog();
-            if (source) {
-                Lil::Resources().TextureAdd(NameFromPath(source), source);
-                CopyAsset(source);
+            std::vector<std::string> paths = BrowseTextureDialog();
+            for (auto& path : paths) {
+                Lil::Resources().TextureAdd(NameFromPath(path), path);
+                CopyAsset(path);
             }
         }
 
@@ -495,10 +495,10 @@ void Lil::Editor::DrawResources() {
 
     if (ImGui::Begin("Sounds")) {
         if (ImGui::Button(ICON_FA_PLUS)) {
-            const char* source = BrowseSoundDialog();
-            if (source) {
-                Lil::Resources().SoundAdd(NameFromPath(source), source);
-                CopyAsset(source);
+            std::vector<std::string> paths = BrowseSoundDialog();
+            for (auto& path : paths) {
+                Lil::Resources().SoundAdd(NameFromPath(path), path);
+                CopyAsset(path);
             }
         }
 

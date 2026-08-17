@@ -2,8 +2,30 @@
 
 #include "LilEngine.hpp"
 #include <tinyfiledialogs/tinyfiledialogs.h>
+#include <string>
+#include <vector>
+#include <sstream>
 
-inline const char*  BrowseTextureDialog() {   
+inline std::vector<std::string> SplitPaths(const char* browse_result) {
+    std::vector<std::string> paths;
+
+    if (browse_result) {
+        std::stringstream ss(browse_result);
+        std::string token;
+
+        while (std::getline(ss, token, '|')) {
+            if (!token.empty()) {
+                paths.push_back(token);
+            }
+        }
+    }
+    else {
+        LIL_LOG_INFO("User pressed cancel or an error occurred.");
+    }
+    return paths;
+}
+
+inline std::vector<std::string>  BrowseTextureDialog() {   
     const char* filters[] = { "*.png", "*.jpeg", "*.jpg" };
     const char* outPath = tinyfd_openFileDialog(
         "Select Texture",           // Title
@@ -11,19 +33,13 @@ inline const char*  BrowseTextureDialog() {
         3,                          // Number of filters
         filters,                    // Filter array
         "Image files",              // Filter description
-        0                           // Allow multiple selections (0 = single)
+        1                           // Allow multiple selections (0 = single)
     );
 
-    if (outPath) {
-        return outPath;
-    }
-    else {
-        LIL_LOG_INFO("User pressed cancel or an error occurred.");
-        return nullptr;
-    }
+    return SplitPaths(outPath);
 }
 
-inline const char* BrowseModelDialog() {
+inline std::vector<std::string> BrowseModelDialog() {
     const char* filters[] = { "*.glb" };
     const char* outPath = tinyfd_openFileDialog(
         "Select Model",
@@ -31,19 +47,13 @@ inline const char* BrowseModelDialog() {
         1,
         filters,
         "Model files",
-        0
+        1
     );
 
-    if (outPath) {
-        return outPath;
-    }
-    else {
-        LIL_LOG_INFO("User pressed cancel or an error occurred.");
-        return nullptr;
-    }
+    return SplitPaths(outPath);
 }
 
-inline const char* BrowseSoundDialog() {
+inline std::vector<std::string> BrowseSoundDialog() {
     const char* filters[] = { "*.wav", "*.ogg", "*.mp3" };
     const char* outPath = tinyfd_openFileDialog(
         "Select Sound",
@@ -51,16 +61,10 @@ inline const char* BrowseSoundDialog() {
         3,
         filters,
         "Sound files",
-        0
+        1
     );
 
-    if (outPath) {
-        return outPath;
-    }
-    else {
-        LIL_LOG_INFO("User pressed cancel or an error occurred.");
-        return nullptr;
-    }
+    return SplitPaths(outPath);
 }
 
 inline const char* BrowseSceneDialog() {
