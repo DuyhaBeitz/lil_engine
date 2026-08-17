@@ -1,350 +1,5 @@
 {
     "value0": {
-        "m_simulation_going": false,
-        "m_simulation_speed": 1.0,
-        "m_physics_debug": false,
-        "m_components": [
-            {
-                "key": {
-                    "value0": "76bc6b32-29e2-43b4-9f81-7e2d73ab3edf"
-                },
-                "value": {
-                    "polymorphic_id": 2147483649,
-                    "polymorphic_name": "LightComponent",
-                    "ptr_wrapper": {
-                        "valid": 1,
-                        "data": {
-                            "value0": {
-                                "value0": {
-                                    "value0": {
-                                        "value0": {
-                                            "value0": "76bc6b32-29e2-43b4-9f81-7e2d73ab3edf"
-                                        }
-                                    },
-                                    "value1": {
-                                        "value0": {
-                                            "translation": {
-                                                "x": 0.0,
-                                                "y": 0.0,
-                                                "z": 0.0
-                                            },
-                                            "rotation": {
-                                                "x": 0.0,
-                                                "y": 0.0,
-                                                "z": 0.0,
-                                                "w": 1.0
-                                            },
-                                            "scale": {
-                                                "x": 1.0,
-                                                "y": 1.0,
-                                                "z": 1.0
-                                            }
-                                        }
-                                    }
-                                },
-                                "m_local_transform": {
-                                    "translation": {
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "rotation": {
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0,
-                                        "w": 1.0
-                                    },
-                                    "scale": {
-                                        "x": 1.0,
-                                        "y": 1.0,
-                                        "z": 1.0
-                                    }
-                                },
-                                "m_is_required": false
-                            },
-                            "m_enabled": true,
-                            "m_lumen": 15.0,
-                            "m_color": {
-                                "r": 255,
-                                "g": 255,
-                                "b": 255,
-                                "a": 255
-                            },
-                            "m_type": 0,
-                            "m_cast_shadows": true,
-                            "m_range": 500.0,
-                            "m_shadow_softness": 3.200000047683716,
-                            "m_depth_bias": 0.0010000000474974514
-                        }
-                    }
-                }
-            },
-            {
-                "key": {
-                    "value0": "d3779ea2-76df-4ec0-b702-733213eb52c6"
-                },
-                "value": {
-                    "polymorphic_id": 2147483650,
-                    "polymorphic_name": "ColliderComponent",
-                    "ptr_wrapper": {
-                        "valid": 1,
-                        "data": {
-                            "value0": {
-                                "value0": {
-                                    "value0": {
-                                        "value0": {
-                                            "value0": "d3779ea2-76df-4ec0-b702-733213eb52c6"
-                                        }
-                                    },
-                                    "value1": {
-                                        "value0": {
-                                            "translation": {
-                                                "x": 0.0,
-                                                "y": 0.0,
-                                                "z": 0.0
-                                            },
-                                            "rotation": {
-                                                "x": 0.0,
-                                                "y": 0.0,
-                                                "z": 0.0,
-                                                "w": 1.0
-                                            },
-                                            "scale": {
-                                                "x": 128.0,
-                                                "y": 5.0,
-                                                "z": 128.0
-                                            }
-                                        }
-                                    }
-                                },
-                                "m_local_transform": {
-                                    "translation": {
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "rotation": {
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0,
-                                        "w": 1.0
-                                    },
-                                    "scale": {
-                                        "x": 1.0,
-                                        "y": 1.0,
-                                        "z": 1.0
-                                    }
-                                },
-                                "m_is_required": true
-                            },
-                            "m_shapes": [
-                                {
-                                    "m_type": 2,
-                                    "m_local_position": {
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "m_local_rotation": {
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0,
-                                        "w": 1.0
-                                    },
-                                    "m_radius": 1.0,
-                                    "m_half_extends": {
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "m_heightmap_texture_key": "heightmap.png",
-                                    "m_map_size": {
-                                        "x": 128.0,
-                                        "y": 5.0,
-                                        "z": 128.0
-                                    }
-                                }
-                            ],
-                            "m_type": 0,
-                            "m_linear_velocity": {
-                                "x": 0.0,
-                                "y": 0.0,
-                                "z": 0.0
-                            },
-                            "m_angular_velocity": {
-                                "x": 0.0,
-                                "y": 0.0,
-                                "z": 0.0
-                            }
-                        }
-                    }
-                }
-            },
-            {
-                "key": {
-                    "value0": "56e2d2e9-0641-40b6-acb7-d8e0bc014ca4"
-                },
-                "value": {
-                    "polymorphic_id": 2147483651,
-                    "polymorphic_name": "ModelComponent",
-                    "ptr_wrapper": {
-                        "valid": 1,
-                        "data": {
-                            "value0": {
-                                "value0": {
-                                    "value0": {
-                                        "value0": {
-                                            "value0": "56e2d2e9-0641-40b6-acb7-d8e0bc014ca4"
-                                        }
-                                    },
-                                    "value1": {
-                                        "value0": {
-                                            "translation": {
-                                                "x": 0.0,
-                                                "y": 0.0,
-                                                "z": 0.0
-                                            },
-                                            "rotation": {
-                                                "x": 0.0,
-                                                "y": 0.0,
-                                                "z": 0.0,
-                                                "w": 1.0
-                                            },
-                                            "scale": {
-                                                "x": 128.0,
-                                                "y": 5.0,
-                                                "z": 128.0
-                                            }
-                                        }
-                                    }
-                                },
-                                "m_local_transform": {
-                                    "translation": {
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "rotation": {
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0,
-                                        "w": 1.0
-                                    },
-                                    "scale": {
-                                        "x": 1.0,
-                                        "y": 1.0,
-                                        "z": 1.0
-                                    }
-                                },
-                                "m_is_required": true
-                            },
-                            "m_model_key": "Gen_Heightmap_From_heightmap.png"
-                        }
-                    }
-                }
-            }
-        ],
-        "m_actors": [
-            {
-                "key": {
-                    "value0": "14d6c070-9276-4de0-830b-68fc1eb1ab49"
-                },
-                "value": {
-                    "polymorphic_id": 1073741824,
-                    "ptr_wrapper": {
-                        "valid": 1,
-                        "data": {
-                            "component_ids": [
-                                {
-                                    "value0": "76bc6b32-29e2-43b4-9f81-7e2d73ab3edf"
-                                }
-                            ],
-                            "value0": {
-                                "value0": {
-                                    "value0": {
-                                        "value0": "14d6c070-9276-4de0-830b-68fc1eb1ab49"
-                                    }
-                                },
-                                "value1": {
-                                    "value0": {
-                                        "translation": {
-                                            "x": 0.0,
-                                            "y": 0.0,
-                                            "z": 0.0
-                                        },
-                                        "rotation": {
-                                            "x": 0.0,
-                                            "y": 0.0,
-                                            "z": 0.0,
-                                            "w": 1.0
-                                        },
-                                        "scale": {
-                                            "x": 1.0,
-                                            "y": 1.0,
-                                            "z": 1.0
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            {
-                "key": {
-                    "value0": "098d1b91-3f56-49ff-8b99-952f9bf7045c"
-                },
-                "value": {
-                    "polymorphic_id": 2147483652,
-                    "polymorphic_name": "Heightmap",
-                    "ptr_wrapper": {
-                        "valid": 1,
-                        "data": {
-                            "value0": {
-                                "component_ids": [
-                                    {
-                                        "value0": "56e2d2e9-0641-40b6-acb7-d8e0bc014ca4"
-                                    },
-                                    {
-                                        "value0": "d3779ea2-76df-4ec0-b702-733213eb52c6"
-                                    }
-                                ],
-                                "value0": {
-                                    "value0": {
-                                        "value0": {
-                                            "value0": "098d1b91-3f56-49ff-8b99-952f9bf7045c"
-                                        }
-                                    },
-                                    "value1": {
-                                        "value0": {
-                                            "translation": {
-                                                "x": 0.0,
-                                                "y": 0.0,
-                                                "z": 0.0
-                                            },
-                                            "rotation": {
-                                                "x": 0.0,
-                                                "y": 0.0,
-                                                "z": 0.0,
-                                                "w": 1.0
-                                            },
-                                            "scale": {
-                                                "x": 128.0,
-                                                "y": 5.0,
-                                                "z": 128.0
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-                            "m_heightmap_texture_key": "heightmap.png"
-                        }
-                    }
-                }
-            }
-        ]
-    },
-    "value1": {
         "texture_keys": [
             "skybox_1.png",
             "GroundSand005_COL_1K.jpg",
@@ -377,7 +32,7 @@
                             },
                             "normal": {
                                 "texture_key": "GroundSand005_NRM_1K.jpg",
-                                "scale": 2.0
+                                "scale": 1.5
                             },
                             "emission": {
                                 "texture_key": "None",
@@ -396,7 +51,7 @@
             }
         ]
     },
-    "value2": {
+    "value1": {
         "background": {
             "value0": {
                 "r": 130,
@@ -533,5 +188,350 @@
             "value1": 1.0,
             "value2": 1.0
         }
+    },
+    "value2": {
+        "m_simulation_going": false,
+        "m_simulation_speed": 1.0,
+        "m_physics_debug": false,
+        "m_components": [
+            {
+                "key": {
+                    "value0": "3ccd168f-d014-497d-84e3-623808b51156"
+                },
+                "value": {
+                    "polymorphic_id": 2147483649,
+                    "polymorphic_name": "LightComponent",
+                    "ptr_wrapper": {
+                        "valid": 1,
+                        "data": {
+                            "value0": {
+                                "value0": {
+                                    "value0": {
+                                        "value0": {
+                                            "value0": "3ccd168f-d014-497d-84e3-623808b51156"
+                                        }
+                                    },
+                                    "value1": {
+                                        "value0": {
+                                            "translation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0
+                                            },
+                                            "rotation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0,
+                                                "w": 1.0
+                                            },
+                                            "scale": {
+                                                "x": 1.0,
+                                                "y": 1.0,
+                                                "z": 1.0
+                                            }
+                                        }
+                                    }
+                                },
+                                "m_local_transform": {
+                                    "translation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0,
+                                        "w": 1.0
+                                    },
+                                    "scale": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
+                                    }
+                                },
+                                "m_is_required": false
+                            },
+                            "m_enabled": true,
+                            "m_lumen": 14.0,
+                            "m_color": {
+                                "r": 255,
+                                "g": 255,
+                                "b": 255,
+                                "a": 255
+                            },
+                            "m_type": 0,
+                            "m_cast_shadows": true,
+                            "m_range": 500.0,
+                            "m_shadow_softness": 3.200000047683716,
+                            "m_depth_bias": 0.0010000000474974514
+                        }
+                    }
+                }
+            },
+            {
+                "key": {
+                    "value0": "67749bf9-d233-4be3-b5b4-b66bd486412c"
+                },
+                "value": {
+                    "polymorphic_id": 2147483650,
+                    "polymorphic_name": "ColliderComponent",
+                    "ptr_wrapper": {
+                        "valid": 1,
+                        "data": {
+                            "value0": {
+                                "value0": {
+                                    "value0": {
+                                        "value0": {
+                                            "value0": "67749bf9-d233-4be3-b5b4-b66bd486412c"
+                                        }
+                                    },
+                                    "value1": {
+                                        "value0": {
+                                            "translation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0
+                                            },
+                                            "rotation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0,
+                                                "w": 1.0
+                                            },
+                                            "scale": {
+                                                "x": 128.0,
+                                                "y": 5.0,
+                                                "z": 128.0
+                                            }
+                                        }
+                                    }
+                                },
+                                "m_local_transform": {
+                                    "translation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0,
+                                        "w": 1.0
+                                    },
+                                    "scale": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
+                                    }
+                                },
+                                "m_is_required": true
+                            },
+                            "m_shapes": [
+                                {
+                                    "m_type": 2,
+                                    "m_local_position": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "m_local_rotation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0,
+                                        "w": 1.0
+                                    },
+                                    "m_radius": 1.0,
+                                    "m_half_extends": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "m_heightmap_texture_key": "heightmap.png",
+                                    "m_map_size": {
+                                        "x": 128.0,
+                                        "y": 5.0,
+                                        "z": 128.0
+                                    }
+                                }
+                            ],
+                            "m_type": 0,
+                            "m_linear_velocity": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "m_angular_velocity": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "key": {
+                    "value0": "1cd5037f-353c-4cf7-b4c9-849e6d4b0be4"
+                },
+                "value": {
+                    "polymorphic_id": 2147483651,
+                    "polymorphic_name": "ModelComponent",
+                    "ptr_wrapper": {
+                        "valid": 1,
+                        "data": {
+                            "value0": {
+                                "value0": {
+                                    "value0": {
+                                        "value0": {
+                                            "value0": "1cd5037f-353c-4cf7-b4c9-849e6d4b0be4"
+                                        }
+                                    },
+                                    "value1": {
+                                        "value0": {
+                                            "translation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0
+                                            },
+                                            "rotation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0,
+                                                "w": 1.0
+                                            },
+                                            "scale": {
+                                                "x": 128.0,
+                                                "y": 5.0,
+                                                "z": 128.0
+                                            }
+                                        }
+                                    }
+                                },
+                                "m_local_transform": {
+                                    "translation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0,
+                                        "w": 1.0
+                                    },
+                                    "scale": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
+                                    }
+                                },
+                                "m_is_required": true
+                            },
+                            "m_model_key": "Gen_Heightmap_From_heightmap.png"
+                        }
+                    }
+                }
+            }
+        ],
+        "m_actors": [
+            {
+                "key": {
+                    "value0": "60e4a5f4-d373-4b79-a931-5397e4cf5647"
+                },
+                "value": {
+                    "polymorphic_id": 1073741824,
+                    "ptr_wrapper": {
+                        "valid": 1,
+                        "data": {
+                            "component_ids": [
+                                {
+                                    "value0": "3ccd168f-d014-497d-84e3-623808b51156"
+                                }
+                            ],
+                            "value0": {
+                                "value0": {
+                                    "value0": {
+                                        "value0": "60e4a5f4-d373-4b79-a931-5397e4cf5647"
+                                    }
+                                },
+                                "value1": {
+                                    "value0": {
+                                        "translation": {
+                                            "x": 0.0,
+                                            "y": 0.0,
+                                            "z": 0.0
+                                        },
+                                        "rotation": {
+                                            "x": 0.0,
+                                            "y": 0.0,
+                                            "z": 0.0,
+                                            "w": 1.0
+                                        },
+                                        "scale": {
+                                            "x": 1.0,
+                                            "y": 1.0,
+                                            "z": 1.0
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "key": {
+                    "value0": "343a325c-2273-49cf-83fa-7e505472a91b"
+                },
+                "value": {
+                    "polymorphic_id": 2147483652,
+                    "polymorphic_name": "Heightmap",
+                    "ptr_wrapper": {
+                        "valid": 1,
+                        "data": {
+                            "value0": {
+                                "component_ids": [
+                                    {
+                                        "value0": "1cd5037f-353c-4cf7-b4c9-849e6d4b0be4"
+                                    },
+                                    {
+                                        "value0": "67749bf9-d233-4be3-b5b4-b66bd486412c"
+                                    }
+                                ],
+                                "value0": {
+                                    "value0": {
+                                        "value0": {
+                                            "value0": "343a325c-2273-49cf-83fa-7e505472a91b"
+                                        }
+                                    },
+                                    "value1": {
+                                        "value0": {
+                                            "translation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0
+                                            },
+                                            "rotation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0,
+                                                "w": 1.0
+                                            },
+                                            "scale": {
+                                                "x": 128.0,
+                                                "y": 5.0,
+                                                "z": 128.0
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "m_heightmap_texture_key": "heightmap.png"
+                        }
+                    }
+                }
+            }
+        ]
     }
 }
