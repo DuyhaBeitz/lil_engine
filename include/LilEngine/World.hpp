@@ -127,13 +127,11 @@ public:
 
     bool m_simulation_going = false;
     float m_simulation_speed = 1.0f;
-    bool m_physics_debug = false;
 
     template <class Archive>
     void save( Archive & ar ) const {
         LIL_SER_FIELD(m_simulation_going);
         LIL_SER_FIELD(m_simulation_speed);
-        LIL_SER_FIELD(m_physics_debug);
         LIL_SER_FIELD(m_components);
         LIL_SER_FIELD(m_actors);
     }
@@ -143,7 +141,6 @@ public:
         Clear();
         LIL_SER_FIELD(m_simulation_going);
         LIL_SER_FIELD(m_simulation_speed);
-        LIL_SER_FIELD(m_physics_debug);
         LIL_SER_FIELD(m_components);
         LIL_SER_FIELD(m_actors);
     }

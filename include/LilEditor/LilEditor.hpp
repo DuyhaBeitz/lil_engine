@@ -62,6 +62,7 @@ namespace Lil {
         };
 
         bool m_cursor_enabled = true;
+        bool m_physics_debug = false;
         Actor* m_selected_actor = nullptr;
         Component* m_selected_component = nullptr;
 

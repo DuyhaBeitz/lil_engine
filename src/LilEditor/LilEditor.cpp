@@ -257,7 +257,7 @@ void Lil::Editor::DrawLayout() {
                 m_selected_actor->LayoutUpdate();
 
                 BeginMode3D(m_layout_camera);
-                    if (Lil::World().m_physics_debug) {
+                    if (m_physics_debug) {
                         m_selected_actor->DebugUpdate();
                         m_selected_actor->DebugDraw();
                     }
@@ -289,7 +289,7 @@ void Lil::Editor::Update() {
         Lil::World().ToggleSimulationGoing();
     }
     if (IsKeyPressed(TOGGLE_DEBUG_KEY)) {
-        Lil::World().m_physics_debug = !Lil::World().m_physics_debug;
+        m_physics_debug = !m_physics_debug;
     }
 
     if (IsKeyPressed(TOGGLE_FULLSCREEN_KEY)) {
@@ -421,7 +421,7 @@ void Lil::Editor::DrawViewport() {
             if (ImGui::IsWindowHovered() || ImGui::IsWindowFocused() || !m_cursor_enabled) HandleViewportInput();
 
             BeginMode3D(m_viewport_camera);
-                if (Lil::World().m_physics_debug) Lil::World().DebugDraw();
+                if (m_physics_debug) Lil::World().DebugDraw();
                 if (m_selected_actor) {
                     Transform t = m_selected_actor->GetTransform();
                     DrawGizmo3D(m_gizmo_mode | m_gizmo_space, &t);
