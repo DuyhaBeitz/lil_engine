@@ -40,7 +40,8 @@ public:
 
     template <class Archive>
     void save( Archive & ar ) const {
-        LIL_SER_FIELD(GetComponentIDs());
+        std::vector<uuids::uuid> component_ids = GetComponentIDs();
+        LIL_SER_FIELD(component_ids);
         LIL_SAVE_BASE(GameObject);
     }
        
