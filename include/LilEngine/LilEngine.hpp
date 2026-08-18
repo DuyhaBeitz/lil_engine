@@ -21,27 +21,27 @@ namespace Lil {
         void Init();
         void Update();
 
-        PhysicsSystem& GetPhysics() { return m_physics; }
-        ResourceManager& GetResources() { return m_resources; }
-        World& GetWorld() { return m_world; }
-        SceneManager& GetSceneManager() { return m_scene_manager; }
-        Audio& GetAudio() { return m_audio; }
-        Environment& GetEnvironment() { return m_environment; }
+        ::PhysicsSystem& GetPhysics();
+        ::ResourceManager& GetResources();
+        ::World& GetWorld();
+        ::SceneManager& GetSceneManager();
+        ::Audio& GetAudio();
+        ::Environment& GetEnvironment();
         
     private:
-        PhysicsSystem m_physics;
-        ResourceManager m_resources;
-        World m_world;
-        SceneManager m_scene_manager;
-        Audio m_audio;
-        Environment m_environment;
+        ::PhysicsSystem m_physics;
+        ::ResourceManager m_resources;
+        ::World m_world;
+        ::SceneManager m_scene_manager;
+        ::Audio m_audio;
+        ::Environment m_environment;
     };
     
     // Convenience functions
-    inline PhysicsSystem& Physics() { return Engine::Get().GetPhysics(); }
-    inline ResourceManager& Resources() { return Engine::Get().GetResources(); }
-    inline World& World() { return Engine::Get().GetWorld(); }
-    inline SceneManager& SceneManager() { return Engine::Get().GetSceneManager(); }
-    inline Audio& Audio() { return Engine::Get().GetAudio(); }
-    inline Environment& Environment() { return Engine::Get().GetEnvironment(); }
+    ::PhysicsSystem& Physics();
+    ::ResourceManager& Resources();
+    ::World& World();
+    ::SceneManager& SceneManager();
+    ::Audio& Audio();
+    ::Environment& Environment();
 }

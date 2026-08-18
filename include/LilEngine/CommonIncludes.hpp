@@ -1,34 +1,8 @@
 #pragma once
 
 #include <raylib.h>
-#include <raymath.h>
-
 #include <r3d/r3d.h>
-
-#include <memory>
 #include "Log.hpp"
-//#include "ReactPhysics3DWrapper.hpp"
-#include "utils/ColorHelper.hpp"
-
-inline std::string NameFromPath(std::string filename) {
-    size_t slash_pos = filename.find_last_of("/\\");
-    std::string name = (slash_pos == std::string::npos) ? filename : filename.substr(slash_pos + 1);
-    return name;
-}
-
-inline std::string NameFromObject(std::string object) {
-    size_t dot_pos = object.find_last_of("._>");
-    std::string name = (dot_pos == std::string::npos) ? object : object.substr(dot_pos + 1);
-    return name;
-}
-
-inline bool IsAssetGenerated(std::string asset_key) {
-    return asset_key.length() >= 4 && (asset_key.substr(0, 4) == "Gen_");
-}
-
-inline std::string HeightmapNameFromImageName(std::string image_name) {
-    return "Gen_Heightmap_From_" + image_name;
-}
 
 // namespaces raylib and reactphysics3d conflict with color definitions
 #define RAYLIGHTGRAY  CLITERAL(Color){ 200, 200, 200, 255 }   // Light Gray

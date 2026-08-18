@@ -1,11 +1,14 @@
 #pragma once
 
 #include "Actor.hpp"
+#include "ReflAttributes.hpp"
 
 class ModelComponent;
 class ColliderComponent;
 
 class Heightmap : public Actor {
+private:
+    void RetrieveComponentPtrs();
 
 public:
     // void Setup(Image heightmap_image, Vector3 map_size);
@@ -32,8 +35,7 @@ public:
     void load( Archive & ar ) {
         LIL_LOAD_BASE(Actor)
         LIL_SER_FIELD(m_heightmap_texture_key);
-        m_model = GetFirst<ModelComponent>();
-        m_collider = GetFirst<ColliderComponent>();
+        RetrieveComponentPtrs();
     }
 };
 LIL_REFLECT(Heightmap, bases<Actor>,

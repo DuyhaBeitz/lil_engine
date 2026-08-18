@@ -27,8 +27,8 @@ public:
     void Step(float delta_time);
     void DrawDebug();
 
-    JPH::PhysicsSystem* GetSystem() { return m_physics_system.get(); }
-    JPH::BodyInterface& GetBodyInterface() { return m_physics_system->GetBodyInterface(); }
-    JPH::TempAllocator* GetTempAllocator() { return m_temp_allocator.get(); }
-    JPH::DebugRenderer* GetDebugRender() { return m_debug_renderer.get(); }
+    JPH::PhysicsSystem* GetSystem();
+    JPH::BodyInterface& GetBodyInterface();
+    JPH::TempAllocator* GetTempAllocator();
+    JPH::DebugRenderer* GetDebugRender();
 };

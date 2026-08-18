@@ -48,3 +48,8 @@ void PhysicsSystem::DrawDebug() {
     draw_settings.mDrawShapeWireframe = true;
     m_physics_system->DrawBodies(draw_settings, m_debug_renderer.get());
 }
+
+JPH::PhysicsSystem* PhysicsSystem::GetSystem() { return m_physics_system.get(); }
+JPH::BodyInterface& PhysicsSystem::GetBodyInterface() { return m_physics_system->GetBodyInterface(); }
+JPH::TempAllocator* PhysicsSystem::GetTempAllocator() { return m_temp_allocator.get(); }
+JPH::DebugRenderer* PhysicsSystem::GetDebugRender() { return m_debug_renderer.get(); }

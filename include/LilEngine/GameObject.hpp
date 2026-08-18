@@ -7,7 +7,7 @@
 #include <random>
 #include <cstdint>
 
-#define TRANSFORM_EMPTY Transform{.translation = Vector3{0.0f, 0.0f, 0.0f}, .rotation = QuaternionIdentity(), .scale = Vector3{1.0f, 1.0f, 1.0f}}
+#define TRANSFORM_EMPTY Transform{.translation = Vector3{0.0f, 0.0f, 0.0f}, .rotation = Quaternion{0.0f, 0.0f, 0.0f, 1.0f}, .scale = Vector3{1.0f, 1.0f, 1.0f}}
 
 class Transformable : public Reflectable {
 public:
@@ -17,17 +17,17 @@ public:
     LIL_REFLECTABLE()
     LIL_SERIALIZABLE()
 
-    Transformable(Transform transform = TRANSFORM_EMPTY) : m_transform(transform), Reflectable() {}
+    Transformable(Transform transform = TRANSFORM_EMPTY);
 
-    void SetTransform(Transform transform) {m_transform = transform;}
-    void SetPosition(Vector3 position) {m_transform.translation = position;}
-    void SetRotation(Quaternion rotation) {m_transform.rotation = rotation;}
-    void SetScale(Vector3 scale) {m_transform.scale = scale;}
+    void SetTransform(Transform transform);
+    void SetPosition(Vector3 position);
+    void SetRotation(Quaternion rotation);
+    void SetScale(Vector3 scale);
 
-    Transform GetTransform() const {return m_transform;}
-    Vector3 GetPosition() const {return m_transform.translation;}
-    Quaternion GetRotation() const {return m_transform.rotation;}
-    Vector3 GetScale() const {return m_transform.scale;}
+    Transform GetTransform() const;
+    Vector3 GetPosition() const;
+    Quaternion GetRotation() const;
+    Vector3 GetScale() const;
 
     Vector3 GetAxisAngle(float& angle) const;
 };
@@ -44,19 +44,13 @@ public:
     LIL_REFLECTABLE()
     LIL_SERIALIZABLE()
 
-    Identifiable() : m_id(GenerateID()) {}
+    Identifiable();
 
-    const uuids::uuid& GetID() const {return m_id;}
-    std::string GetIDString() const {return uuids::to_string(m_id);}
-    void SetID(uuids::uuid id){m_id = id;}
+    const uuids::uuid& GetID() const;
+    std::string GetIDString() const;
+    void SetID(uuids::uuid id);
 
-    static uuids::uuid GenerateID() {
-        std::random_device rd;
-        std::mt19937 engine(rd());
-       
-        uuids::uuid_random_generator gen{engine};
-        return gen();
-    }
+    static uuids::uuid GenerateID();
 };
 LIL_REFLECT(Identifiable, bases<>)
 LIL_SERIALIZE_NO_BASE(Identifiable, m_id)

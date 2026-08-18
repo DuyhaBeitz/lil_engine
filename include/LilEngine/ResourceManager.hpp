@@ -6,6 +6,7 @@
 #include "ReflAttributes.hpp"
 #include "Sound.hpp"
 #include <unordered_map>
+#include "utils/NameHelper.hpp"
 
 struct AlbedoMap : Reflectable {
     LIL_REFLECTABLE()

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Component.hpp"
-#include "Components/ColliderComponent.hpp"
-#include "Components/ModelComponent.hpp"
+#include "GameObject.hpp"
 #include <vector>
+
+class Component;
 
 class Actor : public GameObject {
 public:
@@ -32,20 +32,16 @@ public:
 
     bool IsComponentAttached(const Component* component) const;
 
-    const std::vector<Component*>& Components() const {return m_components;}
+    const std::vector<Component*>& Components() const;
+    std::vector<uuids::uuid> GetComponentIDs() const;
 
     void AttachComponentFromId(uuids::uuid id);
     void AttachComponents(std::vector<uuids::uuid> component_ids);
 
     template <class Archive>
     void save( Archive & ar ) const {
-        std::vector<uuids::uuid> component_ids = {};
-        for (Component* component : m_components) {
-            if (!IsComponentAttached(component)) continue;
-            component_ids.push_back(component->GetID());
-        }
-        LIL_SER_FIELD(component_ids);
-        LIL_SAVE_BASE(GameObject)
+        LIL_SER_FIELD(GetComponentIDs());
+        LIL_SAVE_BASE(GameObject);
     }
        
     template <class Archive>

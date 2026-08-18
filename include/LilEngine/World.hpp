@@ -19,9 +19,7 @@ private:
     std::unordered_map<uuids::uuid, std::unique_ptr<Component>> m_components;
     bool m_update_ready = false;
 
-    void PrepareUpdate() {
-        UpdateActorLayout();
-    }
+    void PrepareUpdate();
 
 public:
     World() = default;
@@ -59,11 +57,7 @@ public:
         }
     }
     Actor* CopyActor(uuids::uuid original_id);
-    
-    Actor* GetActor(uuids::uuid id) {
-        if (m_actors.find(id) == m_actors.end()) return nullptr;
-        return m_actors.at(id).get();
-    }
+    Actor* GetActor(uuids::uuid id);
 
     std::unordered_map<uuids::uuid, std::unique_ptr<Actor>>& Actors();
     void DestroyActor(uuids::uuid id);
@@ -102,11 +96,7 @@ public:
         }
     }
     Component* CopyComponent(uuids::uuid original_id);
-
-    Component* GetComponent(uuids::uuid id) {
-        if (m_components.find(id) == m_components.end()) return nullptr;
-        return m_components.at(id).get();
-    }
+    Component* GetComponent(uuids::uuid id);
 
     Actor* PickActor(Vector2 screen_pos, int render_w, int render_h, Camera camera);
 
@@ -119,9 +109,9 @@ public:
     void Draw();
     void Update();
     void DebugDraw();
-    void ToggleSimulationGoing() { m_simulation_going = !m_simulation_going; }
-    bool IsSumulationGoing() { return m_simulation_going; }
-    void SetSimulationGoing(bool going) { m_simulation_going = going; }
+    void ToggleSimulationGoing();
+    bool IsSumulationGoing();
+    void SetSimulationGoing(bool going);
 
     void UpdateActorLayout();
 

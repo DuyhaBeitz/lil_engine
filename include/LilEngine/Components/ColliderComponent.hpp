@@ -9,14 +9,7 @@
 enum class CollisionShapeType : uint8_t { SPHERE = 0, BOX, HEIGHTMAP, COUNT };
 enum class BodyType : int8_t { STATIC = 0, KINEMATIC, DYNAMIC, COUNT };
 
-inline JPH::EMotionType GetJoltMotionType(BodyType type) {
-    switch (type) {
-        case BodyType::STATIC:    return JPH::EMotionType::Static;
-        case BodyType::KINEMATIC: return JPH::EMotionType::Kinematic;
-        case BodyType::DYNAMIC:   return JPH::EMotionType::Dynamic;
-        default:                  return JPH::EMotionType::Dynamic;
-    }
-}
+JPH::EMotionType GetJoltMotionType(BodyType type);
 
 class CollisionShape : public Reflectable {
 public:
@@ -52,7 +45,7 @@ public:
     Vector3 m_linear_velocity = Vector3{0.0f, 0.0f, 0.0f};
     Vector3 m_angular_velocity = Vector3{0.0f, 0.0f, 0.0f};
 
-    JPH::BodyID GetBodyID() const { return m_body_id; }
+    JPH::BodyID GetBodyID() const;
     void RebuildShapes();
     CollisionShape* AddShape(CollisionShape shape);
 
@@ -60,12 +53,7 @@ public:
     virtual void SimulationUpdate(Actor& actor, float delta_time) override;
     virtual void DebugDraw() override;
 
-    CollisionShape* GetFirstShape(CollisionShapeType type) {
-        for (auto& shape : m_shapes) {
-            if (shape.m_type == type) return &shape;
-        }
-        return nullptr;
-    }
+    CollisionShape* GetFirstShape(CollisionShapeType type);
 };
 
 

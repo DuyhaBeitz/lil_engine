@@ -4,7 +4,12 @@
 
 #include "Components/ModelComponent.hpp"
 
-void World::Clear() {
+void World::PrepareUpdate() {
+    UpdateActorLayout();
+}
+
+void World::Clear()
+{
     LIL_LOG_TRACE("world clear");
     DestroyAllActors();
     DestroyAllComponents();
@@ -79,6 +84,11 @@ Actor* World::CopyActor(uuids::uuid original_id) {
     return result;
 }
 
+Actor *World::GetActor(uuids::uuid id) {
+    if (m_actors.find(id) == m_actors.end()) return nullptr;
+    return m_actors.at(id).get();
+}
+
 Component *World::CopyComponent(uuids::uuid original_id) {
     auto it = m_components.find(original_id);
     if (it == m_components.end()) return nullptr;
@@ -102,6 +112,11 @@ Component *World::CopyComponent(uuids::uuid original_id) {
     Component* result = copy.get();
     m_components.emplace(new_id, std::move(copy));
     return result;
+}
+
+Component *World::GetComponent(uuids::uuid id) {
+    if (m_components.find(id) == m_components.end()) return nullptr;
+    return m_components.at(id).get();
 }
 
 Actor *World::PickActor(Vector2 screen_pos, int render_w, int render_h, Camera camera)
@@ -189,3 +204,7 @@ void World::DebugDraw(){
     for (auto& [key, actor] : m_actors) actor->DebugDraw();
     LIL_LOG_TRACE("World debug drawing DONE");
 }
+
+void World::ToggleSimulationGoing() { m_simulation_going = !m_simulation_going; }
+bool World::IsSumulationGoing() { return m_simulation_going; }
+void World::SetSimulationGoing(bool going) { m_simulation_going = going; }

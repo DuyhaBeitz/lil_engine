@@ -78,6 +78,19 @@ bool Actor::IsComponentAttached(const Component *component) const {
     return component && exists && not_deattached;
 }
 
+const std::vector<Component *> &Actor::Components() const {
+    return m_components;
+}
+
+std::vector<uuids::uuid> Actor::GetComponentIDs() const {
+    std::vector<uuids::uuid> component_ids = {};
+    for (Component* component : m_components) {
+        if (!IsComponentAttached(component)) continue;
+        component_ids.push_back(component->GetID());
+    }
+    return component_ids;
+}
+
 void Actor::AttachComponentFromId(uuids::uuid id) {
     if (Component* component = Lil::World().GetComponent(id)) {
         m_components.push_back(component);

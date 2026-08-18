@@ -22,7 +22,21 @@ void SetSoundPosition(const Camera& listener, Sound sound, const Vector3& positi
     SetSoundPan(sound, pan);
 };
 
-void LilSound::Play() {
+void LilSound::Load(std::string filename) {
+    aliases[0] = LoadSound(filename.c_str());
+    for (int i = 1; i < ALIASES_PER_SOUND; i++){
+        aliases[i] = LoadSoundAlias(aliases[0]);
+    }
+}
+
+void LilSound::Unload() {
+    for (int i = 1; i < ALIASES_PER_SOUND; i++)
+        UnloadSoundAlias(aliases[i]);
+    UnloadSound(aliases[0]);
+}
+
+void LilSound::Play()
+{
     for (int i = 0; i < ALIASES_PER_SOUND; i++){
         if (!IsSoundPlaying(aliases[i])) {
             SetSoundVolume(aliases[i], volume_multiplier * Lil::Audio().GetSFXVolume());
@@ -48,4 +62,9 @@ void LilSound::PlayContinuous3D(int alias_index, const Camera &listener, const V
         SetSoundPosition(listener, aliases[alias_index], position, maxDist, volume_multiplier * Lil::Audio().GetSFXVolume());
         PlaySound(aliases[alias_index]);
     }
+}
+
+void LilSound::StopContinuous(int alias_index) {
+    if (alias_index < 0 || alias_index >= ALIASES_PER_SOUND) return;
+    StopSound(aliases[alias_index]);
 }

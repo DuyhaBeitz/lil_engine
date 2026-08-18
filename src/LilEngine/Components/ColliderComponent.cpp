@@ -7,6 +7,16 @@
 #include "LilEngine.hpp"
 #include <utils/ColliderHelper.hpp>
 
+JPH::EMotionType GetJoltMotionType(BodyType type) {
+    switch (type) {
+        case BodyType::STATIC:    return JPH::EMotionType::Static;
+        case BodyType::KINEMATIC: return JPH::EMotionType::Kinematic;
+        case BodyType::DYNAMIC:   return JPH::EMotionType::Dynamic;
+        default:                  return JPH::EMotionType::Dynamic;
+    }
+}
+
+
 JPH::RefConst<JPH::Shape> CollisionShape::CreateJoltShape() const {
     switch (m_type) {
         case CollisionShapeType::SPHERE:
@@ -71,7 +81,10 @@ ColliderComponent::~ColliderComponent() {
     }
 }
 
-void ColliderComponent::RebuildShapes() {
+JPH::BodyID ColliderComponent::GetBodyID() const { return m_body_id; }
+
+void ColliderComponent::RebuildShapes()
+{
     if (m_body_id.IsInvalid()) return;
 
     // In Jolt, combine all component shapes into a compound shape
@@ -151,4 +164,11 @@ void ColliderComponent::DebugDraw() {
     Component::DebugDraw();
 
     DrawDebugPhysicsBody(GetBodyID());
+}
+
+CollisionShape *ColliderComponent::GetFirstShape(CollisionShapeType type) {
+    for (auto& shape : m_shapes) {
+        if (shape.m_type == type) return &shape;
+    }
+    return nullptr;
 }

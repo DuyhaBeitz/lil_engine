@@ -35,19 +35,19 @@ public:
     R3D_Model* GetModel() const;
     std::string& ModelKey();
 
-    void SetPlaying(bool playing) { m_playing = playing; }
-    bool IsPlaying() { return m_playing; }
-    void TogglePlaying() {m_playing = !m_playing;}
+    void SetPlaying(bool playing);
+    bool IsPlaying();
+    void TogglePlaying();
 
-    void SetLooping(bool looping) { m_looping = looping; }
-    bool IsLooping() { return m_looping; }
-    void ToggleLooping() {m_looping = !m_looping;}
+    void SetLooping(bool looping);
+    bool IsLooping();
+    void ToggleLooping();
 
-    void SetSpeed(float speed) { m_speed = speed; }
-    float GetSpeed() { return m_speed; }
+    void SetSpeed(float speed);
+    float GetSpeed();
 
-    int GetAnimIndex() { return m_anim_idx; }
-    void SetAnimIndex(int anim_idx) { m_anim_idx = anim_idx; }
+    int GetAnimIndex();
+    void SetAnimIndex(int anim_idx);
 };
 LIL_REFLECT(AnimatedModelComponent, bases<Component>,
     field(m_model_key, ModelKeyAttribute()),

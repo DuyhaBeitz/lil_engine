@@ -2,6 +2,7 @@
 #include <LilEngine.hpp>
 #include <utils/MeshHelper.hpp>
 #include "Components/ColliderComponent.hpp"
+#include "Components/ModelComponent.hpp"
 
 void Heightmap::LayoutUpdate() {
     Actor::LayoutUpdate();
@@ -30,6 +31,11 @@ void Heightmap::LayoutUpdate() {
             if (old_scale != shape->m_map_size) shape->m_needs_rebuild = true;
         }
     }
+}
+
+void Heightmap::RetrieveComponentPtrs() {
+    m_model = GetFirst<ModelComponent>();
+    m_collider = GetFirst<ColliderComponent>();
 }
 
 void Heightmap::SetupComponents() {

@@ -16,6 +16,17 @@ void AnimatedModelComponent::SetModel(std::string model_key) {m_model_key = mode
 R3D_Model *AnimatedModelComponent::GetModel() const { return Lil::Resources().GetModel(m_model_key); }
 std::string &AnimatedModelComponent::ModelKey() { return m_model_key; }
 
+void AnimatedModelComponent::SetPlaying(bool playing) { m_playing = playing; }
+bool AnimatedModelComponent::IsPlaying() { return m_playing; }
+void AnimatedModelComponent::TogglePlaying() {m_playing = !m_playing;}
+void AnimatedModelComponent::SetLooping(bool looping) { m_looping = looping; }
+bool AnimatedModelComponent::IsLooping() { return m_looping; }
+void AnimatedModelComponent::ToggleLooping() {m_looping = !m_looping;}
+void AnimatedModelComponent::SetSpeed(float speed) { m_speed = speed; }
+float AnimatedModelComponent::GetSpeed() { return m_speed; }
+int AnimatedModelComponent::GetAnimIndex() { return m_anim_idx; }
+void AnimatedModelComponent::SetAnimIndex(int anim_idx) { m_anim_idx = anim_idx; }
+
 void AnimatedModelComponent::Draw() {
     Component::Draw();
     

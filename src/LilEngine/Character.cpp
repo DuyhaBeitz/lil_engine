@@ -77,7 +77,26 @@ void Character::Jump(float jump_speed) {
     AddImpulse(GetUpVector()*jump_speed);
 }
 
-void Character::LayoutUpdate() {
+void Character::CharacterUpdate(float delta_time, bool jump, float jump_speed, float gravity, float move_x, float move_z) {
+    Vector3 vel = GetVelocity();
+
+    if (IsOnGround()) {
+        if (jump) vel.y = jump_speed + GetGroundVelocity().y; // or call Jump(jump_speed);
+        else vel.y = GetGroundVelocity().y;
+
+        float speed = 100.0f;
+        vel.x = GetGroundVelocity().x + delta_time * speed * move_x;
+        vel.z = GetGroundVelocity().z + delta_time * speed * move_z;
+
+    } else {
+        vel.y += gravity * delta_time;
+    }
+
+    SetVelocity(vel);
+}
+
+void Character::LayoutUpdate()
+{
     Actor::LayoutUpdate();
     
     mCharacter->SetPosition(JphVector3(GetPosition()));
@@ -96,8 +115,6 @@ void Character::LayoutUpdate() {
 
 void Character::SimulationUpdate(float delta_time) {
     Actor::SimulationUpdate(delta_time);
-    
-    CharacterUpdate(delta_time);
 
     JPH::CharacterVirtual::ExtendedUpdateSettings updateSettings;
     JPH::DefaultBroadPhaseLayerFilter broadphaseFilter = Lil::Physics().GetSystem()->GetDefaultBroadPhaseLayerFilter(JPH::Layers::MOVING);

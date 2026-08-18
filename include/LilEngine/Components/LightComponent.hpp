@@ -25,11 +25,8 @@ public:
     virtual void LayoutUpdate() override;
     void UpdateLight();
 
-    LightComponent() {
-        m_light = R3D_CreateLight(R3D_LightType(m_type));
-        R3D_SetShadowUpdateMode(m_light, R3D_SHADOW_UPDATE_INTERVAL);
-    }
-    ~LightComponent() {R3D_DestroyLight(m_light);}
+    LightComponent();
+    ~LightComponent();
 };
 LIL_REFLECT(LightComponent, bases<Component>,
     field(m_type, EnumAttribute{

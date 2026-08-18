@@ -18,22 +18,20 @@ public:
 
 public:
     Component() = default;
-    Component(Transform local_transform) : m_local_transform(local_transform), GameObject() {}
+    Component(Transform local_transform);
 
     Transform& Local() { return m_local_transform; }
 
-    void ApplyParentTransform(Transform parent_transform) {
-        SetTransform(ApplyLocalTransform(parent_transform, m_local_transform));
-    }
+    void ApplyParentTransform(Transform parent_transform);
     
-    virtual void LayoutUpdate() {}
-    virtual void SimulationUpdate(Actor& actor, float delta_time) {};
-    virtual void Draw() {};
-    virtual void DebugUpdate() {};
-    virtual void DebugDraw() {};
+    virtual void LayoutUpdate();
+    virtual void SimulationUpdate(Actor& actor, float delta_time);
+    virtual void Draw();
+    virtual void DebugUpdate();
+    virtual void DebugDraw();
 
-    void MarkRequired() { m_is_required = true; }
-    bool IsRequired() { return m_is_required; }
+    void MarkRequired();
+    bool IsRequired();
 };
 LIL_REFLECT(Component, bases<GameObject>,
     field(m_local_transform)
