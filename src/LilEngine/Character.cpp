@@ -2,7 +2,9 @@
 #include "LilEngine.hpp"
 #include "utils/ColliderHelper.hpp"
 
-Character::Character() {
+Character::Character(float height, float radius) 
+: m_height(height), m_radius(radius)
+{
     mContactListener.Owner = this;
 
     mStandingShape = new JPH::CapsuleShape(m_height * 0.5f, m_radius);

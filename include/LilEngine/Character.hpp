@@ -14,7 +14,8 @@ public:
 
 class Character : public Actor {
 public:
-    Character();
+    Character(float height = 2.0f, float radius = 1.0f);
+    
     virtual ~Character();
 
     virtual void CharacterUpdate(float delta_time, bool jump, float jump_speed, float gravity, float move_x, float move_z);
@@ -46,8 +47,8 @@ public:
     LIL_REFLECTABLE()
     LIL_SERIALIZABLE()
 
-    float m_height = 2.0f;
-    float m_radius = 1.0f;
+    float m_height;
+    float m_radius;
 };
 LIL_REFLECT(Character, bases<Actor>)
 LIL_SER_BEGIN(Character)
