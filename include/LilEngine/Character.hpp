@@ -14,7 +14,7 @@ public:
 
 class Character : public Actor {
 public:
-    Character(float height = 2.0f, float radius = 1.0f);
+    Character(float height = 1.0f, float radius = 0.0f);
     
     virtual ~Character();
 

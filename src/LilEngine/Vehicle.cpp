@@ -8,6 +8,8 @@
 #include <Jolt/Physics/Vehicle/WheeledVehicleController.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 
+#include "utils/ColliderHelper.hpp"
+
 #include "LilEngine.hpp"
 
 // https://github.com/jrouwe/JoltPhysics/blob/master/Samples/Tests/Vehicle/VehicleConstraintTest.cpp
@@ -242,4 +244,5 @@ void Vehicle::DebugDraw() {
 		JPH::RMat44 wheel_transform = mVehicleConstraint->GetWheelWorldTransform(w, JPH::Vec3::sAxisY(), JPH::Vec3::sAxisX()); // The cylinder we draw is aligned with Y so we specify that as rotational axis
 		Lil::Physics().GetDebugRender()->DrawCylinder(wheel_transform, 0.5f * settings->mWidth, settings->mRadius, JPH::Color::sGreen);
 	}
+	DrawDebugPhysicsBody(m_body_id);
 }

@@ -12,8 +12,8 @@ public:
     Color m_color = Color{255, 255, 255, 255};
     int m_type = int(R3D_LIGHT_DIR);
     bool m_cast_shadows = true;
-    float m_range = 500.0f;
-    float m_shadow_softness = 3.2f;
+    float m_range = 10.0f;
+    float m_shadow_softness = 1.0f;
     float m_depth_bias = 0.001f;
 
     bool m_needs_update = true;
