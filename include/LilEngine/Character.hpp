@@ -18,7 +18,24 @@ public:
     
     virtual ~Character();
 
-    virtual void CharacterUpdate(float delta_time, bool jump, float jump_speed, float gravity, float move_x, float move_z);
+    // EXAMPLE, you would want to put similar code inside your SimulationUpdate override
+    // void Character::CharacterUpdate(float delta_time, bool jump, float jump_speed, float gravity, float move_x, float move_z) {
+    //     Vector3 vel = GetVelocity();
+
+    //     if (IsOnGround()) {
+    //         if (jump) vel.y = jump_speed + GetGroundVelocity().y; // or call Jump(jump_speed);
+    //         else vel.y = GetGroundVelocity().y;
+
+    //         float speed = 100.0f;
+    //         vel.x = GetGroundVelocity().x + speed * move_x;
+    //         vel.z = GetGroundVelocity().z + speed * move_z;
+
+    //     } else {
+    //         vel.y += gravity * delta_time;
+    //     }
+
+    //     SetVelocity(vel);
+    // }
 
     virtual void LayoutUpdate() override;
     virtual void SimulationUpdate(float delta_time) override;
