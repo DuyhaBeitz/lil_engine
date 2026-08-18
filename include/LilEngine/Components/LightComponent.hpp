@@ -23,6 +23,7 @@ public:
     LIL_SERIALIZABLE()
 
     virtual void LayoutUpdate() override;
+    virtual void DebugDraw() override;
     void UpdateLight();
 
     LightComponent();

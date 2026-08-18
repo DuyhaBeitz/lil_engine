@@ -17,6 +17,12 @@ void LightComponent::LayoutUpdate() {
     UpdateLight();
 };
 
+void LightComponent::DebugDraw() {
+    Component::DebugDraw();
+    
+    R3D_DrawLightDebug(m_light);
+}
+
 void LightComponent::UpdateLight() {
     if (m_enabled) R3D_EnableLight(m_light);
     else R3D_DisableLight(m_light);
