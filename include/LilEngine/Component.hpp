@@ -7,9 +7,6 @@
 class Actor;
 
 class Component : public GameObject {
-private:
-    virtual void OnLayoutUpdate() {};
-
     // required components cannot be detached, they are native for actor that uses them
     // e.g. specifically setup model component for heightmap actor
     bool m_is_required = false;
@@ -23,17 +20,13 @@ public:
     Component() = default;
     Component(Transform local_transform) : m_local_transform(local_transform), GameObject() {}
 
-    void LayoutUpdate(Transform parent_transform) {
-        SetTransform(ApplyLocalTransform(parent_transform, m_local_transform));
-
-        LIL_LOG_TRACE("Component calling OnLayoutUpdate");
-        LIL_LOG_TRACE(GetTypeInfo().Name());
-        OnLayoutUpdate();
-        LIL_LOG_TRACE("Component calling OnLayoutUpdate DONE");
-    }
-
     Transform& Local() { return m_local_transform; }
 
+    void ApplyParentTransform(Transform parent_transform) {
+        SetTransform(ApplyLocalTransform(parent_transform, m_local_transform));
+    }
+    
+    virtual void LayoutUpdate() {}
     virtual void SimulationUpdate(Actor& actor, float delta_time) {};
     virtual void Draw() {};
     virtual void DebugUpdate() {};

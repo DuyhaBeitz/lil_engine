@@ -11,8 +11,8 @@ private:
     JPH::Ref<JPH::VehicleConstraint> mVehicleConstraint;
     JPH::Ref<JPH::VehicleCollisionTester> mTester;
 
-	virtual void OnDebugDraw() override;
-    virtual void OnDraw() override;
+	virtual void DebugDraw() override;
+    virtual void Draw() override;
 
 public:
 	std::string m_base_model_key = "None";
@@ -22,8 +22,8 @@ public:
     Vehicle();
     virtual ~Vehicle();
 
-    void OnLayoutUpdate() override;
-    void OnSimulationUpdate(float delta_time) override;
+    void LayoutUpdate() override;
+    void SimulationUpdate(float delta_time) override;
 
 
 

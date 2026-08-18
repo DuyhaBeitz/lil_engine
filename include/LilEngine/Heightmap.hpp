@@ -6,8 +6,6 @@ class ModelComponent;
 class ColliderComponent;
 
 class Heightmap : public Actor {
-private:
-    virtual void OnLayoutUpdate() override;
 
 public:
     // void Setup(Image heightmap_image, Vector3 map_size);
@@ -22,6 +20,7 @@ public:
     Heightmap() = default;
 
     virtual void SetupComponents() override;
+    virtual void LayoutUpdate() override;
 
     template <class Archive>
     void save( Archive & ar ) const {

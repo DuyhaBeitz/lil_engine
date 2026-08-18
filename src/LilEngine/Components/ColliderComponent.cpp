@@ -101,7 +101,9 @@ CollisionShape *ColliderComponent::AddShape(CollisionShape shape) {
     return &(m_shapes.back());
 }
 
-void ColliderComponent::OnLayoutUpdate() {
+void ColliderComponent::LayoutUpdate() {
+    Component::LayoutUpdate();
+
     if (m_body_id.IsInvalid()) return;
 
     auto& bi = Lil::Physics().GetBodyInterface();
@@ -128,6 +130,8 @@ void ColliderComponent::OnLayoutUpdate() {
 }
 
 void ColliderComponent::SimulationUpdate(Actor& actor, float delta_time) {
+    Component::SimulationUpdate(actor, delta_time);
+    
     if (m_body_id.IsInvalid()) return;
 
     auto& bi = Lil::Physics().GetBodyInterface();  
@@ -144,6 +148,8 @@ void ColliderComponent::SimulationUpdate(Actor& actor, float delta_time) {
 }
 
 void ColliderComponent::DebugDraw() {
+    Component::DebugDraw();
+
     JPH::BodyLockRead lock(
         Lil::Physics().GetSystem()->GetBodyLockInterface(),
         GetBodyID()

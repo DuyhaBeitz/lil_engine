@@ -5,15 +5,6 @@
 #include "ReflAttributes.hpp"
 
 class LightComponent : public Component {
-private:
-    virtual void OnLayoutUpdate() override {
-        if (m_type != int(R3D_LIGHT_DIR))
-            R3D_SetLightPosition(m_light, GetPosition());
-        if (m_type != int(R3D_LIGHT_OMNI))
-            R3D_SetLightDirection(m_light, Vector3RotateByQuaternion({0,-1,0}, GetRotation()));
-        UpdateLight();
-    };
-
 public:
     R3D_Light m_light;
     bool m_enabled = true;
@@ -31,6 +22,7 @@ public:
     LIL_REFLECTABLE()
     LIL_SERIALIZABLE()
 
+    virtual void LayoutUpdate() override;
     void UpdateLight();
 
     LightComponent() {

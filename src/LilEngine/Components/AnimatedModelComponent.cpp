@@ -17,13 +17,17 @@ R3D_Model *AnimatedModelComponent::GetModel() const { return Lil::Resources().Ge
 std::string &AnimatedModelComponent::ModelKey() { return m_model_key; }
 
 void AnimatedModelComponent::Draw() {
+    Component::Draw();
+    
     R3D_Model* m = GetModel();
     if (m && m_animation_player_loaded)
         R3D_DrawAnimatedModelEx(*m, m_animation_player, GetPosition(), GetRotation(), GetScale());
     else DrawSphere(GetPosition(), 2.f, RAYRED);
 }
 
-void AnimatedModelComponent::OnLayoutUpdate() {
+void AnimatedModelComponent::LayoutUpdate() {
+    Component::LayoutUpdate();
+
     R3D_Model* m = GetModel();
     R3D_AnimationLib* l = Lil::Resources().GetAnimationLib(m_model_key);
     // load
@@ -44,6 +48,8 @@ void AnimatedModelComponent::OnLayoutUpdate() {
     }
 }
 void AnimatedModelComponent::SimulationUpdate(Actor &actor, float delta_time) {
+    Component::SimulationUpdate(actor, delta_time);
+
     if (m_animation_player_loaded) {
         R3D_UpdateAnimationPlayer(&m_animation_player, delta_time * m_speed);
     }

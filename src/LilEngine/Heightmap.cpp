@@ -3,7 +3,9 @@
 #include <utils/MeshHelper.hpp>
 #include "Components/ColliderComponent.hpp"
 
-void Heightmap::OnLayoutUpdate() {
+void Heightmap::LayoutUpdate() {
+    Actor::LayoutUpdate();
+    
     std::string heightmap_name = HeightmapNameFromImageName(m_heightmap_texture_key);
     if (Lil::Resources().TextureExists(m_heightmap_texture_key)) {
         if (!Lil::Resources().ModelExists(heightmap_name)) {

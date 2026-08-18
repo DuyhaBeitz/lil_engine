@@ -1,6 +1,16 @@
 #include "Components/LightComponent.hpp"
 
-void LightComponent::UpdateLight() {    
+void LightComponent::LayoutUpdate() {
+    Component::LayoutUpdate();
+    
+    if (m_type != int(R3D_LIGHT_DIR))
+        R3D_SetLightPosition(m_light, GetPosition());
+    if (m_type != int(R3D_LIGHT_OMNI))
+        R3D_SetLightDirection(m_light, Vector3RotateByQuaternion({0,-1,0}, GetRotation()));
+    UpdateLight();
+};
+
+void LightComponent::UpdateLight() {
     if (m_enabled) R3D_EnableLight(m_light);
     else R3D_DisableLight(m_light);
 

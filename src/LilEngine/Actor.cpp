@@ -14,13 +14,10 @@ void Actor::LayoutUpdate(){
 
     LIL_LOG_TRACE("Actor updating layout on components");
     for (Component* component : m_components) {
-        component->LayoutUpdate(GetTransform());
+        component->ApplyParentTransform(GetTransform());
+        component->LayoutUpdate();
     }
     LIL_LOG_TRACE("Actor updating layout on components DONE");
-
-    LIL_LOG_TRACE("Actor calling OnLayoutUpdate");
-    OnLayoutUpdate();
-    LIL_LOG_TRACE("Actor calling OnLayoutUpdate DONE");
 }
 
 void Actor::SimulationUpdate(float delta_time){
@@ -28,7 +25,6 @@ void Actor::SimulationUpdate(float delta_time){
         if (!IsComponentAttached(component)) continue;
         component->SimulationUpdate(*this, delta_time);
     }
-    OnSimulationUpdate(delta_time);
 }
 
 void Actor::Draw() {
@@ -36,7 +32,6 @@ void Actor::Draw() {
         if (!IsComponentAttached(component)) continue;
         component->Draw();
     }
-    OnDraw();
 }
 
 void Actor::DebugUpdate() {
@@ -61,7 +56,6 @@ void Actor::DebugDraw() {
     for (int i = 0; i < 3; i++) {
         DrawLine3D(GetPosition(), GetPosition()+Vector3RotateByQuaternion(v[i], GetRotation())*10.0f, c[i]);
     }
-    OnDebugDraw();
 };
 
 void Actor::AttachComponent(Component *component) {

@@ -76,7 +76,9 @@ void Character::Jump(float jump_speed) {
     AddImpulse(GetUpVector()*jump_speed);
 }
 
-void Character::OnLayoutUpdate() {
+void Character::LayoutUpdate() {
+    Actor::LayoutUpdate();
+    
     mCharacter->SetPosition(JphVector3(GetPosition()));
     mCharacter->SetRotation(JphQuat(GetRotation()));
 
@@ -91,7 +93,9 @@ void Character::OnLayoutUpdate() {
     }
 };
 
-void Character::OnSimulationUpdate(float delta_time) {
+void Character::SimulationUpdate(float delta_time) {
+    Actor::SimulationUpdate(delta_time);
+    
     CharacterUpdate(delta_time);
 
     JPH::CharacterVirtual::ExtendedUpdateSettings updateSettings;

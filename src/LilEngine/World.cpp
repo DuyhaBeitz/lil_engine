@@ -185,7 +185,7 @@ void World::UpdateActorLayout() {
 
 void World::DebugDraw(){
     LIL_LOG_TRACE("World debug drawing");
-
     for (auto& [key, actor] : m_actors) actor->DebugUpdate();
     for (auto& [key, actor] : m_actors) actor->DebugDraw();
+    LIL_LOG_TRACE("World debug drawing DONE");
 }

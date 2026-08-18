@@ -165,7 +165,9 @@ Vehicle::~Vehicle() {
     }
 }
 
-void Vehicle::OnLayoutUpdate() {
+void Vehicle::LayoutUpdate() {
+	Actor::LayoutUpdate();
+
     if (!m_body_id.IsInvalid()) {
         JPH::BodyInterface& bodyInterface = Lil::Physics().GetSystem()->GetBodyInterface();
         bodyInterface.SetPositionAndRotation(
@@ -177,7 +179,9 @@ void Vehicle::OnLayoutUpdate() {
     }
 }
 
-void Vehicle::OnSimulationUpdate(float delta_time) {
+void Vehicle::SimulationUpdate(float delta_time) {
+	Actor::SimulationUpdate(delta_time);
+
 	JPH::PhysicsSystem* physicsSystem = Lil::Physics().GetSystem();
 	JPH::BodyInterface& bodyInterface = physicsSystem->GetBodyInterface();
 
@@ -221,7 +225,9 @@ void Vehicle::OnSimulationUpdate(float delta_time) {
 	SetRotation(RlQuat(rot));
 }
 
-void Vehicle::OnDebugDraw() {
+void Vehicle::DebugDraw() {
+	Actor::DebugDraw();
+
 	for (uint w = 0; w < 4; ++w) {
 		const JPH::WheelSettings *settings = mVehicleConstraint->GetWheels()[w]->GetSettings();
 		JPH::RMat44 wheel_transform = mVehicleConstraint->GetWheelWorldTransform(w, JPH::Vec3::sAxisY(), JPH::Vec3::sAxisX()); // The cylinder we draw is aligned with Y so we specify that as rotational axis
@@ -229,7 +235,9 @@ void Vehicle::OnDebugDraw() {
 	}
 }
 
-void Vehicle::OnDraw() {
+void Vehicle::Draw() {
+	Actor::Draw();
+
 	for (uint w = 0; w < 4; ++w) {
 		if (R3D_Model* m = Lil::Resources().GetModel(m_wheel_model_key)) {
 			const JPH::WheelSettings *settings = mVehicleConstraint->GetWheels()[w]->GetSettings();

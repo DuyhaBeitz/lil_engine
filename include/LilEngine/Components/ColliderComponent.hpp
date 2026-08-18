@@ -40,8 +40,6 @@ class ColliderComponent : public Component {
 private:
     JPH::BodyID m_body_id;
 
-    virtual void OnLayoutUpdate() override;
-
 public:
     LIL_REFLECTABLE()
     LIL_SERIALIZABLE()
@@ -58,6 +56,7 @@ public:
     void RebuildShapes();
     CollisionShape* AddShape(CollisionShape shape);
 
+    virtual void LayoutUpdate() override;
     virtual void SimulationUpdate(Actor& actor, float delta_time) override;
     virtual void DebugDraw() override;
 

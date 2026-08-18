@@ -9,10 +9,6 @@ class Actor : public GameObject {
 public:
     std::vector<Component*> m_components;
     std::set<const Component*> m_marked_deattached;
-    virtual void OnLayoutUpdate() {};
-    virtual void OnSimulationUpdate(float delta_time) {};
-    virtual void OnDebugDraw() {};
-    virtual void OnDraw() {};
 
 public:
     LIL_REFLECTABLE()
@@ -22,13 +18,13 @@ public:
     
     virtual void SetupComponents() {}
 
-    void LayoutUpdate();
-    void SimulationUpdate(float delta_time);
+    virtual void LayoutUpdate();
+    virtual void SimulationUpdate(float delta_time);
 
-    void Draw();
+    virtual void Draw();
 
-    void DebugUpdate();
-    void DebugDraw();
+    virtual void DebugUpdate();
+    virtual void DebugDraw();
 
     void AttachComponent(Component* component);
 

@@ -9,6 +9,7 @@ ModelComponent::ModelComponent(std::string model_key)
 }
 
 void ModelComponent::Draw() {
+    Component::Draw();
     if (R3D_Model* m = GetModel()) R3D_DrawModelEx(*m, GetPosition(), GetRotation(), GetScale());
     else DrawSphere(GetPosition(), 2.f, RAYRED);
 }

@@ -40,8 +40,8 @@ public:
         SetVelocity(vel);
     }
 
-    void OnLayoutUpdate() override;
-    void OnSimulationUpdate(float delta_time) override;
+    virtual void LayoutUpdate() override;
+    void SimulationUpdate(float delta_time) override;
 
     bool IsOnGround() const;
     bool IsOnSteepSlope() const;

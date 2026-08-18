@@ -17,7 +17,7 @@ public:
     bool m_animation_player_loaded = false;
     R3D_AnimationPlayer m_animation_player;
 
-    virtual void OnLayoutUpdate() override;
+    virtual void LayoutUpdate() override;
     virtual void SimulationUpdate(Actor& actor, float delta_time) override;
 
 public:
