@@ -41,7 +41,8 @@ public:
     }
 
     virtual void LayoutUpdate() override;
-    void SimulationUpdate(float delta_time) override;
+    virtual void SimulationUpdate(float delta_time) override;
+    virtual void DebugDraw() override;
 
     bool IsOnGround() const;
     bool IsOnSteepSlope() const;

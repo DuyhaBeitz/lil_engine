@@ -1,5 +1,6 @@
 #include "Character.hpp"
 #include "LilEngine.hpp"
+#include "utils/ColliderHelper.hpp"
 
 Character::Character() {
     mContactListener.Owner = this;
@@ -126,4 +127,10 @@ void Character::SimulationUpdate(float delta_time) {
             JPH::EActivation::DontActivate
         );
     }
+}
+
+void Character::DebugDraw() {
+    Actor::DebugDraw();
+
+    DrawDebugPhysicsBody(mPhysicsPresenceID);
 }
