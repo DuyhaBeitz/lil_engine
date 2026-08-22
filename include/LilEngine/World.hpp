@@ -6,12 +6,7 @@
 #include <vector>
 
 #include "Actor.hpp"
-
-#include "Character.hpp"
-#include "Heightmap.hpp"
-#include "Vehicle.hpp"
-#include "Components/LightComponent.hpp"
-#include "Components/AnimatedModelComponent.hpp"
+#include "Component.hpp"
 
 class World {
 private:

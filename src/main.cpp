@@ -1,6 +1,13 @@
 // The game code
 // includes LilEngine, and optionally LilEditor
 
+#include "Character.hpp"
+#include "Heightmap.hpp"
+#include "Vehicle.hpp"
+#include "Components/LightComponent.hpp"
+#include "Components/AnimatedModelComponent.hpp"
+#include "Components/InstancedModelComponent.hpp"
+
 #include "LilEngine.hpp"
 #include "LilEditor.hpp"
 

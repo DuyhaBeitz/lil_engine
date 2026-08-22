@@ -1,6 +1,7 @@
 #include "Character.hpp"
 #include "LilEngine.hpp"
 #include "utils/ColliderHelper.hpp"
+#include "utils/MathHelper.hpp"
 
 Character::Character(float height, float radius) 
 : m_height(height), m_radius(radius)

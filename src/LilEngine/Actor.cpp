@@ -1,5 +1,6 @@
 #include "Actor.hpp"
 #include <algorithm>
+#include "Component.hpp"
 #include "LilEngine.hpp"
 
 void Actor::LayoutUpdate(){
