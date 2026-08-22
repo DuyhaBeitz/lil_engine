@@ -93,7 +93,8 @@ public:
     Component* CopyComponent(uuids::uuid original_id);
     Component* GetComponent(uuids::uuid id);
 
-    Actor* PickActor(Vector2 screen_pos, int render_w, int render_h, Camera camera);
+    Actor* PickActor(Vector2 screen_pos, int render_w, int render_h, Camera camera, RayCollision* result = nullptr) const;
+    RayCollision Raycast(Ray ray) const;
 
     std::unordered_map<uuids::uuid, std::unique_ptr<Component>>& Components();
     void DestroyComponent(uuids::uuid id);

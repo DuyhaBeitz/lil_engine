@@ -23,7 +23,7 @@ public:
     R3D_Model* GetModel() const;
     std::string& ModelKey();
 
-    RayCollision Raycast(Ray ray) const;
+    virtual RayCollision Raycast(Ray ray) const override;
 };
 LIL_REFLECT(ModelComponent, bases<Component>,
     field(m_model_key, ModelKeyAttribute())

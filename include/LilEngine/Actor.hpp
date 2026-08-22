@@ -26,6 +26,8 @@ public:
     virtual void DebugUpdate();
     virtual void DebugDraw();
 
+    virtual RayCollision Raycast(Ray ray) const;
+
     void AttachComponent(Component* component);
 
     void DeattachComponent(Component* component);

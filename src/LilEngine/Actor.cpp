@@ -57,6 +57,21 @@ void Actor::DebugDraw() {
     for (int i = 0; i < 3; i++) {
         DrawLine3D(GetPosition(), GetPosition()+Vector3RotateByQuaternion(v[i], GetRotation())*10.0f, c[i]);
     }
+}
+RayCollision Actor::Raycast(Ray ray) const {
+    RayCollision result {
+        .hit      = false,
+        .distance = INFINITY,
+        .point    = Vector3{0.0f, 0.0f, 0.0f},
+        .normal   = Vector3{0.0f, 0.0f, 0.0f},
+    };
+
+    for (Component* component : m_components) {
+        if (!IsComponentAttached(component)) continue;
+        RayCollision res = component->Raycast(ray);
+        if (res.hit && res.distance < result.distance) result = res;
+    }
+    return result;
 };
 
 void Actor::AttachComponent(Component *component) {

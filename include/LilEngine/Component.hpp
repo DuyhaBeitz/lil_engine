@@ -30,6 +30,8 @@ public:
     virtual void DebugUpdate();
     virtual void DebugDraw();
 
+    virtual RayCollision Raycast(Ray ray) const;
+
     void MarkRequired();
     bool IsRequired();
 };

@@ -119,8 +119,7 @@ Component *World::GetComponent(uuids::uuid id) {
     return m_components.at(id).get();
 }
 
-Actor *World::PickActor(Vector2 screen_pos, int render_w, int render_h, Camera camera)
-{
+Actor *World::PickActor(Vector2 screen_pos, int render_w, int render_h, Camera camera, RayCollision* result) const {
     LIL_LOG_TRACE("Picking actor");
     Ray ray = GetScreenToWorldRayEx(screen_pos, camera, render_w, render_h);
 
@@ -128,20 +127,32 @@ Actor *World::PickActor(Vector2 screen_pos, int render_w, int render_h, Camera c
     Actor* a = nullptr;
     
     for (auto& [key, actor] : m_actors) {
-        for (auto& component : actor->Components()) {
-            if (ModelComponent* m = dynamic_cast<ModelComponent*>(component)) {
-                RayCollision res = m->Raycast(ray);
-                if (res.hit && res.distance < closest) {
-                    closest = res.distance;
-                    a = actor.get();
-                }
-            }
+        RayCollision res = actor->Raycast(ray);
+        if (res.hit && res.distance < closest) {
+            closest = res.distance;
+            a = actor.get();
+            if (result) *result = res;
         }
     }
     return a;
 }
 
-std::unordered_map<uuids::uuid, std::unique_ptr<Component>> &World::Components() {return m_components;}
+RayCollision World::Raycast(Ray ray) const {
+    RayCollision result {
+        .hit      = false,
+        .distance = INFINITY,
+        .point    = Vector3{0.0f, 0.0f, 0.0f},
+        .normal   = Vector3{0.0f, 0.0f, 0.0f},
+    };
+
+    for (auto& [key, actor] : m_actors) {
+        RayCollision res = actor->Raycast(ray);
+        if (res.hit && res.distance < result.distance) result = res;
+    }
+    return result;
+}
+
+std::unordered_map<uuids::uuid, std::unique_ptr<Component>> &World::Components() { return m_components; }
 
 void World::DestroyComponent(uuids::uuid id)
 {
