@@ -1,0 +1,75 @@
+#pragma once
+
+#include "Actor.hpp"
+#include "CommonIncludes.hpp"
+#include "Physics.hpp"
+
+class Character;
+
+class CharacterContactAdapter : public JPH::CharacterContactListener {
+public:
+    Character* Owner = nullptr;
+    virtual void OnContactAdded(const JPH::CharacterVirtual *inCharacter, const JPH::CharacterContact &inContact, JPH::CharacterContactSettings &ioSettings) override {};
+};
+
+class Character : public Actor {
+public:
+    Character(float height = 1.0f, float radius = 0.0f);
+    
+    virtual ~Character();
+
+    // EXAMPLE, you would want to put similar code inside your SimulationUpdate override
+    // void Character::CharacterUpdate(float delta_time, bool jump, float jump_speed, float gravity, float move_x, float move_z) {
+    //     Vector3 vel = GetVelocity();
+
+    //     if (IsOnGround()) {
+    //         if (jump) vel.y = jump_speed + GetGroundVelocity().y; // or call Jump(jump_speed);
+    //         else vel.y = GetGroundVelocity().y;
+
+    //         float speed = 100.0f;
+    //         vel.x = GetGroundVelocity().x + speed * move_x;
+    //         vel.z = GetGroundVelocity().z + speed * move_z;
+
+    //     } else {
+    //         vel.y += gravity * delta_time;
+    //     }
+
+    //     SetVelocity(vel);
+    // }
+
+    virtual void LayoutUpdate() override;
+    virtual void SimulationUpdate(float delta_time) override;
+    virtual void DebugDraw() override;
+
+    bool IsOnGround() const;
+    bool IsOnSteepSlope() const;
+    Vector3 GetVelocity() const;
+    Vector3 GetGroundNormal() const;
+    Vector3 GetGroundVelocity() const;
+    Vector3 GetUpVector() const;
+
+    void SetVelocity(const Vector3 velocity);
+    void SetHorizontalVelocity(const Vector3 direction, float speed);
+    void AddImpulse(const Vector3 impulse);
+    void Jump(float jump_speed);
+
+private:
+
+    CharacterContactAdapter mContactListener;
+    JPH::Ref<JPH::CharacterVirtual> mCharacter;
+    JPH::Ref<JPH::Shape> mStandingShape;
+    JPH::BodyID mPhysicsPresenceID;
+
+public:
+    LIL_REFLECTABLE()
+    LIL_SERIALIZABLE()
+
+    float m_height;
+    float m_radius;
+};
+LIL_REFLECT(Character, bases<Actor>)
+LIL_SER_BEGIN(Character)
+LIL_SER_BASE(Actor)
+LIL_SER_FIELD(m_height)
+LIL_SER_FIELD(m_radius)
+LIL_SER_END()
