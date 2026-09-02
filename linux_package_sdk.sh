@@ -1,21 +1,21 @@
 #!/usr/bin/env bash
 set -e
 
-rm -rf dist
-mkdir -p dist/lib dist/include
+rm -rf lil_engine_sdk
+mkdir -p lil_engine_sdk/lib lil_engine_sdk/include
 
-cp build/JoltBuild/libJolt.a         dist/lib/
-cp build/lib/libr3d.a                dist/lib/
-cp build/libtinyfiledialogs.a        dist/lib/
-cp build/libimgui.a                  dist/lib/
-cp build/libraylib-gizmo.a           dist/lib/
-cp build/librlImGui.a                dist/lib/
-cp build/liblil_engine.a             dist/lib/
-cp build/liblil_editor.a             dist/lib/
+cp build/JoltBuild/libJolt.a         lil_engine_sdk/lib/
+cp build/lib/libr3d.a                lil_engine_sdk/lib/
+cp build/libtinyfiledialogs.a        lil_engine_sdk/lib/
+cp build/libimgui.a                  lil_engine_sdk/lib/
+cp build/libraylib-gizmo.a           lil_engine_sdk/lib/
+cp build/librlImGui.a                lil_engine_sdk/lib/
+cp build/liblil_engine.a             lil_engine_sdk/lib/
+cp build/liblil_editor.a             lil_engine_sdk/lib/
 
 if [ -d "include" ]; then
-    cp -R include/* dist/include/
+    cp -R include/* lil_engine_sdk/include/
 fi
 
-cp cmake/lil_engine.cmake dist/
-cp imgui.ini dist/
+cp cmake/lil_engine.cmake lil_engine_sdk/
+cp imgui.ini lil_engine_sdk/
