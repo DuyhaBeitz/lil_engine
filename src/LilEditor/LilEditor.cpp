@@ -195,15 +195,7 @@ void Lil::Editor::DrawComponents() {
                 
                 for (auto& [name, ti] : Lil::Reflection::Get().Types()) {
                     if (ti->IsA<Component>() && *ti != TypeInfo::Get<Component>()) {
-                        bool exists = false;
-                        for (auto& component : m_selected_actor->Components()) {
-                            if (component->GetTypeInfo().Name() == name) {
-                                exists = true;
-                                break;
-                            }
-                        }
-                        
-                        if (!exists && ImGui::MenuItem(name.c_str())) {
+                        if (ImGui::MenuItem(name.c_str())) {
                             Component* component = Lil::World().CreateComponent(ti);
                             if (component) {
                                 m_selected_actor->AttachComponent(component);
