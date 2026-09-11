@@ -57,13 +57,33 @@ LIL_SERIALIZE_NO_BASE(Identifiable, m_id)
 
 class GameObject : public Identifiable, public Transformable {
 public:
+    bool m_visible = true;
+    bool m_raycast_active = true;
+
+public:
     GameObject(Transform transform = TRANSFORM_EMPTY);
     virtual ~GameObject() = default;
 
     LIL_REFLECTABLE()
     LIL_SERIALIZABLE()
+
+    virtual void Draw() {};
+    virtual RayCollision Raycast(Ray ray) const { return RayCollision{0}; };
+
+    void ToggleVisible();
+    void EnableVisible();
+    void DisableVisible();
+    bool IsVisible() const;
+
+    void ToggleRaycastActive();
+    void EnableRaycastActive();
+    void DisableRaycastActive();
+    bool IsRaycastActive() const;
 };
-LIL_REFLECT(GameObject, (bases<Identifiable, Transformable>))
+LIL_REFLECT(GameObject, (bases<Identifiable, Transformable>),
+    field(m_visible),
+    field(m_raycast_active)
+)
 
 LIL_SER_BEGIN(GameObject)
 LIL_SER_BASE(Identifiable)

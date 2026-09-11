@@ -36,7 +36,3 @@ void Component::DebugDraw() {}
 
 void Component::MarkRequired() { m_is_required = true; }
 bool Component::IsRequired() { return m_is_required; }
-
-RayCollision Component::Raycast(Ray ray) const {
-    return RayCollision{0};
-}

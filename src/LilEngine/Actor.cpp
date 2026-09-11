@@ -29,9 +29,11 @@ void Actor::SimulationUpdate(float delta_time){
 }
 
 void Actor::Draw() {
-    for (auto& component : m_components) {
-        if (!IsComponentAttached(component)) continue;
-        component->Draw();
+    if (IsVisible()) {
+        for (auto& component : m_components) {
+            if (!IsComponentAttached(component) || !component->IsVisible()) continue;
+            component->Draw();
+        }
     }
 }
 
@@ -66,11 +68,14 @@ RayCollision Actor::Raycast(Ray ray) const {
         .normal   = Vector3{0.0f, 0.0f, 0.0f},
     };
 
-    for (Component* component : m_components) {
-        if (!IsComponentAttached(component)) continue;
-        RayCollision res = component->Raycast(ray);
-        if (res.hit && res.distance < result.distance) result = res;
+    if (IsRaycastActive()) {
+        for (Component* component : m_components) {
+            if (!IsComponentAttached(component) | !component->IsRaycastActive()) continue;
+            RayCollision res = component->Raycast(ray);
+            if (res.hit && res.distance < result.distance) result = res;
+        }
     }
+
     return result;
 };
 

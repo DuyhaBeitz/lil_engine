@@ -21,12 +21,12 @@ public:
     virtual void LayoutUpdate();
     virtual void SimulationUpdate(float delta_time);
 
-    virtual void Draw();
+    virtual void Draw() override;
 
     virtual void DebugUpdate();
     virtual void DebugDraw();
 
-    virtual RayCollision Raycast(Ray ray) const;
+    virtual RayCollision Raycast(Ray ray) const override;
 
     void AttachComponent(Component* component);
 
