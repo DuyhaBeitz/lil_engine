@@ -3,6 +3,7 @@
 #include "LilEngine.hpp"
 #include "Notification.hpp"
 #include "EditorUI.hpp"
+#include "Painter.hpp"
 
 #include "raygizmo.h"
 #include "imgui.h"
@@ -65,6 +66,7 @@ namespace Lil {
         bool m_physics_debug = false;
         Actor* m_selected_actor = nullptr;
         Component* m_selected_component = nullptr;
+        Painter m_painter;
 
         RenderTexture2D m_viewport_render_target;
         RenderTexture2D m_layout_render_target;
@@ -85,6 +87,7 @@ namespace Lil {
         void DrawInspector();
         void DrawComponents();
         void DrawLayout();
+        void DrawPainter();
 
         void UpdateGizmoMode();
         void HandleViewportInput();

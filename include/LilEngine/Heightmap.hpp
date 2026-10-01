@@ -25,6 +25,8 @@ public:
     virtual void SetupComponents() override;
     virtual void LayoutUpdate() override;
 
+    float GetHeightAt(float x, float z);
+
     template <class Archive>
     void save( Archive & ar ) const {
         LIL_SAVE_BASE(Actor)

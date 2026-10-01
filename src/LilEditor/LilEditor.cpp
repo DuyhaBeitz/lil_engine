@@ -1,6 +1,8 @@
 #include "LilEditor.hpp"
 #include <utils/MeshHelper.hpp>
 #include <utils/FileHelper.hpp>
+#include "Components/InstancedModelComponent.hpp"
+#include "Heightmap.hpp"
 #include "FileDialogHelper.hpp"
 
 Lil::Editor &Lil::Editor::Get() {
@@ -270,6 +272,14 @@ void Lil::Editor::DrawLayout() {
     ImGui::End();
 }
 
+void Lil::Editor::DrawPainter() {
+    if (ImGui::Begin("Painter")) {
+        
+    }
+
+    ImGui::End();
+}
+
 void Lil::Editor::Update() {
     if (!m_cursor_enabled) {UpdateCamera(&m_viewport_camera, CAMERA_FREE);}
     Lil::Engine::Get().Update();
@@ -418,6 +428,20 @@ void Lil::Editor::DrawViewport() {
                     Transform t = m_selected_actor->GetTransform();
                     DrawGizmo3D(m_gizmo_mode | m_gizmo_space, &t);
                     m_selected_actor->SetTransform(t);
+
+                    if (m_selected_actor->GetTypeInfo().Name() == "Heightmap" &&
+                        m_selected_component &&
+                        m_selected_component->GetTypeInfo().Name() == "InstancedModelComponent"
+                    ) {
+                        m_painter.DrawBrush(
+                            GetMousePosition(),
+                            m_viewport_render_target.texture.width,
+                            m_viewport_render_target.texture.height,
+                            m_viewport_camera,
+                            dynamic_cast<Heightmap*>(m_selected_actor),
+                            dynamic_cast<InstancedModelComponent*>(m_selected_component)
+                        );
+                    }
                 }
             EndMode3D();
 

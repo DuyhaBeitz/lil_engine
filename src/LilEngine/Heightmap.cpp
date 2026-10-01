@@ -33,6 +33,35 @@ void Heightmap::LayoutUpdate() {
     }
 }
 
+float Heightmap::GetHeightAt(float x, float z) {
+    Texture2D* heightmap = Lil::Resources().GetTexture(m_heightmap_texture_key);
+
+    if (!heightmap)return 0.0f;
+
+    // World position -> normalized [0, 1] heightmap coordinates.
+    float u = (x - GetPosition().x) / GetScale().x + 0.5f;
+    float v = (z - GetPosition().z) / GetScale().z + 0.5f;
+
+    if (u < 0.0f || u > 1.0f ||
+        v < 0.0f || v > 1.0f)
+        return 0.0f;
+
+    // The mesh uses mapWidth/mapHeight vertices, with the
+    // first vertex at 0 and the last at width-1/height-1.
+    int px = static_cast<int>(u * (heightmap->width - 1));
+    int pz = static_cast<int>(v * (heightmap->height - 1));
+
+    Image img = LoadImageFromTexture(*heightmap);
+
+    float height =
+        static_cast<float>(GetImageColor(img, px, pz).r) / 255.0f;
+
+    UnloadImage(img);
+
+    // HeightmapModel multiplies the normalized height by size.y.
+    return height * GetScale().y;
+}
+
 void Heightmap::RetrieveComponentPtrs() {
     m_model = GetFirst<ModelComponent>();
     m_collider = GetFirst<ColliderComponent>();
