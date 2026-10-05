@@ -19,6 +19,12 @@ struct Brush : public Reflectable {
     bool Dab(float x, float z, Heightmap* heightmap);
     bool IsTooClose(float x, float z) const;
 
+    float min_size = 1.0f;
+    float max_size = 1.0f;
+
+    float slope_coeff = 0.0f;
+    Vector3 offset = Vector3{0.0f, 0.0f, 0.0f};
+
     std::vector<uint64_t> instance_keys;
 
     float cell_size = 5.0f;       // >= min_distance
@@ -30,7 +36,11 @@ struct Brush : public Reflectable {
 LIL_REFLECT(Brush, bases<>,
     field(radius),
     field(min_distance),
-    field(iterations)
+    field(iterations),
+    field(min_size),
+    field(max_size),
+    field(slope_coeff),
+    field(offset)
 )
 
 class Painter {

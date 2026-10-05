@@ -33,10 +33,10 @@ void Heightmap::LayoutUpdate() {
     }
 }
 
-float Heightmap::GetHeightAt(float x, float z) {
+HeightmapQueryResult Heightmap::QueryAt(float x, float z) {
     Texture2D* heightmap = Lil::Resources().GetTexture(m_heightmap_texture_key);
 
-    if (!heightmap)return 0.0f;
+    if (!heightmap) return {0};
 
     // World position -> normalized [0, 1] heightmap coordinates.
     float u = (x - GetPosition().x) / GetScale().x + 0.5f;
@@ -44,7 +44,7 @@ float Heightmap::GetHeightAt(float x, float z) {
 
     if (u < 0.0f || u > 1.0f ||
         v < 0.0f || v > 1.0f)
-        return 0.0f;
+        return {0};
 
     // The mesh uses mapWidth/mapHeight vertices, with the
     // first vertex at 0 and the last at width-1/height-1.
@@ -53,13 +53,20 @@ float Heightmap::GetHeightAt(float x, float z) {
 
     Image img = LoadImageFromTexture(*heightmap);
 
-    float height =
+    float value =
         static_cast<float>(GetImageColor(img, px, pz).r) / 255.0f;
+
+    float height = GetPosition().y + value * GetScale().y;
 
     UnloadImage(img);
 
     // HeightmapModel multiplies the normalized height by size.y.
-    return GetPosition().y + height * GetScale().y;
+    Ray ray = {
+        .position = Vector3{x, height+0.5f, z},
+        .direction = Vector3{0.0f,-1.0f,0.0f}
+    };
+    RayCollision collision = Raycast(ray);
+    return HeightmapQueryResult{.value = value, .height = collision.point.y, .normal = collision.normal};
 }
 
 void Heightmap::RetrieveComponentPtrs() {

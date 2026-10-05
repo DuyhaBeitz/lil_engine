@@ -6,6 +6,12 @@
 class ModelComponent;
 class ColliderComponent;
 
+struct HeightmapQueryResult {
+    float value;   // [0; 1]
+    float height;  // world y coordinate
+    Vector3 normal;
+};
+
 class Heightmap : public Actor {
 private:
     void RetrieveComponentPtrs();
@@ -25,7 +31,7 @@ public:
     virtual void SetupComponents() override;
     virtual void LayoutUpdate() override;
 
-    float GetHeightAt(float x, float z);
+    HeightmapQueryResult QueryAt(float x, float z);
 
     template <class Archive>
     void save( Archive & ar ) const {

@@ -116,10 +116,16 @@ float GetRandomFloat(float min, float max) {
 bool Brush::Dab(float x, float z, Heightmap* heightmap) {
     float angle = GetRandomFloat(0.0f, 2*PI);
     float r     = std::sqrt(GetRandomFloat(0.0f, 1.0f)) * radius;
-    Quaternion q = QuaternionFromAxisAngle(Vector3{0.0f, 1.0f, 0.0f}, angle);
     float xx = x + r * cos(angle);
     float zz = z + r * sin(angle);
-    return TryAdd(Vector3{xx, heightmap->GetHeightAt(xx, zz), zz}, q, Vector3{1.0f, 1.0f, 1.0f});
+    HeightmapQueryResult query = heightmap->QueryAt(xx, zz);
+
+    Vector3 axis = Vector3Lerp(Vector3{0.0f, 1.0f, 0.0f}, query.normal, slope_coeff);
+    Quaternion q = QuaternionFromAxisAngle(axis, angle);
+
+    float size = GetRandomFloat(min_size, max_size);
+
+    return TryAdd(offset+Vector3{xx, query.height, zz}, q, Vector3{size, size, size});
 }
 
 void Painter::DrawBrush(Vector2 screen_pos, int render_w, int render_h, Camera camera, Heightmap* heightmap, InstancedModelComponent *instanced_model) {
@@ -143,6 +149,15 @@ void Painter::DrawBrush(Vector2 screen_pos, int render_w, int render_h, Camera c
         }
     }
     Brush& brush = m_brush_settings[instanced_model->GetID()];
+
+    for (float dx = -1.0f; dx <= 1.0f; dx+=0.5f) {
+        for (float dz = -1.0f; dz <= 1.0f; dz+=0.5f) {
+            Vector3 p1 = res.point + Vector3{dx, 0, dz};
+            HeightmapQueryResult query = heightmap->QueryAt(p1.x, p1.z);
+            Vector3 p2 = p1 + query.normal * 3.0f;
+            DrawLine3D(p1, p2, BLUE);
+        }
+    }
 
     float c = (IsKeyDown(KEY_RIGHT_BRACKET) - IsKeyDown(KEY_LEFT_BRACKET));
     brush.radius += c*brush.radius*GetFrameTime();

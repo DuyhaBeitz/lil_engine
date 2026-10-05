@@ -361,7 +361,12 @@ void Lil::Editor::DrawLayout() {
 void Lil::Editor::DrawPainter() {
     if (ImGui::Begin("Painter")) {
         m_editor.SetCurrentObjectName("Brush");
-        m_editor.VisitObject(TypeInfo::Get<Brush>(), &(m_painter.GetBrush(dynamic_cast<InstancedModelComponent*>(m_selected_component))));
+        InstancedModelComponent* instanced_model = dynamic_cast<InstancedModelComponent*>(m_selected_component);
+        Brush& brush = m_painter.GetBrush(instanced_model);
+        m_editor.VisitObject(TypeInfo::Get<Brush>(), &(brush));
+        if (ImGui::Button("Update")) {
+            instanced_model->Update();
+        }
     }
 
     ImGui::End();
