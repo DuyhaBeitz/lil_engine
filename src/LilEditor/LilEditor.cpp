@@ -274,7 +274,8 @@ void Lil::Editor::DrawLayout() {
 
 void Lil::Editor::DrawPainter() {
     if (ImGui::Begin("Painter")) {
-        
+        m_editor.SetCurrentObjectName("Brush");
+        m_editor.VisitObject(TypeInfo::Get<Brush>(), &(m_painter.GetBrush(dynamic_cast<InstancedModelComponent*>(m_selected_component))));
     }
 
     ImGui::End();
@@ -617,6 +618,13 @@ void Lil::Editor::Draw() {
     DrawLayout();
     DrawEnvironment();
     DrawMenuBar();
+
+    if (m_selected_actor && m_selected_actor->GetTypeInfo().Name() == "Heightmap" &&
+        m_selected_component &&
+        m_selected_component->GetTypeInfo().Name() == "InstancedModelComponent"
+    ) {
+        DrawPainter();
+    }
 
     if (ImGui::Begin("Creation")) {
         for (auto& [name, ti] : Lil::Reflection::Get().Types()) {

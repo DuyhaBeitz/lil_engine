@@ -59,7 +59,7 @@ float Heightmap::GetHeightAt(float x, float z) {
     UnloadImage(img);
 
     // HeightmapModel multiplies the normalized height by size.y.
-    return height * GetScale().y;
+    return GetPosition().y + height * GetScale().y;
 }
 
 void Heightmap::RetrieveComponentPtrs() {

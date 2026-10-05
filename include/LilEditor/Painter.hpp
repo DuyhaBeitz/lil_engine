@@ -3,30 +3,49 @@
 #include "GameObject.hpp"
 #include "Reflection.hpp"
 #include <unordered_map>
-#include "PoissonSampler2D.hpp"
-
-struct Brush {
-    float radius  = 1.0f;
-    float density = 1.0f;
-    PoissonSampler2D sampler;
-    float min_rad = 3.0f;
-    float max_rad = 4.0f;
-
-    int grid_size = 128;
-    float cell_size = 1.0f;
-    std::unordered_map<int, float> density_map;
-};
 
 class InstancedModelComponent;
 class Heightmap;
+
+struct InstanceInfo {
+    Vector3    position;
+    Quaternion rotation;
+    Vector3    scale;
+    Color      color;
+    uint64_t   cell_key;
+};
+
+struct Brush : public Reflectable {
+    LIL_REFLECTABLE()
+    float radius  = 5.0f;
+    float min_distance = 2.0f;
+
+    void Update(InstancedModelComponent *instanced_model);
+    bool TryAdd(const Vector3& p, const Quaternion& rot, const Vector3& scale);
+    void Remove(int i);
+    bool Dab(float x, float z, Heightmap* heightmap);
+    bool IsTooClose(float x, float z) const;
+
+    std::vector<InstanceInfo> instances{};
+
+    float cell_size = 5.0f;       // >= min_distance
+    std::unordered_map<uint64_t, std::vector<int>> grid; // holds vector of indexes pointing to parallel vectors
+
+};
+LIL_REFLECT(Brush, bases<>,
+    field(radius),
+    field(min_distance)
+)
 
 class Painter {
 private:
     // keys are IDs of InstancedModelComponent
     std::unordered_map<uuids::uuid, Brush> m_brush_settings;
+    Vector2 m_prev_pos = {0.0f, 0.0f};
 
 public:
     Painter() = default;
 
     void DrawBrush(Vector2 screen_pos, int render_w, int render_h, Camera camera, Heightmap* heightmap, InstancedModelComponent *instanced_model);
+    Brush& GetBrush(InstancedModelComponent *instanced_model);
 };

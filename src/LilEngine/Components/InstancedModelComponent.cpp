@@ -21,10 +21,9 @@ bool InstancedModelComponent::CheckMapping() {
     return false;
 }
 
-void InstancedModelComponent::Draw()
-{
+void InstancedModelComponent::Draw() {
     Component::Draw();
-
+    if (m_count == 0) return;
     if (R3D_Model* m = GetModel()) R3D_DrawModelInstanced(*m, m_instances, m_count);
 }
 
@@ -48,10 +47,10 @@ void InstancedModelComponent::UnmapInstances() {
         R3D_INSTANCE_COLOR
     );
 
-    Vector3* m_positions        = nullptr;
-    PackedRotation* m_rotations = nullptr;
-    PackedScale* m_scales       = nullptr;
-    Color* m_colors             = nullptr;
+    m_positions = nullptr;
+    m_rotations = nullptr;
+    m_scales    = nullptr;
+    m_colors    = nullptr;
 }
 
 void InstancedModelComponent::SetInstancePosition(Vector3 position, int i) {if (CheckMapping()) m_positions[i] = position;}
@@ -83,8 +82,28 @@ void InstancedModelComponent::SetInstanceTransform(Transform transform, int i) {
 void InstancedModelComponent::SetInstanceColor(Color color, int i) {if (CheckMapping()) {m_colors[i] = color;}}
 
 void InstancedModelComponent::ClearInstances() {
-    m_count = 0;
+    UnmapInstances();
     R3D_UnloadInstanceBuffer(m_instances);
+    m_count = 0;
+}
+
+void InstancedModelComponent::Resize(int size) {
+    if (size < 0) size = 0;
+    if (size == m_count) return;
+    if (size == 0) {
+        ClearInstances();
+        return;
+    }
+
+    if (m_count == 0) {
+        m_instances = R3D_LoadInstanceBufferEx(size, instance_layout);
+    }
+    else if (size > m_count) {
+        R3D_ResizeInstanceBuffer(&m_instances, size, true);
+    }
+    // if size < m_count don't do anything, R3D_DrawModelInstanced accepts count
+
+    m_count = size;
 }
 
 void InstancedModelComponent::AddInstance(Transform transform) {

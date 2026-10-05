@@ -1,13 +1,54 @@
 {
     "value0": {
         "texture_keys": [
-            "heightmap.png",
-            "GroundSand005_NRM_1K.jpg",
+            "GroundSand005_COL_1K.jpg",
             "skybox_1.png",
-            "GroundSand005_COL_1K.jpg"
+            "GroundSand005_NRM_1K.jpg",
+            "heightmap.png"
         ],
         "sound_keys": [],
         "m_model_settings": [
+            {
+                "key": "palm_tree_realistic.glb",
+                "value": {
+                    "material_settings": [
+                        {
+                            "uvScale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "uvOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "albedo": {
+                                "texture_key": "None",
+                                "color": {
+                                    "r": 255,
+                                    "g": 255,
+                                    "b": 255,
+                                    "a": 255
+                                }
+                            },
+                            "normal": {
+                                "texture_key": "None",
+                                "scale": 1.0
+                            },
+                            "emission": {
+                                "texture_key": "None",
+                                "energy": 0.0
+                            },
+                            "orm": {
+                                "texture_key": "None",
+                                "occlusion": 1.0,
+                                "roughness": 0.0,
+                                "metalness": 0.0,
+                                "specular": 0.5
+                            }
+                        }
+                    ]
+                }
+            },
             {
                 "key": "Gen_Heightmap_From_heightmap.png",
                 "value": {
@@ -79,9 +120,9 @@
             },
             "value1": 1.0,
             "value2": {
-                "value0": 0,
-                "value1": 0,
-                "value2": 0
+                "value0": 3,
+                "value1": 4,
+                "value2": 4
             }
         },
         "ssao": {
@@ -193,15 +234,14 @@
     "value2": {
         "m_simulation_going": false,
         "m_simulation_speed": 1.0,
-        "m_physics_debug": false,
         "m_components": [
             {
                 "key": {
-                    "value0": "a8e51774-49f2-4a34-89e7-4caa8675a8de"
+                    "value0": "fa93dac0-01f8-46e4-ad19-c3130d788fee"
                 },
                 "value": {
                     "polymorphic_id": 2147483649,
-                    "polymorphic_name": "LightComponent",
+                    "polymorphic_name": "InstancedModelComponent",
                     "ptr_wrapper": {
                         "valid": 1,
                         "data": {
@@ -209,7 +249,7 @@
                                 "value0": {
                                     "value0": {
                                         "value0": {
-                                            "value0": "a8e51774-49f2-4a34-89e7-4caa8675a8de"
+                                            "value0": "fa93dac0-01f8-46e4-ad19-c3130d788fee"
                                         }
                                     },
                                     "value1": {
@@ -226,9 +266,9 @@
                                                 "w": 1.0
                                             },
                                             "scale": {
-                                                "x": 1.0,
-                                                "y": 1.0,
-                                                "z": 1.0
+                                                "x": 128.0,
+                                                "y": 5.0,
+                                                "z": 128.0
                                             }
                                         }
                                     }
@@ -253,19 +293,70 @@
                                 },
                                 "m_is_required": false
                             },
-                            "m_enabled": true,
-                            "m_lumen": 15.0,
-                            "m_color": {
-                                "r": 255,
-                                "g": 255,
-                                "b": 255,
-                                "a": 255
+                            "m_model_key": "palm_tree_realistic.glb"
+                        }
+                    }
+                }
+            },
+            {
+                "key": {
+                    "value0": "de3f18da-0a2f-47ff-ac23-f662f1b2da17"
+                },
+                "value": {
+                    "polymorphic_id": 2147483650,
+                    "polymorphic_name": "ModelComponent",
+                    "ptr_wrapper": {
+                        "valid": 1,
+                        "data": {
+                            "value0": {
+                                "value0": {
+                                    "value0": {
+                                        "value0": {
+                                            "value0": "de3f18da-0a2f-47ff-ac23-f662f1b2da17"
+                                        }
+                                    },
+                                    "value1": {
+                                        "value0": {
+                                            "translation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0
+                                            },
+                                            "rotation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0,
+                                                "w": 1.0
+                                            },
+                                            "scale": {
+                                                "x": 128.0,
+                                                "y": 5.0,
+                                                "z": 128.0
+                                            }
+                                        }
+                                    }
+                                },
+                                "m_local_transform": {
+                                    "translation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0,
+                                        "w": 1.0
+                                    },
+                                    "scale": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
+                                    }
+                                },
+                                "m_is_required": true
                             },
-                            "m_type": 0,
-                            "m_cast_shadows": true,
-                            "m_range": 500.0,
-                            "m_shadow_softness": 3.200000047683716,
-                            "m_depth_bias": 0.0010000000474974514
+                            "m_model_key": "Gen_Heightmap_From_heightmap.png"
                         }
                     }
                 }
@@ -275,7 +366,7 @@
                     "value0": "c8b39b84-2785-475d-9d73-2856d34f825c"
                 },
                 "value": {
-                    "polymorphic_id": 2147483650,
+                    "polymorphic_id": 2147483651,
                     "polymorphic_name": "ColliderComponent",
                     "ptr_wrapper": {
                         "valid": 1,
@@ -373,11 +464,11 @@
             },
             {
                 "key": {
-                    "value0": "de3f18da-0a2f-47ff-ac23-f662f1b2da17"
+                    "value0": "a8e51774-49f2-4a34-89e7-4caa8675a8de"
                 },
                 "value": {
-                    "polymorphic_id": 2147483651,
-                    "polymorphic_name": "ModelComponent",
+                    "polymorphic_id": 2147483652,
+                    "polymorphic_name": "LightComponent",
                     "ptr_wrapper": {
                         "valid": 1,
                         "data": {
@@ -385,7 +476,7 @@
                                 "value0": {
                                     "value0": {
                                         "value0": {
-                                            "value0": "de3f18da-0a2f-47ff-ac23-f662f1b2da17"
+                                            "value0": "a8e51774-49f2-4a34-89e7-4caa8675a8de"
                                         }
                                     },
                                     "value1": {
@@ -402,9 +493,9 @@
                                                 "w": 1.0
                                             },
                                             "scale": {
-                                                "x": 128.0,
-                                                "y": 5.0,
-                                                "z": 128.0
+                                                "x": 1.0,
+                                                "y": 1.0,
+                                                "z": 1.0
                                             }
                                         }
                                     }
@@ -427,15 +518,82 @@
                                         "z": 1.0
                                     }
                                 },
-                                "m_is_required": true
+                                "m_is_required": false
                             },
-                            "m_model_key": "Gen_Heightmap_From_heightmap.png"
+                            "m_enabled": true,
+                            "m_lumen": 15.0,
+                            "m_color": {
+                                "r": 255,
+                                "g": 255,
+                                "b": 255,
+                                "a": 255
+                            },
+                            "m_type": 0,
+                            "m_cast_shadows": true,
+                            "m_range": 500.0,
+                            "m_shadow_softness": 3.200000047683716,
+                            "m_depth_bias": 0.0010000000474974514
                         }
                     }
                 }
             }
         ],
         "m_actors": [
+            {
+                "key": {
+                    "value0": "d6f4bbd5-a7c6-407e-969e-b5031b974b23"
+                },
+                "value": {
+                    "polymorphic_id": 2147483653,
+                    "polymorphic_name": "Heightmap",
+                    "ptr_wrapper": {
+                        "valid": 1,
+                        "data": {
+                            "value0": {
+                                "component_ids": [
+                                    {
+                                        "value0": "de3f18da-0a2f-47ff-ac23-f662f1b2da17"
+                                    },
+                                    {
+                                        "value0": "c8b39b84-2785-475d-9d73-2856d34f825c"
+                                    },
+                                    {
+                                        "value0": "fa93dac0-01f8-46e4-ad19-c3130d788fee"
+                                    }
+                                ],
+                                "value0": {
+                                    "value0": {
+                                        "value0": {
+                                            "value0": "d6f4bbd5-a7c6-407e-969e-b5031b974b23"
+                                        }
+                                    },
+                                    "value1": {
+                                        "value0": {
+                                            "translation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0
+                                            },
+                                            "rotation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0,
+                                                "w": 1.0
+                                            },
+                                            "scale": {
+                                                "x": 128.0,
+                                                "y": 5.0,
+                                                "z": 128.0
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "m_heightmap_texture_key": "heightmap.png"
+                        }
+                    }
+                }
+            },
             {
                 "key": {
                     "value0": "df282bfa-511f-4278-8449-ad094f047de1"
@@ -477,58 +635,6 @@
                                     }
                                 }
                             }
-                        }
-                    }
-                }
-            },
-            {
-                "key": {
-                    "value0": "d6f4bbd5-a7c6-407e-969e-b5031b974b23"
-                },
-                "value": {
-                    "polymorphic_id": 2147483652,
-                    "polymorphic_name": "Heightmap",
-                    "ptr_wrapper": {
-                        "valid": 1,
-                        "data": {
-                            "value0": {
-                                "component_ids": [
-                                    {
-                                        "value0": "de3f18da-0a2f-47ff-ac23-f662f1b2da17"
-                                    },
-                                    {
-                                        "value0": "c8b39b84-2785-475d-9d73-2856d34f825c"
-                                    }
-                                ],
-                                "value0": {
-                                    "value0": {
-                                        "value0": {
-                                            "value0": "d6f4bbd5-a7c6-407e-969e-b5031b974b23"
-                                        }
-                                    },
-                                    "value1": {
-                                        "value0": {
-                                            "translation": {
-                                                "x": 0.0,
-                                                "y": 0.0,
-                                                "z": 0.0
-                                            },
-                                            "rotation": {
-                                                "x": 0.0,
-                                                "y": 0.0,
-                                                "z": 0.0,
-                                                "w": 1.0
-                                            },
-                                            "scale": {
-                                                "x": 128.0,
-                                                "y": 5.0,
-                                                "z": 128.0
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-                            "m_heightmap_texture_key": "heightmap.png"
                         }
                     }
                 }

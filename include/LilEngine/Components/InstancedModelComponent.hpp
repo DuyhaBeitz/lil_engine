@@ -39,6 +39,7 @@ public:
 
     void SetModel(std::string model_key);
 
+    void Resize(int size);
     void MapInstances();
     void UnmapInstances();
 
