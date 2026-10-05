@@ -36,21 +36,69 @@ void EndTargetMode() {
 #define TOGGLE_FULLSCREEN_KEY KEY_F11
 #define CONFIG_PATH "lil_config.ini"
 
+// if the file doesn't exist, the vector just will be empty
+#define PARSE_FIELD(type, section, field, variable, fallback) \
+{\
+auto v = parser.aConfigVec<type>(section, field);\
+if (v.size() > 0) variable = v[0];\
+else variable = fallback;\
+}
+
 void Lil::Editor::ReadConfig() {
     ConfigParser parser = ConfigParser(CONFIG_PATH);
-    // if the file doesn't exist, the vector just will be empty
-    auto v = parser.aConfigVec<std::string>("Editor", "scene");
-    if (v.size() > 0) m_loaded_scene = v[0];
+    
+    PARSE_FIELD(std::string, "Editor", "scene", m_loaded_scene, "")
 
-    // // a whole vector 
-    // vector<string> c14 = parser.aConfigVec<string>("Section1", "example4");
+    int wx;
+    int wy;
+    PARSE_FIELD(int, "Editor", "window_x", wx, 0)
+    PARSE_FIELD(int, "Editor", "window_y", wy, 0)
+    SetWindowPosition(wx, wy);
 
-    // // or a single entry of a vector
-    // double c222 = parser.aConfig<double>("Section2", "example2", 2);
+    int ww;
+    int wh;
+    PARSE_FIELD(int, "Editor", "window_w", ww, 1920)
+    PARSE_FIELD(int, "Editor", "window_h", wh, 1080)
+    SetWindowSize(ww, wh);
+
+    float cx;
+    float cy;
+    float cz;
+    PARSE_FIELD(float, "Editor", "cam_x", cx, 0.0f)
+    PARSE_FIELD(float, "Editor", "cam_y", cy, 0.0f)
+    PARSE_FIELD(float, "Editor", "cam_z", cz, 0.0f)
+
+    float tx;
+    float ty;
+    float tz;
+    PARSE_FIELD(float, "Editor", "cam_target_x", tx, 0.0f)
+    PARSE_FIELD(float, "Editor", "cam_target_y", ty, 0.0f)
+    PARSE_FIELD(float, "Editor", "cam_target_z", tz, 0.0f)
+
+    m_viewport_camera.position = Vector3{cx, cy, cz};
+    m_viewport_camera.target = Vector3{tx, ty, tz};
 }
 
 void Lil::Editor::WriteConfig() {
-    std::string content = TextFormat("[Editor]\nscene = %s", m_loaded_scene.c_str());
+    std::string content = TextFormat(
+        "[Editor]\n"
+        "window_x = %f\n"
+        "window_y = %f\n"
+        "window_w = %i\n"
+        "window_h = %i\n"
+        "scene = %s\n"
+        "cam_x = %f\n"
+        "cam_y = %f\n"
+        "cam_z = %f\n"
+        "cam_target_x = %f\n"
+        "cam_target_y = %f\n"
+        "cam_target_z = %f",
+        GetWindowPosition().x, GetWindowPosition().y,
+        GetScreenWidth(), GetScreenHeight(),
+        m_loaded_scene.c_str(),        
+        m_viewport_camera.position.x, m_viewport_camera.position.y, m_viewport_camera.position.z,
+        m_viewport_camera.target.x,   m_viewport_camera.target.y,   m_viewport_camera.target.z
+    );
     WriteFile(
         content,
         CONFIG_PATH

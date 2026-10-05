@@ -62,7 +62,7 @@ int main() {
     Lil::Editor::Get().Close();
     Lil::Resources().Unload();
     CloseAudioDevice();
-    CloseWindow();    
+    CloseWindow();
 
     return 0;
 }
