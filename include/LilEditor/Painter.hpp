@@ -6,14 +6,7 @@
 
 class InstancedModelComponent;
 class Heightmap;
-
-struct InstanceInfo {
-    Vector3    position;
-    Quaternion rotation;
-    Vector3    scale;
-    Color      color;
-    uint64_t   cell_key;
-};
+class InstanceInfo;
 
 struct Brush : public Reflectable {
     LIL_REFLECTABLE()
@@ -21,16 +14,18 @@ struct Brush : public Reflectable {
     float min_distance = 2.0f;
     uint iterations = 1;
 
-    void Update(InstancedModelComponent *instanced_model);
     bool TryAdd(const Vector3& p, const Quaternion& rot, const Vector3& scale);
     void Remove(int i);
     bool Dab(float x, float z, Heightmap* heightmap);
     bool IsTooClose(float x, float z) const;
 
-    std::vector<InstanceInfo> instances{};
+    std::vector<uint64_t> instance_keys;
 
     float cell_size = 5.0f;       // >= min_distance
     std::unordered_map<uint64_t, std::vector<int>> grid; // holds vector of indexes pointing to parallel vectors
+    InstancedModelComponent *instanced_model;
+    std::vector<InstanceInfo>* Instances();
+    std::vector<InstanceInfo>* Instances() const;
 };
 LIL_REFLECT(Brush, bases<>,
     field(radius),

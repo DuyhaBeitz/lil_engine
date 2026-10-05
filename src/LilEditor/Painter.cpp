@@ -16,23 +16,6 @@ void WorldToCell(float x, float z, float cell_size, int32_t& cx, int32_t& cz) {
     cz = static_cast<int32_t>(std::floor(z / cell_size));
 }
 
-void Brush::Update(InstancedModelComponent *instanced_model) {
-    instanced_model->Resize(instances.size());
-    if (instances.empty()) return;
-    instanced_model->MapInstances();
-
-    for (int i = 0; i < instances.size(); i++) {
-        const auto& instance = instances[i];
-
-        instanced_model->SetInstancePosition(instance.position, i);
-        instanced_model->SetInstanceRotation(instance.rotation, i);
-        instanced_model->SetInstanceScale(instance.scale, i);
-        instanced_model->SetInstanceColor(instance.color, i);
-    }
-
-    instanced_model->UnmapInstances();
-}
-
 bool Brush::TryAdd(const Vector3 &p, const Quaternion &rot, const Vector3 &scale) {
     if (IsTooClose(p.x, p.z)) return false;
 
@@ -40,23 +23,22 @@ bool Brush::TryAdd(const Vector3 &p, const Quaternion &rot, const Vector3 &scale
     WorldToCell(p.x, p.z, cell_size, cx, cz);
     uint64_t key = CellKey(cx, cz);
 
-    instances.push_back(InstanceInfo{
-        .position = p,
-        .rotation = rot,
-        .scale    = scale,
-        .color    = WHITE,
-        .cell_key = key
-    });
+    Instances()->push_back(InstanceInfo(p, rot, scale, WHITE));
+    instance_keys.push_back(key);
 
-    grid[key].push_back(instances.size()-1);
+    grid[key].push_back(Instances()->size()-1);    
     return true;
 }
 
 void Brush::Remove(int i) {
-    const int last = static_cast<int>(instances.size()) - 1;
+    std::cout << "Removing " << i << std::endl;
 
-    const uint64_t removed_key = instances[i].cell_key;
+    auto* instances = Instances();
+    const int last = static_cast<int>(instances->size()) - 1;
 
+    const uint64_t removed_key = instance_keys[i];
+
+    // Remove i from its grid cell.
     auto old_it = grid.find(removed_key);
     if (old_it != grid.end()) {
         auto& cell = old_it->second;
@@ -67,23 +49,39 @@ void Brush::Remove(int i) {
     }
 
     if (i != last) {
-        const uint64_t affected_cell_key = instances[last].cell_key;
-        instances[i] = std::move(instances[last]);
+        // Move the last instance into the removed slot.
+        (*instances)[i] = std::move((*instances)[last]);
 
-        auto affected_it = grid.find(affected_cell_key);
+        // Move the last instance's key into the same slot.
+        const uint64_t moved_key = instance_keys[last];
+        instance_keys[i] = moved_key;
+
+        // The grid still refers to `last`, so change it to `i`.
+        auto affected_it = grid.find(moved_key);
         if (affected_it != grid.end()) {
             auto& affected_cell = affected_it->second;
 
-            auto it = std::find(affected_cell.begin(), affected_cell.end(), last);
-            if (it != affected_cell.end()) *it = i;
+            auto it = std::find(
+                affected_cell.begin(),
+                affected_cell.end(),
+                last
+            );
+
+            if (it != affected_cell.end())
+                *it = i;
         }
     }
 
-    instances.pop_back();
+    // Remove the duplicated last elements.
+    instances->pop_back();
+    instance_keys.pop_back();
 
-    // Remove empty cell.
+    // Remove empty grid cell.
     auto it = grid.find(removed_key);
-    if (it != grid.end() && it->second.empty()) grid.erase(it);
+    if (it != grid.end() && it->second.empty())
+        grid.erase(it);
+
+    std::cout << "Removing DONE" << std::endl;
 }
 
 bool Brush::IsTooClose(float x, float z) const {
@@ -94,12 +92,20 @@ bool Brush::IsTooClose(float x, float z) const {
             auto it = grid.find(CellKey(cx + dx, cz + dz));
             if (it == grid.end()) continue;
             for (uint32_t i : it->second) {
-                float ddx = instances[i].position.x - x;
-                float ddz = instances[i].position.z - z;
+                float ddx = (*Instances())[i].position.x - x;
+                float ddz = (*Instances())[i].position.z - z;
                 if (ddx*ddx + ddz*ddz < min_distance*min_distance) return true;
             }
         }
     return false;
+}
+
+std::vector<InstanceInfo> *Brush::Instances() {
+    return &(instanced_model->m_infos);
+}
+
+std::vector<InstanceInfo> *Brush::Instances() const {
+    return &(instanced_model->m_infos);
 }
 
 float GetRandomFloat(float min, float max) {
@@ -120,7 +126,23 @@ void Painter::DrawBrush(Vector2 screen_pos, int render_w, int render_h, Camera c
     RayCollision res{0};
     Actor* pick = Lil::World().PickActor(screen_pos, render_w, render_h, camera, &res);
 
-    Brush& brush = GetBrush(instanced_model);
+    auto it = m_brush_settings.find(instanced_model->GetID());
+    if (it == m_brush_settings.end()) {
+        Brush& brush = m_brush_settings[instanced_model->GetID()];
+        brush.instanced_model = instanced_model;
+        brush.instance_keys.reserve(instanced_model->m_infos.size());
+        if (instanced_model->m_infos.size() > 0) {
+            for (int i = 0; i < instanced_model->m_infos.size(); i++) {
+                auto& info = instanced_model->m_infos[i];
+                int32_t cx, cz;
+                WorldToCell(info.position.x, info.position.z, brush.cell_size, cx, cz);
+                uint64_t key = CellKey(cx, cz);
+                brush.instance_keys.push_back(key);
+                brush.grid[key].push_back(i); 
+            }
+        }
+    }
+    Brush& brush = m_brush_settings[instanced_model->GetID()];
 
     float c = (IsKeyDown(KEY_RIGHT_BRACKET) - IsKeyDown(KEY_LEFT_BRACKET));
     brush.radius += c*brush.radius*GetFrameTime();
@@ -134,7 +156,7 @@ void Painter::DrawBrush(Vector2 screen_pos, int render_w, int render_h, Camera c
             for (int i = 0; i < brush.iterations; i++) {
                 placed |= brush.Dab(res.point.x, res.point.z, heightmap);
             }
-            if (placed) brush.Update(instanced_model);
+            if (placed) instanced_model->Update();
         }
         else if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
             int32_t cx, cz;
@@ -153,7 +175,7 @@ void Painter::DrawBrush(Vector2 screen_pos, int render_w, int render_h, Camera c
                     if (it == brush.grid.end()) continue;
 
                     for (auto& i : it->second) {
-                        Vector3 p = brush.instances[i].position;
+                        Vector3 p = (*brush.Instances())[i].position;
                         const float ddx = p.x - res.point.x;
                         const float ddz = p.z - res.point.z;
                         if (ddx*ddx + ddz*ddz < radius_sq) {
@@ -167,7 +189,7 @@ void Painter::DrawBrush(Vector2 screen_pos, int render_w, int render_h, Camera c
             std::sort(to_remove.rbegin(), to_remove.rend());
             to_remove.erase(std::unique(to_remove.begin(), to_remove.end()), to_remove.end());
             for (auto& i : to_remove) brush.Remove(i);
-            if (to_remove.size() > 0) brush.Update(instanced_model);
+            if (to_remove.size() > 0) instanced_model->Update();
         }
     };
 }
