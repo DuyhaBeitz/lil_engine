@@ -19,6 +19,7 @@ struct Brush : public Reflectable {
     LIL_REFLECTABLE()
     float radius  = 5.0f;
     float min_distance = 2.0f;
+    uint iterations = 1;
 
     void Update(InstancedModelComponent *instanced_model);
     bool TryAdd(const Vector3& p, const Quaternion& rot, const Vector3& scale);
@@ -30,11 +31,11 @@ struct Brush : public Reflectable {
 
     float cell_size = 5.0f;       // >= min_distance
     std::unordered_map<uint64_t, std::vector<int>> grid; // holds vector of indexes pointing to parallel vectors
-
 };
 LIL_REFLECT(Brush, bases<>,
     field(radius),
-    field(min_distance)
+    field(min_distance),
+    field(iterations)
 )
 
 class Painter {

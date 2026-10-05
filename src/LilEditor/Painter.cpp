@@ -119,14 +119,22 @@ bool Brush::Dab(float x, float z, Heightmap* heightmap) {
 void Painter::DrawBrush(Vector2 screen_pos, int render_w, int render_h, Camera camera, Heightmap* heightmap, InstancedModelComponent *instanced_model) {
     RayCollision res{0};
     Actor* pick = Lil::World().PickActor(screen_pos, render_w, render_h, camera, &res);
+
+    Brush& brush = GetBrush(instanced_model);
+
+    float c = (IsKeyDown(KEY_RIGHT_BRACKET) - IsKeyDown(KEY_LEFT_BRACKET));
+    brush.radius += c*brush.radius*GetFrameTime();
+    if (brush.radius <= brush.min_distance) brush.radius = brush.min_distance;
+
     if (pick && res.hit) {
-        Brush& brush = GetBrush(instanced_model);
-        DrawSphereWires(res.point, brush.radius, 12, 12, Fade(RED, 0.5f));
+        DrawSphere(res.point, brush.radius, Fade(PURPLE, 0.2f));
 
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-            if (brush.Dab(res.point.x, res.point.z, heightmap)) {
-                brush.Update(instanced_model);
+            bool placed = false;
+            for (int i = 0; i < brush.iterations; i++) {
+                placed |= brush.Dab(res.point.x, res.point.z, heightmap);
             }
+            if (placed) brush.Update(instanced_model);
         }
         else if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
             int32_t cx, cz;
@@ -158,11 +166,8 @@ void Painter::DrawBrush(Vector2 screen_pos, int render_w, int render_h, Camera c
             // sort descending because erasing moves indexes and dedup
             std::sort(to_remove.rbegin(), to_remove.rend());
             to_remove.erase(std::unique(to_remove.begin(), to_remove.end()), to_remove.end());
-            for (auto& i : to_remove) {
-                brush.Remove(i);
-            }
+            for (auto& i : to_remove) brush.Remove(i);
             if (to_remove.size() > 0) brush.Update(instanced_model);
         }
-        brush.Update(instanced_model);
     };
 }
