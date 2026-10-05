@@ -76,6 +76,7 @@ namespace Lil {
         GizmoFlags m_gizmo_space = GIZMO_DISABLED;
 
         void DropSelectedActor();
+        void DropSelectedComponent();
         void SelectActor(Actor* actor);
 
         void LoadScene();

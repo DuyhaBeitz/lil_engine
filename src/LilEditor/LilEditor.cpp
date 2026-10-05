@@ -36,6 +36,10 @@ void EndTargetMode() {
 
 void Lil::Editor::DropSelectedActor() {
     m_selected_actor = nullptr;
+    DropSelectedComponent();
+}
+
+void Lil::Editor::DropSelectedComponent() {
     m_selected_component = nullptr;
 }
 
@@ -169,6 +173,7 @@ void Lil::Editor::DrawComponents() {
                         m_selected_actor->DeattachComponent(component);
                         Lil::World().DestroyComponent(component);
                         ImGui::PopID();
+                        if (component == m_selected_component) DropSelectedComponent();
                         continue;
                     }
                 }
