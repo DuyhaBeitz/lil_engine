@@ -74,26 +74,31 @@ void Lil::Editor::SelectActor(Actor *actor) {
 }
 
 void Lil::Editor::LoadScene(std::string filename) {
-    Lil::SceneManager().LoadScene(filename);
-    DropSelectedActor();
-    Notify("Loaded file: " + filename);
-    m_loaded_scene = filename;
+    try {
+        Lil::SceneManager().LoadScene(filename);
+        DropSelectedActor();
+        Notify("Loaded file: " + filename);
+        m_loaded_scene = filename;   
+    }
+    catch (const cereal::Exception& e) {
+        Notify(std::string("Failed to load: ") + e.what());
+    }
 }
 
 void Lil::Editor::SaveScene(std::string filename) {
-    Lil::SceneManager().SaveScene(filename);
-    Notify("Saved file: " + filename);
+    try {
+        Lil::SceneManager().SaveScene(filename);
+        Notify("Saved file: " + filename);
+    }
+    catch (const cereal::Exception& e) {
+        Notify(std::string("Failed to save: ") + e.what());
+    }
 }
 
 void Lil::Editor::LoadScene() {
     const char* source = BrowseSceneDialog();
     if (source) {
-        try {
-            LoadScene(source);
-        }
-        catch (const cereal::Exception& e) {
-            Notify(std::string("Failed to load: ") + e.what());
-        }
+        LoadScene(source);
     }
     else {
         Notify("Aborted");
@@ -103,12 +108,7 @@ void Lil::Editor::LoadScene() {
 void Lil::Editor::SaveScene() {
     const char* source = SaveSceneDialog();
     if (source) {
-        try {
-            SaveScene(source);
-        }
-        catch (const cereal::Exception& e) {
-            Notify(std::string("Failed to save: ") + e.what());
-        }
+        SaveScene(source);
     }
     else {
         Notify("Aborted");
