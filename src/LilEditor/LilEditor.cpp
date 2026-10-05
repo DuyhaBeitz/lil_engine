@@ -4,6 +4,7 @@
 #include "Components/InstancedModelComponent.hpp"
 #include "Heightmap.hpp"
 #include "FileDialogHelper.hpp"
+#include "configparser.hpp"
 
 Lil::Editor &Lil::Editor::Get() {
     static Lil::Editor instance;
@@ -33,6 +34,28 @@ void EndTargetMode() {
 #define TOGGLE_SIMULATION_KEY KEY_F
 #define TOGGLE_DEBUG_KEY KEY_V
 #define TOGGLE_FULLSCREEN_KEY KEY_F11
+#define CONFIG_PATH "lil_config.ini"
+
+void Lil::Editor::ReadConfig() {
+    ConfigParser parser = ConfigParser(CONFIG_PATH);
+    // if the file doesn't exist, the vector just will be empty
+    auto v = parser.aConfigVec<std::string>("Editor", "scene");
+    if (v.size() > 0) m_loaded_scene = v[0];
+
+    // // a whole vector 
+    // vector<string> c14 = parser.aConfigVec<string>("Section1", "example4");
+
+    // // or a single entry of a vector
+    // double c222 = parser.aConfig<double>("Section2", "example2", 2);
+}
+
+void Lil::Editor::WriteConfig() {
+    std::string content = TextFormat("[Editor]\nscene = %s", m_loaded_scene.c_str());
+    WriteFile(
+        content,
+        CONFIG_PATH
+    );
+}
 
 void Lil::Editor::DropSelectedActor() {
     m_selected_actor = nullptr;
@@ -50,14 +73,23 @@ void Lil::Editor::SelectActor(Actor *actor) {
     m_selected_actor = actor;
 }
 
+void Lil::Editor::LoadScene(std::string filename) {
+    Lil::SceneManager().LoadScene(filename);
+    DropSelectedActor();
+    Notify("Loaded file: " + filename);
+    m_loaded_scene = filename;
+}
+
+void Lil::Editor::SaveScene(std::string filename) {
+    Lil::SceneManager().SaveScene(filename);
+    Notify("Saved file: " + filename);
+}
+
 void Lil::Editor::LoadScene() {
     const char* source = BrowseSceneDialog();
     if (source) {
         try {
-            std::string filename = source;
-            Lil::SceneManager().LoadScene(filename);
-            DropSelectedActor();
-            Notify("Loaded file: " + filename);
+            LoadScene(source);
         }
         catch (const cereal::Exception& e) {
             Notify(std::string("Failed to load: ") + e.what());
@@ -72,9 +104,7 @@ void Lil::Editor::SaveScene() {
     const char* source = SaveSceneDialog();
     if (source) {
         try {
-            std::string filename = source;
-            Lil::SceneManager().SaveScene(filename);
-            Notify("Saved file: " + filename);
+            SaveScene(source);
         }
         catch (const cereal::Exception& e) {
             Notify(std::string("Failed to save: ") + e.what());
@@ -129,6 +159,9 @@ void Lil::Editor::Init() {
     m_layout_render_target = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
     InitUI();
     SetExitKey(KEY_NULL);
+
+    ReadConfig();
+    if (m_loaded_scene != "") LoadScene(m_loaded_scene);
 }
 
 void Lil::Editor::DrawInspector() {
@@ -607,6 +640,10 @@ void Lil::Editor::DrawNotifications() {
             [](const Notification& n) { return n.TimeLeft() <= 0; }),
         m_notifications.end()
     );
+}
+
+void Lil::Editor::Close() {
+    WriteConfig();
 }
 
 void Lil::Editor::Draw() {

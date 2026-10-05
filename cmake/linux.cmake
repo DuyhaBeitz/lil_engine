@@ -104,3 +104,14 @@ target_include_directories(tinyfiledialogs PUBLIC
 target_link_libraries(lil_engine PUBLIC
     tinyfiledialogs
 )
+
+# configparser
+set(CONFPARS_DIR ${CMAKE_SOURCE_DIR}/include/external/configparser)
+add_library(configparser ${CONFPARS_DIR}/configparser.cpp)
+target_include_directories(configparser PUBLIC 
+    ${CONFPARS_DIR}
+)
+
+target_link_libraries(lil_engine PUBLIC
+    configparser
+)

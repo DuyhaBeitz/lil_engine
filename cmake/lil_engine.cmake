@@ -20,9 +20,10 @@ set(_lil_engine_include_dirs
     "${_lil_engine_root}/include/external/imgui"
     "${_lil_engine_root}/include/external/rlImGui-Raylib/include"
     "${_lil_engine_root}/include/external/raylib-gizmo/include"
+    "${_lil_engine_root}/include/external/configparser"
 )
 
-set(_lil_engine_archives lil_engine lil_editor imgui r3d raylib-gizmo rlImGui Jolt tinyfiledialogs)
+set(_lil_engine_archives lil_engine lil_editor imgui r3d raylib-gizmo rlImGui Jolt tinyfiledialogs configparser)
 
 foreach(_lib ${_lil_engine_archives})
     if(NOT TARGET lil_engine::${_lib})
@@ -38,5 +39,5 @@ set_target_properties(lil_engine::lil_engine PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES "${_lil_engine_include_dirs}"
     INTERFACE_COMPILE_DEFINITIONS "JPH_DEBUG_RENDERER"
     INTERFACE_LINK_LIBRARIES
-        "lil_engine::imgui;lil_engine::r3d;lil_engine::raylib-gizmo;lil_engine::rlImGui;lil_engine::Jolt;lil_engine::tinyfiledialogs;raylib;assimp;${_lil_engine_system_libs}"
+        "lil_engine::configparser;lil_engine::imgui;lil_engine::r3d;lil_engine::raylib-gizmo;lil_engine::rlImGui;lil_engine::Jolt;lil_engine::tinyfiledialogs;raylib;assimp;${_lil_engine_system_libs}"
 )

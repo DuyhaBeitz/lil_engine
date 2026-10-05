@@ -23,6 +23,7 @@ int main() {
             Lil::Editor::Get().Draw();
             EndDrawing();
         }
+        Lil::Editor::Get().Close();
     }
     else {
         while (!WindowShouldClose()) {
@@ -44,6 +45,7 @@ namespace Lil {
         void Init();
         void Update();
         void Draw();
+        void Close();
 
     private:
         std::vector<Notification> m_notifications;
@@ -62,6 +64,8 @@ namespace Lil {
             .projection = CAMERA_PERSPECTIVE
         };
 
+        std::string m_loaded_scene = "";
+
         bool m_cursor_enabled = true;
         bool m_physics_debug = false;
         Actor* m_selected_actor = nullptr;
@@ -75,9 +79,15 @@ namespace Lil {
         GizmoFlags m_gizmo_mode = GIZMO_TRANSLATE;
         GizmoFlags m_gizmo_space = GIZMO_DISABLED;
 
+        void ReadConfig();
+        void WriteConfig();
+
         void DropSelectedActor();
         void DropSelectedComponent();
         void SelectActor(Actor* actor);
+
+        void LoadScene(std::string filename);
+        void SaveScene(std::string filename);
 
         void LoadScene();
         void SaveScene();
