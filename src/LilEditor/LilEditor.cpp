@@ -495,6 +495,10 @@ void Lil::Editor::DrawViewport() {
         ImVec2 contentSize = ImGui::GetContentRegionAvail();
         ImVec2 viewerTopLeft = ImGui::GetCursorScreenPos();
 
+        if (IsWindowResized()) {
+            R3D_SetResolution(contentSize.x, contentSize.y);
+        }
+
         ResizeTarget(m_viewport_render_target, contentSize.x, contentSize.y);
 
         BeginTextureMode(m_viewport_render_target);
