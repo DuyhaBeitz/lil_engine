@@ -12,6 +12,7 @@ cp build/libraylib-gizmo.a           lil_engine_sdk/lib/
 cp build/librlImGui.a                lil_engine_sdk/lib/
 cp build/liblil_engine.a             lil_engine_sdk/lib/
 cp build/liblil_editor.a             lil_engine_sdk/lib/
+cp build/libconfigparser.a             lil_engine_sdk/lib/
 
 if [ -d "include" ]; then
     cp -R include/* lil_engine_sdk/include/

@@ -27,6 +27,7 @@ public:
 
 public:
     Heightmap() = default;
+    virtual ~Heightmap();
 
     virtual void SetupComponents() override;
     virtual void LayoutUpdate() override;

@@ -64,9 +64,9 @@ void Lil::Editor::ReadConfig() {
     float cx;
     float cy;
     float cz;
-    PARSE_FIELD(float, "Editor", "cam_x", cx, 0.0f)
-    PARSE_FIELD(float, "Editor", "cam_y", cy, 0.0f)
-    PARSE_FIELD(float, "Editor", "cam_z", cz, 0.0f)
+    PARSE_FIELD(float, "Editor", "cam_x", cx, 10.0f)
+    PARSE_FIELD(float, "Editor", "cam_y", cy, 10.0f)
+    PARSE_FIELD(float, "Editor", "cam_z", cz, 10.0f)
 
     float tx;
     float ty;
@@ -143,6 +143,12 @@ void Lil::Editor::SaveScene(std::string filename) {
     }
 }
 
+void Lil::Editor::ClearScene() {
+    Lil::SceneManager().ClearScene();
+    Notify("Cleared scene");
+    DropSelectedActor();
+}
+
 void Lil::Editor::LoadScene() {
     const char* source = BrowseSceneDialog();
     if (source) {
@@ -195,6 +201,7 @@ void Lil::Editor::DrawMenuBar() {
         if (ImGui::BeginMenu("File")) {
             if (ImGui::MenuItem("Load Scene", "Ctrl+Shift+L")) LoadScene();
             if (ImGui::MenuItem("Save Scene", "Ctrl+Shift+S")) SaveScene();
+            if (ImGui::MenuItem("Clear Scene", "")) ClearScene();
             ImGui::EndMenu();
         }
 

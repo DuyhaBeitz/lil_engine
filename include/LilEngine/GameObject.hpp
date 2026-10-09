@@ -18,6 +18,7 @@ public:
     LIL_SERIALIZABLE()
 
     Transformable(Transform transform = TRANSFORM_EMPTY);
+    ~Transformable() = default;
 
     void SetTransform(Transform transform);
     void SetPosition(Vector3 position);
@@ -45,6 +46,7 @@ public:
     LIL_SERIALIZABLE()
 
     Identifiable();
+    ~Identifiable() = default;
 
     const uuids::uuid& GetID() const;
     std::string GetIDString() const;

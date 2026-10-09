@@ -74,7 +74,10 @@ void Heightmap::RetrieveComponentPtrs() {
     m_collider = GetFirst<ColliderComponent>();
 }
 
-void Heightmap::SetupComponents() {
+Heightmap::~Heightmap() {}
+
+void Heightmap::SetupComponents()
+{
     m_model = Lil::World().CreateComponent<ModelComponent>();
     AttachComponent(m_model);
     m_model->MarkRequired();

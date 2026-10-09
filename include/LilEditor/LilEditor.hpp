@@ -89,6 +89,7 @@ namespace Lil {
         void LoadScene(std::string filename);
         void SaveScene(std::string filename);
 
+        void ClearScene();
         void LoadScene();
         void SaveScene();
 
