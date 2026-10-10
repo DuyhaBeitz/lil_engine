@@ -90,4 +90,6 @@ LIL_REFLECT(GameObject, (bases<Identifiable, Transformable>),
 LIL_SER_BEGIN(GameObject)
 LIL_SER_BASE(Identifiable)
 LIL_SER_BASE(Transformable)
+LIL_SER_FIELD(m_visible)
+LIL_SER_FIELD(m_raycast_active)
 LIL_SER_END()
