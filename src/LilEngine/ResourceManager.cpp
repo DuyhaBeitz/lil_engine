@@ -115,15 +115,25 @@ void ResourceManager::ModelAdd(std::string key, R3D_Model model) {
 
 void ResourceManager::ModelAdd(std::string key, std::string filename) {
     R3D_Model model = R3D_LoadModelEx(filename.c_str(), R3D_IMPORT_RETAIN_MESH_DATA);
-    ModelAdd(key, model);
+
+    std::set<int> loaded_ids{};
+    auto try_add_texture = [&loaded_ids, this](std::string key, Texture2D& texture) {
+        if (texture.id == 0 || loaded_ids.contains(texture.id)) return;
+        std::string indx = std::to_string(loaded_ids.size());
+        TextureAdd("Gen_" + indx + "_" + key, texture);
+        loaded_ids.insert(texture.id);
+    };
 
     for (int i = 0; i < model.materialCount; i++) {
         R3D_Material& mat = model.materials[i];
-        if (mat.albedo.texture.id != 0)   TextureAdd("Gen_albedo_"   + key, mat.albedo.texture);
-        if (mat.normal.texture.id != 0)   TextureAdd("Gen_normal_"   + key, mat.normal.texture);
-        if (mat.emission.texture.id != 0) TextureAdd("Gen_emission_" + key, mat.emission.texture);
-        if (mat.orm.texture.id != 0)      TextureAdd("Gen_orm_"      + key, mat.orm.texture);
+        std::string indx = std::to_string(i);
+        try_add_texture(key, mat.albedo.texture);
+        try_add_texture(key, mat.normal.texture);
+        try_add_texture(key, mat.emission.texture);
+        try_add_texture(key, mat.orm.texture);
     }
+
+    ModelAdd(key, model);
 }
 
 void ResourceManager::ModelAdd(std::string filename) {
