@@ -8,9 +8,7 @@ void World::PrepareUpdate() {
     UpdateActorLayout();
 }
 
-void World::Clear()
-{
-    LIL_LOG_TRACE("world clear");
+void World::Clear() {
     DestroyAllActors();
     DestroyAllComponents();
     m_update_ready = false;
@@ -18,9 +16,7 @@ void World::Clear()
 
 std::unordered_map<uuids::uuid, std::unique_ptr<Actor>> &World::Actors() {return m_actors;}
 
-void World::DestroyActor(uuids::uuid id)
-{
-    LIL_LOG_TRACE("Destroying actor");
+void World::DestroyActor(uuids::uuid id) {
     auto it = m_actors.find(id);
     if (it != m_actors.end()) {
         m_actors.erase(it);
@@ -33,7 +29,6 @@ void World::DestroyActor(Actor *actor) {
 }
 
 void World::DestroyAllActors() {
-    LIL_LOG_TRACE("Destroying all actors");
     std::set<uuids::uuid> ids_to_destroy = {};
     for (auto& [id, actor] : m_actors) ids_to_destroy.insert(id);
     for (auto& id : ids_to_destroy) DestroyActor(id);
@@ -120,7 +115,6 @@ Component *World::GetComponent(uuids::uuid id) {
 }
 
 Actor *World::PickActor(Vector2 screen_pos, int render_w, int render_h, Camera camera, RayCollision* result) const {
-    LIL_LOG_TRACE("Picking actor");
     Ray ray = GetScreenToWorldRayEx(screen_pos, camera, render_w, render_h);
 
     float closest = INFINITY;
@@ -154,9 +148,7 @@ RayCollision World::Raycast(Ray ray) const {
 
 std::unordered_map<uuids::uuid, std::unique_ptr<Component>> &World::Components() { return m_components; }
 
-void World::DestroyComponent(uuids::uuid id)
-{
-    LIL_LOG_TRACE("Destroying component");
+void World::DestroyComponent(uuids::uuid id) {
     auto it = m_components.find(id);
     if (it != m_components.end()) {
         m_components.erase(it);
@@ -169,7 +161,6 @@ void World::DestroyComponent(Component *component) {
 }
 
 void World::DestroyAllComponents() {
-    LIL_LOG_TRACE("Destroying all components");
     std::set<uuids::uuid> ids_to_destroy = {};
     for (auto& [id, component] : m_components) ids_to_destroy.insert(id);
     for (auto& id : ids_to_destroy) DestroyComponent(id);
@@ -180,29 +171,19 @@ bool World::IsComponentAlive(Component *component) const {
 }
 
 void World::Draw() {
-    LIL_LOG_TRACE("World drawing");
     for (auto& [key, actor] : m_actors) actor->Draw();
 }
 
-void World::Update() {
-    LIL_LOG_TRACE("World updating");
+void World::Update(float delta_time) {
     if (!m_update_ready) {
         PrepareUpdate();
         m_update_ready = true;
     }
 
-    float time_step = GetFrameTime()*m_simulation_speed;
-    LIL_LOG_TRACE("World: physics step");
-    if (m_simulation_going && time_step > 0.0) Lil::Physics().Step(time_step);
-    LIL_LOG_TRACE("World: physics step DONE");
-
-    LIL_LOG_TRACE("World: simulation update");
-    if (m_simulation_going) for (auto& [key, actor] : m_actors) actor->SimulationUpdate(time_step);
-    LIL_LOG_TRACE("World: simulation update DONE");
+    if (m_simulation_going && delta_time > 0.0) Lil::Physics().Step(delta_time);
+    if (m_simulation_going) for (auto& [key, actor] : m_actors) actor->SimulationUpdate(delta_time);
     
-    LIL_LOG_TRACE("World: updating actor layout");
     UpdateActorLayout();
-    LIL_LOG_TRACE("World: updating actor layout DONE");
 }
 
 void World::UpdateActorLayout() {
@@ -210,10 +191,8 @@ void World::UpdateActorLayout() {
 }
 
 void World::DebugDraw(){
-    LIL_LOG_TRACE("World debug drawing");
     for (auto& [key, actor] : m_actors) actor->DebugUpdate();
     for (auto& [key, actor] : m_actors) actor->DebugDraw();
-    LIL_LOG_TRACE("World debug drawing DONE");
 }
 
 void World::ToggleSimulationGoing() { m_simulation_going = !m_simulation_going; }

@@ -409,9 +409,9 @@ void Lil::Editor::DrawPainter() {
     ImGui::End();
 }
 
-void Lil::Editor::Update() {
+void Lil::Editor::Update(float delta_time) {
     if (!m_cursor_enabled) {UpdateCamera(&m_viewport_camera, CAMERA_FREE);}
-    Lil::Engine::Get().Update();
+    Lil::Engine::Get().Update(delta_time);
     Lil::Environment().Update();
 
     UpdateGizmoMode();

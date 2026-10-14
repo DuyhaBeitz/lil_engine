@@ -18,7 +18,7 @@ int main() {
     if (with_editor) {
         Lil::Editor::Get().Init();
         while (!WindowShouldClose()) {
-            Lil::Editor::Get().Update();
+            Lil::Editor::Get().Update(dt);
             BeginDrawing();
             Lil::Editor::Get().Draw();
             EndDrawing();
@@ -27,7 +27,7 @@ int main() {
     }
     else {
         while (!WindowShouldClose()) {
-            MyGameUpdate();
+            MyGameUpdate(dt);
             BeginDrawing();
             MyGameDraw();
             EndDrawing();
@@ -43,7 +43,7 @@ namespace Lil {
         static Editor& Get();
         
         void Init();
-        void Update();
+        void Update(float delta_time);
         void Draw();
         void Close();
 

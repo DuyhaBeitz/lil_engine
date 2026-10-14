@@ -26,8 +26,8 @@ namespace Lil {
         Physics().Init();
     }
 
-    void Engine::Update() {
-        GetWorld().Update();
+    void Engine::Update(float delta_time) {
+        GetWorld().Update(delta_time);
     }
 
 }

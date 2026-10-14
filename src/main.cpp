@@ -32,6 +32,8 @@ int main() {
     SetTraceLogLevel(LOG_ALL);
     DisableCursor();
     SetWindowState(FLAG_WINDOW_RESIZABLE);
+    SetTargetFPS(60);
+    float dt = 1.0f/60.0f;
 
     Lil::Engine().Get().Init();
 
@@ -42,14 +44,14 @@ int main() {
     while (!WindowShouldClose()) {
         if (IsKeyPressed(KEY_I)) editor = !editor;
         if (editor) {
-            Lil::Editor::Get().Update();
+            Lil::Editor::Get().Update(dt);
             BeginDrawing();
             Lil::Editor::Get().Draw();
             EndDrawing();
         }
         else {
             UpdateCamera(&camera, CAMERA_FREE);
-            Lil::Engine::Get().Update();
+            Lil::Engine::Get().Update(dt);
 
             BeginDrawing();
                 ClearBackground(RAYBLACK);

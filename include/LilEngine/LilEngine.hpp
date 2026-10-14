@@ -19,7 +19,7 @@ namespace Lil {
         static Engine& Get();
         
         void Init();
-        void Update();
+        void Update(float delta_time);
 
         ::PhysicsSystem& GetPhysics();
         ::ResourceManager& GetResources();
