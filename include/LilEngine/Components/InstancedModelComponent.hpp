@@ -2,6 +2,7 @@
 
 #include "Component.hpp"
 #include "ReflAttributes.hpp"
+#include "Physics.hpp"
 
 struct InstanceInfo : public Reflectable {
     InstanceInfo() = default;
@@ -32,11 +33,18 @@ class InstancedModelComponent : public Component {
 private:
     R3D_InstanceBuffer m_instances;
     int m_count = 0;
+    std::vector<JPH::BodyID> m_body_ids;
 
     void ResizeInternal(int size);
+    void ClearCollisions();
+    JPH::BodyID CreateBody(const InstanceInfo& instance);
 
 public:
     std::string m_model_key = "None";
+    bool m_collides = false;
+    bool m_update_collisions = false;
+    Vector3 m_collision_rel_offset = Vector3{0.0f, 0.0f, 0.0f};
+    Vector3 m_collision_rel_half_extent  = Vector3{1.0f, 1.0f, 1.0f};
 
 public:
     LIL_REFLECTABLE()
@@ -44,6 +52,7 @@ public:
     InstancedModelComponent() = default;
     virtual ~InstancedModelComponent() = default;
 
+    virtual void DebugDraw() override;
     virtual void Draw() override;
 
     void Update();
@@ -70,10 +79,14 @@ public:
     void serialize(Archive& ar) {
         ar(cereal::base_class<Component>(this));
         ar(m_model_key, m_infos);
+        ar(m_collides, m_collision_rel_offset, m_collision_rel_half_extent);
         Update();
     }
 };
 LIL_REFLECT(InstancedModelComponent, bases<Component>,
-    field(m_model_key, ModelKeyAttribute())
+    field(m_model_key, ModelKeyAttribute()),
+    field(m_collides),
+    field(m_collision_rel_offset),
+    field(m_collision_rel_half_extent)
 )
 LIL_SER_REGISTER_POLYMORPHIC(InstancedModelComponent)

@@ -566,14 +566,18 @@ void Lil::Editor::DrawViewport() {
                         m_selected_component &&
                         m_selected_component->GetTypeInfo().Name() == "InstancedModelComponent"
                     ) {
-                        m_painter.DrawBrush(
-                            GetMousePosition(),
-                            m_viewport_render_target.texture.width,
-                            m_viewport_render_target.texture.height,
-                            m_viewport_camera,
-                            dynamic_cast<Heightmap*>(m_selected_actor),
-                            dynamic_cast<InstancedModelComponent*>(m_selected_component)
-                        );
+                        float mx = GetMousePosition().x;
+                        float my = GetMousePosition().y;
+                        if (mx >= 0 && mx <= contentSize.x && my >= 0 && my <= contentSize.y) {
+                            m_painter.DrawBrush(
+                                GetMousePosition(),
+                                m_viewport_render_target.texture.width,
+                                m_viewport_render_target.texture.height,
+                                m_viewport_camera,
+                                dynamic_cast<Heightmap*>(m_selected_actor),
+                                dynamic_cast<InstancedModelComponent*>(m_selected_component)
+                            );
+                        }
                     }
                 }
             EndMode3D();

@@ -6,6 +6,7 @@
 
 #include "LilEngine.hpp"
 #include <utils/ColliderHelper.hpp>
+#include <utils/MathHelper.hpp>
 
 JPH::EMotionType GetJoltMotionType(BodyType type) {
     switch (type) {
@@ -23,7 +24,7 @@ JPH::RefConst<JPH::Shape> CollisionShape::CreateJoltShape() const {
             return new JPH::SphereShape(m_radius);
             
         case CollisionShapeType::BOX:
-            return new JPH::BoxShape(JphVector3(m_half_extends));
+            return new JPH::BoxShape(JphVector3NonNullScale(m_half_extends));
             
         case CollisionShapeType::HEIGHTMAP:
             if (Lil::Resources().TextureExists(m_heightmap_texture_key)) {
@@ -99,13 +100,14 @@ void ColliderComponent::RebuildShapes()
     if (m_shapes.empty()) {
         compound_settings.AddShape(
             JPH::Vec3(0, 0, 0),
-            JPH::Quat(0, 0, 0, 0),
+            JPH::Quat(0, 0, 0, 1),
             new JPH::SphereShape(0.5f));
     }
 
     auto shape_result = compound_settings.Create();
     if (shape_result.IsValid()) {
-        Lil::Physics().GetBodyInterface().SetShape(m_body_id, shape_result.Get(), true, JPH::EActivation::Activate);
+        bool dynamic = Lil::Physics().GetBodyInterface().GetMotionType(m_body_id) == JPH::EMotionType::Dynamic;
+        Lil::Physics().GetBodyInterface().SetShape(m_body_id, shape_result.Get(), dynamic, dynamic ? JPH::EActivation::Activate : JPH::EActivation::DontActivate);
     }
 }
 

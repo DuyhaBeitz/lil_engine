@@ -65,6 +65,13 @@ Transform GetLocalTransform(Transform parent, Transform child) {
 }
 
 JPH::Vec3 JphVector3(const Vector3 &v) {return JPH::Vec3(v.x, v.y, v.z);}
+JPH::Vec3 JphVector3NonNullScale(const Vector3 &v) {
+    return JPH::Vec3(
+        std::max(v.x, 0.05f),
+        std::max(v.y, 0.05f),
+        std::max(v.z, 0.05f)
+    );
+}
 Vector3 RlVector3(const JPH::Vec3& v) {return Vector3{ v.GetX(), v.GetY(), v.GetZ() };}
 JPH::Quat JphQuat(const Quaternion& q) {return JPH::Quat(q.x, q.y, q.z, q.w).Normalized();}
 Quaternion RlQuat(const JPH::Quat& q) {return QuaternionNormalize(Quaternion{ q.GetX(), q.GetY(), q.GetZ(), q.GetW()});}

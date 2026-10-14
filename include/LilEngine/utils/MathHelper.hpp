@@ -12,6 +12,7 @@ Transform ApplyInverseLocalTransform(Transform global, Transform local);
 Transform GetLocalTransform(Transform parent, Transform child);
 
 JPH::Vec3 JphVector3(const Vector3& v);
+JPH::Vec3 JphVector3NonNullScale(const Vector3 &v);
 Vector3 RlVector3(const JPH::Vec3& v);
 JPH::Quat JphQuat(const Quaternion& q);
 Quaternion RlQuat(const JPH::Quat& q);

@@ -4,6 +4,11 @@
 #include "Heightmap.hpp"
 
 Brush &Painter::GetBrush(InstancedModelComponent *instanced_model) {
+    if (m_brush_settings.find(instanced_model->GetID()) == m_brush_settings.end()) {
+        Brush& brush = m_brush_settings[instanced_model->GetID()];
+        brush.instanced_model = instanced_model;
+        brush.construct_from_instance();
+    }
     return m_brush_settings[instanced_model->GetID()];
 }
 

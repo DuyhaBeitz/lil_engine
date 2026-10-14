@@ -1,5 +1,7 @@
 #include "Components/InstancedModelComponent.hpp"
 #include "LilEngine.hpp"
+#include "utils/ColliderHelper.hpp"
+#include <utils/MathHelper.hpp>
 
 typedef struct PackedRotation {
     int16_t x, y, z, w;
@@ -28,6 +30,18 @@ InstanceInfo::InstanceInfo(Vector3 pos, Quaternion rot, Vector3 scal, Color col)
     scale    = scal;
     color    = col;
 }
+
+void InstancedModelComponent::DebugDraw() {
+    Component::DebugDraw();
+
+    if (m_collides) {
+        for (auto id : m_body_ids) {
+            DrawDebugPhysicsBody(id);
+        }
+    }
+}
+
+
 
 void InstancedModelComponent::Draw() {
     Component::Draw();
@@ -74,6 +88,19 @@ void InstancedModelComponent::Update() {
         R3D_INSTANCE_SCALE |
         R3D_INSTANCE_COLOR
     );
+
+    if (m_collides) {
+        auto& body_interface = Lil::Physics().GetBodyInterface();
+        ClearCollisions();
+        Lil::Physics().GetSystem()->OptimizeBroadPhase();
+        for (int i = 0; i < m_infos.size(); i++) {
+            JPH::BodyID id = CreateBody(m_infos[i]);
+            if (!id.IsInvalid()) m_body_ids.push_back(id);
+        }
+    }
+    else if (!m_collides && m_body_ids.size() > 0) {
+        ClearCollisions();
+    }
 }
 
 void InstancedModelComponent::SetInstancePosition(Vector3 position, int i) {m_infos[i].position = position;}
@@ -114,4 +141,34 @@ void InstancedModelComponent::ResizeInternal(int size) {
 void InstancedModelComponent::Resize(int size) {
     ResizeInternal(size);
     m_infos.resize(size);
+}
+
+void InstancedModelComponent::ClearCollisions() {
+    auto& body_interface = Lil::Physics().GetBodyInterface();
+    for (JPH::BodyID id : m_body_ids) {
+        if (id.IsInvalid()) continue;
+        if (body_interface.IsAdded(id)) body_interface.RemoveBody(id);
+        body_interface.DestroyBody(id);
+    }
+    m_body_ids.clear();
+}
+
+JPH::BodyID InstancedModelComponent::CreateBody(const InstanceInfo &instance) {
+    const Vector3 half_extent = instance.scale * m_collision_rel_half_extent;
+
+    JPH::RefConst<JPH::Shape> shape = new JPH::BoxShape(JphVector3NonNullScale(half_extent));
+
+    JPH::BodyCreationSettings settings(
+        shape,
+        JphVector3(
+            instance.position + Vector3RotateByQuaternion(half_extent*m_collision_rel_offset, instance.rotation)
+        ),
+        JphQuat(instance.rotation),
+        JPH::EMotionType::Static,
+        JPH::Layers::NON_MOVING
+    );
+
+    auto& body_interface = Lil::Physics().GetBodyInterface();
+    auto* ps = Lil::Physics().GetSystem();
+    return body_interface.CreateAndAddBody(settings, JPH::EActivation::DontActivate);
 }

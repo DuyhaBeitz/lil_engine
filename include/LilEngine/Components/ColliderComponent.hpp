@@ -21,7 +21,7 @@ public:
     Quaternion m_local_rotation = QuaternionIdentity();
 
     float m_radius = 1.0f;
-    Vector3 m_half_extends = Vector3{0.0f, 0.0f, 0.0f};
+    Vector3 m_half_extends = Vector3{1.0f, 1.0f, 1.0f};
     std::string m_heightmap_texture_key = "";
     Vector3 m_map_size = Vector3{1.0f, 1.0f, 1.0f};
 
