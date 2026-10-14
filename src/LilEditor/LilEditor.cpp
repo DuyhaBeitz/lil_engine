@@ -121,15 +121,36 @@ void Lil::Editor::SelectActor(Actor *actor) {
     m_selected_actor = actor;
 }
 
+void Lil::Editor::LoadEditor(std::string filename) {
+    std::ifstream is(filename);
+    ArchiveIn a_in(is);
+    a_in(*this);
+}
+
+void Lil::Editor::SaveEditor(std::string filename) {
+    std::ofstream os(filename);
+    ArchiveOut a_out(os);
+    a_out(*this);
+}
+
 void Lil::Editor::LoadScene(std::string filename) {
     try {
         Lil::SceneManager().LoadScene(filename);
         DropSelectedActor();
         Notify("Loaded file: " + filename);
-        m_loaded_scene = filename;   
+        m_loaded_scene = filename;
     }
     catch (const cereal::Exception& e) {
         Notify(std::string("Failed to load: ") + e.what());
+        return;
+    }
+
+    try {
+        LoadEditor(filename + ".edtr");
+    }
+    catch (const cereal::Exception& e) {
+        Notify(std::string("Failed to load editor info: ") + e.what());
+        return;
     }
 }
 
@@ -140,6 +161,15 @@ void Lil::Editor::SaveScene(std::string filename) {
     }
     catch (const cereal::Exception& e) {
         Notify(std::string("Failed to save: ") + e.what());
+        return;
+    }
+
+    try {
+        SaveEditor(filename + ".edtr");
+    }
+    catch (const cereal::Exception& e) {
+        Notify(std::string("Failed to save editor info: ") + e.what());
+        return;
     }
 }
 

@@ -3,6 +3,7 @@
 #include "GameObject.hpp"
 #include "Reflection.hpp"
 #include <unordered_map>
+#include "Serialization.hpp"
 
 class InstancedModelComponent;
 class Heightmap;
@@ -32,6 +33,26 @@ struct Brush : public Reflectable {
     InstancedModelComponent *instanced_model;
     std::vector<InstanceInfo>* Instances();
     std::vector<InstanceInfo>* Instances() const;
+
+    uuids::uuid get_instance_model_id() const;
+    void construct_from_instance();
+    void set_instanced_model(uuids::uuid id);
+
+    template <class Archive>
+    void save( Archive & ar ) const {
+        ar(radius, min_distance, iterations, min_size, max_size, slope_coeff, offset, cell_size);
+        ar(get_instance_model_id());
+    }
+       
+    template <class Archive>
+    void load( Archive & ar ) {
+        ar(radius, min_distance, iterations, min_size, max_size, slope_coeff, offset, cell_size);
+
+        uuids::uuid id;
+        ar(id);
+        set_instanced_model(id);
+        construct_from_instance();        
+    }
 };
 LIL_REFLECT(Brush, bases<>,
     field(radius),
@@ -42,6 +63,7 @@ LIL_REFLECT(Brush, bases<>,
     field(slope_coeff),
     field(offset)
 )
+LIL_DISAMBIGUATE_LOAD_SAVE(Brush)
 
 class Painter {
 private:
@@ -50,8 +72,13 @@ private:
     Vector2 m_prev_pos = {0.0f, 0.0f};
 
 public:
+    LIL_SERIALIZABLE()
+
     Painter() = default;
 
     void DrawBrush(Vector2 screen_pos, int render_w, int render_h, Camera camera, Heightmap* heightmap, InstancedModelComponent *instanced_model);
     Brush& GetBrush(InstancedModelComponent *instanced_model);
 };
+LIL_SER_BEGIN_NO_POLYMORPH(Painter)
+LIL_SER_FIELD(m_brush_settings)
+LIL_SER_END()

@@ -47,6 +47,11 @@ namespace Lil {
         void Draw();
         void Close();
 
+        template <class Archive>
+        void serialize( Archive & ar ) {
+            LIL_SER_FIELD(m_painter);
+        }
+
     private:
         std::vector<Notification> m_notifications;
         Camera m_viewport_camera = {
@@ -85,6 +90,9 @@ namespace Lil {
         void DropSelectedActor();
         void DropSelectedComponent();
         void SelectActor(Actor* actor);
+
+        void LoadEditor(std::string filename);
+        void SaveEditor(std::string filename);
 
         void LoadScene(std::string filename);
         void SaveScene(std::string filename);

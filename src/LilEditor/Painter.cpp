@@ -108,6 +108,35 @@ std::vector<InstanceInfo> *Brush::Instances() const {
     return &(instanced_model->m_infos);
 }
 
+uuids::uuid Brush::get_instance_model_id() const {
+    return instanced_model->GetID();
+}
+
+void Brush::construct_from_instance()
+{
+    instance_keys.reserve(instanced_model->m_infos.size());
+    if (instanced_model->m_infos.size() > 0) {
+        for (int i = 0; i < instanced_model->m_infos.size(); i++) {
+            auto& info = instanced_model->m_infos[i];
+            int32_t cx, cz;
+            WorldToCell(info.position.x, info.position.z, cell_size, cx, cz);
+            uint64_t key = CellKey(cx, cz);
+            instance_keys.push_back(key);
+            grid[key].push_back(i); 
+        }
+    }
+}
+
+void Brush::set_instanced_model(uuids::uuid id) {
+    if (Component* component = Lil::World().GetComponent(id)) {
+        if (InstancedModelComponent* inst_modl = dynamic_cast<InstancedModelComponent*>(component)) {
+            instanced_model = inst_modl;
+            return;
+        }
+    }
+    throw std::runtime_error("set_instanced_model failed");
+}
+
 float GetRandomFloat(float min, float max) {
     int precision = 1000000;
     return min + (max-min)* float(GetRandomValue(0, 1000000)) / float(precision);
@@ -136,17 +165,7 @@ void Painter::DrawBrush(Vector2 screen_pos, int render_w, int render_h, Camera c
     if (it == m_brush_settings.end()) {
         Brush& brush = m_brush_settings[instanced_model->GetID()];
         brush.instanced_model = instanced_model;
-        brush.instance_keys.reserve(instanced_model->m_infos.size());
-        if (instanced_model->m_infos.size() > 0) {
-            for (int i = 0; i < instanced_model->m_infos.size(); i++) {
-                auto& info = instanced_model->m_infos[i];
-                int32_t cx, cz;
-                WorldToCell(info.position.x, info.position.z, brush.cell_size, cx, cz);
-                uint64_t key = CellKey(cx, cz);
-                brush.instance_keys.push_back(key);
-                brush.grid[key].push_back(i); 
-            }
-        }
+        brush.construct_from_instance();
     }
     Brush& brush = m_brush_settings[instanced_model->GetID()];
 

@@ -210,6 +210,11 @@ void typename::serialize( Archive & ar ) { ar(__VA_ARGS__); }
 #define LIL_SER_REGISTER_POLYMORPHIC(typename) \
 CEREAL_REGISTER_TYPE(typename)
 
+#define LIL_SER_BEGIN_NO_POLYMORPH(typename) \
+LIL_DISAMBIGUATE_SERIALIZE(typename) \
+template <class Archive> \
+void typename::serialize( Archive & ar )  {
+
 #define LIL_SER_BEGIN(typename) \
 LIL_SER_REGISTER_POLYMORPHIC(typename) \
 LIL_DISAMBIGUATE_SERIALIZE(typename) \
