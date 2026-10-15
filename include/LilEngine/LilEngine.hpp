@@ -20,6 +20,7 @@ namespace Lil {
         
         void Init();
         void Update(float delta_time);
+        void UpdateFixedAccumulative(float delta_time);
 
         ::PhysicsSystem& GetPhysics();
         ::ResourceManager& GetResources();
@@ -29,6 +30,8 @@ namespace Lil {
         ::Environment& GetEnvironment();
         
     private:
+        float m_time_accumulator = 0.0f;
+
         ::PhysicsSystem m_physics;
         ::ResourceManager m_resources;
         ::World m_world;

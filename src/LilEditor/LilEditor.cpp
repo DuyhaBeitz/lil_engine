@@ -442,6 +442,19 @@ void Lil::Editor::Update(float delta_time) {
     }
 }
 
+void Lil::Editor::UpdateFixedAccumulative(float delta_time) {
+    m_time_accumulator += GetFrameTime();
+    int i = 0;
+    while (m_time_accumulator >= delta_time) {
+        m_time_accumulator -= delta_time;
+        i++;
+    }
+
+    for (int j = 0; j < i; j++) {
+        Update(delta_time);
+    }
+}
+
 void Lil::Editor::UpdateGizmoMode() {
     if (IsKeyPressed(KEY_ONE)) m_gizmo_mode = GIZMO_TRANSLATE;
     if (IsKeyPressed(KEY_TWO)) m_gizmo_mode = GIZMO_ROTATE;

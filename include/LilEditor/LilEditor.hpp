@@ -44,6 +44,7 @@ namespace Lil {
         
         void Init();
         void Update(float delta_time);
+        void UpdateFixedAccumulative(float delta_time);
         void Draw();
         void Close();
 
@@ -69,6 +70,7 @@ namespace Lil {
             .projection = CAMERA_PERSPECTIVE
         };
 
+        float m_time_accumulator = 0.0f;
         std::string m_loaded_scene = "";
 
         bool m_cursor_enabled = true;
