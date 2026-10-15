@@ -409,9 +409,9 @@ void Lil::Editor::DrawPainter() {
     ImGui::End();
 }
 
-void Lil::Editor::Update(float delta_time) {
+void Lil::Editor::Update(float delta_time, float physics_step_time) {
     if (!m_cursor_enabled) {UpdateCamera(&m_viewport_camera, CAMERA_FREE);}
-    Lil::Engine::Get().Update(delta_time);
+    Lil::Engine::Get().Update(delta_time, physics_step_time);
     Lil::Environment().Update();
 
     UpdateGizmoMode();
@@ -439,19 +439,6 @@ void Lil::Editor::Update(float delta_time) {
         else {
             Notify("Failed to copy actor");
         }
-    }
-}
-
-void Lil::Editor::UpdateFixedAccumulative(float delta_time) {
-    m_time_accumulator += GetFrameTime();
-    int i = 0;
-    while (m_time_accumulator >= delta_time) {
-        m_time_accumulator -= delta_time;
-        i++;
-    }
-
-    for (int j = 0; j < i; j++) {
-        Update(delta_time);
     }
 }
 

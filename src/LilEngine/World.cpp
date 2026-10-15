@@ -174,13 +174,23 @@ void World::Draw() {
     for (auto& [key, actor] : m_actors) actor->Draw();
 }
 
-void World::Update(float delta_time) {
+void World::Update(float delta_time, float physics_step_time) {
     if (!m_update_ready) {
         PrepareUpdate();
         m_update_ready = true;
     }
 
-    if (m_simulation_going && delta_time > 0.0) Lil::Physics().Step(delta_time);
+    if (m_simulation_going && delta_time > 0.0f) {
+        m_time_accumulator += delta_time;
+        int i = 0;
+        while (m_time_accumulator >= physics_step_time) {
+            m_time_accumulator -= physics_step_time;
+            i++;
+        }
+        for (int j = 0; j < i; j++) {
+            Lil::Physics().Step(physics_step_time);
+        }
+    }
     if (m_simulation_going) for (auto& [key, actor] : m_actors) actor->SimulationUpdate(delta_time);
     
     UpdateActorLayout();

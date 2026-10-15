@@ -13,6 +13,7 @@ private:
     std::unordered_map<uuids::uuid, std::unique_ptr<Actor>> m_actors;
     std::unordered_map<uuids::uuid, std::unique_ptr<Component>> m_components;
     bool m_update_ready = false;
+    float m_time_accumulator = 0.0f;
 
     void PrepareUpdate();
 
@@ -103,7 +104,7 @@ public:
     bool IsComponentAlive(Component* component) const;
 
     void Draw();
-    void Update(float delta_time);
+    void Update(float delta_time, float physics_step_time);
     void DebugDraw();
     void ToggleSimulationGoing();
     bool IsSumulationGoing();

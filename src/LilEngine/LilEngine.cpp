@@ -26,20 +26,7 @@ namespace Lil {
         Physics().Init();
     }
 
-    void Engine::Update(float delta_time) {
-        GetWorld().Update(delta_time);
-    }
-
-    void Engine::UpdateFixedAccumulative(float delta_time)  {
-        m_time_accumulator += GetFrameTime();
-        int i = 0;
-        while (m_time_accumulator >= delta_time) {
-            m_time_accumulator -= delta_time;
-            i++;
-        }
-
-        for (int j = 0; j < i; j++) {
-            Update(delta_time);
-        }
+    void Engine::Update(float delta_time, float physics_step_time) {
+        GetWorld().Update(delta_time, physics_step_time);
     }
 }
