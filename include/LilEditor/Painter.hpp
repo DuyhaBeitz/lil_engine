@@ -40,13 +40,27 @@ struct Brush : public Reflectable {
 
     template <class Archive>
     void save( Archive & ar ) const {
-        ar(radius, min_distance, iterations, min_size, max_size, slope_coeff, offset, cell_size);
+        LIL_SER_FIELD(radius)
+        LIL_SER_FIELD(min_distance)
+        LIL_SER_FIELD(iterations)
+        LIL_SER_FIELD(min_size)
+        LIL_SER_FIELD(max_size)
+        LIL_SER_FIELD(slope_coeff)
+        LIL_SER_FIELD(offset)
+        LIL_SER_FIELD(cell_size)
         ar(get_instance_model_id());
     }
        
     template <class Archive>
     void load( Archive & ar ) {
-        ar(radius, min_distance, iterations, min_size, max_size, slope_coeff, offset, cell_size);
+        LIL_SER_FIELD(radius)
+        LIL_SER_FIELD(min_distance)
+        LIL_SER_FIELD(iterations)
+        LIL_SER_FIELD(min_size)
+        LIL_SER_FIELD(max_size)
+        LIL_SER_FIELD(slope_coeff)
+        LIL_SER_FIELD(offset)
+        LIL_SER_FIELD(cell_size)
 
         uuids::uuid id;
         ar(id);

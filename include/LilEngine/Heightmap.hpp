@@ -2,6 +2,7 @@
 
 #include "Actor.hpp"
 #include "ReflAttributes.hpp"
+#include "ComponentRef.hpp"
 
 class ModelComponent;
 class ColliderComponent;
@@ -13,21 +14,18 @@ struct HeightmapQueryResult {
 };
 
 class Heightmap : public Actor {
-private:
-    void RetrieveComponentPtrs();
-
 public:
     // void Setup(Image heightmap_image, Vector3 map_size);
     LIL_REFLECTABLE()
 
     std::string m_heightmap_texture_key;
 
-    ModelComponent* m_model = nullptr;
-    ColliderComponent* m_collider = nullptr;
+    ComponentRef<ModelComponent> m_model;
+    ComponentRef<ColliderComponent> m_collider;
 
 public:
     Heightmap() = default;
-    virtual ~Heightmap();
+    virtual ~Heightmap() = default;
 
     virtual void SetupComponents() override;
     virtual void LayoutUpdate() override;
@@ -38,13 +36,16 @@ public:
     void save( Archive & ar ) const {
         LIL_SAVE_BASE(Actor)
         LIL_SER_FIELD(m_heightmap_texture_key);
+        LIL_SER_FIELD(m_model);
+        LIL_SER_FIELD(m_collider);
     }
         
     template <class Archive>
     void load( Archive & ar ) {
         LIL_LOAD_BASE(Actor)
         LIL_SER_FIELD(m_heightmap_texture_key);
-        RetrieveComponentPtrs();
+        LIL_SER_FIELD(m_model);
+        LIL_SER_FIELD(m_collider);
     }
 };
 LIL_REFLECT(Heightmap, bases<Actor>,

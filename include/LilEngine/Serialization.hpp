@@ -198,6 +198,11 @@ struct cereal::specialize<ArchiveOut, typename, cereal::specialization::member_l
 template <> \
 struct cereal::specialize<ArchiveIn, typename, cereal::specialization::member_load_save> {}; \
 
+#define LIL_DISAMBIGUATE_LOAD_SAVE_MINIMAL(typename) \
+template <> \
+struct cereal::specialize<ArchiveOut, typename, cereal::specialization::member_load_save_minimal> {}; \
+template <> \
+struct cereal::specialize<ArchiveIn, typename, cereal::specialization::member_load_save_minimal> {}; \
 
 #define LIL_SERIALIZE_NO_BASE(typename, ...) \
 LIL_DISAMBIGUATE_SERIALIZE(typename) \

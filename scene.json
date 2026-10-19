@@ -233,14 +233,258 @@
     },
     "value2": {
         "m_simulation_going": false,
-        "m_simulation_speed": 1.0,
         "m_components": [
+            {
+                "key": {
+                    "value0": "53dcfac9-266f-40a8-a324-60ba8df01a3e"
+                },
+                "value": {
+                    "polymorphic_id": 2147483649,
+                    "polymorphic_name": "ColliderComponent",
+                    "ptr_wrapper": {
+                        "valid": 1,
+                        "data": {
+                            "value0": {
+                                "value0": {
+                                    "value0": {
+                                        "value0": {
+                                            "value0": "53dcfac9-266f-40a8-a324-60ba8df01a3e"
+                                        }
+                                    },
+                                    "value1": {
+                                        "value0": {
+                                            "translation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0
+                                            },
+                                            "rotation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0,
+                                                "w": 1.0
+                                            },
+                                            "scale": {
+                                                "x": 128.0,
+                                                "y": 5.0,
+                                                "z": 128.0
+                                            }
+                                        }
+                                    },
+                                    "m_visible": true,
+                                    "m_raycast_active": true
+                                },
+                                "m_local_transform": {
+                                    "translation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0,
+                                        "w": 1.0
+                                    },
+                                    "scale": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
+                                    }
+                                },
+                                "m_is_required": true
+                            },
+                            "m_shapes": [
+                                {
+                                    "m_type": 2,
+                                    "m_local_position": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "m_local_rotation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0,
+                                        "w": 1.0
+                                    },
+                                    "m_radius": 1.0,
+                                    "m_half_extends": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
+                                    },
+                                    "m_heightmap_texture_key": "heightmap.png",
+                                    "m_map_size": {
+                                        "x": 128.0,
+                                        "y": 5.0,
+                                        "z": 128.0
+                                    }
+                                }
+                            ],
+                            "m_type": 0,
+                            "m_linear_velocity": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "m_angular_velocity": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "key": {
+                    "value0": "490cf5eb-2006-4bd8-846d-e4f41eab8e1e"
+                },
+                "value": {
+                    "polymorphic_id": 2147483650,
+                    "polymorphic_name": "ModelComponent",
+                    "ptr_wrapper": {
+                        "valid": 1,
+                        "data": {
+                            "value0": {
+                                "value0": {
+                                    "value0": {
+                                        "value0": {
+                                            "value0": "490cf5eb-2006-4bd8-846d-e4f41eab8e1e"
+                                        }
+                                    },
+                                    "value1": {
+                                        "value0": {
+                                            "translation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0
+                                            },
+                                            "rotation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0,
+                                                "w": 1.0
+                                            },
+                                            "scale": {
+                                                "x": 128.0,
+                                                "y": 5.0,
+                                                "z": 128.0
+                                            }
+                                        }
+                                    },
+                                    "m_visible": true,
+                                    "m_raycast_active": true
+                                },
+                                "m_local_transform": {
+                                    "translation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0,
+                                        "w": 1.0
+                                    },
+                                    "scale": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
+                                    }
+                                },
+                                "m_is_required": true
+                            },
+                            "m_model_key": "Gen_Heightmap_From_heightmap.png"
+                        }
+                    }
+                }
+            },
+            {
+                "key": {
+                    "value0": "f45cc0a9-340a-47c5-837e-76d1ca10eb64"
+                },
+                "value": {
+                    "polymorphic_id": 2147483651,
+                    "polymorphic_name": "LightComponent",
+                    "ptr_wrapper": {
+                        "valid": 1,
+                        "data": {
+                            "value0": {
+                                "value0": {
+                                    "value0": {
+                                        "value0": {
+                                            "value0": "f45cc0a9-340a-47c5-837e-76d1ca10eb64"
+                                        }
+                                    },
+                                    "value1": {
+                                        "value0": {
+                                            "translation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0
+                                            },
+                                            "rotation": {
+                                                "x": 0.3713349997997284,
+                                                "y": -0.17170371115207673,
+                                                "z": -0.2354341298341751,
+                                                "w": 0.8815944194793701
+                                            },
+                                            "scale": {
+                                                "x": 128.0,
+                                                "y": 5.0,
+                                                "z": 128.0
+                                            }
+                                        }
+                                    },
+                                    "m_visible": true,
+                                    "m_raycast_active": true
+                                },
+                                "m_local_transform": {
+                                    "translation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "rotation": {
+                                        "x": 0.3713349997997284,
+                                        "y": -0.17170371115207673,
+                                        "z": -0.2354341298341751,
+                                        "w": 0.8815944194793701
+                                    },
+                                    "scale": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
+                                    }
+                                },
+                                "m_is_required": false
+                            },
+                            "m_enabled": true,
+                            "m_lumen": 15.0,
+                            "m_color": {
+                                "r": 255,
+                                "g": 255,
+                                "b": 255,
+                                "a": 255
+                            },
+                            "m_type": 0,
+                            "m_cast_shadows": true,
+                            "m_range": 40.0,
+                            "m_shadow_softness": 1.0,
+                            "m_depth_bias": 0.0010000000474974514
+                        }
+                    }
+                }
+            },
             {
                 "key": {
                     "value0": "2b57cd05-ea39-451b-bf64-8cf75f248c24"
                 },
                 "value": {
-                    "polymorphic_id": 2147483649,
+                    "polymorphic_id": 2147483652,
                     "polymorphic_name": "InstancedModelComponent",
                     "ptr_wrapper": {
                         "valid": 1,
@@ -3051,11 +3295,112 @@
             },
             {
                 "key": {
+                    "value0": "32ed0fdc-06da-4bac-b786-21f36d51e34f"
+                },
+                "value": {
+                    "polymorphic_id": 1,
+                    "ptr_wrapper": {
+                        "valid": 1,
+                        "data": {
+                            "value0": {
+                                "value0": {
+                                    "value0": {
+                                        "value0": {
+                                            "value0": "32ed0fdc-06da-4bac-b786-21f36d51e34f"
+                                        }
+                                    },
+                                    "value1": {
+                                        "value0": {
+                                            "translation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0
+                                            },
+                                            "rotation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0,
+                                                "w": 1.0
+                                            },
+                                            "scale": {
+                                                "x": 128.0,
+                                                "y": 5.0,
+                                                "z": 128.0
+                                            }
+                                        }
+                                    },
+                                    "m_visible": true,
+                                    "m_raycast_active": true
+                                },
+                                "m_local_transform": {
+                                    "translation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0,
+                                        "w": 1.0
+                                    },
+                                    "scale": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
+                                    }
+                                },
+                                "m_is_required": true
+                            },
+                            "m_shapes": [
+                                {
+                                    "m_type": 2,
+                                    "m_local_position": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "m_local_rotation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0,
+                                        "w": 1.0
+                                    },
+                                    "m_radius": 1.0,
+                                    "m_half_extends": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
+                                    },
+                                    "m_heightmap_texture_key": "heightmap.png",
+                                    "m_map_size": {
+                                        "x": 128.0,
+                                        "y": 5.0,
+                                        "z": 128.0
+                                    }
+                                }
+                            ],
+                            "m_type": 0,
+                            "m_linear_velocity": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "m_angular_velocity": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "key": {
                     "value0": "48b19239-6baa-4253-8a74-4d85b292212e"
                 },
                 "value": {
-                    "polymorphic_id": 2147483650,
-                    "polymorphic_name": "ModelComponent",
+                    "polymorphic_id": 2,
                     "ptr_wrapper": {
                         "valid": 1,
                         "data": {
@@ -3119,8 +3464,7 @@
                     "value0": "cfaee9fb-38e0-4206-ba76-9d2b7c4921f6"
                 },
                 "value": {
-                    "polymorphic_id": 2147483651,
-                    "polymorphic_name": "ColliderComponent",
+                    "polymorphic_id": 1,
                     "ptr_wrapper": {
                         "valid": 1,
                         "data": {
@@ -3222,8 +3566,7 @@
                     "value0": "aa093802-2b56-4dc0-9524-86fb1d04dc99"
                 },
                 "value": {
-                    "polymorphic_id": 2147483652,
-                    "polymorphic_name": "LightComponent",
+                    "polymorphic_id": 3,
                     "ptr_wrapper": {
                         "valid": 1,
                         "data": {
@@ -3293,12 +3636,3273 @@
                         }
                     }
                 }
+            },
+            {
+                "key": {
+                    "value0": "a4236cd8-accd-4214-8131-5fd7e7f59857"
+                },
+                "value": {
+                    "polymorphic_id": 2,
+                    "ptr_wrapper": {
+                        "valid": 1,
+                        "data": {
+                            "value0": {
+                                "value0": {
+                                    "value0": {
+                                        "value0": {
+                                            "value0": "a4236cd8-accd-4214-8131-5fd7e7f59857"
+                                        }
+                                    },
+                                    "value1": {
+                                        "value0": {
+                                            "translation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0
+                                            },
+                                            "rotation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0,
+                                                "w": 1.0
+                                            },
+                                            "scale": {
+                                                "x": 128.0,
+                                                "y": 5.0,
+                                                "z": 128.0
+                                            }
+                                        }
+                                    },
+                                    "m_visible": true,
+                                    "m_raycast_active": true
+                                },
+                                "m_local_transform": {
+                                    "translation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0,
+                                        "w": 1.0
+                                    },
+                                    "scale": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
+                                    }
+                                },
+                                "m_is_required": true
+                            },
+                            "m_model_key": "Gen_Heightmap_From_heightmap.png"
+                        }
+                    }
+                }
+            },
+            {
+                "key": {
+                    "value0": "cf539eb8-37ce-4762-af82-5f190631066d"
+                },
+                "value": {
+                    "polymorphic_id": 4,
+                    "ptr_wrapper": {
+                        "valid": 1,
+                        "data": {
+                            "value0": {
+                                "value0": {
+                                    "value0": {
+                                        "value0": {
+                                            "value0": "cf539eb8-37ce-4762-af82-5f190631066d"
+                                        }
+                                    },
+                                    "value1": {
+                                        "value0": {
+                                            "translation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0
+                                            },
+                                            "rotation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0,
+                                                "w": 1.0
+                                            },
+                                            "scale": {
+                                                "x": 128.0,
+                                                "y": 5.0,
+                                                "z": 128.0
+                                            }
+                                        }
+                                    },
+                                    "m_visible": true,
+                                    "m_raycast_active": true
+                                },
+                                "m_local_transform": {
+                                    "translation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0,
+                                        "w": 1.0
+                                    },
+                                    "scale": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
+                                    }
+                                },
+                                "m_is_required": false
+                            },
+                            "value1": "palm_tree_realistic.glb",
+                            "value2": [
+                                {
+                                    "position": {
+                                        "x": -9.31454849243164,
+                                        "y": 4.968683242797852,
+                                        "z": 0.5960432887077332
+                                    },
+                                    "rotation": {
+                                        "x": 0.01920003816485405,
+                                        "y": 0.8307605385780335,
+                                        "z": 0.05760010704398155,
+                                        "w": 0.5533086657524109
+                                    },
+                                    "scale": {
+                                        "x": 0.6781980395317078,
+                                        "y": 0.6781980395317078,
+                                        "z": 0.6781980395317078
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -4.978583812713623,
+                                        "y": 5.0,
+                                        "z": -7.0113525390625
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.4433833360671997,
+                                        "z": 0.0,
+                                        "w": -0.8963320851325989
+                                    },
+                                    "scale": {
+                                        "x": 1.0826325416564942,
+                                        "y": 1.0826325416564942,
+                                        "z": 1.0826325416564942
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -11.089703559875489,
+                                        "y": 5.0,
+                                        "z": -6.489546298980713
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.9445793628692627,
+                                        "z": 0.0,
+                                        "w": -0.3282831907272339
+                                    },
+                                    "scale": {
+                                        "x": 1.099047064781189,
+                                        "y": 1.099047064781189,
+                                        "z": 1.099047064781189
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 1.6951853036880494,
+                                        "y": 3.2335238456726076,
+                                        "z": -19.41554069519043
+                                    },
+                                    "rotation": {
+                                        "x": -0.0358705073595047,
+                                        "y": 0.9245104789733887,
+                                        "z": 0.0,
+                                        "w": 0.3794652223587036
+                                    },
+                                    "scale": {
+                                        "x": 0.7754760384559631,
+                                        "y": 0.7754760384559631,
+                                        "z": 0.7754760384559631
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -8.374735832214356,
+                                        "y": 5.0,
+                                        "z": -1.6359288692474366
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.4134833812713623,
+                                        "z": 0.0,
+                                        "w": 0.9105117917060852
+                                    },
+                                    "scale": {
+                                        "x": 0.6309265494346619,
+                                        "y": 0.6309265494346619,
+                                        "z": 0.6309265494346619
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -12.63922119140625,
+                                        "y": 5.0,
+                                        "z": -2.0899131298065187
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.7890967726707459,
+                                        "z": 0.0,
+                                        "w": 0.6142688989639282
+                                    },
+                                    "scale": {
+                                        "x": 1.0277130603790284,
+                                        "y": 1.0277130603790284,
+                                        "z": 1.0277130603790284
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -10.82936954498291,
+                                        "y": 5.0,
+                                        "z": -5.1747941970825199
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.03817027434706688,
+                                        "z": 0.0,
+                                        "w": -0.9992712736129761
+                                    },
+                                    "scale": {
+                                        "x": 1.0268590450286866,
+                                        "y": 1.0268590450286866,
+                                        "z": 1.0268590450286866
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -10.75117301940918,
+                                        "y": 5.0,
+                                        "z": -8.400079727172852
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.5753238797187805,
+                                        "z": 0.0,
+                                        "w": -0.8179256916046143
+                                    },
+                                    "scale": {
+                                        "x": 0.9211230278015137,
+                                        "y": 0.9211230278015137,
+                                        "z": 0.9211230278015137
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -9.029366493225098,
+                                        "y": 5.0,
+                                        "z": -11.041093826293946
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.5966099500656128,
+                                        "z": 0.0,
+                                        "w": -0.802531361579895
+                                    },
+                                    "scale": {
+                                        "x": 0.6858265399932861,
+                                        "y": 0.6858265399932861,
+                                        "z": 0.6858265399932861
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -7.497743606567383,
+                                        "y": 5.0,
+                                        "z": -2.9262967109680177
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.5298612713813782,
+                                        "z": 0.0,
+                                        "w": 0.8480844497680664
+                                    },
+                                    "scale": {
+                                        "x": 0.7458440065383911,
+                                        "y": 0.7458440065383911,
+                                        "z": 0.7458440065383911
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -7.034518241882324,
+                                        "y": 5.0,
+                                        "z": -8.758852005004883
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.8349630236625671,
+                                        "z": 0.0,
+                                        "w": -0.5503062605857849
+                                    },
+                                    "scale": {
+                                        "x": 0.7796400189399719,
+                                        "y": 0.7796400189399719,
+                                        "z": 0.7796400189399719
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -3.8606295585632326,
+                                        "y": 5.0,
+                                        "z": -6.012337684631348
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.26843971014022829,
+                                        "z": 0.0,
+                                        "w": 0.9632964730262756
+                                    },
+                                    "scale": {
+                                        "x": 0.851238489151001,
+                                        "y": 0.851238489151001,
+                                        "z": 0.851238489151001
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -11.275733947753907,
+                                        "y": 5.0,
+                                        "z": -9.592340469360352
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.9852666258811951,
+                                        "z": 0.0,
+                                        "w": 0.17102527618408204
+                                    },
+                                    "scale": {
+                                        "x": 0.8955770134925842,
+                                        "y": 0.8955770134925842,
+                                        "z": 0.8955770134925842
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -10.159387588500977,
+                                        "y": 5.0,
+                                        "z": -15.711320877075196
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.5963349342346191,
+                                        "z": 0.0,
+                                        "w": -0.8027357459068298
+                                    },
+                                    "scale": {
+                                        "x": 0.9230735301971436,
+                                        "y": 0.9230735301971436,
+                                        "z": 0.9230735301971436
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -12.078577041625977,
+                                        "y": 5.0,
+                                        "z": -13.319862365722657
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.671435534954071,
+                                        "z": 0.0,
+                                        "w": -0.7410629987716675
+                                    },
+                                    "scale": {
+                                        "x": 0.8746914863586426,
+                                        "y": 0.8746914863586426,
+                                        "z": 0.8746914863586426
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -9.786314010620118,
+                                        "y": 5.0,
+                                        "z": -13.96430778503418
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.5887607932090759,
+                                        "z": 0.0,
+                                        "w": -0.8083073496818543
+                                    },
+                                    "scale": {
+                                        "x": 1.076828956604004,
+                                        "y": 1.076828956604004,
+                                        "z": 1.076828956604004
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -5.651418685913086,
+                                        "y": 5.0,
+                                        "z": -13.223126411437989
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.3642130494117737,
+                                        "z": 0.0,
+                                        "w": 0.9313156604766846
+                                    },
+                                    "scale": {
+                                        "x": 1.0673969984054566,
+                                        "y": 1.0673969984054566,
+                                        "z": 1.0673969984054566
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -4.066105842590332,
+                                        "y": 5.0,
+                                        "z": -16.715551376342775
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.1612110286951065,
+                                        "z": 0.0,
+                                        "w": -0.9869200587272644
+                                    },
+                                    "scale": {
+                                        "x": 1.0700255632400513,
+                                        "y": 1.0700255632400513,
+                                        "z": 1.0700255632400513
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -5.212346076965332,
+                                        "y": 5.0,
+                                        "z": -15.852812767028809
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.24165131151676179,
+                                        "z": 0.0,
+                                        "w": 0.9703632593154907
+                                    },
+                                    "scale": {
+                                        "x": 0.7143965363502502,
+                                        "y": 0.7143965363502502,
+                                        "z": 0.7143965363502502
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -3.8698060512542726,
+                                        "y": 5.0,
+                                        "z": -22.338184356689454
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.45583969354629519,
+                                        "z": 0.0,
+                                        "w": -0.8900619149208069
+                                    },
+                                    "scale": {
+                                        "x": 1.0327324867248536,
+                                        "y": 1.0327324867248536,
+                                        "z": 1.0327324867248536
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -5.511098861694336,
+                                        "y": 4.991437911987305,
+                                        "z": -25.883224487304689
+                                    },
+                                    "rotation": {
+                                        "x": 0.04614812880754471,
+                                        "y": 0.7467143535614014,
+                                        "z": -0.0057685161009430889,
+                                        "w": -0.6635169386863709
+                                    },
+                                    "scale": {
+                                        "x": 1.0756115913391114,
+                                        "y": 1.0756115913391114,
+                                        "z": 1.0756115913391114
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -8.507716178894043,
+                                        "y": 5.0,
+                                        "z": -23.046937942504884
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.992060661315918,
+                                        "z": 0.0,
+                                        "w": -0.1257602721452713
+                                    },
+                                    "scale": {
+                                        "x": 1.041735053062439,
+                                        "y": 1.041735053062439,
+                                        "z": 1.041735053062439
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -2.6513538360595705,
+                                        "y": 4.985550880432129,
+                                        "z": -24.427745819091798
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.6314504742622376,
+                                        "z": -0.004913304932415485,
+                                        "w": -0.7754006385803223
+                                    },
+                                    "scale": {
+                                        "x": 0.613225519657135,
+                                        "y": 0.613225519657135,
+                                        "z": 0.613225519657135
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -5.349396705627441,
+                                        "y": 5.0,
+                                        "z": -21.316177368164064
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.9479139447212219,
+                                        "z": 0.0,
+                                        "w": 0.3185264766216278
+                                    },
+                                    "scale": {
+                                        "x": 0.7017310261726379,
+                                        "y": 0.7017310261726379,
+                                        "z": 0.7017310261726379
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -0.25403642654418948,
+                                        "y": 4.441783905029297,
+                                        "z": -27.42460823059082
+                                    },
+                                    "rotation": {
+                                        "x": 0.08609592914581299,
+                                        "y": 0.5541919469833374,
+                                        "z": -0.02459874376654625,
+                                        "w": -0.8275588750839233
+                                    },
+                                    "scale": {
+                                        "x": 0.9848185181617737,
+                                        "y": 0.9848185181617737,
+                                        "z": 0.9848185181617737
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 1.1221942901611329,
+                                        "y": 3.8560290336608888,
+                                        "z": -25.292518615722658
+                                    },
+                                    "rotation": {
+                                        "x": 0.03556005284190178,
+                                        "y": 0.14162135124206544,
+                                        "z": 0.008649743162095547,
+                                        "w": -0.989244282245636
+                                    },
+                                    "scale": {
+                                        "x": 0.7947920560836792,
+                                        "y": 0.7947920560836792,
+                                        "z": 0.7947920560836792
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -2.9663476943969728,
+                                        "y": 4.602550029754639,
+                                        "z": -28.96923828125
+                                    },
+                                    "rotation": {
+                                        "x": 0.03339530527591705,
+                                        "y": 0.8611037135124207,
+                                        "z": -0.013358122669160366,
+                                        "w": -0.5071556568145752
+                                    },
+                                    "scale": {
+                                        "x": 0.6348775029182434,
+                                        "y": 0.6348775029182434,
+                                        "z": 0.6348775029182434
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 3.257596015930176,
+                                        "y": 2.9391140937805177,
+                                        "z": -27.46428108215332
+                                    },
+                                    "rotation": {
+                                        "x": 0.01337586808949709,
+                                        "y": 0.21758422255516053,
+                                        "z": -0.01170384045690298,
+                                        "w": -0.9758797287940979
+                                    },
+                                    "scale": {
+                                        "x": 0.7823899984359741,
+                                        "y": 0.7823899984359741,
+                                        "z": 0.7823899984359741
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -1.4200397729873658,
+                                        "y": 4.424070358276367,
+                                        "z": -29.263595581054689
+                                    },
+                                    "rotation": {
+                                        "x": 0.07509924471378327,
+                                        "y": 0.8228456377983093,
+                                        "z": -0.05006616562604904,
+                                        "w": -0.5610514283180237
+                                    },
+                                    "scale": {
+                                        "x": 0.7389065027236939,
+                                        "y": 0.7389065027236939,
+                                        "z": 0.7389065027236939
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 0.7001702189445496,
+                                        "y": 3.581672191619873,
+                                        "z": -23.21588897705078
+                                    },
+                                    "rotation": {
+                                        "x": 0.09259463101625443,
+                                        "y": 0.5787428021430969,
+                                        "z": 0.05471500754356384,
+                                        "w": 0.8083868622779846
+                                    },
+                                    "scale": {
+                                        "x": 0.7348025441169739,
+                                        "y": 0.7348025441169739,
+                                        "z": 0.7348025441169739
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -1.1014773845672608,
+                                        "y": 4.8158793449401859,
+                                        "z": -24.371532440185548
+                                    },
+                                    "rotation": {
+                                        "x": 0.059131983667612079,
+                                        "y": 0.768501341342926,
+                                        "z": 0.00591319752857089,
+                                        "w": 0.6370826363563538
+                                    },
+                                    "scale": {
+                                        "x": 0.6249729990959168,
+                                        "y": 0.6249729990959168,
+                                        "z": 0.6249729990959168
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -4.598974704742432,
+                                        "y": 4.665982246398926,
+                                        "z": -28.96001434326172
+                                    },
+                                    "rotation": {
+                                        "x": -0.06723984330892563,
+                                        "y": 0.969257116317749,
+                                        "z": -0.014942186884582043,
+                                        "w": -0.23621214926242829
+                                    },
+                                    "scale": {
+                                        "x": 0.8526794910430908,
+                                        "y": 0.8526794910430908,
+                                        "z": 0.8526794910430908
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 1.4564133882522584,
+                                        "y": 3.321229934692383,
+                                        "z": -28.307159423828126
+                                    },
+                                    "rotation": {
+                                        "x": 0.05542450770735741,
+                                        "y": 0.25173425674438479,
+                                        "z": -0.027712250128388406,
+                                        "w": -0.9658106565475464
+                                    },
+                                    "scale": {
+                                        "x": 0.8147464990615845,
+                                        "y": 0.8147464990615845,
+                                        "z": 0.8147464990615845
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -0.09534008800983429,
+                                        "y": 3.896450996398926,
+                                        "z": -29.876686096191408
+                                    },
+                                    "rotation": {
+                                        "x": 0.14991123974323274,
+                                        "y": 0.6842264533042908,
+                                        "z": 0.009671694599092007,
+                                        "w": -0.7136296629905701
+                                    },
+                                    "scale": {
+                                        "x": 0.6806575059890747,
+                                        "y": 0.6806575059890747,
+                                        "z": 0.6806575059890747
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 5.8346757888793949,
+                                        "y": 3.0707809925079347,
+                                        "z": -24.10006332397461
+                                    },
+                                    "rotation": {
+                                        "x": 0.006445060018450022,
+                                        "y": 0.05328376963734627,
+                                        "z": 0.0012084487825632096,
+                                        "w": -0.9985578656196594
+                                    },
+                                    "scale": {
+                                        "x": 0.776990532875061,
+                                        "y": 0.776990532875061,
+                                        "z": 0.776990532875061
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 1.907921314239502,
+                                        "y": 3.3120930194854738,
+                                        "z": -22.099306106567384
+                                    },
+                                    "rotation": {
+                                        "x": -0.05196134373545647,
+                                        "y": 0.6788651347160339,
+                                        "z": 0.03637293726205826,
+                                        "w": 0.7315183877944946
+                                    },
+                                    "scale": {
+                                        "x": 1.0158300399780274,
+                                        "y": 1.0158300399780274,
+                                        "z": 1.0158300399780274
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 2.946300983428955,
+                                        "y": 3.2606194019317629,
+                                        "z": -20.35313606262207
+                                    },
+                                    "rotation": {
+                                        "x": -0.04072496294975281,
+                                        "y": 0.5349991321563721,
+                                        "z": -0.04072481021285057,
+                                        "w": 0.842887282371521
+                                    },
+                                    "scale": {
+                                        "x": 1.0430610179901124,
+                                        "y": 1.0430610179901124,
+                                        "z": 1.0430610179901124
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -1.6670538187026978,
+                                        "y": 4.875730037689209,
+                                        "z": -21.25003433227539
+                                    },
+                                    "rotation": {
+                                        "x": 0.05401071906089783,
+                                        "y": 0.9971151351928711,
+                                        "z": 0.007715817075222731,
+                                        "w": 0.052769891917705539
+                                    },
+                                    "scale": {
+                                        "x": 0.7608320116996765,
+                                        "y": 0.7608320116996765,
+                                        "z": 0.7608320116996765
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -1.760274887084961,
+                                        "y": 4.837310791015625,
+                                        "z": -15.057909965515137
+                                    },
+                                    "rotation": {
+                                        "x": 0.025081774219870569,
+                                        "y": 0.8201999664306641,
+                                        "z": -0.07524532824754715,
+                                        "w": 0.5665521025657654
+                                    },
+                                    "scale": {
+                                        "x": 0.704580545425415,
+                                        "y": 0.704580545425415,
+                                        "z": 0.704580545425415
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 2.023054361343384,
+                                        "y": 2.9597458839416506,
+                                        "z": -16.619243621826173
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.18945708870887757,
+                                        "z": 0.007350832223892212,
+                                        "w": 0.9818614721298218
+                                    },
+                                    "scale": {
+                                        "x": 0.8410500288009644,
+                                        "y": 0.8410500288009644,
+                                        "z": 0.8410500288009644
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 2.254910707473755,
+                                        "y": 3.3700368404388429,
+                                        "z": -18.14581871032715
+                                    },
+                                    "rotation": {
+                                        "x": -0.03694746270775795,
+                                        "y": 0.4036110043525696,
+                                        "z": 0.018473733216524125,
+                                        "w": -0.9139977097511292
+                                    },
+                                    "scale": {
+                                        "x": 0.9448450207710266,
+                                        "y": 0.9448450207710266,
+                                        "z": 0.9448450207710266
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -2.849714517593384,
+                                        "y": 5.0,
+                                        "z": -8.706915855407715
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.8370659947395325,
+                                        "z": 0.0,
+                                        "w": 0.5471019148826599
+                                    },
+                                    "scale": {
+                                        "x": 1.043727993965149,
+                                        "y": 1.043727993965149,
+                                        "z": 1.043727993965149
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -1.4642832279205323,
+                                        "y": 4.9953765869140629,
+                                        "z": -10.336725234985352
+                                    },
+                                    "rotation": {
+                                        "x": 0.03535393998026848,
+                                        "y": 0.9111967086791992,
+                                        "z": 0.0,
+                                        "w": 0.41045182943344118
+                                    },
+                                    "scale": {
+                                        "x": 0.8596050143241882,
+                                        "y": 0.8596050143241882,
+                                        "z": 0.8596050143241882
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -4.170891761779785,
+                                        "y": 5.0,
+                                        "z": -9.267499923706055
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.9999909400939941,
+                                        "z": 0.0,
+                                        "w": 0.004256788175553083
+                                    },
+                                    "scale": {
+                                        "x": 0.976839542388916,
+                                        "y": 0.976839542388916,
+                                        "z": 0.976839542388916
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -5.71823787689209,
+                                        "y": 5.0,
+                                        "z": -10.030594825744629
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.953044056892395,
+                                        "z": 0.0,
+                                        "w": -0.302831768989563
+                                    },
+                                    "scale": {
+                                        "x": 0.6085005402565002,
+                                        "y": 0.6085005402565002,
+                                        "z": 0.6085005402565002
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -7.782708168029785,
+                                        "y": 4.774938106536865,
+                                        "z": 0.7462351322174072
+                                    },
+                                    "rotation": {
+                                        "x": 0.10301033407449722,
+                                        "y": 0.8573520183563232,
+                                        "z": 0.15754520893096925,
+                                        "w": 0.4790782332420349
+                                    },
+                                    "scale": {
+                                        "x": 0.7096844911575317,
+                                        "y": 0.7096844911575317,
+                                        "z": 0.7096844911575317
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 2.0213255882263185,
+                                        "y": 3.9309499263763429,
+                                        "z": 2.5054454803466799
+                                    },
+                                    "rotation": {
+                                        "x": 0.007169527467340231,
+                                        "y": 0.10334818065166474,
+                                        "z": 0.0015932283131405712,
+                                        "w": 0.9946181178092957
+                                    },
+                                    "scale": {
+                                        "x": 1.0621044635772706,
+                                        "y": 1.0621044635772706,
+                                        "z": 1.0621044635772706
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -4.012777328491211,
+                                        "y": 5.0,
+                                        "z": -18.30366325378418
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.714896023273468,
+                                        "z": 0.0,
+                                        "w": 0.6992307901382446
+                                    },
+                                    "scale": {
+                                        "x": 0.8632680177688599,
+                                        "y": 0.8632680177688599,
+                                        "z": 0.8632680177688599
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -0.9520362019538879,
+                                        "y": 3.8250160217285158,
+                                        "z": 6.465223789215088
+                                    },
+                                    "rotation": {
+                                        "x": 0.025590308010578157,
+                                        "y": 0.666917622089386,
+                                        "z": 0.05118061602115631,
+                                        "w": 0.742931067943573
+                                    },
+                                    "scale": {
+                                        "x": 0.9491070508956909,
+                                        "y": 0.9491070508956909,
+                                        "z": 0.9491070508956909
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -5.359739780426025,
+                                        "y": 4.019608020782471,
+                                        "z": 4.984502792358398
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.6531740427017212,
+                                        "z": 0.0,
+                                        "w": 0.7572078108787537
+                                    },
+                                    "scale": {
+                                        "x": 0.8065530061721802,
+                                        "y": 0.8065530061721802,
+                                        "z": 0.8065530061721802
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 2.622234344482422,
+                                        "y": 3.6502652168273927,
+                                        "z": 5.007893085479736
+                                    },
+                                    "rotation": {
+                                        "x": 0.01004493422806263,
+                                        "y": 0.430759072303772,
+                                        "z": -0.00334831140935421,
+                                        "w": 0.9024049639701843
+                                    },
+                                    "scale": {
+                                        "x": 0.7820630073547363,
+                                        "y": 0.7820630073547363,
+                                        "z": 0.7820630073547363
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -4.925150394439697,
+                                        "y": 5.0,
+                                        "z": -23.97416877746582
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.7486258745193481,
+                                        "z": 0.0,
+                                        "w": -0.6629927158355713
+                                    },
+                                    "scale": {
+                                        "x": 0.8484620451927185,
+                                        "y": 0.8484620451927185,
+                                        "z": 0.8484620451927185
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 3.7913918495178224,
+                                        "y": 3.425748825073242,
+                                        "z": -1.2521817684173585
+                                    },
+                                    "rotation": {
+                                        "x": 0.015254010446369648,
+                                        "y": 0.2827097475528717,
+                                        "z": -0.013074866496026516,
+                                        "w": -0.9589951038360596
+                                    },
+                                    "scale": {
+                                        "x": 0.8859624862670898,
+                                        "y": 0.8859624862670898,
+                                        "z": 0.8859624862670898
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -8.315573692321778,
+                                        "y": 5.0,
+                                        "z": -18.556198120117189
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.9998335242271423,
+                                        "z": 0.0,
+                                        "w": -0.01825164258480072
+                                    },
+                                    "scale": {
+                                        "x": 0.6836125254631043,
+                                        "y": 0.6836125254631043,
+                                        "z": 0.6836125254631043
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 3.0762219429016115,
+                                        "y": 3.338266611099243,
+                                        "z": -7.225025177001953
+                                    },
+                                    "rotation": {
+                                        "x": 0.044191230088472369,
+                                        "y": 0.524178683757782,
+                                        "z": -0.01606954075396061,
+                                        "w": -0.8503091335296631
+                                    },
+                                    "scale": {
+                                        "x": 0.8707234859466553,
+                                        "y": 0.8707234859466553,
+                                        "z": 0.8707234859466553
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 4.423905372619629,
+                                        "y": 3.2080078125,
+                                        "z": -7.179749011993408
+                                    },
+                                    "rotation": {
+                                        "x": 0.004290977958589792,
+                                        "y": 0.27834346890449526,
+                                        "z": -0.019309397786855699,
+                                        "w": 0.9602779150009155
+                                    },
+                                    "scale": {
+                                        "x": 0.6583729982376099,
+                                        "y": 0.6583729982376099,
+                                        "z": 0.6583729982376099
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 4.798567295074463,
+                                        "y": 2.5108420848846437,
+                                        "z": -11.949583053588868
+                                    },
+                                    "rotation": {
+                                        "x": 0.0011554898228496314,
+                                        "y": 0.07441074401140213,
+                                        "z": -0.002310984069481492,
+                                        "w": -0.9972243309020996
+                                    },
+                                    "scale": {
+                                        "x": 0.7766330242156982,
+                                        "y": 0.7766330242156982,
+                                        "z": 0.7766330242156982
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 0.5733069777488709,
+                                        "y": 3.2999258041381838,
+                                        "z": -15.74843978881836
+                                    },
+                                    "rotation": {
+                                        "x": 0.08254151791334152,
+                                        "y": 0.9029375314712524,
+                                        "z": -0.048149216920137408,
+                                        "w": -0.4190135896205902
+                                    },
+                                    "scale": {
+                                        "x": 0.9710230231285095,
+                                        "y": 0.9710230231285095,
+                                        "z": 0.9710230231285095
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 4.109167575836182,
+                                        "y": 2.4898743629455568,
+                                        "z": -13.381549835205079
+                                    },
+                                    "rotation": {
+                                        "x": 0.030895063653588296,
+                                        "y": 0.6646824479103088,
+                                        "z": -0.010298340581357479,
+                                        "w": 0.746415913105011
+                                    },
+                                    "scale": {
+                                        "x": 0.8757979869842529,
+                                        "y": 0.8757979869842529,
+                                        "z": 0.8757979869842529
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 7.151332378387451,
+                                        "y": 2.3387253284454347,
+                                        "z": -16.76651382446289
+                                    },
+                                    "rotation": {
+                                        "x": -0.016676055267453195,
+                                        "y": 0.24197201430797578,
+                                        "z": -0.014823161996901036,
+                                        "w": 0.9700266718864441
+                                    },
+                                    "scale": {
+                                        "x": 0.9399070143699646,
+                                        "y": 0.9399070143699646,
+                                        "z": 0.9399070143699646
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 9.131010055541993,
+                                        "y": 2.1069626808166506,
+                                        "z": -19.619749069213868
+                                    },
+                                    "rotation": {
+                                        "x": 0.0003259976801928133,
+                                        "y": 0.014003640040755272,
+                                        "z": -0.0004346669011283666,
+                                        "w": -0.9999018907546997
+                                    },
+                                    "scale": {
+                                        "x": 0.7748900055885315,
+                                        "y": 0.7748900055885315,
+                                        "z": 0.7748900055885315
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 7.900100231170654,
+                                        "y": 2.3397376537323,
+                                        "z": -24.757022857666017
+                                    },
+                                    "rotation": {
+                                        "x": 0.0810466855764389,
+                                        "y": 0.43548473715782168,
+                                        "z": 0.06903976947069168,
+                                        "w": -0.8938781023025513
+                                    },
+                                    "scale": {
+                                        "x": 0.7360085248947144,
+                                        "y": 0.7360085248947144,
+                                        "z": 0.7360085248947144
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 5.729122638702393,
+                                        "y": 2.278134822845459,
+                                        "z": -19.521284103393556
+                                    },
+                                    "rotation": {
+                                        "x": 0.11702125519514084,
+                                        "y": 0.7009429335594177,
+                                        "z": 0.061054568737745288,
+                                        "w": 0.7008975744247437
+                                    },
+                                    "scale": {
+                                        "x": 1.0487245321273804,
+                                        "y": 1.0487245321273804,
+                                        "z": 1.0487245321273804
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 7.09769344329834,
+                                        "y": 1.9583820104599,
+                                        "z": -19.093292236328126
+                                    },
+                                    "rotation": {
+                                        "x": -0.003837626427412033,
+                                        "y": 0.49521443247795107,
+                                        "z": -0.0230257548391819,
+                                        "w": 0.8684571385383606
+                                    },
+                                    "scale": {
+                                        "x": 0.6703035235404968,
+                                        "y": 0.6703035235404968,
+                                        "z": 0.6703035235404968
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 1.301013469696045,
+                                        "y": 3.220762014389038,
+                                        "z": -20.805044174194337
+                                    },
+                                    "rotation": {
+                                        "x": 0.13205508887767793,
+                                        "y": 0.9289546608924866,
+                                        "z": 0.01390053704380989,
+                                        "w": 0.3455599248409271
+                                    },
+                                    "scale": {
+                                        "x": 0.8456305265426636,
+                                        "y": 0.8456305265426636,
+                                        "z": 0.8456305265426636
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 2.6372053623199465,
+                                        "y": 3.108501672744751,
+                                        "z": -25.5336971282959
+                                    },
+                                    "rotation": {
+                                        "x": 0.016667135059833528,
+                                        "y": 0.536419153213501,
+                                        "z": 0.0,
+                                        "w": -0.8437872529029846
+                                    },
+                                    "scale": {
+                                        "x": 0.610791027545929,
+                                        "y": 0.610791027545929,
+                                        "z": 0.610791027545929
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -0.2905046343803406,
+                                        "y": 4.166073322296143,
+                                        "z": -21.953964233398439
+                                    },
+                                    "rotation": {
+                                        "x": 0.14543068408966065,
+                                        "y": 0.6346732974052429,
+                                        "z": -0.0396629199385643,
+                                        "w": -0.7579357624053955
+                                    },
+                                    "scale": {
+                                        "x": 0.6873250007629395,
+                                        "y": 0.6873250007629395,
+                                        "z": 0.6873250007629395
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -2.6547043323516847,
+                                        "y": 4.784537315368652,
+                                        "z": -18.310354232788087
+                                    },
+                                    "rotation": {
+                                        "x": 0.0932430848479271,
+                                        "y": 0.8195803165435791,
+                                        "z": 0.01864861696958542,
+                                        "w": -0.5650187730789185
+                                    },
+                                    "scale": {
+                                        "x": 0.8640180230140686,
+                                        "y": 0.8640180230140686,
+                                        "z": 0.8640180230140686
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -6.065544128417969,
+                                        "y": 5.0,
+                                        "z": -17.058286666870118
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.9114950895309448,
+                                        "z": 0.0,
+                                        "w": -0.41131120920181277
+                                    },
+                                    "scale": {
+                                        "x": 0.947393536567688,
+                                        "y": 0.947393536567688,
+                                        "z": 0.947393536567688
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -10.380971908569336,
+                                        "y": 5.0,
+                                        "z": -10.739047050476075
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.9943111538887024,
+                                        "z": 0.0,
+                                        "w": -0.1065143570303917
+                                    },
+                                    "scale": {
+                                        "x": 0.9881330132484436,
+                                        "y": 0.9881330132484436,
+                                        "z": 0.9881330132484436
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -13.36796760559082,
+                                        "y": 5.0,
+                                        "z": -7.590209007263184
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.8827551007270813,
+                                        "z": 0.0,
+                                        "w": -0.4698334038257599
+                                    },
+                                    "scale": {
+                                        "x": 0.7900534868240356,
+                                        "y": 0.7900534868240356,
+                                        "z": 0.7900534868240356
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -14.568290710449219,
+                                        "y": 5.0,
+                                        "z": -3.4619829654693605
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.894853413105011,
+                                        "z": 0.0,
+                                        "w": -0.44636037945747378
+                                    },
+                                    "scale": {
+                                        "x": 0.6697010397911072,
+                                        "y": 0.6697010397911072,
+                                        "z": 0.6697010397911072
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -17.22121810913086,
+                                        "y": 4.600801944732666,
+                                        "z": 2.621941328048706
+                                    },
+                                    "rotation": {
+                                        "x": -0.08485865592956543,
+                                        "y": 0.9401141405105591,
+                                        "z": 0.09193021804094315,
+                                        "w": 0.3170698881149292
+                                    },
+                                    "scale": {
+                                        "x": 0.9242280125617981,
+                                        "y": 0.9242280125617981,
+                                        "z": 0.9242280125617981
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -14.417634010314942,
+                                        "y": 4.904338836669922,
+                                        "z": 2.33542537689209
+                                    },
+                                    "rotation": {
+                                        "x": -0.01481900829821825,
+                                        "y": 0.9543080925941467,
+                                        "z": 0.029638011008501054,
+                                        "w": 0.2969816029071808
+                                    },
+                                    "scale": {
+                                        "x": 0.7028965353965759,
+                                        "y": 0.7028965353965759,
+                                        "z": 0.7028965353965759
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -9.523853302001954,
+                                        "y": 3.6492233276367189,
+                                        "z": 4.83661413192749
+                                    },
+                                    "rotation": {
+                                        "x": -0.00326005881652236,
+                                        "y": 0.10550081729888916,
+                                        "z": 0.005705102346837521,
+                                        "w": 0.9943975210189819
+                                    },
+                                    "scale": {
+                                        "x": 0.815820038318634,
+                                        "y": 0.815820038318634,
+                                        "z": 0.815820038318634
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -14.165616035461426,
+                                        "y": 4.447296142578125,
+                                        "z": 4.857845306396484
+                                    },
+                                    "rotation": {
+                                        "x": -0.010112731717526913,
+                                        "y": 0.675820529460907,
+                                        "z": 0.09607096016407013,
+                                        "w": -0.7307083606719971
+                                    },
+                                    "scale": {
+                                        "x": 0.7069440484046936,
+                                        "y": 0.7069440484046936,
+                                        "z": 0.7069440484046936
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -16.778100967407228,
+                                        "y": 3.9099197387695314,
+                                        "z": 4.7218427658081059
+                                    },
+                                    "rotation": {
+                                        "x": 0.02181660383939743,
+                                        "y": 0.5822340250015259,
+                                        "z": 0.07853979617357254,
+                                        "w": -0.808924674987793
+                                    },
+                                    "scale": {
+                                        "x": 0.788722038269043,
+                                        "y": 0.788722038269043,
+                                        "z": 0.788722038269043
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -14.292613983154297,
+                                        "y": 3.4120841026306154,
+                                        "z": 7.757646560668945
+                                    },
+                                    "rotation": {
+                                        "x": -0.02179725468158722,
+                                        "y": 0.9754777550697327,
+                                        "z": 0.1453150361776352,
+                                        "w": -0.1638646274805069
+                                    },
+                                    "scale": {
+                                        "x": 0.8467485308647156,
+                                        "y": 0.8467485308647156,
+                                        "z": 0.8467485308647156
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -14.322425842285157,
+                                        "y": 3.8458943367004396,
+                                        "z": 6.423666477203369
+                                    },
+                                    "rotation": {
+                                        "x": -0.042969610542058948,
+                                        "y": 0.9603269696235657,
+                                        "z": 0.13607046008110047,
+                                        "w": -0.2396051585674286
+                                    },
+                                    "scale": {
+                                        "x": 0.9418615102767944,
+                                        "y": 0.9418615102767944,
+                                        "z": 0.9418615102767944
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -8.842315673828125,
+                                        "y": 3.4606516361236574,
+                                        "z": 9.689763069152832
+                                    },
+                                    "rotation": {
+                                        "x": -0.01314262580126524,
+                                        "y": 0.34251439571380618,
+                                        "z": 0.02628525160253048,
+                                        "w": 0.9390528798103333
+                                    },
+                                    "scale": {
+                                        "x": 1.0124419927597047,
+                                        "y": 1.0124419927597047,
+                                        "z": 1.0124419927597047
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -11.172004699707032,
+                                        "y": 4.171988487243652,
+                                        "z": 3.8979709148406984
+                                    },
+                                    "rotation": {
+                                        "x": 0.10307478159666062,
+                                        "y": 0.7396451830863953,
+                                        "z": 0.13915148377418519,
+                                        "w": -0.650336503982544
+                                    },
+                                    "scale": {
+                                        "x": 1.0382155179977418,
+                                        "y": 1.0382155179977418,
+                                        "z": 1.0382155179977418
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -13.13900375366211,
+                                        "y": 2.8922691345214845,
+                                        "z": 11.29905891418457
+                                    },
+                                    "rotation": {
+                                        "x": -0.014269224368035794,
+                                        "y": 0.9176575541496277,
+                                        "z": 0.014269224368035794,
+                                        "w": 0.3968594968318939
+                                    },
+                                    "scale": {
+                                        "x": 0.9427175521850586,
+                                        "y": 0.9427175521850586,
+                                        "z": 0.9427175521850586
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -5.510572910308838,
+                                        "y": 3.451333522796631,
+                                        "z": 7.585737705230713
+                                    },
+                                    "rotation": {
+                                        "x": -0.0007762285531498492,
+                                        "y": 0.03331730142235756,
+                                        "z": 0.0007762285531498492,
+                                        "w": -0.9994442462921143
+                                    },
+                                    "scale": {
+                                        "x": 0.7583545446395874,
+                                        "y": 0.7583545446395874,
+                                        "z": 0.7583545446395874
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -12.041451454162598,
+                                        "y": 3.2163736820220949,
+                                        "z": 8.719879150390625
+                                    },
+                                    "rotation": {
+                                        "x": -0.007366647012531757,
+                                        "y": 0.9573970437049866,
+                                        "z": 0.07366590946912766,
+                                        "w": 0.27912387251853945
+                                    },
+                                    "scale": {
+                                        "x": 1.0292584896087647,
+                                        "y": 1.0292584896087647,
+                                        "z": 1.0292584896087647
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -1.2101562023162842,
+                                        "y": 5.0,
+                                        "z": -8.388401985168457
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.30240944027900698,
+                                        "z": 0.0,
+                                        "w": -0.9531782269477844
+                                    },
+                                    "scale": {
+                                        "x": 1.0028035640716553,
+                                        "y": 1.0028035640716553,
+                                        "z": 1.0028035640716553
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -6.029064655303955,
+                                        "y": 5.0,
+                                        "z": -5.230467319488525
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.9565042853355408,
+                                        "z": 0.0,
+                                        "w": 0.29171836376190188
+                                    },
+                                    "scale": {
+                                        "x": 1.0564415454864503,
+                                        "y": 1.0564415454864503,
+                                        "z": 1.0564415454864503
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 1.75704824924469,
+                                        "y": 3.937808036804199,
+                                        "z": -8.600956916809082
+                                    },
+                                    "rotation": {
+                                        "x": 0.11433640122413635,
+                                        "y": 0.43169406056404116,
+                                        "z": -0.037159331142902377,
+                                        "w": 0.8939723968505859
+                                    },
+                                    "scale": {
+                                        "x": 0.7703574895858765,
+                                        "y": 0.7703574895858765,
+                                        "z": 0.7703574895858765
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 0.19422905147075654,
+                                        "y": 4.152791976928711,
+                                        "z": -11.236464500427246
+                                    },
+                                    "rotation": {
+                                        "x": 0.12013143301010132,
+                                        "y": 0.6409280300140381,
+                                        "z": -0.1244213655591011,
+                                        "w": 0.7478629946708679
+                                    },
+                                    "scale": {
+                                        "x": 0.610260009765625,
+                                        "y": 0.610260009765625,
+                                        "z": 0.610260009765625
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -0.8358087539672852,
+                                        "y": 3.738823413848877,
+                                        "z": -18.800640106201173
+                                    },
+                                    "rotation": {
+                                        "x": 0.11850050091743469,
+                                        "y": 0.6027538180351257,
+                                        "z": 0.06771456450223923,
+                                        "w": 0.7861680388450623
+                                    },
+                                    "scale": {
+                                        "x": 0.8275190591812134,
+                                        "y": 0.8275190591812134,
+                                        "z": 0.8275190591812134
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 3.391608715057373,
+                                        "y": 3.216766357421875,
+                                        "z": -19.015220642089845
+                                    },
+                                    "rotation": {
+                                        "x": 0.011232861317694188,
+                                        "y": 0.10564003884792328,
+                                        "z": -0.004011736251413822,
+                                        "w": 0.9943329095840454
+                                    },
+                                    "scale": {
+                                        "x": 0.6440465450286865,
+                                        "y": 0.6440465450286865,
+                                        "z": 0.6440465450286865
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 0.20407769083976746,
+                                        "y": 3.505094528198242,
+                                        "z": -19.801576614379884
+                                    },
+                                    "rotation": {
+                                        "x": 0.0019388203509151936,
+                                        "y": 0.010717484168708325,
+                                        "z": 0.0006979726022109389,
+                                        "w": -0.9999404549598694
+                                    },
+                                    "scale": {
+                                        "x": 0.6412875056266785,
+                                        "y": 0.6412875056266785,
+                                        "z": 0.6412875056266785
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 0.18531028926372529,
+                                        "y": 3.2723464965820314,
+                                        "z": -17.628116607666017
+                                    },
+                                    "rotation": {
+                                        "x": 0.01212310791015625,
+                                        "y": 0.133339524269104,
+                                        "z": -0.01010258961468935,
+                                        "w": -0.9909448623657227
+                                    },
+                                    "scale": {
+                                        "x": 0.9669849872589111,
+                                        "y": 0.9669849872589111,
+                                        "z": 0.9669849872589111
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -7.619240760803223,
+                                        "y": 5.0,
+                                        "z": -11.831947326660157
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.9339656829833984,
+                                        "z": 0.0,
+                                        "w": 0.35736268758773806
+                                    },
+                                    "scale": {
+                                        "x": 0.7368969917297363,
+                                        "y": 0.7368969917297363,
+                                        "z": 0.7368969917297363
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -8.817985534667969,
+                                        "y": 5.0,
+                                        "z": -9.140872955322266
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.7131298184394836,
+                                        "z": 0.0,
+                                        "w": -0.7010321021080017
+                                    },
+                                    "scale": {
+                                        "x": 0.6915000081062317,
+                                        "y": 0.6915000081062317,
+                                        "z": 0.6915000081062317
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -6.815103530883789,
+                                        "y": 3.9394679069519045,
+                                        "z": 3.8783812522888185
+                                    },
+                                    "rotation": {
+                                        "x": -0.009955513291060925,
+                                        "y": 0.6434914469718933,
+                                        "z": -0.0348442979156971,
+                                        "w": 0.7645951509475708
+                                    },
+                                    "scale": {
+                                        "x": 0.7410035133361816,
+                                        "y": 0.7410035133361816,
+                                        "z": 0.7410035133361816
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -8.419246673583985,
+                                        "y": 4.1076436042785648,
+                                        "z": 2.4348251819610597
+                                    },
+                                    "rotation": {
+                                        "x": 0.013615721836686135,
+                                        "y": 0.26019006967544558,
+                                        "z": 0.035011857748031619,
+                                        "w": -0.9648264646530151
+                                    },
+                                    "scale": {
+                                        "x": 0.9149355292320252,
+                                        "y": 0.9149355292320252,
+                                        "z": 0.9149355292320252
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -18.037384033203126,
+                                        "y": 2.3622121810913088,
+                                        "z": 10.574407577514649
+                                    },
+                                    "rotation": {
+                                        "x": -0.06646207720041275,
+                                        "y": 0.9602686166763306,
+                                        "z": 0.03692343458533287,
+                                        "w": 0.26852139830589297
+                                    },
+                                    "scale": {
+                                        "x": 0.7591249942779541,
+                                        "y": 0.7591249942779541,
+                                        "z": 0.7591249942779541
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -4.586535453796387,
+                                        "y": 3.8467812538146974,
+                                        "z": 6.519010543823242
+                                    },
+                                    "rotation": {
+                                        "x": -0.003425286617130041,
+                                        "y": 0.2221885472536087,
+                                        "z": 0.015413787215948105,
+                                        "w": 0.9748758673667908
+                                    },
+                                    "scale": {
+                                        "x": 0.8494450449943543,
+                                        "y": 0.8494450449943543,
+                                        "z": 0.8494450449943543
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -1.6870033740997315,
+                                        "y": 3.987208843231201,
+                                        "z": 4.681663990020752
+                                    },
+                                    "rotation": {
+                                        "x": 0.01200942974537611,
+                                        "y": 0.7719795107841492,
+                                        "z": 0.0,
+                                        "w": 0.6355339884757996
+                                    },
+                                    "scale": {
+                                        "x": 0.9831640124320984,
+                                        "y": 0.9831640124320984,
+                                        "z": 0.9831640124320984
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 4.64733362197876,
+                                        "y": 3.295609951019287,
+                                        "z": 1.9072901010513306
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.4657585918903351,
+                                        "z": 0.035841524600982669,
+                                        "w": 0.8841857314109802
+                                    },
+                                    "scale": {
+                                        "x": 0.8383375406265259,
+                                        "y": 0.8383375406265259,
+                                        "z": 0.8383375406265259
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -3.141885280609131,
+                                        "y": 5.0,
+                                        "z": -14.09518814086914
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.3282623589038849,
+                                        "z": 0.0,
+                                        "w": 0.9445866942405701
+                                    },
+                                    "scale": {
+                                        "x": 1.0889055728912354,
+                                        "y": 1.0889055728912354,
+                                        "z": 1.0889055728912354
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 8.351900100708008,
+                                        "y": 2.8937909603118898,
+                                        "z": -3.9013283252716066
+                                    },
+                                    "rotation": {
+                                        "x": 0.010322710499167443,
+                                        "y": 0.26653197407722475,
+                                        "z": -0.008258136920630932,
+                                        "w": 0.9637354016304016
+                                    },
+                                    "scale": {
+                                        "x": 1.0702329874038697,
+                                        "y": 1.0702329874038697,
+                                        "z": 1.0702329874038697
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 8.746353149414063,
+                                        "y": 2.7042224407196047,
+                                        "z": -9.327296257019043
+                                    },
+                                    "rotation": {
+                                        "x": -0.010890493169426918,
+                                        "y": 0.1762772649526596,
+                                        "z": -0.0027226440142840149,
+                                        "w": -0.984276533126831
+                                    },
+                                    "scale": {
+                                        "x": 0.6804050207138062,
+                                        "y": 0.6804050207138062,
+                                        "z": 0.6804050207138062
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 5.595880031585693,
+                                        "y": 2.546879291534424,
+                                        "z": -10.610180854797364
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.2344532012939453,
+                                        "z": -0.007284705527126789,
+                                        "w": -0.9721001386642456
+                                    },
+                                    "scale": {
+                                        "x": 0.7797390222549439,
+                                        "y": 0.7797390222549439,
+                                        "z": 0.7797390222549439
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 5.594008922576904,
+                                        "y": 2.3298072814941408,
+                                        "z": -15.529475212097168
+                                    },
+                                    "rotation": {
+                                        "x": -0.04209248721599579,
+                                        "y": 0.6075651049613953,
+                                        "z": -0.018707774579524995,
+                                        "w": -0.7929331064224243
+                                    },
+                                    "scale": {
+                                        "x": 1.0435049533843995,
+                                        "y": 1.0435049533843995,
+                                        "z": 1.0435049533843995
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 5.6675896644592289,
+                                        "y": 2.7993483543395998,
+                                        "z": -8.786140441894532
+                                    },
+                                    "rotation": {
+                                        "x": 0.02075991965830326,
+                                        "y": 0.672945499420166,
+                                        "z": -0.04151983931660652,
+                                        "w": 0.7382340431213379
+                                    },
+                                    "scale": {
+                                        "x": 0.6306385397911072,
+                                        "y": 0.6306385397911072,
+                                        "z": 0.6306385397911072
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 10.30296516418457,
+                                        "y": 1.562694787979126,
+                                        "z": -21.812788009643556
+                                    },
+                                    "rotation": {
+                                        "x": 0.002559548942372203,
+                                        "y": 0.1645493358373642,
+                                        "z": 0.0012797744711861015,
+                                        "w": 0.9863647222518921
+                                    },
+                                    "scale": {
+                                        "x": 0.6763890385627747,
+                                        "y": 0.6763890385627747,
+                                        "z": 0.6763890385627747
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 7.732508659362793,
+                                        "y": 2.7653141021728517,
+                                        "z": -28.62986946105957
+                                    },
+                                    "rotation": {
+                                        "x": 0.008478202857077122,
+                                        "y": 0.5459757447242737,
+                                        "z": -0.016956405714154245,
+                                        "w": -0.8375864624977112
+                                    },
+                                    "scale": {
+                                        "x": 1.0067495107650757,
+                                        "y": 1.0067495107650757,
+                                        "z": 1.0067495107650757
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 4.576554298400879,
+                                        "y": 3.124744415283203,
+                                        "z": -20.22712516784668
+                                    },
+                                    "rotation": {
+                                        "x": 0.1382116973400116,
+                                        "y": 0.786350667476654,
+                                        "z": 0.11056894809007645,
+                                        "w": 0.5918824076652527
+                                    },
+                                    "scale": {
+                                        "x": 0.9700225591659546,
+                                        "y": 0.9700225591659546,
+                                        "z": 0.9700225591659546
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 7.410476207733154,
+                                        "y": 2.877272367477417,
+                                        "z": -26.987810134887697
+                                    },
+                                    "rotation": {
+                                        "x": 0.007376030087471008,
+                                        "y": 0.47435441613197329,
+                                        "z": -0.0073760016821324829,
+                                        "w": -0.8802721500396729
+                                    },
+                                    "scale": {
+                                        "x": 0.9423545598983765,
+                                        "y": 0.9423545598983765,
+                                        "z": 0.9423545598983765
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 4.672394752502441,
+                                        "y": 2.7188687324523927,
+                                        "z": -28.37669563293457
+                                    },
+                                    "rotation": {
+                                        "x": 0.01878662034869194,
+                                        "y": 0.8088122010231018,
+                                        "z": -0.03757324069738388,
+                                        "w": -0.5865647196769714
+                                    },
+                                    "scale": {
+                                        "x": 0.6482885479927063,
+                                        "y": 0.6482885479927063,
+                                        "z": 0.6482885479927063
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -1.8761976957321168,
+                                        "y": 4.542259693145752,
+                                        "z": -1.1841994524002076
+                                    },
+                                    "rotation": {
+                                        "x": 0.03416191041469574,
+                                        "y": 0.23189786076545716,
+                                        "z": 0.018789052963256837,
+                                        "w": -0.9719585180282593
+                                    },
+                                    "scale": {
+                                        "x": 0.7032290101051331,
+                                        "y": 0.7032290101051331,
+                                        "z": 0.7032290101051331
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -6.874032497406006,
+                                        "y": 4.175685882568359,
+                                        "z": 1.6776611804962159
+                                    },
+                                    "rotation": {
+                                        "x": 0.042911969125270846,
+                                        "y": 0.9554274678230286,
+                                        "z": 0.12873588502407075,
+                                        "w": 0.26219072937965395
+                                    },
+                                    "scale": {
+                                        "x": 0.8075380325317383,
+                                        "y": 0.8075380325317383,
+                                        "z": 0.8075380325317383
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -0.880622386932373,
+                                        "y": 4.934982776641846,
+                                        "z": -3.2304701805114748
+                                    },
+                                    "rotation": {
+                                        "x": 0.00681251659989357,
+                                        "y": 0.44033852219581606,
+                                        "z": 0.023843806236982347,
+                                        "w": -0.8974893093109131
+                                    },
+                                    "scale": {
+                                        "x": 0.6967530250549316,
+                                        "y": 0.6967530250549316,
+                                        "z": 0.6967530250549316
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -1.1462877988815308,
+                                        "y": 3.930208683013916,
+                                        "z": 1.8825452327728272
+                                    },
+                                    "rotation": {
+                                        "x": 0.010153536684811116,
+                                        "y": 0.4361545443534851,
+                                        "z": 0.013538048602640629,
+                                        "w": 0.8997126221656799
+                                    },
+                                    "scale": {
+                                        "x": 1.0801299810409547,
+                                        "y": 1.0801299810409547,
+                                        "z": 1.0801299810409547
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -0.2495836317539215,
+                                        "y": 3.9376325607299806,
+                                        "z": 0.3919088542461395
+                                    },
+                                    "rotation": {
+                                        "x": 0.004954197909682989,
+                                        "y": 0.10664546489715576,
+                                        "z": 0.0024770989548414947,
+                                        "w": 0.9942817091941834
+                                    },
+                                    "scale": {
+                                        "x": 0.6438525319099426,
+                                        "y": 0.6438525319099426,
+                                        "z": 0.6438525319099426
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -0.5712581872940064,
+                                        "y": 3.9175829887390138,
+                                        "z": 3.390004873275757
+                                    },
+                                    "rotation": {
+                                        "x": -0.0037445658817887308,
+                                        "y": 0.48130056262016299,
+                                        "z": -0.0037445658817887308,
+                                        "w": 0.8765396475791931
+                                    },
+                                    "scale": {
+                                        "x": 0.9406909942626953,
+                                        "y": 0.9406909942626953,
+                                        "z": 0.9406909942626953
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -2.8532350063323976,
+                                        "y": 3.9795408248901369,
+                                        "z": 1.8623554706573487
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.754771888256073,
+                                        "z": 0.017602628096938134,
+                                        "w": 0.6557512879371643
+                                    },
+                                    "scale": {
+                                        "x": 0.6362155079841614,
+                                        "y": 0.6362155079841614,
+                                        "z": 0.6362155079841614
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 2.785890579223633,
+                                        "y": 3.8512792587280275,
+                                        "z": 1.1143443584442139
+                                    },
+                                    "rotation": {
+                                        "x": 0.015166391618549824,
+                                        "y": 0.3261466324329376,
+                                        "z": 0.0,
+                                        "w": 0.9451975226402283
+                                    },
+                                    "scale": {
+                                        "x": 1.0198044776916505,
+                                        "y": 1.0198044776916505,
+                                        "z": 1.0198044776916505
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 1.941884160041809,
+                                        "y": 3.6697957515716554,
+                                        "z": -1.4386416673660279
+                                    },
+                                    "rotation": {
+                                        "x": 0.03367006778717041,
+                                        "y": 0.48513638973236086,
+                                        "z": 0.0,
+                                        "w": 0.8737901449203491
+                                    },
+                                    "scale": {
+                                        "x": 0.8683620095252991,
+                                        "y": 0.8683620095252991,
+                                        "z": 0.8683620095252991
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -11.396177291870118,
+                                        "y": 5.0,
+                                        "z": -17.874221801757814
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.7624138593673706,
+                                        "z": 0.0,
+                                        "w": -0.6470897197723389
+                                    },
+                                    "scale": {
+                                        "x": 0.7179005146026611,
+                                        "y": 0.7179005146026611,
+                                        "z": 0.7179005146026611
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -17.166955947875978,
+                                        "y": 5.0,
+                                        "z": -14.224120140075684
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.9977375268936157,
+                                        "z": 0.0,
+                                        "w": 0.06722962111234665
+                                    },
+                                    "scale": {
+                                        "x": 1.0029335021972657,
+                                        "y": 1.0029335021972657,
+                                        "z": 1.0029335021972657
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -21.080814361572267,
+                                        "y": 4.442261695861816,
+                                        "z": -17.015701293945314
+                                    },
+                                    "rotation": {
+                                        "x": -0.22148510813713075,
+                                        "y": 0.9398913979530335,
+                                        "z": -0.039085615426301959,
+                                        "w": -0.25694534182548525
+                                    },
+                                    "scale": {
+                                        "x": 0.9394465684890747,
+                                        "y": 0.9394465684890747,
+                                        "z": 0.9394465684890747
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -21.016128540039064,
+                                        "y": 0.0,
+                                        "z": -14.707298278808594
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.9998663067817688,
+                                        "z": 0.0,
+                                        "w": -0.016351372003555299
+                                    },
+                                    "scale": {
+                                        "x": 0.8537470102310181,
+                                        "y": 0.8537470102310181,
+                                        "z": 0.8537470102310181
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -17.013837814331056,
+                                        "y": 5.0,
+                                        "z": -9.478169441223145
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.7222391366958618,
+                                        "z": 0.0,
+                                        "w": 0.6916434168815613
+                                    },
+                                    "scale": {
+                                        "x": 0.7235510349273682,
+                                        "y": 0.7235510349273682,
+                                        "z": 0.7235510349273682
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -9.356036186218262,
+                                        "y": 5.0,
+                                        "z": -7.456031799316406
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.46566829085350039,
+                                        "z": 0.0,
+                                        "w": 0.88495934009552
+                                    },
+                                    "scale": {
+                                        "x": 1.0194544792175294,
+                                        "y": 1.0194544792175294,
+                                        "z": 1.0194544792175294
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -3.9502804279327394,
+                                        "y": 5.0,
+                                        "z": -4.116108417510986
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.44872578978538515,
+                                        "z": 0.0,
+                                        "w": 0.8936694860458374
+                                    },
+                                    "scale": {
+                                        "x": 0.9289849996566773,
+                                        "y": 0.9289849996566773,
+                                        "z": 0.9289849996566773
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 0.4765600860118866,
+                                        "y": 4.795137882232666,
+                                        "z": -8.297797203063965
+                                    },
+                                    "rotation": {
+                                        "x": 0.03764568641781807,
+                                        "y": 0.37952280044555666,
+                                        "z": 0.008687465451657772,
+                                        "w": -0.9243753552436829
+                                    },
+                                    "scale": {
+                                        "x": 0.9675610065460205,
+                                        "y": 0.9675610065460205,
+                                        "z": 0.9675610065460205
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": -3.6047117710113527,
+                                        "y": 5.0,
+                                        "z": -2.1072473526000978
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.9693388342857361,
+                                        "z": 0.0,
+                                        "w": 0.24572794139385224
+                                    },
+                                    "scale": {
+                                        "x": 1.0916889905929566,
+                                        "y": 1.0916889905929566,
+                                        "z": 1.0916889905929566
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                },
+                                {
+                                    "position": {
+                                        "x": 0.7839421033859253,
+                                        "y": 4.3717241287231449,
+                                        "z": -3.360328435897827
+                                    },
+                                    "rotation": {
+                                        "x": 0.012700823135674,
+                                        "y": 0.05420941486954689,
+                                        "z": 0.007257613353431225,
+                                        "w": 0.9984224438667297
+                                    },
+                                    "scale": {
+                                        "x": 0.9772189855575562,
+                                        "y": 0.9772189855575562,
+                                        "z": 0.9772189855575562
+                                    },
+                                    "color": {
+                                        "r": 255,
+                                        "g": 255,
+                                        "b": 255,
+                                        "a": 255
+                                    }
+                                }
+                            ],
+                            "value3": true,
+                            "value4": {
+                                "x": 0.0,
+                                "y": 1.0,
+                                "z": 0.0
+                            },
+                            "value5": {
+                                "x": 0.4000000059604645,
+                                "y": 3.0,
+                                "z": 0.4000000059604645
+                            }
+                        }
+                    }
+                }
             }
         ],
         "m_actors": [
             {
                 "key": {
-                    "value0": "4e5af098-e273-4c72-bce1-727c58003aba"
+                    "value0": "b3e1667f-937d-4426-85c8-37839b00aa95"
                 },
                 "value": {
                     "polymorphic_id": 2147483653,
@@ -3309,22 +6913,22 @@
                             "value0": {
                                 "component_ids": [
                                     {
-                                        "value0": "48b19239-6baa-4253-8a74-4d85b292212e"
+                                        "value0": "490cf5eb-2006-4bd8-846d-e4f41eab8e1e"
                                     },
                                     {
-                                        "value0": "cfaee9fb-38e0-4206-ba76-9d2b7c4921f6"
+                                        "value0": "53dcfac9-266f-40a8-a324-60ba8df01a3e"
                                     },
                                     {
-                                        "value0": "aa093802-2b56-4dc0-9524-86fb1d04dc99"
+                                        "value0": "f45cc0a9-340a-47c5-837e-76d1ca10eb64"
                                     },
                                     {
-                                        "value0": "2b57cd05-ea39-451b-bf64-8cf75f248c24"
+                                        "value0": "cf539eb8-37ce-4762-af82-5f190631066d"
                                     }
                                 ],
                                 "value0": {
                                     "value0": {
                                         "value0": {
-                                            "value0": "4e5af098-e273-4c72-bce1-727c58003aba"
+                                            "value0": "b3e1667f-937d-4426-85c8-37839b00aa95"
                                         }
                                     },
                                     "value1": {
@@ -3351,7 +6955,9 @@
                                     "m_raycast_active": true
                                 }
                             },
-                            "m_heightmap_texture_key": "heightmap.png"
+                            "m_heightmap_texture_key": "heightmap.png",
+                            "m_model": "490cf5eb-2006-4bd8-846d-e4f41eab8e1e",
+                            "m_collider": "53dcfac9-266f-40a8-a324-60ba8df01a3e"
                         }
                     }
                 }

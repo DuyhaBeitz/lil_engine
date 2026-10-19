@@ -4,6 +4,20 @@
 #include "Components/ColliderComponent.hpp"
 #include "Components/ModelComponent.hpp"
 
+void Heightmap::SetupComponents() {
+    m_model = Lil::World().CreateComponent<ModelComponent>();
+    AttachComponent(m_model.get());
+    m_model->MarkRequired();
+
+    m_collider = Lil::World().CreateComponent<ColliderComponent>(BodyType::STATIC);
+    AttachComponent(m_collider.get());
+    m_collider->MarkRequired();
+
+    CollisionShape shape;
+    shape.m_type = CollisionShapeType::HEIGHTMAP;
+    m_collider->AddShape(shape);
+}
+
 void Heightmap::LayoutUpdate() {
     Actor::LayoutUpdate();
     
@@ -67,26 +81,4 @@ HeightmapQueryResult Heightmap::QueryAt(float x, float z) {
     };
     RayCollision collision = Raycast(ray);
     return HeightmapQueryResult{.value = value, .height = collision.point.y, .normal = collision.normal};
-}
-
-void Heightmap::RetrieveComponentPtrs() {
-    m_model = GetFirst<ModelComponent>();
-    m_collider = GetFirst<ColliderComponent>();
-}
-
-Heightmap::~Heightmap() {}
-
-void Heightmap::SetupComponents()
-{
-    m_model = Lil::World().CreateComponent<ModelComponent>();
-    AttachComponent(m_model);
-    m_model->MarkRequired();
-
-    m_collider = Lil::World().CreateComponent<ColliderComponent>(BodyType::STATIC);
-    AttachComponent(m_collider);
-    m_collider->MarkRequired();
-
-    CollisionShape shape;
-    shape.m_type = CollisionShapeType::HEIGHTMAP;
-    m_collider->AddShape(shape);
 }

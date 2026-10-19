@@ -140,6 +140,7 @@ public:
 	Vehicle() = default;
     virtual ~Vehicle();
 
+    virtual void SetupComponents() override;
     void LayoutUpdate() override;
     void SimulationUpdate(float delta_time) override;
 	virtual void DebugDraw() override;

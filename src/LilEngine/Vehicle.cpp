@@ -149,7 +149,7 @@ void Vehicle::ConstructVehicle(const VehicleConfig &config) {
 		});
 
     Lil::Physics().GetSystem()->AddConstraint(mVehicleConstraint);
-	Lil::Physics().GetSystem()->AddStepListener(mVehicleConstraint);	
+	Lil::Physics().GetSystem()->AddStepListener(mVehicleConstraint);
 }
 
 void Vehicle::DestroyVehicle() {
@@ -173,6 +173,10 @@ void Vehicle::DestroyVehicle() {
     mRight = 0.0f;
     mBrake = 0.0f;
     mHandBrake = 0.0f;
+}
+
+void Vehicle::SetupComponents() {
+	ConstructVehicle(m_vehicle_config);
 }
 
 Vehicle::~Vehicle() {
