@@ -43,14 +43,14 @@ public:
     template <class Archive>
     void save( Archive & ar ) const {
         std::vector<uuids::uuid> component_ids = GetComponentIDs();
-        LIL_SER_FIELD(component_ids);
+        LIL_SER_FIELD(component_ids)
         LIL_SAVE_BASE(GameObject);
     }
        
     template <class Archive>
     void load( Archive & ar ) {
         std::vector<uuids::uuid> component_ids = {};
-        LIL_SER_FIELD(component_ids);
+        LIL_SER_FIELD(component_ids)
         LIL_LOAD_BASE(GameObject)
         AttachComponents(component_ids);
     }
@@ -58,7 +58,7 @@ public:
     template <class Archive>
     std::vector<uuids::uuid> load_no_attaching_components( Archive & ar ) {
         std::vector<uuids::uuid> component_ids = {};
-        LIL_SER_FIELD(component_ids);
+        LIL_SER_FIELD(component_ids)
         LIL_LOAD_BASE(GameObject)
         return component_ids;
     }

@@ -1,30 +1,7 @@
 {
     "value0": {
         "m_painter": {
-            "m_brush_settings": [
-                {
-                    "key": {
-                        "value0": "2b57cd05-ea39-451b-bf64-8cf75f248c24"
-                    },
-                    "value": {
-                        "value0": 5.0,
-                        "value1": 1.7000000476837159,
-                        "value2": 3,
-                        "value3": 0.6000000238418579,
-                        "value4": 1.100000023841858,
-                        "value5": 0.3499999940395355,
-                        "value6": {
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
-                        },
-                        "value7": 5.0,
-                        "value8": {
-                            "value0": "2b57cd05-ea39-451b-bf64-8cf75f248c24"
-                        }
-                    }
-                }
-            ]
+            "m_brush_settings": []
         }
     }
 }

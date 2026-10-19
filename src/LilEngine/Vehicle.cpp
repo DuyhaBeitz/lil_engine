@@ -14,9 +14,9 @@
 
 // https://github.com/jrouwe/JoltPhysics/blob/master/Samples/Tests/Vehicle/VehicleConstraintTest.cpp
 
-Vehicle::Vehicle(const VehicleConfig& config) 
-: m_vehicle_config(config)
-{
+void Vehicle::ConstructVehicle(const VehicleConfig &config) {
+	m_vehicle_config = config;
+
     // Create collision tester
 	mTester = new JPH::VehicleCollisionTesterCastCylinder(JPH::Layers::MOVING);
 
@@ -29,7 +29,7 @@ Vehicle::Vehicle(const VehicleConfig& config)
 
 	JPH::BodyCreationSettings car_body_settings(car_shape, position, JPH::Quat::sRotation(JPH::Vec3::sAxisZ(), m_vehicle_config.InitialRollAngle), JPH::EMotionType::Dynamic, JPH::Layers::MOVING);
 	car_body_settings.mOverrideMassProperties = JPH::EOverrideMassProperties::CalculateInertia;
-	car_body_settings.mMassPropertiesOverride.mMass = 1500.0f;
+	car_body_settings.mMassPropertiesOverride.mMass = config.mass;
     JPH::BodyInterface& body_interface = Lil::Physics().GetBodyInterface();
     JPH::Body* CarBody = body_interface.CreateBody(car_body_settings);
 	m_body_id = CarBody->GetID();
@@ -149,22 +149,44 @@ Vehicle::Vehicle(const VehicleConfig& config)
 		});
 
     Lil::Physics().GetSystem()->AddConstraint(mVehicleConstraint);
-	Lil::Physics().GetSystem()->AddStepListener(mVehicleConstraint);
+	Lil::Physics().GetSystem()->AddStepListener(mVehicleConstraint);	
+}
+
+void Vehicle::DestroyVehicle() {
+    JPH::PhysicsSystem* physics = Lil::Physics().GetSystem();
+
+    if (mVehicleConstraint != nullptr) {
+        physics->RemoveStepListener(mVehicleConstraint);
+        physics->RemoveConstraint(mVehicleConstraint);
+        mVehicleConstraint = nullptr;
+    }
+	
+    if (!m_body_id.IsInvalid()) {
+        physics->GetBodyInterface().RemoveBody(m_body_id);
+        physics->GetBodyInterface().DestroyBody(m_body_id);
+        m_body_id = JPH::BodyID();
+    }
+
+    mTester = nullptr;
+
+    mForward = 0.0f;
+    mRight = 0.0f;
+    mBrake = 0.0f;
+    mHandBrake = 0.0f;
 }
 
 Vehicle::~Vehicle() {
-	Lil::Physics().GetSystem()->RemoveStepListener(mVehicleConstraint);
-    Lil::Physics().GetSystem()->RemoveConstraint(mVehicleConstraint);
-	
-    if (!m_body_id.IsInvalid()) {
-        Lil::Physics().GetSystem()->GetBodyInterface().RemoveBody(m_body_id);
-        Lil::Physics().GetSystem()->GetBodyInterface().DestroyBody(m_body_id);
-        m_body_id = JPH::BodyID();
-    }
+	DestroyVehicle();
 }
 
 void Vehicle::LayoutUpdate() {
 	Actor::LayoutUpdate();
+
+	if (m_update_config) {
+		m_update_config = false;
+		DestroyVehicle();
+		ConstructVehicle(m_vehicle_config);
+	}
 
     if (!m_body_id.IsInvalid()) {
         JPH::BodyInterface& bodyInterface = Lil::Physics().GetSystem()->GetBodyInterface();
