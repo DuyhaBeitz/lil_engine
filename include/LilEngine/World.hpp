@@ -4,6 +4,7 @@
 #include "Serialization.hpp"
 #include "ResourceManager.hpp"
 #include <vector>
+#include <set>
 
 #include "Actor.hpp"
 #include "Component.hpp"
@@ -94,8 +95,8 @@ public:
     Component* CopyComponent(uuids::uuid original_id);
     Component* GetComponent(uuids::uuid id);
 
-    Actor* PickActor(Vector2 screen_pos, int render_w, int render_h, Camera camera, RayCollision* result = nullptr) const;
-    RayCollision Raycast(Ray ray) const;
+    Actor* PickActor(Vector2 screen_pos, int render_w, int render_h, Camera camera, RayCollision* result = nullptr, std::set<uuids::uuid> ignore_ids = {}) const;
+    Actor* Raycast(Ray ray, RayCollision* result = nullptr, std::set<uuids::uuid> ignore_ids = {}) const;
 
     std::unordered_map<uuids::uuid, std::unique_ptr<Component>>& Components();
     void DestroyComponent(uuids::uuid id);
