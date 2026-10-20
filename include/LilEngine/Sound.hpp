@@ -17,8 +17,8 @@ struct LilSound {
     void Load(std::string filename);
     void Unload();
 
-    void Play();
-    void Play3D(const Camera& listener, const Vector3& position, float maxDist);
-    void PlayContinuous3D(int alias_index, const Camera& listener, const Vector3& position, float maxDist);
+    void Play(float volume = 1.0f, float pitch = 1.0f);
+    void Play3D(const Camera& listener, const Vector3& position, float maxDist, float volume = 1.0f, float pitch = 1.0f);
+    void PlayContinuous3D(int alias_index, const Camera& listener, const Vector3& position, float maxDist, float volume = 1.0f, float pitch = 1.0f);
     void StopContinuous(int alias_index);
 };

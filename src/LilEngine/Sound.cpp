@@ -35,31 +35,33 @@ void LilSound::Unload() {
     UnloadSound(aliases[0]);
 }
 
-void LilSound::Play()
-{
+void LilSound::Play(float volume, float pitch) {
     for (int i = 0; i < ALIASES_PER_SOUND; i++){
         if (!IsSoundPlaying(aliases[i])) {
-            SetSoundVolume(aliases[i], volume_multiplier * Lil::Audio().GetSFXVolume());
+            SetSoundVolume(aliases[i], volume * volume_multiplier * Lil::Audio().GetSFXVolume());
+            SetSoundPitch(aliases[i], pitch);
             PlaySound(aliases[i]);
             break;
         }
     }
 }
 
-void LilSound::Play3D(const Camera &listener, const Vector3 &position, float maxDist) {
+void LilSound::Play3D(const Camera &listener, const Vector3 &position, float maxDist, float volume, float pitch) {
     for (int i = 0; i < ALIASES_PER_SOUND; i++){
         if (!IsSoundPlaying(aliases[i])) {
-            SetSoundPosition(listener, aliases[i], position, maxDist, volume_multiplier * Lil::Audio().GetSFXVolume());
+            SetSoundPosition(listener, aliases[i], position, maxDist, volume * volume_multiplier * Lil::Audio().GetSFXVolume());
+            SetSoundPitch(aliases[i], pitch);
             PlaySound(aliases[i]);
             break;
         }
     }
 }
 
-void LilSound::PlayContinuous3D(int alias_index, const Camera &listener, const Vector3 &position, float maxDist) {
+void LilSound::PlayContinuous3D(int alias_index, const Camera &listener, const Vector3 &position, float maxDist, float volume, float pitch) {
     if (alias_index < 0 || alias_index >= ALIASES_PER_SOUND) return;
-    if (!IsSoundPlaying(aliases[alias_index])) {
-        SetSoundPosition(listener, aliases[alias_index], position, maxDist, volume_multiplier * Lil::Audio().GetSFXVolume());
+    SetSoundPosition(listener, aliases[alias_index], position, maxDist, volume * volume_multiplier * Lil::Audio().GetSFXVolume());
+    SetSoundPitch(aliases[alias_index], pitch);
+    if (!IsSoundPlaying(aliases[alias_index])) {    
         PlaySound(aliases[alias_index]);
     }
 }
