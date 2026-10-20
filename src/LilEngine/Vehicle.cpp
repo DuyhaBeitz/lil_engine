@@ -262,6 +262,26 @@ std::array<Transform, 4> Vehicle::GetWheelTransforms() {
 	return wheel_transforms;
 }
 
+VehicleState Vehicle::GetVehicleState() const {
+    VehicleState s;
+    auto* c = static_cast<JPH::WheeledVehicleController*>(mVehicleConstraint->GetController());
+    const JPH::VehicleEngine& e = c->GetEngine();
+
+    s.rpm = e.GetCurrentRPM();
+    s.rpm01 = (s.rpm - e.mMinRPM) / (e.mMaxRPM - e.mMinRPM);
+    s.gear = c->GetTransmission().GetCurrentGear();
+    s.throttle = std::abs(mForward);
+    s.speed = Lil::Physics().GetBodyInterface().GetLinearVelocity(m_body_id).Length();
+
+    for (int i = 0; i < 4; ++i) {
+        auto* w = static_cast<const JPH::WheelWV*>(mVehicleConstraint->GetWheel(i));
+        s.grounded[i] = w->HasContact();
+        s.lon_skid[i] = (s.grounded[i] && s.speed > 1.0f) ? w->mLongitudinalSlip : 0.0f;
+		s.lat_skid[i] = (s.grounded[i] && s.speed > 1.0f) ? w->mLateralSlip : 0.0f;
+    }
+    return s;
+}
+
 void Vehicle::DebugDraw() {
 	Actor::DebugDraw();
 

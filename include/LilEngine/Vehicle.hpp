@@ -127,6 +127,17 @@ LIL_SER_FIELD(RearSuspensionFrequency)
 LIL_SER_FIELD(RearSuspensionDamping)
 LIL_SER_END()
 
+struct VehicleState {
+    float rpm = 0;
+	float rpm01 = 0;
+	float throttle = 0;
+	float speed = 0;
+    int gear = 0;
+    std::array<float, 4> lon_skid{};
+	std::array<float, 4> lat_skid{};
+    std::array<bool, 4> grounded{};
+};
+
 class Vehicle : public Actor {
 protected:
     JPH::BodyID m_body_id;
@@ -146,6 +157,7 @@ public:
 	virtual void DebugDraw() override;
 
 	std::array<Transform, 4> GetWheelTransforms();
+	VehicleState GetVehicleState() const;
 
     LIL_REFLECTABLE()
 
