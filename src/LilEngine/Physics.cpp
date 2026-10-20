@@ -15,7 +15,7 @@ void PhysicsSystem::Init() {
 
 	m_job_system = std::make_unique<JPH::JobSystemThreadPool>(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers, std::thread::hardware_concurrency() - 1);
 
-	const JPH::uint cMaxBodies = 1024;
+	const JPH::uint cMaxBodies = 1024 * 10;
 	const JPH::uint cNumBodyMutexes = 0;
 	const JPH::uint cMaxBodyPairs = 1024;
 	const JPH::uint cMaxContactConstraints = 1024;
