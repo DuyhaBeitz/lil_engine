@@ -543,21 +543,10 @@ r3d_rect_t r3d_light_get_screen_rect(const r3d_light_t* light, const Matrix* vie
     Vector3 min = light->aabb.min;
     Vector3 max = light->aabb.max;
 
-    bool cameraInside =
-        (camPos.x >= min.x && camPos.x <= max.x) &&
-        (camPos.y >= min.y && camPos.y <= max.y) &&
-        (camPos.z >= min.z && camPos.z <= max.z);
-
-    if (cameraInside)
-    {
-        return (r3d_rect_t){0, 0, w, h};
-    }
-
     Vector2 minNDC = {+FLT_MAX, +FLT_MAX};
     Vector2 maxNDC = {-FLT_MAX, -FLT_MAX};
 
-    for (int i = 0; i < 8; i++)
-    {
+    for (int i = 0; i < 8; i++) {
         Vector4 corner = {
             (i & 1) ? max.x : min.x,
             (i & 2) ? max.y : min.y,
@@ -566,13 +555,12 @@ r3d_rect_t r3d_light_get_screen_rect(const r3d_light_t* light, const Matrix* vie
         };
         Vector4 clip = r3d_vector4_transform(corner, viewProj);
 
-        float w = clip.w;
-        if (fabsf(w) < 1e-4f)
-        {
-            w = (w < 0.0f) ? -1e-4f : 1e-4f;
+        // If the AABB crosses the near plane: fullscreen
+        if (clip.w <= 0.0f) {
+            return (r3d_rect_t){0, 0, w, h};
         }
 
-        Vector2 ndc = Vector2Scale((Vector2){clip.x, clip.y}, 1.0f / w);
+        Vector2 ndc = Vector2Scale((Vector2){clip.x, clip.y}, 1.0f / clip.w);
         minNDC = Vector2Min(minNDC, ndc);
         maxNDC = Vector2Max(maxNDC, ndc);
     }
@@ -584,8 +572,7 @@ r3d_rect_t r3d_light_get_screen_rect(const r3d_light_t* light, const Matrix* vie
     int rectH = (int)fminf((maxNDC.y * 0.5f + 0.5f) * h, (float)h) - y;
 
     // Security: Invalid dimensions = skip
-    if (rectW <= 0 || rectH <= 0)
-    {
+    if (rectW <= 0 || rectH <= 0) {
         return (r3d_rect_t){0, 0, 0, 0};
     }
 
