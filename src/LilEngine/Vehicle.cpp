@@ -276,8 +276,10 @@ VehicleState Vehicle::GetVehicleState() const {
     for (int i = 0; i < 4; ++i) {
         auto* w = static_cast<const JPH::WheelWV*>(mVehicleConstraint->GetWheel(i));
         s.grounded[i] = w->HasContact();
-        s.lon_skid[i] = (s.grounded[i] && s.speed > 1.0f) ? w->mLongitudinalSlip : 0.0f;
-		s.lat_skid[i] = (s.grounded[i] && s.speed > 1.0f) ? w->mLateralSlip : 0.0f;
+        s.lon_friction[i] = (s.grounded[i]) ? w->mCombinedLongitudinalFriction : 0.0f;
+		s.lat_friction[i] = (s.grounded[i]) ? w->mCombinedLateralFriction : 0.0f;
+        s.lon_slid[i] = (s.grounded[i]) ? w->mLongitudinalSlip : 0.0f;
+		s.lat_slid[i] = (s.grounded[i]) ? w->mLateralSlip : 0.0f;
     }
     return s;
 }

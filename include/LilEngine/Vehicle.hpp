@@ -133,8 +133,12 @@ struct VehicleState {
 	float throttle = 0;
 	float speed = 0;
     int gear = 0;
-    std::array<float, 4> lon_skid{};
-	std::array<float, 4> lat_skid{};
+
+	std::array<float, 4> lon_friction{};
+	std::array<float, 4> lat_friction{};
+
+    std::array<float, 4> lon_slid{};
+	std::array<float, 4> lat_slid{};
     std::array<bool, 4> grounded{};
 };
 
