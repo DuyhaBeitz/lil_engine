@@ -83,6 +83,8 @@ namespace Lil {
         GizmoFlags m_gizmo_mode = GIZMO_TRANSLATE;
         GizmoFlags m_gizmo_space = GIZMO_DISABLED;
 
+        void UpdateViewportCamera();
+
         void ReadConfig();
         void WriteConfig();
 

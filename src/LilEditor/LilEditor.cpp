@@ -1,4 +1,5 @@
 #include "LilEditor.hpp"
+#include <raymath.h>
 #include <utils/MeshHelper.hpp>
 #include <utils/FileHelper.hpp>
 #include "Components/InstancedModelComponent.hpp"
@@ -42,6 +43,57 @@ void EndTargetMode() {
 auto v = parser.aConfigVec<type>(section, field);\
 if (v.size() > 0) variable = v[0];\
 else variable = fallback;\
+}
+
+#define FOCUS_KEY KEY_C
+#define CARRY_KEY KEY_G
+#define FOCUS_DISTANCE 8.0f
+
+void Lil::Editor::UpdateViewportCamera() {
+    static float speed = 10.0f;
+    static bool flying = false, carrying = false;
+    Camera3D& cam = m_viewport_camera;
+    float dt = GetFrameTime();
+    float mult = IsKeyDown(KEY_LEFT_SHIFT) ? 4.0f : 1.0f;
+
+    if (!m_selected_actor) flying = carrying = false;
+    else {
+        if (IsKeyPressed(CARRY_KEY)) carrying = !carrying;
+        if (IsKeyPressed(FOCUS_KEY)) flying = true;
+    }
+
+    Vector3 move{0.0f, 0.0f, 0.0f};
+    Vector2 look{0.0f, 0.0f};
+    if (!m_cursor_enabled) {
+        speed = Clamp(speed * powf(1.15f, GetMouseWheelMove()), 0.5f, 500.0f);
+        move = {
+            float(IsKeyDown(KEY_W) - IsKeyDown(KEY_S)),
+            float(IsKeyDown(KEY_D) - IsKeyDown(KEY_A)),
+            float(IsKeyDown(KEY_SPACE) - IsKeyDown(KEY_LEFT_CONTROL))
+        };
+        look = Vector2Scale(GetMouseDelta(), 0.05f);
+    }
+    if (Vector3Length(move) > 0.0f) flying = false;
+
+    Vector3 before = cam.position;
+    UpdateCameraPro(&cam, move * speed * mult * dt, {look.x, look.y, 0.0f}, 0.0f);
+    if (!m_selected_actor) return;
+
+    Vector3 pos = m_selected_actor->GetTransform().translation;
+    if (carrying) {
+        pos += cam.position - before;
+        m_selected_actor->SetPosition(pos);
+    }
+
+    // never move the camera under the mouse while the gizmo may be dragged
+    if (!flying || (m_cursor_enabled && IsMouseButtonDown(MOUSE_BUTTON_LEFT))) return;
+
+    Vector3 goal = pos - Vector3Normalize(cam.target - cam.position) * FOCUS_DISTANCE;
+    Vector3 d = goal - cam.position;
+    flying = Vector3Length(d) > 0.01f;
+    d = d * (1.0f - expf(-6.0f * mult * dt));
+    cam.position = cam.position + d;
+    cam.target   = cam.target + d;
 }
 
 void Lil::Editor::ReadConfig() {
@@ -410,9 +462,17 @@ void Lil::Editor::DrawPainter() {
 }
 
 void Lil::Editor::Update(float delta_time, float physics_step_time) {
-    if (!m_cursor_enabled) {UpdateCamera(&m_viewport_camera, CAMERA_FREE);}
+    ImGuiIO& io = ImGui::GetIO();
+    if (m_cursor_enabled) io.ConfigFlags &= ~ImGuiConfigFlags_NoMouseCursorChange;
+    else io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
+    if (!m_cursor_enabled && !IsCursorHidden()) DisableCursor();
+
+    if (!io.WantTextInput) UpdateViewportCamera();
     Lil::Engine::Get().Update(delta_time, physics_step_time);
     Lil::Environment().Update();
+
+    // typing into a text field: no editor shortcuts
+    if (io.WantTextInput) return;
 
     UpdateGizmoMode();
     
@@ -451,12 +511,14 @@ void Lil::Editor::UpdateGizmoMode() {
 void Lil::Editor::HandleViewportInput() {
     ImGuiIO& io = ImGui::GetIO();
 
-    if (IsKeyPressed(KEY_ESCAPE)) DropSelectedActor();
+    if (!io.WantTextInput) {
+        if (IsKeyPressed(KEY_ESCAPE)) DropSelectedActor();
 
-    if (IsKeyPressed(TOGGLE_CURSOR_KEY)) {
-        if (m_cursor_enabled) DisableCursor();
-        else EnableCursor();
-        m_cursor_enabled = !m_cursor_enabled;
+        if (IsKeyPressed(TOGGLE_CURSOR_KEY)) {
+            if (m_cursor_enabled) DisableCursor();
+            else EnableCursor();
+            m_cursor_enabled = !m_cursor_enabled;
+        }
     }
 
     if (m_cursor_enabled && IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
@@ -771,6 +833,9 @@ void Lil::Editor::Draw() {
                     if (ImGui::IsMouseDoubleClicked(0)) {
                         Actor* actor = Lil::World().CreateActor(ti);
                         if (actor) {
+                            Vector3 fwd = Vector3Normalize(m_viewport_camera.target - m_viewport_camera.position);
+                            Vector3 p = m_viewport_camera.position + fwd * FOCUS_DISTANCE;
+                            actor->SetPosition(p);
                             SelectActor(actor);
                         }
                     }
