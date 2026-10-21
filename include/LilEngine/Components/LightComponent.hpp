@@ -31,9 +31,9 @@ public:
 };
 LIL_REFLECT(LightComponent, bases<Component>,
     field(m_type, EnumAttribute{
-        EnumAttrItem{"Directional", 0},
-        EnumAttrItem{"Conus", 1},
-        EnumAttrItem{"Sphere", 2},
+        EnumAttrItem{"Directional", int(R3D_LIGHT_DIR)},
+        EnumAttrItem{"Conus",       int(R3D_LIGHT_SPOT)},
+        EnumAttrItem{"Sphere",      int(R3D_LIGHT_OMNI)},
     }),
     field(m_enabled),
     field(m_lumen),

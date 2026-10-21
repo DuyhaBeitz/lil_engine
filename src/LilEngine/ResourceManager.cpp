@@ -70,6 +70,23 @@ void ModelSettings::Apply(R3D_Model *model) const {
     }
 }
 
+TextureSettings TextureSettings::GenerateFrom(const Texture2D &texture) {
+    TextureSettings settings;
+
+    settings.pixel_format = texture.format;
+    settings.filter       = TEXTURE_FILTER_POINT;
+    settings.wrap         = TEXTURE_WRAP_CLAMP;
+
+    return settings;
+}
+
+
+void TextureSettings::Apply(Texture2D* texture) const {
+    texture->format = pixel_format;
+    SetTextureFilter(*texture, filter);
+    SetTextureWrap(*texture, wrap);
+}
+
 void ResourceManager::Unload() {
     UnloadModelPreviews();
     ModelUnloadAll();
@@ -79,6 +96,7 @@ void ResourceManager::Unload() {
 void ResourceManager::TextureAdd(std::string key, Texture2D texture) {
     if (TextureExists(key)) UnloadTexture(m_textures[key]);
     m_textures[key] = texture;
+    if (m_texture_settings.find(key) == m_texture_settings.end()) m_texture_settings[key] = TextureSettings::GenerateFrom(m_textures.at(key));
 }
 
 void ResourceManager::TextureAdd(std::string key, std::string filename) {
@@ -93,6 +111,10 @@ void ResourceManager::TextureAdd(std::string filename) {
 
 bool ResourceManager::TextureExists(std::string key) {
     return m_textures.find(key) != m_textures.end();
+}
+
+bool ResourceManager::TextureSettingsExists(std::string key) {
+    return m_texture_settings.find(key) != m_texture_settings.end();
 }
 
 void ResourceManager::TextureUnload(std::string key) {
@@ -182,6 +204,12 @@ void ResourceManager::AnimationLibAdd(std::string filename) {
     AnimationLibAdd(key, filename);
 }
 
+void ResourceManager::ApplyTextureSettings() {
+    for (auto& [key, texture] : m_textures) {
+        m_texture_settings.at(key).Apply(&texture);
+    }
+}
+
 void ResourceManager::ApplyModelSettings() {
     for (auto& [key, model] : m_models) {
         m_model_settings.at(key).Apply(&model);
@@ -212,6 +240,11 @@ R3D_Model *ResourceManager::GetModel(std::string key) {
 
 R3D_AnimationLib *ResourceManager::GetAnimationLib(std::string key) {
     if (AnimationLibExists(key)) return &m_animation_libs[key];
+    else return nullptr;
+}
+
+TextureSettings* ResourceManager::GetTextureSettings(std::string key) {
+    if (TextureSettingsExists(key)) return &m_texture_settings[key];
     else return nullptr;
 }
 

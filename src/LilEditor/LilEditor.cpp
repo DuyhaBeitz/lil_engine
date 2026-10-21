@@ -631,24 +631,20 @@ void Lil::Editor::DrawResources() {
         }
 
         for (auto& [key, texture] : Lil::Resources().Textures()) {
+            ImGui::PushID(&texture);
             if (texture.id == 0) {
                 ImGui::TextUnformatted(key.c_str());
             }
             else {
                 rlImGuiImageSize(&texture, 128, 128);
-                ImGui::SameLine();                
-                if (ImGui::CollapsingHeader(key.c_str())) {
-                    std::string heightmap_name = HeightmapNameFromImageName(key);
-                    if (!Lil::Resources().ModelExists(heightmap_name)) {
-                        if (ImGui::Button("Generate heightmap model")) {
-                            Image image = LoadImageFromTexture(texture);
-                            Lil::Resources().ModelAdd(heightmap_name, HeightmapModel(image, Vector3{1.0f, 1.0f, 1.0f}));
-                            UnloadImage(image);
-                        }
-                    }
-                }
+                ImGui::SameLine();
             }
+            m_editor.SetCurrentObjectName(key);
+            m_editor.VisitObject(TypeInfo::Get<TextureSettings>(), Lil::Resources().GetTextureSettings(key));
+            ImGui::PopID();
         }
+        Lil::Resources().ApplyTextureSettings();
+
     }
     ImGui::End();
 

@@ -31,10 +31,10 @@ struct EnvFog {
 };
 LIL_REFLECT(EnvFog, bases<>,
     field(mode, EnumAttribute{
-        EnumAttrItem{"FOG_DISABLED", 0},
-        EnumAttrItem{"FOG_LINEAR",   1},
-        EnumAttrItem{"FOG_EXP2",     2},
-        EnumAttrItem{"FOG_EXP",      3}
+        EnumAttrItem{"FOG_DISABLED", int(R3D_FOG_DISABLED)},
+        EnumAttrItem{"FOG_LINEAR",   int(R3D_FOG_LINEAR)},
+        EnumAttrItem{"FOG_EXP2",     int(R3D_FOG_EXP2)},
+        EnumAttrItem{"FOG_EXP",      int(R3D_FOG_EXP)}
     }),
     field(color),
     field(start),
@@ -52,8 +52,8 @@ struct EnvDoF {
 };
 LIL_REFLECT(EnvDoF, bases<>,
     field(mode, EnumAttribute{
-        EnumAttrItem{"DOF_DISABLED", 0},
-        EnumAttrItem{"DOF_ENABLED", 1}
+        EnumAttrItem{"DOF_DISABLED", int(R3D_DOF_DISABLED)},
+        EnumAttrItem{"DOF_ENABLED", int(R3D_DOF_ENABLED)}
     }),
     field(focusPoint),
     field(focusScale),
@@ -71,10 +71,10 @@ struct EnvBloom {
 };
 LIL_REFLECT(EnvBloom, bases<>,
     field(mode, EnumAttribute{
-        EnumAttrItem{"BLOOM_DISABLED", 0},
-        EnumAttrItem{"BLOOM_MIX",      1},
-        EnumAttrItem{"BLOOM_ADDITIVE", 2},
-        EnumAttrItem{"BLOOM_SCREEN",   3}
+        EnumAttrItem{"BLOOM_DISABLED", int(R3D_BLOOM_DISABLED)},
+        EnumAttrItem{"BLOOM_MIX",      int(R3D_BLOOM_MIX)},
+        EnumAttrItem{"BLOOM_ADDITIVE", int(R3D_BLOOM_ADDITIVE)},
+        EnumAttrItem{"BLOOM_SCREEN",   int(R3D_BLOOM_SCREEN)}
     }),
     field(levels),
     field(intensity),
@@ -90,11 +90,11 @@ struct EnvTonemap {
 };
 LIL_REFLECT(EnvTonemap, bases<>,
     field(mode, EnumAttribute{
-        EnumAttrItem{"TONEMAP_LINEAR",  0},
-        EnumAttrItem{"TONEMAP_REINHARD",1},
-        EnumAttrItem{"TONEMAP_FILMIC",  2},
-        EnumAttrItem{"TONEMAP_ACES",    3},
-        EnumAttrItem{"TONEMAP_AGX",     4},
+        EnumAttrItem{"TONEMAP_LINEAR",  int(R3D_TONEMAP_LINEAR)},
+        EnumAttrItem{"TONEMAP_REINHARD",int(R3D_TONEMAP_REINHARD)},
+        EnumAttrItem{"TONEMAP_FILMIC",  int(R3D_TONEMAP_FILMIC)},
+        EnumAttrItem{"TONEMAP_ACES",    int(R3D_TONEMAP_ACES)},
+        EnumAttrItem{"TONEMAP_AGX",     int(R3D_TONEMAP_AGX)},
     }),
     field(exposure),
     field(white)
