@@ -463,8 +463,8 @@ void Lil::Editor::DrawPainter() {
 
 void Lil::Editor::Update(float delta_time, float physics_step_time) {
     ImGuiIO& io = ImGui::GetIO();
-    if (m_cursor_enabled) io.ConfigFlags &= ~ImGuiConfigFlags_NoMouseCursorChange;
-    else io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
+    if (m_cursor_enabled) io.ConfigFlags = (io.ConfigFlags & ~ImGuiConfigFlags_NoMouseCursorChange) | ImGuiConfigFlags_NavEnableKeyboard;
+    else io.ConfigFlags = (io.ConfigFlags | ImGuiConfigFlags_NoMouseCursorChange) & ~ImGuiConfigFlags_NavEnableKeyboard;
     if (!m_cursor_enabled && !IsCursorHidden()) DisableCursor();
 
     if (!io.WantTextInput) UpdateViewportCamera();
