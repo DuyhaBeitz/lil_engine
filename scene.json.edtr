@@ -4,15 +4,15 @@
             "m_brush_settings": [
                 {
                     "key": {
-                        "value0": "cf539eb8-37ce-4762-af82-5f190631066d"
+                        "value0": "68160fa6-6304-4a62-8bab-041dba33410c"
                     },
                     "value": {
                         "radius": 5.0,
-                        "min_distance": 2.0,
-                        "iterations": 3,
-                        "min_size": 1.0,
+                        "min_distance": 1.5,
+                        "iterations": 1,
+                        "min_size": 0.6000000238418579,
                         "max_size": 1.0,
-                        "slope_coeff": 0.0,
+                        "slope_coeff": 0.30000001192092898,
                         "offset": {
                             "x": 0.0,
                             "y": 0.0,
@@ -20,7 +20,7 @@
                         },
                         "cell_size": 5.0,
                         "value0": {
-                            "value0": "cf539eb8-37ce-4762-af82-5f190631066d"
+                            "value0": "68160fa6-6304-4a62-8bab-041dba33410c"
                         }
                     }
                 }
