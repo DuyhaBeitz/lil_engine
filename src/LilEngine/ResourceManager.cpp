@@ -88,7 +88,6 @@ void TextureSettings::Apply(Texture2D* texture) const {
 }
 
 void ResourceManager::Unload() {
-    UnloadModelPreviews();
     ModelUnloadAll();
     TextureUnloadAll();
 }
@@ -250,50 +249,6 @@ TextureSettings* ResourceManager::GetTextureSettings(std::string key) {
 
 ModelSettings *ResourceManager::GetModelSettings(std::string key) {
     if (ModelSettingsExists(key)) return &m_model_settings[key];
-    else return nullptr;
-}
-
-bool ResourceManager::ModelPreviewExists(std::string key) {
-    return m_model_previews.find(key) != m_model_previews.end();
-}
-
-void ResourceManager::UnloadModelPreviews() {
-    for (auto& [key, preview] : m_model_previews) {
-        UnloadRenderTexture(preview);
-    }
-    m_model_previews.clear();
-}
-
-void ResourceManager::UpdateModelPreviews() {
-    std::set<std::string> keys_to_remove = {};
-    for (auto& [key, preview] : m_model_previews) {
-        if (!ModelExists(key)) {
-            UnloadRenderTexture(preview);
-            keys_to_remove.insert(key);
-        }
-    }
-    for (auto& key : keys_to_remove) {
-        m_model_previews.erase(key);
-    }
-
-    for (auto& [key, model] : m_models) {
-        if (!ModelPreviewExists(key)) {
-            m_model_previews[key] = LoadRenderTexture(100, 100);
-
-            BoundingBox bb = m_models.at(key).aabb;
-            float diam = Vector3Length(bb.max - bb.min);
-            
-            model_preview_camera.position = Vector3{diam, diam, diam};
-            R3D_View view = {.camera = R3D_CameraFromRL(model_preview_camera), .target = m_model_previews.at(key)};
-            R3D_BeginPro(view);
-                R3D_DrawModel(m_models.at(key), Vector3{0.0f, 0.0f, 0.0f}, 1.0f);
-            R3D_End();
-        }
-    }
-}
-
-RenderTexture2D *ResourceManager::GetModelPreview(std::string key) {
-    if (ModelPreviewExists(key)) return &m_model_previews[key];
     else return nullptr;
 }
 

@@ -227,10 +227,6 @@ public:
     void ApplyTextureSettings();
     void ApplyModelSettings();
 
-    bool ModelPreviewExists(std::string key);
-    void UnloadModelPreviews();
-    void UpdateModelPreviews();
-
     void SoundAdd(std::string key, LilSound sound);
     void SoundAdd(std::string key, std::string filename);
     void SoundAdd(std::string filename);
@@ -244,7 +240,6 @@ public:
     R3D_AnimationLib* GetAnimationLib(std::string key);
     TextureSettings* GetTextureSettings(std::string key);
     ModelSettings* GetModelSettings(std::string key);
-    RenderTexture2D* GetModelPreview(std::string key);
     LilSound* GetSound(std::string key);
 
     std::unordered_map<std::string, Texture2D>& Textures() { return m_textures; }
@@ -299,7 +294,6 @@ public:
 
         ApplyTextureSettings();
         ApplyModelSettings();
-        UpdateModelPreviews();        
     }
 
 };
