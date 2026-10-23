@@ -2,7 +2,7 @@
 
 #include "CommonIncludes.hpp"
 #include "Serialization.hpp"
-#include "ResourceManager.hpp"
+#include "Assets.hpp"
 #include <vector>
 #include <set>
 

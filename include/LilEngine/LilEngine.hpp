@@ -2,7 +2,7 @@
 
 #include "CommonIncludes.hpp"
 #include "Physics.hpp"
-#include "ResourceManager.hpp"
+#include "Assets.hpp"
 #include "Audio.hpp"
 #include "SceneManager.hpp"
 #include "Environment.hpp"
@@ -22,26 +22,26 @@ namespace Lil {
         void Update(float delta_time, float physics_step_time);
 
         ::PhysicsSystem& GetPhysics();
-        ::ResourceManager& GetResources();
+        //::ResourceManager& GetResources();
         ::World& GetWorld();
         ::SceneManager& GetSceneManager();
         ::Audio& GetAudio();
-        ::Environment& GetEnvironment();
+        //::Environment& GetEnvironment();
         
     private:
         ::PhysicsSystem m_physics;
-        ::ResourceManager m_resources;
+        //::ResourceManager m_resources;
         ::World m_world;
         ::SceneManager m_scene_manager;
         ::Audio m_audio;
-        ::Environment m_environment;
+        //::Environment m_environment;
     };
     
     // Convenience functions
     ::PhysicsSystem& Physics();
-    ::ResourceManager& Resources();
+    //::ResourceManager& Resources();
     ::World& World();
     ::SceneManager& SceneManager();
     ::Audio& Audio();
-    ::Environment& Environment();
+    //::Environment& Environment();
 }

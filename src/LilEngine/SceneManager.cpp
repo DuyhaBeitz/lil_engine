@@ -4,26 +4,28 @@
 
 void SceneManager::UpdateScene() {
     Lil::World().UpdateActorLayout();
-    Lil::Resources().ApplyModelSettings();
-    Lil::Environment().Update();
+    Lil::Assets::ApplyAllModelSettings();
+    //Lil::Environment().Update();
 }
 
 void SceneManager::ClearScene() {
-    Lil::Resources() = ResourceManager();
-    Lil::Environment() = Environment();
+    //Lil::Resources() = ResourceManager();
+    //Lil::Environment() = Environment();
     Lil::World() = World();
     UpdateScene();
 }
 
 void SceneManager::LoadScene(std::string filename) {
     std::ifstream is(filename);
-    ArchiveIn a_in(is);
-    a_in(Lil::Resources(), Lil::Environment(), Lil::World());
+    ArchiveIn ar(is);
+    Lil::Assets::load_assets(ar);
+    LIL_SER_FIELD(Lil::World())
     UpdateScene();
 }
 
 void SceneManager::SaveScene(std::string filename) {
     std::ofstream os(filename);
-    ArchiveOut a_out(os);
-    a_out(Lil::Resources(), Lil::Environment(), Lil::World());
+    ArchiveOut ar(os);
+    Lil::Assets::save_assets(ar);
+    LIL_SER_FIELD(Lil::World())
 }

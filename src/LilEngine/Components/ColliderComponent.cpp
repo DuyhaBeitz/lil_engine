@@ -26,14 +26,14 @@ JPH::RefConst<JPH::Shape> CollisionShape::CreateJoltShape() const {
         case CollisionShapeType::BOX:
             return new JPH::BoxShape(JphVector3NonNullScale(m_half_extends));
             
-        case CollisionShapeType::HEIGHTMAP:
-            if (Lil::Resources().TextureExists(m_heightmap_texture_key)) {
-                Image image = LoadImageFromTexture(*Lil::Resources().GetTexture(m_heightmap_texture_key));
-                auto res = GetHeightmapShapeSettings(image, m_map_size).Create().Get();
-                UnloadImage(image);
-                return res;
-            }
-            break;
+        // case CollisionShapeType::HEIGHTMAP:
+        //     if (Lil::Assets::TextureExists(m_heightmap_texture_key)) {
+        //         Image image = LoadImageFromTexture(*Lil::Assets::GetTexture(m_heightmap_texture_key));
+        //         auto res = GetHeightmapShapeSettings(image, m_map_size).Create().Get();
+        //         UnloadImage(image);
+        //         return res;
+        //     }
+        //     break;
         default:
             break;
     }

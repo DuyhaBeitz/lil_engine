@@ -363,7 +363,7 @@ bool Lil::UIStyle::DrawModelKeyField(const std::string &name, std::string *value
     int currentIndex = -1;
     std::vector<std::string> modelKeys;
     modelKeys.push_back("None");
-    for (const auto& [key, model] : Lil::Resources().Models()) {
+    for (const auto& [key, model] : Lil::Assets::Models()) {
         modelKeys.push_back(key);
         if (key == *value) currentIndex = modelKeys.size() - 1;
     }
@@ -394,7 +394,7 @@ bool Lil::UIStyle::DrawTextureKeyField(const std::string &name, std::string *val
     int currentIndex = -1;
     std::vector<std::string> textureKeys;
     textureKeys.push_back("None");
-    for (const auto& [key, texture] : Lil::Resources().Textures()) {
+    for (const auto& [key, texture] : Lil::Assets::Textures()) {
         textureKeys.push_back(key);
         if (key == *value) currentIndex = textureKeys.size() - 1;
     }
@@ -526,14 +526,14 @@ bool Lil::UIStyle::DrawBodyTypeField(const std::string &name, BodyType *value) {
 
 bool DrawTextureFieldToKey(std::string name, Texture2D* texture) {
     std::string texture_key = "None";
-    for (auto& [key, t] : Lil::Resources().Textures()) {
+    for (auto& [key, t] : Lil::Assets::Textures()) {
         if (t.id != 0 && texture->id == t.id) {
             texture_key = key;
             break;
         }
     }
     bool res = Lil::UIStyle::DrawTextureKeyField(name, &texture_key);
-    Texture2D* tex = Lil::Resources().GetTexture(texture_key);
+    Texture2D* tex = Lil::Assets::GetTexture(texture_key);
     if (tex) *texture = *tex;
     return res;
 }

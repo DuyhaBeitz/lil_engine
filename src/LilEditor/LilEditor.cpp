@@ -657,22 +657,22 @@ void Lil::Editor::DrawResources() {
         if (ImGui::Button(ICON_FA_PLUS)) {
             std::vector<std::string> paths = BrowseModelDialog();
             for (auto& path : paths) {
-                Lil::Resources().ModelAdd(NameFromPath(path), path);
+                Lil::Assets::ModelAdd(NameFromPath(path), path);
                 CopyAsset(path);
             }
         }
 
-        for (auto& [key, model] : Lil::Resources().Models()) {
+        for (auto& [key, model] : Lil::Assets::Models()) {
             ImGui::PushID(&model);
-            if (!Lil::Resources().AnimationLibExists(key)) {
-                if (ImGui::Button("Load animations")) Lil::Resources().AnimationLibAdd("assets/" + key);
+            if (!Lil::Assets::AnimationLibExists(key)) {
+                if (ImGui::Button("Load animations")) Lil::Assets::AnimationLibAdd("assets/" + key);
                 ImGui::SameLine();
             }
             m_editor.SetCurrentObjectName(key);
-            m_editor.VisitObject(TypeInfo::Get<ModelSettings>(), Lil::Resources().GetModelSettings(key));
+            m_editor.VisitObject(TypeInfo::Get<ModelSettings>(), Lil::Assets::GetModelSettings(key));
             ImGui::PopID();
         }
-        Lil::Resources().ApplyModelSettings();
+        Lil::Assets::ApplyModelSettings();
     }
 
     ImGui::End();
@@ -682,12 +682,12 @@ void Lil::Editor::DrawResources() {
         if (ImGui::Button(ICON_FA_PLUS)) {
             std::vector<std::string> paths = BrowseTextureDialog();
             for (auto& path : paths) {
-                Lil::Resources().TextureAdd(NameFromPath(path), path);
+                Lil::Assets::TextureAdd(NameFromPath(path), path);
                 CopyAsset(path);
             }
         }
 
-        for (auto& [key, texture] : Lil::Resources().Textures()) {
+        for (auto& [key, texture] : Lil::Assets::Textures()) {
             ImGui::PushID(&texture);
             if (texture.id == 0) {
                 ImGui::TextUnformatted(key.c_str());
@@ -697,10 +697,10 @@ void Lil::Editor::DrawResources() {
                 ImGui::SameLine();
             }
             m_editor.SetCurrentObjectName(key);
-            m_editor.VisitObject(TypeInfo::Get<TextureSettings>(), Lil::Resources().GetTextureSettings(key));
+            m_editor.VisitObject(TypeInfo::Get<TextureSettings>(), Lil::Assets::GetTextureSettings(key));
             ImGui::PopID();
         }
-        Lil::Resources().ApplyTextureSettings();
+        Lil::Assets::ApplyTextureSettings();
 
     }
     ImGui::End();
@@ -709,12 +709,12 @@ void Lil::Editor::DrawResources() {
         if (ImGui::Button(ICON_FA_PLUS)) {
             std::vector<std::string> paths = BrowseSoundDialog();
             for (auto& path : paths) {
-                Lil::Resources().SoundAdd(NameFromPath(path), path);
+                Lil::Assets::SoundAdd(NameFromPath(path), path);
                 CopyAsset(path);
             }
         }
 
-        for (auto& [name, sound] : Lil::Resources().Sounds()) {
+        for (auto& [name, sound] : Lil::Assets::Sounds()) {
             ImGui::PushID(&sound);
             if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
                 auto& volume = sound.volume_multiplier;

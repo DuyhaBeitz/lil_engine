@@ -3,6 +3,8 @@
 #include "Physics.hpp"
 #include "Component.hpp"
 #include "utils/MathHelper.hpp"
+#include "Serialization.hpp"
+#include "Reflection.hpp"
 #include "ReflAttributes.hpp"
 #include <list>
 

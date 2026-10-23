@@ -1,7 +1,6 @@
 #pragma once
 
 #include <raylib.h>
-#include <r3d/r3d.h>
 #include "Log.hpp"
 
 // namespaces raylib and reactphysics3d conflict with color definitions
