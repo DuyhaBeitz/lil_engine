@@ -22,7 +22,6 @@ public:
     void SetModel(Lil::Assets::Model model_key);
     void SetModel(std::string model_key);
 
-    //R3D_Model* GetModel() const;
     Lil::Assets::Model ModelKey();
 
     virtual RayCollision Raycast(Ray ray) const override;

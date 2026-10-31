@@ -3,8 +3,8 @@
 
 #include <unordered_map>
 #include <r3d/r3d.h>
-#include "../AdvancedBackend/R3DAccess.hpp"
-#include "../Backend/MeshHelper.hpp"
+#include "R3DAccess.hpp"
+#include "MeshHelper.hpp"
 
 
 #include "utils/NameHelper.hpp"
@@ -132,40 +132,36 @@ namespace Lil::Assets {
 
 
     void MaterialSetAlbedo(R3D_Material& material_data, const AlbedoMap& map) {
+        material_data.albedo.color = map.color;
+
         Texture2D* texture_data = GetTextureData(map.texture_key);
         if (!texture_data) return;
-        material_data.albedo = {
-            *texture_data,
-            map.color
-        };
+        material_data.albedo.texture = *texture_data;
     }
     void MaterialSetNormal(R3D_Material& material_data, const NormalMap& map) {
+        material_data.normal.scale = map.scale;
+
         Texture2D* texture_data = GetTextureData(map.texture_key);
         if (!texture_data) return;
-        material_data.normal = {
-            *texture_data,
-            map.scale
-        };
+        material_data.normal.texture = *texture_data;
     }
     void MaterialSetEmission(R3D_Material& material_data, const EmissionMap& map) {
+        material_data.emission.color = WHITE;
+        material_data.emission.energy = map.energy;
+
         Texture2D* texture_data = GetTextureData(map.texture_key);
         if (!texture_data) return;
-        material_data.emission = {
-            *texture_data,
-            WHITE,
-            map.energy
-        };
+        material_data.emission.texture = *texture_data;
     }
     void MaterialSetOrm(R3D_Material& material_data, const OrmMap& map) {
+        material_data.orm.occlusion = map.occlusion;
+        material_data.orm.roughness = map.roughness;
+        material_data.orm.metalness = map.metalness;
+        material_data.orm.specular = map.specular;
+
         Texture2D* texture_data = GetTextureData(map.texture_key);
         if (!texture_data) return;
-        material_data.orm = {
-            *texture_data,
-            map.occlusion,
-            map.roughness,
-            map.metalness,
-            map.specular
-        };
+        material_data.orm.texture = *texture_data;
     }
     AlbedoMap MaterialGetAlbedo(const R3D_Material& material_data) {
         AlbedoMap map;
@@ -220,7 +216,7 @@ namespace Lil::Assets {
         return settings;
     }
     void ModelSettingsApply(const ModelSettings& settings, R3D_Model& model_data) {
-        assert(model_data.materialCount == static_cast<int>(settings.size()) && "materialCount and material_settings.size() don't match");
+        assert(model_data.materialCount == static_cast<int>(settings.material_settings.size()) && "materialCount and material_settings.size() don't match");
         for (int i = 0; i < model_data.materialCount; i++) {
             const MaterialSettings* mat = settings.Material(i);
             if (!mat) continue;

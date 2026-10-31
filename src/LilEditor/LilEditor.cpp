@@ -469,7 +469,7 @@ void Lil::Editor::Update(float delta_time, float physics_step_time) {
 
     if (!io.WantTextInput) UpdateViewportCamera();
     Lil::Engine::Get().Update(delta_time, physics_step_time);
-    //Lil::Environment().Update();
+    Lil::Environment().Update();
 
     // typing into a text field: no editor shortcuts
     if (io.WantTextInput) return;
@@ -733,8 +733,8 @@ void Lil::Editor::DrawResources() {
 
 void Lil::Editor::DrawEnvironment() {
     if (ImGui::Begin("Environment")) {
-        // m_editor.SetCurrentObjectName("Environment");
-        // m_editor.VisitObject(Lil::Environment().GetTypeInfo(), &Lil::Environment());
+        m_editor.SetCurrentObjectName("Environment");
+        m_editor.VisitObject(Lil::Environment().GetTypeInfo(), &Lil::Environment());
     }
     ImGui::End();
 }

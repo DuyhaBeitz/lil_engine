@@ -10,6 +10,14 @@
             }
         },
         {
+            "key": "skybox_1.png",
+            "value": {
+                "pixel_format": 7,
+                "filter": 0,
+                "wrap": 1
+            }
+        },
+        {
             "key": "Gen_0_palm_tree_realistic.glb",
             "value": {
                 "pixel_format": 7,
@@ -68,9 +76,9 @@
                         "orm": {
                             "texture_key": "None",
                             "occlusion": 1.0,
-                            "roughness": 0.0,
+                            "roughness": 1.0,
                             "metalness": 0.0,
-                            "specular": 0.5
+                            "specular": 0.0
                         }
                     }
                 ]
@@ -846,5 +854,138 @@
                 }
             }
         ]
+    },
+    "Lil::Environment()": {
+        "background": {
+            "value0": {
+                "r": 0,
+                "g": 0,
+                "b": 0,
+                "a": 255
+            },
+            "value1": 1.0,
+            "value2": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "value3": "skybox_1.png",
+            "value4": 0.0
+        },
+        "ambient": {
+            "value0": {
+                "r": 100,
+                "g": 100,
+                "b": 100,
+                "a": 255
+            },
+            "value1": 1.0
+        },
+        "ssao": {
+            "value0": 0.019999999552965165,
+            "value1": false,
+            "value2": 1.0,
+            "value3": 1.0,
+            "value4": 1.0,
+            "value5": 0.5,
+            "value6": 16
+        },
+        "ssil": {
+            "value0": 1.0,
+            "value1": 1.0,
+            "value2": 0.019999999552965165,
+            "value3": false,
+            "value4": 1.0,
+            "value5": 1.0,
+            "value6": 0.5,
+            "value7": 8
+        },
+        "ssgi": {
+            "value0": 2,
+            "value1": 1.0,
+            "value2": 0.10000000149011612,
+            "value3": false,
+            "value4": 1.0,
+            "value5": 1.0,
+            "value6": 2
+        },
+        "ssr": {
+            "value0": 8,
+            "value1": 0.10000000149011612,
+            "value2": false,
+            "value3": 50.0,
+            "value4": 64,
+            "value5": 0.10000000149011612,
+            "value6": 0.10000000149011612
+        },
+        "fog": {
+            "value0": {
+                "r": 200,
+                "g": 200,
+                "b": 200,
+                "a": 255
+            },
+            "value1": 0.009999999776482582,
+            "value2": 100.0,
+            "value3": 0,
+            "value4": 0.5,
+            "value5": 1.0
+        },
+        "volumetricFog": {
+            "value0": 0.0,
+            "value1": 0.0,
+            "value2": {
+                "r": 0,
+                "g": 0,
+                "b": 0,
+                "a": 255
+            },
+            "value3": 0.0,
+            "value4": false,
+            "value5": 64.0,
+            "value6": {
+                "r": 255,
+                "g": 255,
+                "b": 255,
+                "a": 255
+            },
+            "value7": 0.10000000149011612,
+            "value8": 0.5,
+            "value9": 1.0
+        },
+        "dof": {
+            "value0": 10.0,
+            "value1": 1.0,
+            "value2": 20.0,
+            "value3": 0,
+            "value4": 1.0
+        },
+        "bloom": {
+            "value0": 1.0,
+            "value1": 0.05000000074505806,
+            "value2": 0.5,
+            "value3": 0,
+            "value4": 0.5,
+            "value5": 0.0
+        },
+        "autoExposure": {
+            "value0": 3.0,
+            "value1": 1.0,
+            "value2": false,
+            "value3": 0.0,
+            "value4": 5.0,
+            "value5": -5.0
+        },
+        "tonemap": {
+            "value0": 1.0,
+            "value1": 0,
+            "value2": 1.0
+        },
+        "color": {
+            "value0": 1.0,
+            "value1": 1.0,
+            "value2": 1.0
+        }
     }
 }

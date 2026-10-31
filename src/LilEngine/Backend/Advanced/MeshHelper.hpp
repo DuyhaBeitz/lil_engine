@@ -1,7 +1,8 @@
-#include "MeshHelper.hpp"
-#include <rlgl.h>
+#pragma once
 
-R3D_Model LoadR3DModelFromMesh(R3D_Mesh mesh) {
+#include <r3d/r3d.h>
+
+inline R3D_Model LoadR3DModelFromMesh(R3D_Mesh mesh) {
     R3D_Model model = {0};
 
     model.meshes = reinterpret_cast<R3D_Mesh*>(RL_MALLOC(sizeof(R3D_Mesh)));
@@ -20,7 +21,7 @@ R3D_Model LoadR3DModelFromMesh(R3D_Mesh mesh) {
     return model;
 }
 
-R3D_Model HeightmapModel(Image &image, Vector3 size) {
+inline R3D_Model HeightmapModel(Image &image, Vector3 size) {
     Texture2D texture = LoadTextureFromImage(image);
 
     R3D_Model model = {0};

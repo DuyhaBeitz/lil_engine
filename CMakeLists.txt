@@ -10,14 +10,7 @@ option(PLATFORM "platform (Desktop/Web)" Desktop)
 # -------------------------------
 # Engine Library
 # -------------------------------
-file(GLOB_RECURSE ENGINE_SOURCES
-    ${CMAKE_SOURCE_DIR}/src/LilEngine/*.cpp
-)
-add_library(lil_engine STATIC ${ENGINE_SOURCES})
-target_include_directories(lil_engine PUBLIC 
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/LilEngine
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/external
-)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/engine_lib.cmake)
 
 # -------------------------------
 # Editor Library
