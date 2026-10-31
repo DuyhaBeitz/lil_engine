@@ -38,9 +38,7 @@ namespace Lil::Render {
     void InstanceBuffer::Clear() {
         if (m_id == 0) return;
         if (InstanceSlot* s = s_buffers.Get(m_id)) {
-            std::cout << s << " " << &(s->buffer) << " " << s->capacity << " " << s->count << std::endl;
-
-            
+           
             R3D_UnloadInstanceBuffer(s->buffer);
             s_buffers.Free(m_id);
         }

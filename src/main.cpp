@@ -10,7 +10,6 @@
 
 #include "LilEngine.hpp"
 #include "LilEditor.hpp"
-#include <r3d/r3d.h>
 
 constexpr int target_fps = 120;
 constexpr float dt = 1.0f / float(target_fps);
@@ -24,15 +23,15 @@ static Camera camera = {
 };
 
 void DrawGame() {
-    R3D_Begin(camera);
+    Lil::Render::BeginView(camera, {0, 0, 0, 0}, nullptr);
+    Lil::Render::BeginScene();
     Lil::World().Draw();
-    R3D_End();
+    Lil::Render::EndScene();
+    Lil::Render::EndView();
 }
 
 int main() {
-    InitWindow(1920, 1080, "game");
-    R3D_Init(GetScreenWidth(), GetScreenHeight());
-    InitAudioDevice();
+    Lil::Render::InitWindow(1920, 1080, "game");
     SetTraceLogLevel(LOG_ALL);
     DisableCursor();
     SetWindowState(FLAG_WINDOW_RESIZABLE);

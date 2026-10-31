@@ -36,8 +36,6 @@ bool Brush::TryAdd(const Vector3 &p, const Quaternion &rot, const Vector3 &scale
 }
 
 void Brush::Remove(int i) {
-    std::cout << "Removing " << i << std::endl;
-
     auto* instances = Instances();
     const int last = static_cast<int>(instances->size()) - 1;
 
@@ -85,8 +83,6 @@ void Brush::Remove(int i) {
     auto it = grid.find(removed_key);
     if (it != grid.end() && it->second.empty())
         grid.erase(it);
-
-    std::cout << "Removing DONE" << std::endl;
 }
 
 bool Brush::IsTooClose(float x, float z) const {

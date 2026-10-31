@@ -42,6 +42,7 @@ set(ADVANCED_BACKEND_SOURCES
     ${AB}/Light.cpp
     ${AB}/Model.cpp
     ${AB}/R3DAccess.cpp
+    ${AB}/Frame.cpp
 )
 
 add_library(lil_engine STATIC 

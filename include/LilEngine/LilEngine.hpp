@@ -11,6 +11,8 @@
 #include "imgui.h"
 #include "rlImGui.h"
 
+#include "Render/Frame.hpp"
+
 #include "Log.hpp"
 
 namespace Lil {

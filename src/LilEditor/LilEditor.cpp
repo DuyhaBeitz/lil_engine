@@ -5,7 +5,6 @@
 #include "Heightmap.hpp"
 #include "FileDialogHelper.hpp"
 #include "configparser.hpp"
-#include <r3d/r3d.h>
 
 Lil::Editor &Lil::Editor::Get() {
     static Lil::Editor instance;
@@ -19,14 +18,13 @@ void ResizeTarget(RenderTexture2D& target, int w, int h) {
     }
 }
 
-void BeginTargetMode(RenderTexture2D& target, int topleftX, int topleftY, int width, int height) {
+void BeginRenderContext(RenderTexture2D& target, int topleftX, int topleftY, int width, int height) {
     SetMouseOffset(-topleftX, -topleftY);
     ResizeTarget(target, width, height);
     SetGizmoRenderSize(width, height);
-    BeginTextureMode(target);
 }
 
-void EndTargetMode() {
+void EndRenderContext() {
     EndTextureMode();
     SetMouseOffset(0, 0);
 }
@@ -401,12 +399,9 @@ void Lil::Editor::DrawLayout() {
         ClearBackground(RAYBLACK);
         EndTextureMode();
 
-        R3D_View view = {
-            .camera = R3D_CameraFromRL(m_layout_camera),
-            .target = m_layout_render_target,
-            .viewport = {0, 0, float(size), float(size)}
-        };
-        R3D_BeginPro(view);
+        BeginRenderContext(m_layout_render_target, viewerTopLeft.x, viewerTopLeft.y, size, size);
+        Lil::Render::BeginView(m_layout_camera, {0, 0, float(size), float(size)}, &m_layout_render_target);
+        Lil::Render::BeginScene();
             if (m_selected_actor) {
                 Transform old_actor_transform = m_selected_actor->GetTransform();
                 m_selected_actor->SetPosition(Vector3{0.0f, 0.0f, 0.0f});
@@ -416,30 +411,30 @@ void Lil::Editor::DrawLayout() {
                 m_selected_actor->SetTransform(old_actor_transform);
                 m_selected_actor->LayoutUpdate();
             }
-        R3D_End();
+        Lil::Render::EndScene();
 
-        BeginTargetMode(m_layout_render_target, viewerTopLeft.x, viewerTopLeft.y, size, size);
-            if (m_selected_actor) {
-                Transform old_actor_transform = m_selected_actor->GetTransform();
-                m_selected_actor->SetPosition(Vector3{0.0f, 0.0f, 0.0f});
-                m_selected_actor->SetRotation(QuaternionIdentity());
-                m_selected_actor->LayoutUpdate();
+        if (m_selected_actor) {
+            Transform old_actor_transform = m_selected_actor->GetTransform();
+            m_selected_actor->SetPosition(Vector3{0.0f, 0.0f, 0.0f});
+            m_selected_actor->SetRotation(QuaternionIdentity());
+            m_selected_actor->LayoutUpdate();
 
-                BeginMode3D(m_layout_camera);
-                    if (m_physics_debug) {
-                        m_selected_actor->DebugUpdate();
-                        m_selected_actor->DebugDraw();
-                    }
-                    if (m_selected_component) {
-                        Transform t = m_selected_component->GetTransform();
-                        DrawGizmo3D(m_gizmo_mode | m_gizmo_space, &t);
-                        m_selected_component->Local() = GetLocalTransform(m_selected_actor->GetTransform(), t);
-                    }
-                EndMode3D();
-                m_selected_actor->SetTransform(old_actor_transform);
-                m_selected_actor->LayoutUpdate();
-            }
-        EndTargetMode();
+            Lil::Render::BeginOverlay();
+                if (m_physics_debug) {
+                    m_selected_actor->DebugUpdate();
+                    m_selected_actor->DebugDraw();
+                }
+                if (m_selected_component) {
+                    Transform t = m_selected_component->GetTransform();
+                    DrawGizmo3D(m_gizmo_mode | m_gizmo_space, &t);
+                    m_selected_component->Local() = GetLocalTransform(m_selected_actor->GetTransform(), t);
+                }
+            Lil::Render::EndOverlay();
+            m_selected_actor->SetTransform(old_actor_transform);
+            m_selected_actor->LayoutUpdate();
+        }
+        Lil::Render::EndView();
+        EndRenderContext();
         
         rlImGuiImageRenderTexture(&m_layout_render_target);
     }
@@ -545,44 +540,6 @@ void Lil::Editor::DrawViewport() {
                 Lil::World().SetSimulationGoing(isSimulating);
             }
             ImGui::PopStyleColor();
-            ImGui::SameLine();
-
-            static const std::unordered_map<std::string, R3D_OutputMode> renderModeMap = {
-                {"SCENE", R3D_OUTPUT_SCENE},
-                {"ALBEDO", R3D_OUTPUT_ALBEDO},
-                {"NORMAL", R3D_OUTPUT_NORMAL},
-                {"ORM", R3D_OUTPUT_ORM},
-                {"DIFFUSE", R3D_OUTPUT_DIFFUSE},
-                {"SPECULAR", R3D_OUTPUT_SPECULAR},
-                {"SSAO", R3D_OUTPUT_SSAO},
-                {"SSIL", R3D_OUTPUT_SSIL},
-                {"SSGI", R3D_OUTPUT_SSGI},
-                {"SSR", R3D_OUTPUT_SSR},
-                {"BLOOM", R3D_OUTPUT_BLOOM},
-                {"DOF", R3D_OUTPUT_DOF}
-            };
-            static R3D_OutputMode currentMode = R3D_OUTPUT_SCENE;
-            std::string currentName = "SCENE";
-
-            for (const auto& [name, mode] : renderModeMap) {
-                if (mode == currentMode) {
-                    currentName = name;
-                    break;
-                }
-            }
-
-            ImGui::SetNextItemWidth(300.0f);
-            if (ImGui::BeginCombo("##Render Mode", currentName.c_str())) {
-                for (const auto& [name, mode] : renderModeMap) {
-                    bool isSelected = (mode == currentMode);
-                    if (ImGui::Selectable(name.c_str(), isSelected)) {
-                        currentMode = mode;
-                        R3D_SetOutputMode(mode);
-                    }
-                    if (isSelected) ImGui::SetItemDefaultFocus();
-                }
-                ImGui::EndCombo();
-            }
             
             ImGui::SameLine(ImGui::GetWindowWidth() - 230.0f);
             ImGui::Text("FPS: %d", GetFPS());
@@ -595,57 +552,47 @@ void Lil::Editor::DrawViewport() {
         ImVec2 viewerTopLeft = ImGui::GetCursorScreenPos();
 
         if (IsWindowResized()) {
-            R3D_SetResolution(contentSize.x, contentSize.y);
+            Lil::Render::SetResolution(contentSize.x, contentSize.y);
         }
 
-        ResizeTarget(m_viewport_render_target, contentSize.x, contentSize.y);
-
-        BeginTextureMode(m_viewport_render_target);
-        ClearBackground(RAYBLACK);
-        EndTextureMode();
-
-        R3D_View view = {
-            .camera = R3D_CameraFromRL(m_viewport_camera),
-            .target = m_viewport_render_target,
-            .viewport = {0, 0, contentSize.x, contentSize.y}
-        };
-        R3D_BeginPro(view);
+        BeginRenderContext(m_viewport_render_target, viewerTopLeft.x, viewerTopLeft.y, contentSize.x, contentSize.y);
+        Lil::Render::BeginView(m_viewport_camera, {0, 0, float(contentSize.x), float(contentSize.y)}, &m_viewport_render_target);
+        Lil::Render::BeginScene();
             Lil::World().Draw();
-        R3D_End();
+        Lil::Render::EndScene();
         
-        BeginTargetMode(m_viewport_render_target, viewerTopLeft.x, viewerTopLeft.y, contentSize.x, contentSize.y);
-            ImGuiIO& io = ImGui::GetIO();
-            if (ImGui::IsWindowHovered() || ImGui::IsWindowFocused() || !m_cursor_enabled) HandleViewportInput();
+        ImGuiIO& io = ImGui::GetIO();
+        if (ImGui::IsWindowHovered() || ImGui::IsWindowFocused() || !m_cursor_enabled) HandleViewportInput();
 
-            BeginMode3D(m_viewport_camera);
-                if (m_physics_debug) Lil::World().DebugDraw();
-                if (m_selected_actor) {
-                    Transform t = m_selected_actor->GetTransform();
-                    DrawGizmo3D(m_gizmo_mode | m_gizmo_space, &t);
-                    m_selected_actor->SetTransform(t);
+        Lil::Render::BeginOverlay();
+            if (m_physics_debug) Lil::World().DebugDraw();
+            if (m_selected_actor) {
+                Transform t = m_selected_actor->GetTransform();
+                DrawGizmo3D(m_gizmo_mode | m_gizmo_space, &t);
+                m_selected_actor->SetTransform(t);
 
-                    if (m_selected_actor->GetTypeInfo().Name() == "Heightmap" &&
-                        m_selected_component &&
-                        m_selected_component->GetTypeInfo().Name() == "InstancedModelComponent"
-                    ) {
-                        float mx = GetMousePosition().x;
-                        float my = GetMousePosition().y;
-                        if (mx >= 0 && mx <= contentSize.x && my >= 0 && my <= contentSize.y) {
-                            m_painter.DrawBrush(
-                                GetMousePosition(),
-                                m_viewport_render_target.texture.width,
-                                m_viewport_render_target.texture.height,
-                                m_viewport_camera,
-                                dynamic_cast<Heightmap*>(m_selected_actor),
-                                dynamic_cast<InstancedModelComponent*>(m_selected_component)
-                            );
-                        }
+                if (m_selected_actor->GetTypeInfo().Name() == "Heightmap" &&
+                    m_selected_component &&
+                    m_selected_component->GetTypeInfo().Name() == "InstancedModelComponent"
+                ) {
+                    float mx = GetMousePosition().x;
+                    float my = GetMousePosition().y;
+                    if (mx >= 0 && mx <= contentSize.x && my >= 0 && my <= contentSize.y) {
+                        m_painter.DrawBrush(
+                            GetMousePosition(),
+                            m_viewport_render_target.texture.width,
+                            m_viewport_render_target.texture.height,
+                            m_viewport_camera,
+                            dynamic_cast<Heightmap*>(m_selected_actor),
+                            dynamic_cast<InstancedModelComponent*>(m_selected_component)
+                        );
                     }
                 }
-            EndMode3D();
+            }
+        Lil::Render::EndOverlay();
+        Lil::Render::EndView();
+        EndRenderContext();
 
-        EndTargetMode();
-        
         rlImGuiImageRenderTexture(&m_viewport_render_target);
     }
     
