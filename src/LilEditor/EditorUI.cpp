@@ -356,23 +356,23 @@ bool Lil::UIStyle::DrawTransformBlock(const std::string &name, ::Transform *valu
     return res;
 }
 
-bool Lil::UIStyle::DrawModelKeyField(const std::string &name, std::string *value) {
+bool Lil::UIStyle::DrawModelKeyField(const std::string &name, Lil::Assets::Model *value) {
     Lil::UIStyle::BeginPropertyRow(name, Lil::UIStyle::COLOR_TYPE_STRING, ICON_FA_CAR);
     ImGui::PushStyleColor(ImGuiCol_FrameBg, Lil::UIStyle::COLOR_COMBO_BG);
     
     int currentIndex = -1;
-    std::vector<std::string> modelKeys;
+    std::vector<Lil::Assets::Model> modelKeys;
     modelKeys.push_back("None");
-    for (const auto& [key, model] : Lil::Assets::Models()) {
-        modelKeys.push_back(key);
-        if (key == *value) currentIndex = modelKeys.size() - 1;
+    for (const auto& [handle, settings] : Lil::Assets::ModelSettingsMap()) {
+        modelKeys.push_back(handle);
+        if (handle == *value) currentIndex = modelKeys.size() - 1;
     }
 
     bool res = false;
-    if (ImGui::BeginCombo(("##" + name).c_str(), (*value).c_str())) {
+    if (ImGui::BeginCombo(("##" + name).c_str(), value->Key().c_str())) {
         for (size_t i = 0; i < modelKeys.size(); i++) {
             bool isSelected = (static_cast<int>(i) == currentIndex);
-            if (ImGui::Selectable(modelKeys[i].c_str(), isSelected)) {
+            if (ImGui::Selectable(modelKeys[i].Key().c_str(), isSelected)) {
                 if (*value != modelKeys[i]) res = true;
                 *value = modelKeys[i];
             }
@@ -386,24 +386,24 @@ bool Lil::UIStyle::DrawModelKeyField(const std::string &name, std::string *value
     return res;
 }
 
-bool Lil::UIStyle::DrawTextureKeyField(const std::string &name, std::string *value) {
+bool Lil::UIStyle::DrawTextureKeyField(const std::string &name, Lil::Assets::Texture *value) {
     Lil::UIStyle::BeginPropertyRow(name, Lil::UIStyle::COLOR_TYPE_STRING, ICON_FA_MAP);
     ImGui::PushStyleColor(ImGuiCol_FrameBg, Lil::UIStyle::COLOR_COMBO_BG);
     ImGui::PushID(value);
     
     int currentIndex = -1;
-    std::vector<std::string> textureKeys;
+    std::vector<Lil::Assets::Texture> textureKeys;
     textureKeys.push_back("None");
-    for (const auto& [key, texture] : Lil::Assets::Textures()) {
-        textureKeys.push_back(key);
-        if (key == *value) currentIndex = textureKeys.size() - 1;
+    for (const auto& [handle, texture] : Lil::Assets::TextureSettingsMap()) {
+        textureKeys.push_back(handle);
+        if (handle == *value) currentIndex = textureKeys.size() - 1;
     }
 
     bool res = false;
-    if (ImGui::BeginCombo(("##" + name).c_str(), (*value).c_str())) {
+    if (ImGui::BeginCombo(("##" + name).c_str(), value->Key().c_str())) {
         for (size_t i = 0; i < textureKeys.size(); i++) {
             bool isSelected = (static_cast<int>(i) == currentIndex);
-            if (ImGui::Selectable(textureKeys[i].c_str(), isSelected)) {
+            if (ImGui::Selectable(textureKeys[i].Key().c_str(), isSelected)) {
                 if (*value != textureKeys[i]) res = true;
                 *value = textureKeys[i];
             }
@@ -525,58 +525,17 @@ bool Lil::UIStyle::DrawBodyTypeField(const std::string &name, BodyType *value) {
 }
 
 bool DrawTextureFieldToKey(std::string name, Texture2D* texture) {
-    std::string texture_key = "None";
-    for (auto& [key, t] : Lil::Assets::Textures()) {
-        if (t.id != 0 && texture->id == t.id) {
-            texture_key = key;
+    Lil::Assets::Texture texture_key = "None";
+    for (auto& [handle, settings] : Lil::Assets::TextureSettingsMap()) {
+        Texture2D* t = Lil::Assets::GetTextureData(handle);
+        if (!t) continue;
+        if (t->id != 0 && texture->id == t->id) {
+            texture_key = handle;
+            *texture = *t;
             break;
         }
     }
     bool res = Lil::UIStyle::DrawTextureKeyField(name, &texture_key);
-    Texture2D* tex = Lil::Assets::GetTexture(texture_key);
-    if (tex) *texture = *tex;
-    return res;
-}
-
-bool Lil::UIStyle::DrawMaterialField(const std::string &name, R3D_Material *value) {
-    ImGui::PushID(value);
-    bool res = false;   
-
-    res |= DrawVector2Field("UV scale", &(value->uvScale));
-    res |= DrawVector2Field("UV offset", &(value->uvOffset));
-
-    if (ImGui::CollapsingHeader(name.c_str())) {
-        res |= DrawTextureFieldToKey("albedo", &(value->albedo.texture));
-        res |= DrawColorField("albedo color", &(value->albedo.color));
-
-        res |= DrawTextureFieldToKey("normal", &(value->normal.texture));
-        res |= DrawFloatField("normal scale", &(value->normal.scale));
-
-        res |= DrawTextureFieldToKey("emission", &(value->emission.texture));
-        res |= DrawFloatField("emission energy", &(value->emission.energy));
-
-        res |= DrawTextureFieldToKey("orm", &(value->orm.texture));
-        res |= DrawFloatField("orm occlusion", &(value->orm.occlusion));
-        res |= DrawFloatField("orm roughness", &(value->orm.roughness));
-        res |= DrawFloatField("orm metalness", &(value->orm.metalness));
-        res |= DrawFloatField("orm specular", &(value->orm.specular));
-    }
-
-    ImGui::PopID();
-    return res;
-}
-
-bool Lil::UIStyle::DrawModelField(const std::string &name, R3D_Model *value) {
-    ImGui::PushID(value);
-    bool res = false;
-    
-    if (ImGui::CollapsingHeader(name.c_str())) {
-        for (int i = 0; i < value->materialCount; i++) {
-            res |= DrawMaterialField(TextFormat("material_%d", i), &(value->materials[i]));
-        }
-    }
-    ImGui::PopID();
-
     return res;
 }
 

@@ -12,6 +12,18 @@ struct ModelSettings : Reflectable {
     LIL_REFLECTABLE()
     LIL_SERIALIZABLE()
     std::list<MaterialSettings> material_settings;
+    MaterialSettings* Material(int i) {
+        if (i < 0 || static_cast<size_t>(i) >= material_settings.size())
+            return nullptr;
+        auto it = std::next(material_settings.begin(), i);
+        return &(*it);
+    }
+    const MaterialSettings* Material(int i) const {
+        if (i < 0 || static_cast<size_t>(i) >= material_settings.size())
+            return nullptr;
+        auto it = std::next(material_settings.begin(), i);
+        return &(*it);
+    }
 };
 LIL_REFLECT_EX(std::list<MaterialSettings>, bases<>, std_list_MaterialSettings)
 LIL_REFLECT(ModelSettings, bases<>,
@@ -43,11 +55,13 @@ namespace Lil::Assets {
     ModelSettings* GetModelSettings(Model handle);
     bool ModelExists(Model handle);
     bool ModelSettingsExists(Model handle);
+    void ModelAddHeightmap(Model handle, Image heightmap_image, const Vector3& scale);
     void ModelAdd(Model handle, std::string filename);
     void ModelAdd(std::string filename);
     void ModelRemove(Model handle);
 
     void UpdateAllModelSettings();
+    void ApplyModelSettings(Model handle);
     void ApplyAllModelSettings();
 
     template <class Archive>

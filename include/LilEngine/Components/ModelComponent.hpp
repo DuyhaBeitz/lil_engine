@@ -19,6 +19,7 @@ public:
 
     virtual void Draw() override;
 
+    void SetModel(Lil::Assets::Model model_key);
     void SetModel(std::string model_key);
 
     //R3D_Model* GetModel() const;

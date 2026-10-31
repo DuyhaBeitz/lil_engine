@@ -3,6 +3,7 @@
 #include "LilEngine.hpp"
 #include "Components/ColliderComponent.hpp"
 #include "extras/IconsFontAwesome6.h"
+#include "Assets.hpp"
 #include <set>
 
 // DPI scaling functions
@@ -182,13 +183,10 @@ namespace Lil {
         static bool DrawVector4Field(const std::string& name, ::Vector4* values);
         static bool DrawColorField(const std::string& name, ::Color* value);
         static bool DrawTransformBlock(const std::string& name, ::Transform* value);
-        static bool DrawModelKeyField(const std::string& name, std::string* value);
-        static bool DrawTextureKeyField(const std::string& name, std::string* value);
+        static bool DrawModelKeyField(const std::string& name, Lil::Assets::Model* value);
+        static bool DrawTextureKeyField(const std::string& name, Lil::Assets::Texture* value);
         static bool DrawCollisionShapeField(const std::string& name, CollisionShape* value);
         static bool DrawBodyTypeField(const std::string& name, BodyType* value);
-
-        static bool DrawMaterialField(const std::string& name, R3D_Material* value);
-        static bool DrawModelField(const std::string& name, R3D_Model* value);
 
         // ==========================================
         // Reusable Read-Only (Const) Draw Elements
@@ -221,13 +219,7 @@ class EditorUIVisitor : public IVisitor {
             m_container_no_erase = field.HasAttribute<ContainerNoEraseAttribute>();
         }
 
-        if (field.HasAttribute<ModelKeyAttribute>()) {
-            Lil::UIStyle::DrawModelKeyField(field.name, static_cast<std::string*>(field.GetPtr(ptr)));
-        }
-        else if (field.HasAttribute<TextureKeyAttribute>()) {
-            Lil::UIStyle::DrawTextureKeyField(field.name, static_cast<std::string*>(field.GetPtr(ptr)));
-        }
-        else if (field.HasAttribute<EnumAttribute>()) {
+        if (field.HasAttribute<EnumAttribute>()) {
             const auto* attr = field.GetAttribute<EnumAttribute>();
             Lil::UIStyle::DrawAttributeEnumCombo(field.name, static_cast<int*>(field.GetPtr(ptr)), *attr);
         }
@@ -244,16 +236,8 @@ class EditorUIVisitor : public IVisitor {
 
     // here THE OBJECT is const, the field only follows
     void HandleFieldConst(const FieldInfo& field, const void* ptr) {
-        if (field.HasAttribute<ModelKeyAttribute>()) {
-            Lil::UIStyle::DrawConstModelKeyField(field.name, static_cast<const std::string*>(field.GetPtrConst(ptr)));
-        }
-        else if (field.HasAttribute<TextureKeyAttribute>()) {
-            Lil::UIStyle::DrawConstTextureKeyField(field.name, static_cast<const std::string*>(field.GetPtrConst(ptr)));
-        }
-        else {
-            SetCurrentObjectName(field.name);
-            VisitObjectConst(field.type, field.GetPtrConst(ptr));
-        }
+        SetCurrentObjectName(field.name);
+        VisitObjectConst(field.type, field.GetPtrConst(ptr));
     }
 
 public:
@@ -301,11 +285,11 @@ public:
             else if (ti == TypeInfo::Get<BodyType>()) {
                 Lil::UIStyle::DrawBodyTypeField(m_object_name, static_cast<BodyType*>(ptr));
             }
-            else if (ti == TypeInfo::Get<R3D_Material>()) {
-                Lil::UIStyle::DrawMaterialField(m_object_name, static_cast<R3D_Material*>(ptr));
+            else if (ti == TypeInfo::Get<Lil::Assets::Texture>()) {
+                Lil::UIStyle::DrawTextureKeyField(m_object_name, static_cast<Lil::Assets::Texture*>(ptr));
             }
-            else if (ti == TypeInfo::Get<R3D_Model>()) {
-                Lil::UIStyle::DrawModelField(m_object_name, static_cast<R3D_Model*>(ptr));
+            else if (ti == TypeInfo::Get<Lil::Assets::Model>()) {
+                Lil::UIStyle::DrawModelKeyField(m_object_name, static_cast<Lil::Assets::Model*>(ptr));
             }
             else if (ti.IsContainer()) {
                 ImGui::PushStyleColor(ImGuiCol_Header, Lil::UIStyle::COLOR_HEADER_BG);

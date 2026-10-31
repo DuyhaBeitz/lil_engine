@@ -61,6 +61,7 @@ namespace Lil::Assets {
 
     void UpdateAllSoundSettings();
     void ApplyAllSoundSettings();
+    void ApplySoundSettings(Sound handle);
 
     template <class Archive>
     void save_sounds( Archive & ar ) {

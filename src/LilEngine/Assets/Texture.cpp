@@ -77,9 +77,14 @@ namespace Lil::Assets {
             settings = GenTextureSettings(textures.at(handle));
         }
     }
+    void ApplyTextureSettings(Texture handle) {
+        TextureSettingsApply(texture_settings.at(handle), textures.at(handle));
+    }
     void ApplyAllTextureSettings() {
         for (auto& [handle, settings] : texture_settings) {
-            TextureSettingsApply(settings, textures.at(handle));
+            auto it = textures.find(handle);
+            if (it == textures.end()) continue;
+            TextureSettingsApply(settings, it->second);
         }
     }
 

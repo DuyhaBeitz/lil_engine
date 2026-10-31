@@ -3,6 +3,8 @@
 
 #include <unordered_map>
 #include <r3d/r3d.h>
+#include "../AdvancedBackend/R3DAccess.hpp"
+#include "../Backend/MeshHelper.hpp"
 
 
 #include "utils/NameHelper.hpp"
@@ -55,20 +57,24 @@ namespace Lil::Assets {
         return model_settings.find(handle) != model_settings.end();
     }
 
-    ModelSettings *GetModelSettings(Model handle)
-    {
+    ModelSettings *GetModelSettings(Model handle) {
         if (!ModelSettingsExists(handle)) return nullptr;
-        return &(model_settings.at(handle.Key()));
+        return &(model_settings.at(handle));
     }
 
     static void ModelAdd(Model handle, R3D_Model model_data) {
         if (ModelExists(handle)) R3D_UnloadModel(model_data, true);
         models[handle] = model_data;
         if (!ModelSettingsExists(handle)) model_settings[handle] = GenModelSettings(models.at(handle));
+        Backend::BumpAssetGeneration();
+    }
+
+    void ModelAddHeightmap(Model handle, Image heightmap_image, const Vector3& scale) {
+        ModelAdd(handle, HeightmapModel(heightmap_image, scale));
     }
 
     void ModelAdd(Model handle, std::string filename) {
-        R3D_Model model_data = R3D_LoadModelEx(filename.c_str(), R3D_IMPORT_RETAIN_MESH_DATA);
+        R3D_Model model_data = R3D_LoadModelEx(filename.c_str(), R3D_IMPORT_RETAIN_MESH_DATA | R3D_IMPORT_OPTIMIZE_MESH);
 
         std::set<int> loaded_ids{};
         auto try_add_texture = [&loaded_ids](Texture handle, Texture2D& texture) {
@@ -86,6 +92,8 @@ namespace Lil::Assets {
             try_add_texture(handle.Key(), mat.emission.texture);
             try_add_texture(handle.Key(), mat.orm.texture);
         }
+
+        ModelAdd(handle, model_data);
     }
 
     void ModelAdd(std::string filename) {
@@ -97,16 +105,25 @@ namespace Lil::Assets {
         if (ModelExists(handle)) {
             R3D_UnloadModel(models.at(handle), true);
             models.erase(handle);
+            model_settings.erase(handle);
+            Backend::BumpAssetGeneration();
         }
     }
     void UpdateAllModelSettings() {
         for (auto& [handle, settings] : model_settings) {
-            settings = GenModelSettings(models.at(handle));
+            auto it = models.find(handle);
+            if (it == models.end()) continue;
+            settings = GenModelSettings(it->second);
         }
+    }
+    void ApplyModelSettings(Model handle) {
+        ModelSettingsApply(model_settings.at(handle), models.at(handle));
     }
     void ApplyAllModelSettings() {
         for (auto& [handle, settings] : model_settings) {
-            ModelSettingsApply(settings, models.at(handle));
+            auto it = models.find(handle);
+            if (it == models.end()) continue;
+            ModelSettingsApply(settings, it->second);
         }
     }
 
@@ -115,27 +132,35 @@ namespace Lil::Assets {
 
 
     void MaterialSetAlbedo(R3D_Material& material_data, const AlbedoMap& map) {
+        Texture2D* texture_data = GetTextureData(map.texture_key);
+        if (!texture_data) return;
         material_data.albedo = {
-            *GetTextureData(map.texture_key),
+            *texture_data,
             map.color
         };
     }
     void MaterialSetNormal(R3D_Material& material_data, const NormalMap& map) {
+        Texture2D* texture_data = GetTextureData(map.texture_key);
+        if (!texture_data) return;
         material_data.normal = {
-            *GetTextureData(map.texture_key),
+            *texture_data,
             map.scale
         };
     }
     void MaterialSetEmission(R3D_Material& material_data, const EmissionMap& map) {
+        Texture2D* texture_data = GetTextureData(map.texture_key);
+        if (!texture_data) return;
         material_data.emission = {
-            *GetTextureData(map.texture_key),
+            *texture_data,
             WHITE,
             map.energy
         };
     }
     void MaterialSetOrm(R3D_Material& material_data, const OrmMap& map) {
+        Texture2D* texture_data = GetTextureData(map.texture_key);
+        if (!texture_data) return;
         material_data.orm = {
-            *GetTextureData(map.texture_key),
+            *texture_data,
             map.occlusion,
             map.roughness,
             map.metalness,
@@ -195,10 +220,11 @@ namespace Lil::Assets {
         return settings;
     }
     void ModelSettingsApply(const ModelSettings& settings, R3D_Model& model_data) {
-        assert(model_data->materialCount == settings.size() && "materialCount and material_settings.size() don't match");
+        assert(model_data.materialCount == static_cast<int>(settings.size()) && "materialCount and material_settings.size() don't match");
         for (int i = 0; i < model_data.materialCount; i++) {
-            auto it = std::next(settings.material_settings.begin(), i);
-            MaterialSettingsApply(*it, model_data.materials[i]);
+            const MaterialSettings* mat = settings.Material(i);
+            if (!mat) continue;
+            MaterialSettingsApply(*mat, model_data.materials[i]);
         }
     }
 
@@ -207,6 +233,14 @@ namespace Lil::Assets {
             R3D_UnloadModel(model, true);
         }
         models.clear();
+        Backend::BumpAssetGeneration();
     }
 
 } // namespace Assets
+
+namespace Lil::Backend {
+    R3D_Model* R3DModel(const Assets::Model& h) {
+        auto it = Assets::models.find(h);
+        return it == Assets::models.end() ? nullptr : &it->second;
+    }
+}

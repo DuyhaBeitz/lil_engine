@@ -6,6 +6,7 @@
 #include "Serialization.hpp"
 #include "Reflection.hpp"
 #include "ReflAttributes.hpp"
+#include "Assets.hpp"
 #include <list>
 
 enum class CollisionShapeType : uint8_t { SPHERE = 0, BOX, HEIGHTMAP, COUNT };
@@ -24,7 +25,7 @@ public:
 
     float m_radius = 1.0f;
     Vector3 m_half_extends = Vector3{1.0f, 1.0f, 1.0f};
-    std::string m_heightmap_texture_key = "";
+    Lil::Assets::Texture m_heightmap_texture_key;
     Vector3 m_map_size = Vector3{1.0f, 1.0f, 1.0f};
 
     JPH::RefConst<JPH::Shape> CreateJoltShape() const;
@@ -68,7 +69,7 @@ LIL_REFLECT(CollisionShape, bases<>,
     field(m_local_rotation),
     field(m_radius),
     field(m_half_extends),
-    field(m_heightmap_texture_key, TextureKeyAttribute()),
+    field(m_heightmap_texture_key),
     field(m_map_size)
 )
 LIL_SER_BEGIN(CollisionShape)

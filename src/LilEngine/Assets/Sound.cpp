@@ -94,7 +94,7 @@ namespace Lil::Assets {
     SoundData *GetSoundData(Sound handle)
     {
         if (!SoundExists(handle)) return nullptr;
-        return &(sounds.at(handle.Key()));
+        return &(sounds.at(handle));
     }
 
     void SoundAdd(Sound handle, SoundData& sound_data) {
@@ -139,6 +139,10 @@ namespace Lil::Assets {
         for (auto& [handle, settings] : sound_settings) {
             SoundSettingsApply(settings, sounds.at(handle));
         }
+    }
+
+    void ApplySoundSettings(Sound handle) {
+        SoundSettingsApply(sound_settings.at(handle), sounds.at(handle));
     }
 
     void UnloadAllSounds() {

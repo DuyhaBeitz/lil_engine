@@ -1,84 +1,88 @@
-// #include "Heightmap.hpp"
-// #include <LilEngine.hpp>
-// #include <utils/MeshHelper.hpp>
-// #include "Components/ColliderComponent.hpp"
-// #include "Components/ModelComponent.hpp"
+#include "Heightmap.hpp"
+#include <LilEngine.hpp>
+#include "Components/ColliderComponent.hpp"
+#include "Components/ModelComponent.hpp"
+#include "Assets.hpp"
 
-// void Heightmap::SetupComponents() {
-//     m_model = Lil::World().CreateComponent<ModelComponent>();
-//     AttachComponent(m_model.get());
-//     m_model->MarkRequired();
+void Heightmap::SetupComponents() {
+    m_model = Lil::World().CreateComponent<ModelComponent>();
+    AttachComponent(m_model.get());
+    m_model->MarkRequired();
 
-//     m_collider = Lil::World().CreateComponent<ColliderComponent>(BodyType::STATIC);
-//     AttachComponent(m_collider.get());
-//     m_collider->MarkRequired();
+    m_collider = Lil::World().CreateComponent<ColliderComponent>(BodyType::STATIC);
+    AttachComponent(m_collider.get());
+    m_collider->MarkRequired();
 
-//     CollisionShape shape;
-//     shape.m_type = CollisionShapeType::HEIGHTMAP;
-//     m_collider->AddShape(shape);
-// }
+    CollisionShape shape;
+    shape.m_type = CollisionShapeType::HEIGHTMAP;
+    m_collider->AddShape(shape);
+}
 
-// void Heightmap::LayoutUpdate() {
-//     Actor::LayoutUpdate();
+void Heightmap::LayoutUpdate() {
+    Actor::LayoutUpdate();
     
-//     std::string heightmap_name = HeightmapNameFromImageName(m_heightmap_texture_key);
-//     if (Lil::Assets::TextureExists(m_heightmap_texture_key)) {
-//         if (!Lil::Assets::ModelExists(heightmap_name)) {
-//             Image image = LoadImageFromTexture(*Lil::Assets::GetTexture(m_heightmap_texture_key));
-//             Lil::Assets::ModelAdd(heightmap_name, HeightmapModel(image, Vector3{1.0f, 1.0f, 1.0f}));
-//             Lil::Assets::GetModel(heightmap_name)->materials[0].albedo.texture = *Lil::Assets::GetTexture(m_heightmap_texture_key);
-//             UnloadImage(image);
-//         }
+    std::string heightmap_name = HeightmapNameFromImageName(m_heightmap_texture_key.Key());
+    if (Lil::Assets::TextureExists(m_heightmap_texture_key)) {
+        Lil::Assets::Model handle(heightmap_name);
+        if (!Lil::Assets::ModelExists(handle)) {
+            bool settings_existed = Lil::Assets::ModelSettingsExists(handle);
+            Image image = LoadImageFromTexture(*Lil::Assets::GetTextureData(m_heightmap_texture_key));
+            Lil::Assets::ModelAddHeightmap(handle, image, Vector3{1.0f, 1.0f, 1.0f});
+            if (!settings_existed)
+                Lil::Assets::GetModelSettings(handle)->Material(0)->albedo.texture_key = Lil::Assets::Texture(m_heightmap_texture_key);
+            Lil::Assets::ApplyModelSettings(handle);
+            UnloadImage(image);
+        }
 
-//         if (m_model) {
-//             m_model->SetModel(heightmap_name);
-//             //m_model->Local().translation = GetScale() * Vector3{-0.5f, 0.0f, -0.5f};
-//         }
-//         if (m_collider && m_collider->m_shapes.size() > 0) {
-//             CollisionShape* shape = &m_collider->m_shapes.front();
-//             std::string old_key = shape->m_heightmap_texture_key;
-//             shape->m_heightmap_texture_key = m_heightmap_texture_key;
-//             if (old_key != shape->m_heightmap_texture_key) shape->m_needs_rebuild = true;
+        if (m_model) {
+            m_model->SetModel(handle);
+            //m_model->Local().translation = GetScale() * Vector3{-0.5f, 0.0f, -0.5f};
+        }
+        if (m_collider && m_collider->m_shapes.size() > 0) {
+            CollisionShape* shape = &m_collider->m_shapes.front();
+            Lil::Assets::Texture old_key = shape->m_heightmap_texture_key;
+            shape->m_heightmap_texture_key = m_heightmap_texture_key;
+            if (old_key != shape->m_heightmap_texture_key) shape->m_needs_rebuild = true;
 
-//             Vector3 old_scale = shape->m_map_size;
-//             shape->m_map_size = GetScale();
-//             if (old_scale != shape->m_map_size) shape->m_needs_rebuild = true;
-//         }
-//     }
-// }
+            Vector3 old_scale = shape->m_map_size;
+            shape->m_map_size = GetScale();
+            if (old_scale != shape->m_map_size) shape->m_needs_rebuild = true;
+        }
+    }
+}
 
-// HeightmapQueryResult Heightmap::QueryAt(float x, float z) {
-//     Texture2D* heightmap = Lil::Assets::GetTextureData(m_heightmap_texture_key);
+HeightmapQueryResult Heightmap::QueryAt(float x, float z) {
+    Texture2D* heightmap = Lil::Assets::GetTextureData(m_heightmap_texture_key);
 
-//     if (!heightmap) return {0};
+    if (!heightmap) return {0};
 
-//     // World position -> normalized [0, 1] heightmap coordinates.
-//     float u = (x - GetPosition().x) / GetScale().x + 0.5f;
-//     float v = (z - GetPosition().z) / GetScale().z + 0.5f;
+    // World position -> normalized [0, 1] heightmap coordinates.
+    float u = (x - GetPosition().x) / GetScale().x + 0.5f;
+    float v = (z - GetPosition().z) / GetScale().z + 0.5f;
 
-//     if (u < 0.0f || u > 1.0f ||
-//         v < 0.0f || v > 1.0f)
-//         return {0};
+    if (u < 0.0f || u > 1.0f ||
+        v < 0.0f || v > 1.0f)
+        return {0};
 
-//     // The mesh uses mapWidth/mapHeight vertices, with the
-//     // first vertex at 0 and the last at width-1/height-1.
-//     int px = static_cast<int>(u * (heightmap->width - 1));
-//     int pz = static_cast<int>(v * (heightmap->height - 1));
+    // The mesh uses mapWidth/mapHeight vertices, with the
+    // first vertex at 0 and the last at width-1/height-1.
+    int px = static_cast<int>(u * (heightmap->width - 1));
+    int pz = static_cast<int>(v * (heightmap->height - 1));
 
-//     Image img = LoadImageFromTexture(*heightmap);
+    Image img = LoadImageFromTexture(*heightmap);
 
-//     float value =
-//         static_cast<float>(GetImageColor(img, px, pz).r) / 255.0f;
+    float value =
+        static_cast<float>(GetImageColor(img, px, pz).r) / 255.0f;
 
-//     float height = GetPosition().y + value * GetScale().y;
+    float height = GetPosition().y + value * GetScale().y;
 
-//     UnloadImage(img);
+    UnloadImage(img);
 
-//     // HeightmapModel multiplies the normalized height by size.y.
-//     Ray ray = {
-//         .position = Vector3{x, height+0.5f, z},
-//         .direction = Vector3{0.0f,-1.0f,0.0f}
-//     };
-//     RayCollision collision = Raycast(ray);
-//     return HeightmapQueryResult{.value = value, .height = collision.point.y, .normal = collision.normal};
-// }
+    // HeightmapModel multiplies the normalized height by size.y.
+    Ray ray = {
+        .position = Vector3{x, height+0.5f, z},
+        .direction = Vector3{0.0f,-1.0f,0.0f}
+    };
+    RayCollision collision = Raycast(ray);
+    return HeightmapQueryResult{.value = value, .height = collision.point.y, .normal = collision.normal};
+}

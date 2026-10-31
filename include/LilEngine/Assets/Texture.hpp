@@ -90,6 +90,7 @@ namespace Lil::Assets {
     void TextureRemove(Texture handle);
 
     void UpdateAllTextureSettings();
+    void ApplyTextureSettings(Texture handle);
     void ApplyAllTextureSettings();
 
     template <class Archive>

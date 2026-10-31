@@ -1,4 +1,4 @@
-#include "utils/MeshHelper.hpp"
+#include "MeshHelper.hpp"
 #include <rlgl.h>
 
 R3D_Model LoadR3DModelFromMesh(R3D_Mesh mesh) {

@@ -4,7 +4,6 @@
 #include <span>
 
 struct Attribute : refl::attr::usage::field {}; 
-struct TextureKeyAttribute : Attribute {};
 struct ContainerNoAddAttribute : Attribute {};
 struct ContainerNoEraseAttribute : Attribute {};
 

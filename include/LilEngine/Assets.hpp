@@ -3,6 +3,7 @@
 #include "Assets/Texture.hpp"
 #include "Assets/Model.hpp"
 #include "Assets/Sound.hpp"
+#include "Assets/AnimationLib.hpp"
 
 namespace Lil::Assets {
     template <class Archive>
@@ -10,6 +11,7 @@ namespace Lil::Assets {
         save_sounds(ar);
         save_textures(ar);
         save_models(ar);
+        save_animation_libs(ar);
     }
         
     template <class Archive>
@@ -17,11 +19,13 @@ namespace Lil::Assets {
         load_sounds(ar);
         load_textures(ar);
         load_models(ar);
+        load_animation_libs(ar);
     }
 
-    void Unload() {
+    inline void Unload() {
         UnloadAllSounds();
         UnloadAllTextures();
         UnloadAllModels();
+        UnloadAllAnimationLibs();
     }
 } // namespace Lil::Assets

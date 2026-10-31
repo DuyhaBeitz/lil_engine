@@ -10,6 +10,7 @@
 
 #include "LilEngine.hpp"
 #include "LilEditor.hpp"
+#include <r3d/r3d.h>
 
 constexpr int target_fps = 120;
 constexpr float dt = 1.0f / float(target_fps);
@@ -63,6 +64,7 @@ int main() {
     }
 
     Lil::Editor::Get().Close();
+    Lil::World().Clear();
     Lil::Assets::Unload();
     CloseAudioDevice();
     CloseWindow();

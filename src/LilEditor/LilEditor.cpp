@@ -1,11 +1,11 @@
 #include "LilEditor.hpp"
 #include <raymath.h>
-#include <utils/MeshHelper.hpp>
 #include <utils/FileHelper.hpp>
 #include "Components/InstancedModelComponent.hpp"
 #include "Heightmap.hpp"
 #include "FileDialogHelper.hpp"
 #include "configparser.hpp"
+#include <r3d/r3d.h>
 
 Lil::Editor &Lil::Editor::Get() {
     static Lil::Editor instance;
@@ -469,7 +469,7 @@ void Lil::Editor::Update(float delta_time, float physics_step_time) {
 
     if (!io.WantTextInput) UpdateViewportCamera();
     Lil::Engine::Get().Update(delta_time, physics_step_time);
-    Lil::Environment().Update();
+    //Lil::Environment().Update();
 
     // typing into a text field: no editor shortcuts
     if (io.WantTextInput) return;
@@ -662,17 +662,17 @@ void Lil::Editor::DrawResources() {
             }
         }
 
-        for (auto& [key, model] : Lil::Assets::Models()) {
-            ImGui::PushID(&model);
-            if (!Lil::Assets::AnimationLibExists(key)) {
-                if (ImGui::Button("Load animations")) Lil::Assets::AnimationLibAdd("assets/" + key);
+        for (auto& [handle, settings] : Lil::Assets::ModelSettingsMap()) {
+            ImGui::PushID(&settings);
+            if (!Lil::Assets::AnimationLibExists(Lil::Assets::AnimationLib(handle.Key()))) {
+                if (ImGui::Button("Load animations")) Lil::Assets::AnimationLibAdd("assets/" + handle.Key());
                 ImGui::SameLine();
             }
-            m_editor.SetCurrentObjectName(key);
-            m_editor.VisitObject(TypeInfo::Get<ModelSettings>(), Lil::Assets::GetModelSettings(key));
+            m_editor.SetCurrentObjectName(handle.Key());
+            m_editor.VisitObject(TypeInfo::Get<ModelSettings>(), Lil::Assets::GetModelSettings(handle));
             ImGui::PopID();
         }
-        Lil::Assets::ApplyModelSettings();
+        Lil::Assets::ApplyAllModelSettings();
     }
 
     ImGui::End();
@@ -687,21 +687,21 @@ void Lil::Editor::DrawResources() {
             }
         }
 
-        for (auto& [key, texture] : Lil::Assets::Textures()) {
-            ImGui::PushID(&texture);
+        for (auto& [handle, settings] : Lil::Assets::TextureSettingsMap()) {
+            ImGui::PushID(&settings);
+            Texture2D& texture = *Lil::Assets::GetTextureData(handle);
             if (texture.id == 0) {
-                ImGui::TextUnformatted(key.c_str());
+                ImGui::TextUnformatted(handle.Key().c_str());
             }
             else {
                 rlImGuiImageSize(&texture, 128, 128);
                 ImGui::SameLine();
             }
-            m_editor.SetCurrentObjectName(key);
-            m_editor.VisitObject(TypeInfo::Get<TextureSettings>(), Lil::Assets::GetTextureSettings(key));
+            m_editor.SetCurrentObjectName(handle.Key());
+            m_editor.VisitObject(TypeInfo::Get<TextureSettings>(), &settings);
             ImGui::PopID();
+            Lil::Assets::ApplyTextureSettings(handle);
         }
-        Lil::Assets::ApplyTextureSettings();
-
     }
     ImGui::End();
 
@@ -714,18 +714,16 @@ void Lil::Editor::DrawResources() {
             }
         }
 
-        for (auto& [name, sound] : Lil::Assets::Sounds()) {
-            ImGui::PushID(&sound);
-            if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
-                auto& volume = sound.volume_multiplier;
-
+        for (auto& [handle, settings] : Lil::Assets::SoundSettingsMap()) {
+            ImGui::PushID(&settings);
+            if (ImGui::CollapsingHeader(handle.Key().c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
                 ImGui::SetNextItemWidth(120.0f);
                 if (ImGui::Button("Play " ICON_FA_PLAY)) {
-                    sound.Play();
+                    Lil::Assets::GetSoundData(handle)->Play();
                 }
-
-                ImGui::SetNextItemWidth(300.0f);
-                ImGui::DragFloat("Volume", &volume, 0.01f, 0.0f, 1.0f, "%.2f");
+                m_editor.SetCurrentObjectName(handle.Key());
+                m_editor.VisitObject(TypeInfo::Get<SoundSettings>(), &settings);
+                Lil::Assets::ApplySoundSettings(handle);
             }
             ImGui::PopID();
         }
@@ -735,8 +733,8 @@ void Lil::Editor::DrawResources() {
 
 void Lil::Editor::DrawEnvironment() {
     if (ImGui::Begin("Environment")) {
-        m_editor.SetCurrentObjectName("Environment");
-        m_editor.VisitObject(Lil::Environment().GetTypeInfo(), &Lil::Environment());
+        // m_editor.SetCurrentObjectName("Environment");
+        // m_editor.VisitObject(Lil::Environment().GetTypeInfo(), &Lil::Environment());
     }
     ImGui::End();
 }

@@ -1,7 +1,6 @@
 #include "Components/ModelComponent.hpp"
 
 #include "LilEngine.hpp"
-#include "utils/MeshHelper.hpp"
 
 ModelComponent::ModelComponent(Lil::Assets::Model model_key) : m_model_key(model_key), Component() {}
 
@@ -12,8 +11,9 @@ void ModelComponent::Draw() {
 }
 
 
+void ModelComponent::SetModel(Lil::Assets::Model model_key) {m_model_key = model_key;}
 void ModelComponent::SetModel(std::string model_key) {m_model_key = model_key;}
-//R3D_Model *ModelComponent::GetModel() const { return Lil::Assets::GetModel(m_model_key); }
+
 Lil::Assets::Model ModelComponent::ModelKey() { return m_model_key; }
 
 

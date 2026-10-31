@@ -17,6 +17,9 @@ namespace Lil {
     class Engine {
     public:
         static Engine& Get();
+        ~Engine() {
+            m_world.Clear();
+        }
         
         void Init();
         void Update(float delta_time, float physics_step_time);
