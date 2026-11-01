@@ -5,8 +5,8 @@
 #include "Assets/AnimationLib.hpp"
 
 namespace Lil::Backend {
-    R3D_Model*        R3DModel(const Assets::Model& handle);              // defined in Model.cpp
-    R3D_AnimationLib* R3DAnimationLib(const Assets::AnimationLib& handle);// defined in AnimationLib.cpp
+    R3D_Model*        GetRaylibModel(const Assets::Model& handle);              // defined in Model.cpp
+    R3D_AnimationLib* RaylibAnimationLib(const Assets::AnimationLib& handle);// defined in AnimationLib.cpp
 
     // Bumped whenever a model or animation lib is removed or replaced.
     // Handles built from them compare against it to detect staleness.
