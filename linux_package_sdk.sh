@@ -18,5 +18,5 @@ if [ -d "include" ]; then
     cp -R include/* lil_engine_sdk/include/
 fi
 
-cp cmake/lil_engine.cmake lil_engine_sdk/
+cp cmake/sdk_advanced/lil_engine.cmake lil_engine_sdk/
 cp imgui.ini lil_engine_sdk/

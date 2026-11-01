@@ -12,7 +12,6 @@ void ModelComponent::Draw() {
 
 
 void ModelComponent::SetModel(Lil::Assets::Model model_key) {m_model_key = model_key;}
-void ModelComponent::SetModel(std::string model_key) {m_model_key = model_key;}
 
 Lil::Assets::Model ModelComponent::ModelKey() { return m_model_key; }
 

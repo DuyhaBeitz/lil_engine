@@ -32,22 +32,36 @@ set(ENGINE_SOURCES
     ${S}/Assets/Texture.cpp
 )
 
-set(AB ${S}/Backend/Basic)
-set(ADVANCED_BACKEND_SOURCES
-    ${AB}/AnimationLib.cpp
-    ${AB}/AnimationPlayer.cpp
-    ${AB}/Environment.cpp
-    ${AB}/Environment.cpp
-    ${AB}/InstanceBuffer.cpp
-    ${AB}/Light.cpp
-    ${AB}/Model.cpp
-    ${AB}/BackendAccess.cpp
-    ${AB}/Frame.cpp
-)
+if(BACKEND STREQUAL "Advanced")
+    set(B "${S}/Backend/Advanced")
+    set(BACKEND_SOURCES
+        ${B}/AnimationLib.cpp
+        ${B}/AnimationPlayer.cpp
+        ${B}/BackendAccess.cpp
+        ${B}/Environment.cpp
+        ${B}/Frame.cpp
+        ${B}/InstanceBuffer.cpp
+        ${B}/Light.cpp
+        ${B}/Model.cpp
+    )
+else()
+    set(B "${S}/Backend/Basic")
+    set(BACKEND_SOURCES
+        ${B}/AnimationLib.cpp
+        ${B}/AnimationPlayer.cpp
+        ${B}/Environment.cpp
+        ${B}/Environment.cpp
+        ${B}/InstanceBuffer.cpp
+        ${B}/Light.cpp
+        ${B}/Model.cpp
+        ${B}/BackendAccess.cpp
+        ${B}/Frame.cpp
+    )
+endif()
 
 add_library(lil_engine STATIC 
 ${ENGINE_SOURCES}
-${ADVANCED_BACKEND_SOURCES}
+${BACKEND_SOURCES}
 )
 target_include_directories(lil_engine PUBLIC 
     ${CMAKE_CURRENT_SOURCE_DIR}/include/LilEngine

@@ -2,63 +2,7 @@
     "sound_settings": [],
     "texture_settings": [
         {
-            "key": "Gen_1_tree1.glb",
-            "value": {
-                "pixel_format": 7,
-                "filter": 0,
-                "wrap": 1
-            }
-        },
-        {
-            "key": "Gen_0_tree1.glb",
-            "value": {
-                "pixel_format": 4,
-                "filter": 0,
-                "wrap": 0
-            }
-        },
-        {
-            "key": "GroundSand005_COL_1K.jpg",
-            "value": {
-                "pixel_format": 4,
-                "filter": 0,
-                "wrap": 0
-            }
-        },
-        {
-            "key": "skybox_1.png",
-            "value": {
-                "pixel_format": 7,
-                "filter": 0,
-                "wrap": 1
-            }
-        },
-        {
-            "key": "Gen_0_palm_tree_realistic.glb",
-            "value": {
-                "pixel_format": 7,
-                "filter": 0,
-                "wrap": 1
-            }
-        },
-        {
-            "key": "GroundSand005_NRM_1K.jpg",
-            "value": {
-                "pixel_format": 4,
-                "filter": 0,
-                "wrap": 0
-            }
-        },
-        {
-            "key": "heightmap.png",
-            "value": {
-                "pixel_format": 4,
-                "filter": 0,
-                "wrap": 1
-            }
-        },
-        {
-            "key": "Gen_1_palm_tree_realistic.glb",
+            "key": "Gen_1_cop.glb",
             "value": {
                 "pixel_format": 7,
                 "filter": 0,
@@ -74,7 +18,63 @@
             }
         },
         {
-            "key": "Gen_1_cop.glb",
+            "key": "Gen_1_palm_tree_realistic.glb",
+            "value": {
+                "pixel_format": 7,
+                "filter": 0,
+                "wrap": 1
+            }
+        },
+        {
+            "key": "heightmap.png",
+            "value": {
+                "pixel_format": 4,
+                "filter": 0,
+                "wrap": 1
+            }
+        },
+        {
+            "key": "GroundSand005_NRM_1K.jpg",
+            "value": {
+                "pixel_format": 4,
+                "filter": 0,
+                "wrap": 0
+            }
+        },
+        {
+            "key": "Gen_0_palm_tree_realistic.glb",
+            "value": {
+                "pixel_format": 7,
+                "filter": 0,
+                "wrap": 1
+            }
+        },
+        {
+            "key": "skybox_1.png",
+            "value": {
+                "pixel_format": 7,
+                "filter": 0,
+                "wrap": 1
+            }
+        },
+        {
+            "key": "GroundSand005_COL_1K.jpg",
+            "value": {
+                "pixel_format": 4,
+                "filter": 0,
+                "wrap": 0
+            }
+        },
+        {
+            "key": "Gen_0_tree1.glb",
+            "value": {
+                "pixel_format": 4,
+                "filter": 0,
+                "wrap": 0
+            }
+        },
+        {
+            "key": "Gen_1_tree1.glb",
             "value": {
                 "pixel_format": 7,
                 "filter": 0,
@@ -83,163 +83,6 @@
         }
     ],
     "model_settings": [
-        {
-            "key": "palm_tree_realistic.glb",
-            "value": {
-                "material_settings": [
-                    {
-                        "uvScale": {
-                            "x": 1.0,
-                            "y": 1.0
-                        },
-                        "uvOffset": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "albedo": {
-                            "texture_key": "Gen_0_palm_tree_realistic.glb",
-                            "color": {
-                                "r": 255,
-                                "g": 255,
-                                "b": 255,
-                                "a": 255
-                            }
-                        },
-                        "normal": {
-                            "texture_key": "None",
-                            "scale": 1.0
-                        },
-                        "emission": {
-                            "texture_key": "None",
-                            "energy": 0.0
-                        },
-                        "orm": {
-                            "texture_key": "None",
-                            "occlusion": 0.0,
-                            "roughness": 1.0,
-                            "metalness": 0.0,
-                            "specular": 0.0
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "key": "Gen_Heightmap_From_heightmap.png",
-            "value": {
-                "material_settings": [
-                    {
-                        "uvScale": {
-                            "x": 5.0,
-                            "y": 5.0
-                        },
-                        "uvOffset": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "albedo": {
-                            "texture_key": "GroundSand005_COL_1K.jpg",
-                            "color": {
-                                "r": 255,
-                                "g": 255,
-                                "b": 255,
-                                "a": 255
-                            }
-                        },
-                        "normal": {
-                            "texture_key": "GroundSand005_NRM_1K.jpg",
-                            "scale": 1.0
-                        },
-                        "emission": {
-                            "texture_key": "None",
-                            "energy": 0.0
-                        },
-                        "orm": {
-                            "texture_key": "None",
-                            "occlusion": 1.0,
-                            "roughness": 1.0,
-                            "metalness": 0.0,
-                            "specular": 0.5
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "key": "cop.glb",
-            "value": {
-                "material_settings": [
-                    {
-                        "uvScale": {
-                            "x": 3.2161361856520257e-35,
-                            "y": 441.5331726074219
-                        },
-                        "uvOffset": {
-                            "x": 2.802596928649634e-45,
-                            "y": 0.0
-                        },
-                        "albedo": {
-                            "texture_key": "Gen_0_cop.glb",
-                            "color": {
-                                "r": 255,
-                                "g": 255,
-                                "b": 255,
-                                "a": 255
-                            }
-                        },
-                        "normal": {
-                            "texture_key": "None",
-                            "scale": 0.0
-                        },
-                        "emission": {
-                            "texture_key": "None",
-                            "energy": 0.0
-                        },
-                        "orm": {
-                            "texture_key": "None",
-                            "occlusion": 0.0,
-                            "roughness": 0.0,
-                            "metalness": 0.0,
-                            "specular": 0.0
-                        }
-                    },
-                    {
-                        "uvScale": {
-                            "x": 3.2161361856520257e-35,
-                            "y": 441.5331726074219
-                        },
-                        "uvOffset": {
-                            "x": 2.802596928649634e-45,
-                            "y": 0.0
-                        },
-                        "albedo": {
-                            "texture_key": "Gen_1_cop.glb",
-                            "color": {
-                                "r": 255,
-                                "g": 255,
-                                "b": 255,
-                                "a": 255
-                            }
-                        },
-                        "normal": {
-                            "texture_key": "None",
-                            "scale": 0.0
-                        },
-                        "emission": {
-                            "texture_key": "None",
-                            "energy": 0.0
-                        },
-                        "orm": {
-                            "texture_key": "None",
-                            "occlusion": 0.0,
-                            "roughness": 1.0,
-                            "metalness": 0.0,
-                            "specular": 0.0
-                        }
-                    }
-                ]
-            }
-        },
         {
             "key": "tree1.glb",
             "value": {
@@ -348,6 +191,163 @@
                     }
                 ]
             }
+        },
+        {
+            "key": "cop.glb",
+            "value": {
+                "material_settings": [
+                    {
+                        "uvScale": {
+                            "x": 3.2161361856520257e-35,
+                            "y": 441.5331726074219
+                        },
+                        "uvOffset": {
+                            "x": 2.802596928649634e-45,
+                            "y": 0.0
+                        },
+                        "albedo": {
+                            "texture_key": "Gen_0_cop.glb",
+                            "color": {
+                                "r": 255,
+                                "g": 255,
+                                "b": 255,
+                                "a": 255
+                            }
+                        },
+                        "normal": {
+                            "texture_key": "None",
+                            "scale": 0.0
+                        },
+                        "emission": {
+                            "texture_key": "None",
+                            "energy": 0.0
+                        },
+                        "orm": {
+                            "texture_key": "None",
+                            "occlusion": 0.0,
+                            "roughness": 0.0,
+                            "metalness": 0.0,
+                            "specular": 0.0
+                        }
+                    },
+                    {
+                        "uvScale": {
+                            "x": 3.2161361856520257e-35,
+                            "y": 441.5331726074219
+                        },
+                        "uvOffset": {
+                            "x": 2.802596928649634e-45,
+                            "y": 0.0
+                        },
+                        "albedo": {
+                            "texture_key": "Gen_1_cop.glb",
+                            "color": {
+                                "r": 255,
+                                "g": 255,
+                                "b": 255,
+                                "a": 255
+                            }
+                        },
+                        "normal": {
+                            "texture_key": "None",
+                            "scale": 0.0
+                        },
+                        "emission": {
+                            "texture_key": "None",
+                            "energy": 0.0
+                        },
+                        "orm": {
+                            "texture_key": "None",
+                            "occlusion": 0.0,
+                            "roughness": 1.0,
+                            "metalness": 0.0,
+                            "specular": 0.0
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "key": "Gen_Heightmap_From_heightmap.png",
+            "value": {
+                "material_settings": [
+                    {
+                        "uvScale": {
+                            "x": 5.0,
+                            "y": 5.0
+                        },
+                        "uvOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "albedo": {
+                            "texture_key": "GroundSand005_COL_1K.jpg",
+                            "color": {
+                                "r": 255,
+                                "g": 255,
+                                "b": 255,
+                                "a": 255
+                            }
+                        },
+                        "normal": {
+                            "texture_key": "GroundSand005_NRM_1K.jpg",
+                            "scale": 1.0
+                        },
+                        "emission": {
+                            "texture_key": "None",
+                            "energy": 0.0
+                        },
+                        "orm": {
+                            "texture_key": "None",
+                            "occlusion": 1.0,
+                            "roughness": 1.0,
+                            "metalness": 0.0,
+                            "specular": 0.5
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "key": "palm_tree_realistic.glb",
+            "value": {
+                "material_settings": [
+                    {
+                        "uvScale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "uvOffset": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "albedo": {
+                            "texture_key": "Gen_0_palm_tree_realistic.glb",
+                            "color": {
+                                "r": 255,
+                                "g": 255,
+                                "b": 255,
+                                "a": 255
+                            }
+                        },
+                        "normal": {
+                            "texture_key": "None",
+                            "scale": 1.0
+                        },
+                        "emission": {
+                            "texture_key": "None",
+                            "energy": 0.0
+                        },
+                        "orm": {
+                            "texture_key": "None",
+                            "occlusion": 0.0,
+                            "roughness": 1.0,
+                            "metalness": 0.0,
+                            "specular": 0.0
+                        }
+                    }
+                ]
+            }
         }
     ],
     "animation_lib_keys": [
@@ -358,11 +358,11 @@
         "m_components": [
             {
                 "key": {
-                    "value0": "130a430f-9e80-454e-939a-9c8b7f6b9023"
+                    "value0": "e9600062-1f64-40f7-8e19-a7987b61d7f4"
                 },
                 "value": {
                     "polymorphic_id": 2147483649,
-                    "polymorphic_name": "ModelComponent",
+                    "polymorphic_name": "AnimatedModelComponent",
                     "ptr_wrapper": {
                         "valid": 1,
                         "data": {
@@ -370,7 +370,7 @@
                                 "value0": {
                                     "value0": {
                                         "value0": {
-                                            "value0": "130a430f-9e80-454e-939a-9c8b7f6b9023"
+                                            "value0": "e9600062-1f64-40f7-8e19-a7987b61d7f4"
                                         }
                                     },
                                     "value1": {
@@ -390,6 +390,152 @@
                                                 "x": 1.0,
                                                 "y": 1.0,
                                                 "z": 1.0
+                                            }
+                                        }
+                                    },
+                                    "m_visible": false,
+                                    "m_raycast_active": true
+                                },
+                                "m_local_transform": {
+                                    "translation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0,
+                                        "w": 1.0
+                                    },
+                                    "scale": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
+                                    }
+                                },
+                                "m_is_required": false
+                            },
+                            "m_model_key": "cop.glb",
+                            "m_anim_idx": 2,
+                            "m_playing": true,
+                            "m_looping": true,
+                            "m_speed": 1.0
+                        }
+                    }
+                }
+            },
+            {
+                "key": {
+                    "value0": "481971da-2b67-41ba-b6ce-f038b804a6ef"
+                },
+                "value": {
+                    "polymorphic_id": 2147483650,
+                    "polymorphic_name": "LightComponent",
+                    "ptr_wrapper": {
+                        "valid": 1,
+                        "data": {
+                            "value0": {
+                                "value0": {
+                                    "value0": {
+                                        "value0": {
+                                            "value0": "481971da-2b67-41ba-b6ce-f038b804a6ef"
+                                        }
+                                    },
+                                    "value1": {
+                                        "value0": {
+                                            "translation": {
+                                                "x": 2.499584197998047,
+                                                "y": 24.866924285888673,
+                                                "z": 37.91193389892578
+                                            },
+                                            "rotation": {
+                                                "x": -0.2237941175699234,
+                                                "y": 0.0,
+                                                "z": 0.0,
+                                                "w": 0.9746422171592712
+                                            },
+                                            "scale": {
+                                                "x": 128.0,
+                                                "y": 5.0,
+                                                "z": 128.0
+                                            }
+                                        }
+                                    },
+                                    "m_visible": true,
+                                    "m_raycast_active": true
+                                },
+                                "m_local_transform": {
+                                    "translation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "rotation": {
+                                        "x": -0.2237941175699234,
+                                        "y": 0.0,
+                                        "z": 0.0,
+                                        "w": 0.9746422171592712
+                                    },
+                                    "scale": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
+                                    }
+                                },
+                                "m_is_required": false
+                            },
+                            "m_enabled": true,
+                            "m_lumen": 1.0,
+                            "m_color": {
+                                "r": 255,
+                                "g": 255,
+                                "b": 255,
+                                "a": 255
+                            },
+                            "m_type": 0,
+                            "m_cast_shadows": true,
+                            "m_range": 40.0,
+                            "m_shadow_softness": 1.0,
+                            "m_depth_bias": 0.0010000000474974514
+                        }
+                    }
+                }
+            },
+            {
+                "key": {
+                    "value0": "a6b8c85c-a111-43dd-92f2-8bdb0b60797a"
+                },
+                "value": {
+                    "polymorphic_id": 2147483651,
+                    "polymorphic_name": "ColliderComponent",
+                    "ptr_wrapper": {
+                        "valid": 1,
+                        "data": {
+                            "value0": {
+                                "value0": {
+                                    "value0": {
+                                        "value0": {
+                                            "value0": "a6b8c85c-a111-43dd-92f2-8bdb0b60797a"
+                                        }
+                                    },
+                                    "value1": {
+                                        "value0": {
+                                            "translation": {
+                                                "x": 2.499584197998047,
+                                                "y": 24.866924285888673,
+                                                "z": 37.91193389892578
+                                            },
+                                            "rotation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0,
+                                                "w": 1.0
+                                            },
+                                            "scale": {
+                                                "x": 128.0,
+                                                "y": 5.0,
+                                                "z": 128.0
                                             }
                                         }
                                     },
@@ -414,9 +560,112 @@
                                         "z": 1.0
                                     }
                                 },
-                                "m_is_required": false
+                                "m_is_required": true
                             },
-                            "m_model_key": "tree1.glb"
+                            "m_shapes": [
+                                {
+                                    "m_type": 2,
+                                    "m_local_position": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "m_local_rotation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0,
+                                        "w": 1.0
+                                    },
+                                    "m_radius": 1.0,
+                                    "m_half_extends": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
+                                    },
+                                    "m_heightmap_texture_key": "heightmap.png",
+                                    "m_map_size": {
+                                        "x": 128.0,
+                                        "y": 5.0,
+                                        "z": 128.0
+                                    }
+                                }
+                            ],
+                            "m_type": 0,
+                            "m_linear_velocity": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "m_angular_velocity": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "key": {
+                    "value0": "4ce65218-662a-43fe-a202-5ade248f60e1"
+                },
+                "value": {
+                    "polymorphic_id": 2147483652,
+                    "polymorphic_name": "ModelComponent",
+                    "ptr_wrapper": {
+                        "valid": 1,
+                        "data": {
+                            "value0": {
+                                "value0": {
+                                    "value0": {
+                                        "value0": {
+                                            "value0": "4ce65218-662a-43fe-a202-5ade248f60e1"
+                                        }
+                                    },
+                                    "value1": {
+                                        "value0": {
+                                            "translation": {
+                                                "x": 2.499584197998047,
+                                                "y": 24.866924285888673,
+                                                "z": 37.91193389892578
+                                            },
+                                            "rotation": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0,
+                                                "w": 1.0
+                                            },
+                                            "scale": {
+                                                "x": 128.0,
+                                                "y": 5.0,
+                                                "z": 128.0
+                                            }
+                                        }
+                                    },
+                                    "m_visible": true,
+                                    "m_raycast_active": true
+                                },
+                                "m_local_transform": {
+                                    "translation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "rotation": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0,
+                                        "w": 1.0
+                                    },
+                                    "scale": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
+                                    }
+                                },
+                                "m_is_required": true
+                            },
+                            "m_model_key": "Gen_Heightmap_From_heightmap.png"
                         }
                     }
                 }
@@ -426,7 +675,7 @@
                     "value0": "eb7f0ce7-8656-4190-b556-1b1fb7e7c225"
                 },
                 "value": {
-                    "polymorphic_id": 2147483650,
+                    "polymorphic_id": 2147483653,
                     "polymorphic_name": "InstancedModelComponent",
                     "ptr_wrapper": {
                         "valid": 1,
@@ -481,7 +730,7 @@
                                 },
                                 "m_is_required": false
                             },
-                            "value1": "palm_tree_realistic.glb",
+                            "value1": "tree1.glb",
                             "value2": [
                                 {
                                     "position": {
@@ -837,10 +1086,10 @@
             },
             {
                 "key": {
-                    "value0": "4ce65218-662a-43fe-a202-5ade248f60e1"
+                    "value0": "130a430f-9e80-454e-939a-9c8b7f6b9023"
                 },
                 "value": {
-                    "polymorphic_id": 1,
+                    "polymorphic_id": 4,
                     "ptr_wrapper": {
                         "valid": 1,
                         "data": {
@@ -848,252 +1097,7 @@
                                 "value0": {
                                     "value0": {
                                         "value0": {
-                                            "value0": "4ce65218-662a-43fe-a202-5ade248f60e1"
-                                        }
-                                    },
-                                    "value1": {
-                                        "value0": {
-                                            "translation": {
-                                                "x": 2.499584197998047,
-                                                "y": 24.866924285888673,
-                                                "z": 37.91193389892578
-                                            },
-                                            "rotation": {
-                                                "x": 0.0,
-                                                "y": 0.0,
-                                                "z": 0.0,
-                                                "w": 1.0
-                                            },
-                                            "scale": {
-                                                "x": 128.0,
-                                                "y": 5.0,
-                                                "z": 128.0
-                                            }
-                                        }
-                                    },
-                                    "m_visible": true,
-                                    "m_raycast_active": true
-                                },
-                                "m_local_transform": {
-                                    "translation": {
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "rotation": {
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0,
-                                        "w": 1.0
-                                    },
-                                    "scale": {
-                                        "x": 1.0,
-                                        "y": 1.0,
-                                        "z": 1.0
-                                    }
-                                },
-                                "m_is_required": true
-                            },
-                            "m_model_key": "Gen_Heightmap_From_heightmap.png"
-                        }
-                    }
-                }
-            },
-            {
-                "key": {
-                    "value0": "a6b8c85c-a111-43dd-92f2-8bdb0b60797a"
-                },
-                "value": {
-                    "polymorphic_id": 2147483651,
-                    "polymorphic_name": "ColliderComponent",
-                    "ptr_wrapper": {
-                        "valid": 1,
-                        "data": {
-                            "value0": {
-                                "value0": {
-                                    "value0": {
-                                        "value0": {
-                                            "value0": "a6b8c85c-a111-43dd-92f2-8bdb0b60797a"
-                                        }
-                                    },
-                                    "value1": {
-                                        "value0": {
-                                            "translation": {
-                                                "x": 2.499584197998047,
-                                                "y": 24.866924285888673,
-                                                "z": 37.91193389892578
-                                            },
-                                            "rotation": {
-                                                "x": 0.0,
-                                                "y": 0.0,
-                                                "z": 0.0,
-                                                "w": 1.0
-                                            },
-                                            "scale": {
-                                                "x": 128.0,
-                                                "y": 5.0,
-                                                "z": 128.0
-                                            }
-                                        }
-                                    },
-                                    "m_visible": true,
-                                    "m_raycast_active": true
-                                },
-                                "m_local_transform": {
-                                    "translation": {
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "rotation": {
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0,
-                                        "w": 1.0
-                                    },
-                                    "scale": {
-                                        "x": 1.0,
-                                        "y": 1.0,
-                                        "z": 1.0
-                                    }
-                                },
-                                "m_is_required": true
-                            },
-                            "m_shapes": [
-                                {
-                                    "m_type": 2,
-                                    "m_local_position": {
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "m_local_rotation": {
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0,
-                                        "w": 1.0
-                                    },
-                                    "m_radius": 1.0,
-                                    "m_half_extends": {
-                                        "x": 1.0,
-                                        "y": 1.0,
-                                        "z": 1.0
-                                    },
-                                    "m_heightmap_texture_key": "heightmap.png",
-                                    "m_map_size": {
-                                        "x": 128.0,
-                                        "y": 5.0,
-                                        "z": 128.0
-                                    }
-                                }
-                            ],
-                            "m_type": 0,
-                            "m_linear_velocity": {
-                                "x": 0.0,
-                                "y": 0.0,
-                                "z": 0.0
-                            },
-                            "m_angular_velocity": {
-                                "x": 0.0,
-                                "y": 0.0,
-                                "z": 0.0
-                            }
-                        }
-                    }
-                }
-            },
-            {
-                "key": {
-                    "value0": "481971da-2b67-41ba-b6ce-f038b804a6ef"
-                },
-                "value": {
-                    "polymorphic_id": 2147483652,
-                    "polymorphic_name": "LightComponent",
-                    "ptr_wrapper": {
-                        "valid": 1,
-                        "data": {
-                            "value0": {
-                                "value0": {
-                                    "value0": {
-                                        "value0": {
-                                            "value0": "481971da-2b67-41ba-b6ce-f038b804a6ef"
-                                        }
-                                    },
-                                    "value1": {
-                                        "value0": {
-                                            "translation": {
-                                                "x": 2.499584197998047,
-                                                "y": 24.866924285888673,
-                                                "z": 37.91193389892578
-                                            },
-                                            "rotation": {
-                                                "x": -0.2237941175699234,
-                                                "y": 0.0,
-                                                "z": 0.0,
-                                                "w": 0.9746422171592712
-                                            },
-                                            "scale": {
-                                                "x": 128.0,
-                                                "y": 5.0,
-                                                "z": 128.0
-                                            }
-                                        }
-                                    },
-                                    "m_visible": true,
-                                    "m_raycast_active": true
-                                },
-                                "m_local_transform": {
-                                    "translation": {
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "rotation": {
-                                        "x": -0.2237941175699234,
-                                        "y": 0.0,
-                                        "z": 0.0,
-                                        "w": 0.9746422171592712
-                                    },
-                                    "scale": {
-                                        "x": 1.0,
-                                        "y": 1.0,
-                                        "z": 1.0
-                                    }
-                                },
-                                "m_is_required": false
-                            },
-                            "m_enabled": true,
-                            "m_lumen": 1.0,
-                            "m_color": {
-                                "r": 255,
-                                "g": 255,
-                                "b": 255,
-                                "a": 255
-                            },
-                            "m_type": 0,
-                            "m_cast_shadows": true,
-                            "m_range": 40.0,
-                            "m_shadow_softness": 1.0,
-                            "m_depth_bias": 0.0010000000474974514
-                        }
-                    }
-                }
-            },
-            {
-                "key": {
-                    "value0": "e9600062-1f64-40f7-8e19-a7987b61d7f4"
-                },
-                "value": {
-                    "polymorphic_id": 2147483653,
-                    "polymorphic_name": "AnimatedModelComponent",
-                    "ptr_wrapper": {
-                        "valid": 1,
-                        "data": {
-                            "value0": {
-                                "value0": {
-                                    "value0": {
-                                        "value0": {
-                                            "value0": "e9600062-1f64-40f7-8e19-a7987b61d7f4"
+                                            "value0": "130a430f-9e80-454e-939a-9c8b7f6b9023"
                                         }
                                     },
                                     "value1": {
@@ -1116,7 +1120,7 @@
                                             }
                                         }
                                     },
-                                    "m_visible": false,
+                                    "m_visible": true,
                                     "m_raycast_active": true
                                 },
                                 "m_local_transform": {
@@ -1139,11 +1143,7 @@
                                 },
                                 "m_is_required": false
                             },
-                            "m_model_key": "cop.glb",
-                            "m_anim_idx": 2,
-                            "m_playing": true,
-                            "m_looping": true,
-                            "m_speed": 1.0
+                            "m_model_key": "tree1.glb"
                         }
                     }
                 }
@@ -1208,56 +1208,6 @@
                             "m_heightmap_texture_key": "heightmap.png",
                             "m_model": "4ce65218-662a-43fe-a202-5ade248f60e1",
                             "m_collider": "a6b8c85c-a111-43dd-92f2-8bdb0b60797a"
-                        }
-                    }
-                }
-            },
-            {
-                "key": {
-                    "value0": "a7209aa2-5365-40e4-aa6a-8a3122220e77"
-                },
-                "value": {
-                    "polymorphic_id": 1073741824,
-                    "ptr_wrapper": {
-                        "valid": 1,
-                        "data": {
-                            "component_ids": [
-                                {
-                                    "value0": "e9600062-1f64-40f7-8e19-a7987b61d7f4"
-                                },
-                                {
-                                    "value0": "130a430f-9e80-454e-939a-9c8b7f6b9023"
-                                }
-                            ],
-                            "value0": {
-                                "value0": {
-                                    "value0": {
-                                        "value0": "a7209aa2-5365-40e4-aa6a-8a3122220e77"
-                                    }
-                                },
-                                "value1": {
-                                    "value0": {
-                                        "translation": {
-                                            "x": 2.4382262229919435,
-                                            "y": 37.01724624633789,
-                                            "z": 35.27945327758789
-                                        },
-                                        "rotation": {
-                                            "x": 0.0,
-                                            "y": 0.0,
-                                            "z": 0.0,
-                                            "w": 1.0
-                                        },
-                                        "scale": {
-                                            "x": 1.0,
-                                            "y": 1.0,
-                                            "z": 1.0
-                                        }
-                                    }
-                                },
-                                "m_visible": true,
-                                "m_raycast_active": true
-                            }
                         }
                     }
                 }

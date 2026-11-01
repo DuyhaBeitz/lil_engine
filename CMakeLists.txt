@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_BUILD_TYPE Release)
 option(PLATFORM "platform (Desktop/Web)" Desktop)
+option(BACKEND "backend (Advanced/Basic)" Advanced)
 
 # -------------------------------
 # Engine Library

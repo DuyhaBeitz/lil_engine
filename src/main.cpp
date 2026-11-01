@@ -12,7 +12,6 @@
 #include "LilEditor.hpp"
 
 #define LIL3D_IMPLEMENTATION
-
 #include "lil3d/lil3d.h"
 
 constexpr int target_fps = 120;
