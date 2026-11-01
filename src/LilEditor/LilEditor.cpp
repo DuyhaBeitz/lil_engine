@@ -636,18 +636,18 @@ void Lil::Editor::DrawResources() {
 
         for (auto& [handle, settings] : Lil::Assets::TextureSettingsMap()) {
             ImGui::PushID(&settings);
-            Texture2D& texture = *Lil::Assets::GetTextureData(handle);
-            if (texture.id == 0) {
-                ImGui::TextUnformatted(handle.Key().c_str());
+            Texture2D* texture = Lil::Assets::GetTextureData(handle);
+            if (!texture || texture->id == 0) {
+                ImGui::TextUnformatted(handle.Key().c_str());   // missing / failed to load
             }
             else {
-                rlImGuiImageSize(&texture, 128, 128);
+                rlImGuiImageSize(texture, 128, 128);
                 ImGui::SameLine();
             }
             m_editor.SetCurrentObjectName(handle.Key());
             m_editor.VisitObject(TypeInfo::Get<TextureSettings>(), &settings);
             ImGui::PopID();
-            Lil::Assets::ApplyTextureSettings(handle);
+            if (texture) Lil::Assets::ApplyTextureSettings(handle);
         }
     }
     ImGui::End();

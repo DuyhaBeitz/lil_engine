@@ -12,7 +12,7 @@ struct AlbedoMap : Reflectable {
     LIL_SERIALIZABLE()
 
     Lil::Assets::Texture texture_key;
-    Color color;
+    Color color = WHITE;
 };
 LIL_REFLECT(AlbedoMap, bases<>,
     field(texture_key),
@@ -28,7 +28,7 @@ struct NormalMap : Reflectable {
     LIL_SERIALIZABLE()
 
     Lil::Assets::Texture texture_key;
-    float scale;
+    float scale = 1.0f;
 };
 LIL_REFLECT(NormalMap, bases<>,
     field(texture_key),
@@ -44,7 +44,7 @@ struct EmissionMap : Reflectable {
     LIL_SERIALIZABLE()
 
     Lil::Assets::Texture texture_key;
-    float energy;
+    float energy = 1.0f;
 };
 LIL_REFLECT(EmissionMap, bases<>,
     field(texture_key),
@@ -60,10 +60,10 @@ struct OrmMap : Reflectable {
     LIL_SERIALIZABLE()
 
     Lil::Assets::Texture texture_key;
-    float occlusion;
-    float roughness;
-    float metalness;
-    float specular;
+    float occlusion = 0.0f;
+    float roughness = 1.0f;
+    float metalness = 0.0f;
+    float specular = 0.0f;
 };
 LIL_REFLECT(OrmMap, bases<>,
     field(texture_key),
@@ -84,8 +84,8 @@ struct MaterialSettings : Reflectable {
     LIL_REFLECTABLE()
     LIL_SERIALIZABLE()
 
-    Vector2 uvScale;
-    Vector2 uvOffset;
+    Vector2 uvScale = Vector2{1.0f, 1.0f};
+    Vector2 uvOffset = Vector2{0.0f, 0.0f};
     AlbedoMap albedo;
     NormalMap normal;
     EmissionMap emission;
