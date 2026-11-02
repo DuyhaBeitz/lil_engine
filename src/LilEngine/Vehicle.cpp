@@ -252,7 +252,7 @@ void Vehicle::SimulationUpdate(float delta_time) {
 std::array<Transform, 4> Vehicle::GetWheelTransforms() {
 	std::array<Transform, 4> wheel_transforms;
 
-	for (uint w = 0; w < 4; ++w) {
+	for (int w = 0; w < 4; ++w) {
 		const JPH::WheelSettings *settings = mVehicleConstraint->GetWheels()[w]->GetSettings();
 		JPH::RMat44 wheel_transform = mVehicleConstraint->GetWheelWorldTransform(w, JPH::Vec3::sAxisY(), JPH::Vec3::sAxisX()); // The cylinder we draw is aligned with Y so we specify that as rotational axis
 		JPH::Vec3 position = wheel_transform.GetTranslation();
@@ -287,7 +287,7 @@ VehicleState Vehicle::GetVehicleState() const {
 void Vehicle::DebugDraw() {
 	Actor::DebugDraw();
 
-	for (uint w = 0; w < 4; ++w) {
+	for (int w = 0; w < 4; ++w) {
 		const JPH::WheelSettings *settings = mVehicleConstraint->GetWheels()[w]->GetSettings();
 		JPH::RMat44 wheel_transform = mVehicleConstraint->GetWheelWorldTransform(w, JPH::Vec3::sAxisY(), JPH::Vec3::sAxisX()); // The cylinder we draw is aligned with Y so we specify that as rotational axis
 		Lil::Physics().GetDebugRender()->DrawCylinder(wheel_transform, 0.5f * settings->mWidth, settings->mRadius, JPH::Color::sGreen);

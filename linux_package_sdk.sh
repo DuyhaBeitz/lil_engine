@@ -14,6 +14,16 @@ cp build/liblil_engine.a             lil_engine_sdk/lib/
 cp build/liblil_editor.a             lil_engine_sdk/lib/
 cp build/libconfigparser.a             lil_engine_sdk/lib/
 
+cp web-build/JoltBuild/libJolt.a         lil_engine_sdk/web-lib/
+cp web-build/lib/libr3d.a                lil_engine_sdk/web-lib/
+cp web-build/libtinyfiledialogs.a        lil_engine_sdk/web-lib/
+cp web-build/libimgui.a                  lil_engine_sdk/web-lib/
+cp web-build/libraylib-gizmo.a           lil_engine_sdk/web-lib/
+cp web-build/librlImGui.a                lil_engine_sdk/web-lib/
+cp web-build/liblil_engine.a             lil_engine_sdk/web-lib/
+cp web-build/liblil_editor.a             lil_engine_sdk/web-lib/
+cp web-build/libconfigparser.a           lil_engine_sdk/web-lib/
+
 if [ -d "include" ]; then
     cp -R include/* lil_engine_sdk/include/
 fi

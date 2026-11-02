@@ -42,6 +42,8 @@ target_include_directories(game PUBLIC
 
 if(WIN32)
     include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/windows.cmake)
+elseif (PLATFORM STREQUAL "Web")
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/web.cmake)
 elseif(UNIX AND NOT APPLE)
     include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/linux.cmake)
 else()

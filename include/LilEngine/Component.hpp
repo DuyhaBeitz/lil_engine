@@ -26,7 +26,7 @@ public:
     
     virtual void LayoutUpdate();
     virtual void SimulationUpdate(Actor& actor, float delta_time);
-    virtual void Draw();
+    virtual void Draw() override;
     virtual void DebugUpdate();
     virtual void DebugDraw();
 
