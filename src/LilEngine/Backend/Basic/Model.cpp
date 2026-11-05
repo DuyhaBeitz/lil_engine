@@ -40,10 +40,12 @@ namespace Lil::Assets {
     }
     BoundingBox ModelBounds(Model handle) { return models.at(handle).aabb; }
 
-    // lil3d does not infer transparency from the asset, so derive it from the albedo:
-    //  - texture alpha that is (nearly) binary  -> alpha test (cutout, e.g. foliage), double-sided
-    //  - texture alpha with intermediate values
-    //    or colour alpha < 255                  -> alpha blending
+    // lil3d does not infer transparency from the asset. r3d treated materials as opaque unless the
+    // asset asked otherwise, and raylib does not expose glTF alphaMode, so be conservative:
+    //  - a texture whose alpha is clearly a cutout mask (a real share of fully transparent texels,
+    //    and almost no semi-transparent ones, e.g. foliage) -> alpha test, double-sided
+    //  - material colour alpha < 255                         -> alpha blending
+    //  - anything else (including textures with stray / soft alpha, e.g. characters) -> opaque
     enum class AlphaKind { Opaque, Cutout, Blend };
     static std::unordered_map<unsigned int, AlphaKind> s_alpha_cache;   // by GL texture id
 
@@ -69,13 +71,15 @@ namespace Lil::Assets {
             ImageFormat(&img, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
             const unsigned char* p = static_cast<const unsigned char*>(img.data);
             const size_t n = size_t(img.width) * size_t(img.height);
-            size_t transparent = 0, partial = 0;
+            size_t clear = 0, soft = 0;
             for (size_t i = 0; i < n; i++) {
                 unsigned char a = p[i * 4 + 3];
-                if (a < 250) { if (a <= 5) transparent++; else partial++; }
+                if (a <= 5) clear++;
+                else if (a < 250) soft++;
             }
-            if (transparent + partial > 0)
-                kind = (partial * 100 > n) ? AlphaKind::Blend : AlphaKind::Cutout;   // >1% soft pixels
+            // mask-like: >= 5% fully transparent, and the semi-transparent texels are a small
+            // minority of the non-opaque ones (anti-aliased edges only)
+            if (clear * 100 >= n * 5 && soft * 4 <= clear) kind = AlphaKind::Cutout;
             UnloadImage(img);
         }
         s_alpha_cache[tex.id] = kind;
@@ -93,8 +97,8 @@ namespace Lil::Assets {
         else if (kind == AlphaKind::Blend) { m.blendMode = LIL3D_BLEND_ALPHA; }
     }
 
-    // Maps the backend has no equivalent for (normal map, UV offset/scale, specular,
-    // emission texture) are accepted and ignored; they keep their defaults.
+    // Maps the backend has no equivalent for (normal map, specular, emission texture)
+    // are accepted and ignored; they keep their defaults.
     static void MaterialSetAlbedo(LIL3D_Material& material_data, const AlbedoMap& map);
     static void MaterialSetNormal(LIL3D_Material& material_data, const NormalMap& map);
     static void MaterialSetEmission(LIL3D_Material& material_data, const EmissionMap& map);
@@ -240,7 +244,9 @@ namespace Lil::Assets {
         return map;                                                 // specular: unsupported
     }
     MaterialSettings GenMaterialSettings(const LIL3D_Material& material_data) {
-        MaterialSettings settings;                                  // uvOffset / uvScale keep defaults
+        MaterialSettings settings;
+        settings.uvOffset = material_data.uvOffset;
+        settings.uvScale  = material_data.uvScale;
         settings.albedo   = MaterialGetAlbedo(material_data);
         settings.normal   = MaterialGetNormal(material_data);
         settings.emission = MaterialGetEmission(material_data);
@@ -248,6 +254,8 @@ namespace Lil::Assets {
         return settings;
     }
     void MaterialSettingsApply(const MaterialSettings& settings, LIL3D_Material& material_data) {
+        material_data.uvOffset = settings.uvOffset;
+        material_data.uvScale  = settings.uvScale;
         MaterialSetAlbedo(material_data, settings.albedo);
         MaterialSetNormal(material_data, settings.normal);
         MaterialSetEmission(material_data, settings.emission);

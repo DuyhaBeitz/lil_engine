@@ -13,6 +13,7 @@
  *   - Simple PBR (metallic-roughness, GGX) with sky-based ambient + reflections
  *   - Skeletal animation: animation libs + animation player (blending, crossfade),
  *     per-animation FPS read from the asset, portable CPU skinning
+ *   - Per-material UV offset/scale (uvOffset / uvScale)
  *   - Heightmap mesh generator (centred on X/Z like r3d), light debug shapes
  *
  * Usage (in exactly ONE .c file):
@@ -165,6 +166,8 @@ typedef struct LIL3D_Material {
         float roughness;                /**< Multiplies texture G, default 0.5                            */
         float metalness;                /**< Multiplies texture B, default 0                              */
     } orm;
+    Vector2 uvOffset;                   /**< Added to the UVs after scaling. Default (0,0)  */
+    Vector2 uvScale;                    /**< Multiplies the UVs (tiling). Default (1,1)     */
     float alphaCutoff;                  /**< > 0 enables alpha test (also in shadows) */
     LIL3D_BlendMode blendMode;
     LIL3D_CullMode cullMode;
@@ -518,15 +521,15 @@ typedef struct lil3d_lit_program {
     int locViewPos, locAmbient, locEnv, locMat, locEmission, locLightCount;
     int locLightPos, locLightDir, locLightColor, locLightParams, locLightShadow;
     int locShadowMat[LIL3D_SHADOW_SLOTS];
-    int locInstanceBase;
-    float lastMat[4], lastEmission[4];
+    int locInstanceBase, locUV;
+    float lastMat[4], lastEmission[4], lastUV[4];
 } lil3d_lit_program;
 
 typedef struct lil3d_depth_program {
     Shader shader;
     Material material;
-    int locLight, locAlpha, locInstanceBase;
-    float lastAlpha;
+    int locLight, locAlpha, locInstanceBase, locUV;
+    float lastAlpha, lastUV[4];
 } lil3d_depth_program;
 
 typedef struct lil3d_sky_program {
@@ -678,6 +681,7 @@ static const char* const lil3d_vs_lit_common = LIL3D_GLSL(
     attribute vec2 vertexTexCoord;
     attribute vec3 vertexNormal;
     uniform mat4 mvp;
+    uniform vec4 uUV;           // xy offset, zw scale
     varying vec3 vWorldPos;
     varying vec3 vNormal;
     varying vec2 vUV;
@@ -691,7 +695,7 @@ static const char* const lil3d_vs_lit_plain = LIL3D_GLSL(
         vec4 wp = matModel*vec4(vertexPosition, 1.0);
         vWorldPos = wp.xyz;
         vNormal = vec3(matNormal*vec4(vertexNormal, 0.0));
-        vUV = vertexTexCoord;
+        vUV = vertexTexCoord*uUV.zw + uUV.xy;
         gl_Position = mvp*vec4(vertexPosition, 1.0);
     }
 );
@@ -707,7 +711,7 @@ static const char* const lil3d_vs_lit_inst = LIL3D_GLSL(
         vec4 wp = m*vec4(vertexPosition, 1.0);
         vWorldPos = wp.xyz;
         vNormal = vec3(m*vec4(vertexNormal, 0.0));
-        vUV = vertexTexCoord;
+        vUV = vertexTexCoord*uUV.zw + uUV.xy;
         gl_Position = mvp*wp;
     }
 );
@@ -917,6 +921,7 @@ static const char* const lil3d_vs_depth_common = LIL3D_GLSL(
     attribute vec3 vertexPosition;
     attribute vec2 vertexTexCoord;
     uniform mat4 mvp;
+    uniform vec4 uUV;           // xy offset, zw scale
     varying vec3 vWorldPos;
     varying vec2 vUV;
 );
@@ -927,7 +932,7 @@ static const char* const lil3d_vs_depth_plain = LIL3D_GLSL(
     {
         vec4 wp = matModel*vec4(vertexPosition, 1.0);
         vWorldPos = wp.xyz;
-        vUV = vertexTexCoord;
+        vUV = vertexTexCoord*uUV.zw + uUV.xy;
         gl_Position = mvp*vec4(vertexPosition, 1.0);
     }
 );
@@ -939,7 +944,7 @@ static const char* const lil3d_vs_depth_inst = LIL3D_GLSL(
     {
         vec4 wp = uInstanceBase*instanceTransform*vec4(vertexPosition, 1.0);
         vWorldPos = wp.xyz;
-        vUV = vertexTexCoord;
+        vUV = vertexTexCoord*uUV.zw + uUV.xy;
         gl_Position = mvp*wp;
     }
 );
@@ -1130,6 +1135,7 @@ static bool lil3d_load_lit(lil3d_lit_program* p, bool instanced, const char* def
     p->locEnv          = GetShaderLocation(*s, "uEnv");
     p->locMat          = GetShaderLocation(*s, "uMat");
     p->locEmission     = GetShaderLocation(*s, "uEmission");
+    p->locUV           = GetShaderLocation(*s, "uUV");
     p->locLightCount   = GetShaderLocation(*s, "uLightCount");
     p->locLightPos     = GetShaderLocation(*s, "uLightPos");
     p->locLightDir     = GetShaderLocation(*s, "uLightDir");
@@ -1170,7 +1176,7 @@ static bool lil3d_load_lit(lil3d_lit_program* p, bool instanced, const char* def
     }
 
     p->material = lil3d_make_material(*s);
-    for (int i = 0; i < 4; i++) { p->lastMat[i] = -1.0f; p->lastEmission[i] = -1.0f; }
+    for (int i = 0; i < 4; i++) { p->lastMat[i] = -1.0f; p->lastEmission[i] = -1.0f; p->lastUV[i] = -1e30f; }
     return true;
 }
 
@@ -1184,6 +1190,7 @@ static bool lil3d_load_depth(lil3d_depth_program* p, bool instanced, const char*
     Shader* s = &p->shader;
     p->locLight        = GetShaderLocation(*s, "uShadowLight");
     p->locAlpha        = GetShaderLocation(*s, "uAlphaCutoff");
+    p->locUV           = GetShaderLocation(*s, "uUV");
     p->locInstanceBase = instanced ? GetShaderLocation(*s, "uInstanceBase") : -1;
 
     s->locs[SHADER_LOC_MAP_ALBEDO]    = GetShaderLocation(*s, "texture0");
@@ -1197,6 +1204,7 @@ static bool lil3d_load_depth(lil3d_depth_program* p, bool instanced, const char*
 
     p->material = lil3d_make_material(*s);
     p->lastAlpha = -1.0f;
+    for (int i = 0; i < 4; i++) p->lastUV[i] = -1e30f;
     return true;
 }
 
@@ -1760,6 +1768,8 @@ LIL3D_Material LIL3D_GetDefaultMaterial(void)
     m.orm.occlusion = 1.0f;
     m.orm.roughness = 0.5f;
     m.orm.metalness = 0.0f;
+    m.uvOffset = (Vector2){ 0.0f, 0.0f };
+    m.uvScale = (Vector2){ 1.0f, 1.0f };
     m.alphaCutoff = 0.0f;
     m.blendMode = LIL3D_BLEND_OPAQUE;
     m.cullMode = LIL3D_CULL_BACK;
@@ -2196,6 +2206,20 @@ static Texture2D lil3d_albedo_or_white(const LIL3D_Material* m)
     return (m->albedo.texture.id != 0) ? m->albedo.texture : lil3d_white_texture();
 }
 
+/* UV transform uniform (offset.xy, scale.zw), cached per program. A zeroed scale (material not
+ * created through LIL3D_GetDefaultMaterial) is treated as 1 so the texture never collapses. */
+static void lil3d_set_uv(Shader shader, int loc, float* last, const LIL3D_Material* m)
+{
+    float sx = m->uvScale.x, sy = m->uvScale.y;
+    if (sx == 0.0f && sy == 0.0f) { sx = 1.0f; sy = 1.0f; }
+    float uv[4] = { m->uvOffset.x, m->uvOffset.y, sx, sy };
+    if (memcmp(uv, last, sizeof(uv)) != 0)
+    {
+        SetShaderValue(shader, loc, uv, SHADER_UNIFORM_VEC4);
+        memcpy(last, uv, sizeof(uv));
+    }
+}
+
 static void lil3d_draw_lit(const lil3d_drawcall* dc)
 {
     lil3d_lit_program* p = (dc->instances != NULL && lil3d_ctx.hwInstancing) ? &lil3d_ctx.litInst : &lil3d_ctx.lit;
@@ -2222,6 +2246,7 @@ static void lil3d_draw_lit(const lil3d_drawcall* dc)
         memcpy(p->lastEmission, em, sizeof(em));
     }
 
+    lil3d_set_uv(p->shader, p->locUV, p->lastUV, m);
     lil3d_apply_material_state(m);
     lil3d_submit(p->shader, &p->material, dc, p->locInstanceBase);
 }
@@ -2238,6 +2263,7 @@ static void lil3d_draw_depth(const lil3d_drawcall* dc)
         SetShaderValue(p->shader, p->locAlpha, &m->alphaCutoff, SHADER_UNIFORM_FLOAT);
         p->lastAlpha = m->alphaCutoff;
     }
+    lil3d_set_uv(p->shader, p->locUV, p->lastUV, m);
     lil3d_submit(p->shader, &p->material, dc, p->locInstanceBase);
 }
 
@@ -2406,6 +2432,7 @@ static void lil3d_render_shadow(lil3d_frame* f, int slot)
     const Camera3D* cam = &lil3d_ctx.camera;
     lil3d_ctx.depth.lastAlpha = -1.0f;
     lil3d_ctx.depthInst.lastAlpha = -1.0f;
+    for (int i = 0; i < 4; i++) { lil3d_ctx.depth.lastUV[i] = -1e30f; lil3d_ctx.depthInst.lastUV[i] = -1e30f; }
 
     BeginTextureMode(l->shadowMap);
     rlDisableColorBlend();              /* alpha channel carries packed depth */
@@ -2523,7 +2550,7 @@ static void lil3d_upload_frame(lil3d_lit_program* p, const lil3d_frame* f)
         else memset(slotTex, 0, sizeof(*slotTex));
     }
 
-    for (int i = 0; i < 4; i++) { p->lastMat[i] = -1.0f; p->lastEmission[i] = -1.0f; }
+    for (int i = 0; i < 4; i++) { p->lastMat[i] = -1.0f; p->lastEmission[i] = -1.0f; p->lastUV[i] = -1e30f; }
 }
 
 static void lil3d_draw_sky(void)
