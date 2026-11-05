@@ -14,7 +14,7 @@ cp build/liblil_editor.a                 lil_engine_sdk/lib/
 cp build/libconfigparser.a               lil_engine_sdk/lib/
 
 
-cp web/libraylib.a                   lil_engine_sdk/web-lib/
+cp web/libraylib.a                       lil_engine_sdk/web-lib/
 cp web-build/JoltBuild/libJolt.a         lil_engine_sdk/web-lib/
 cp web-build/libtinyfiledialogs.a        lil_engine_sdk/web-lib/
 cp web-build/libimgui.a                  lil_engine_sdk/web-lib/
