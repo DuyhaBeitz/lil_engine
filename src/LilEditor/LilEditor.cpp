@@ -478,10 +478,12 @@ void Lil::Editor::Update(float delta_time, float physics_step_time) {
         m_physics_debug = !m_physics_debug;
     }
 
+    #ifndef __EMSCRIPTEN__
     if (IsKeyPressed(TOGGLE_FULLSCREEN_KEY)) {
         SetWindowSize(GetMonitorWidth(GetCurrentMonitor()), GetMonitorHeight(GetCurrentMonitor()));
         ToggleFullscreen();
     }
+    #endif
     if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyDown(KEY_LEFT_SHIFT)) {
         if (IsKeyPressed(KEY_S)) SaveScene();
         else if (IsKeyPressed(KEY_L)) LoadScene();

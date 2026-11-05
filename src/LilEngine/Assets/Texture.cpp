@@ -88,6 +88,21 @@ namespace Lil::Assets {
         }
     }
 
+    Image TextureToImage(Texture2D tex) {
+        RenderTexture2D rt = LoadRenderTexture(tex.width, tex.height);
+
+        BeginTextureMode(rt);
+            ClearBackground(BLANK);
+            DrawTexture(tex, 0, 0, WHITE);
+        EndTextureMode();
+
+        Image img = LoadImageFromTexture(rt.texture);   // RGBA8 on every platform
+        ImageFlipVertical(&img);                        // render textures are stored upside down
+
+        UnloadRenderTexture(rt);
+        return img;
+    }
+
     void UnloadAllTextures() {
         for (auto& [handle, texture] : textures) {
             UnloadTexture(texture);

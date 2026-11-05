@@ -26,7 +26,9 @@ void Heightmap::LayoutUpdate() {
         Lil::Assets::Model handle(heightmap_name);
         if (!Lil::Assets::ModelExists(handle)) {
             bool settings_existed = Lil::Assets::ModelSettingsExists(handle);
-            Image image = LoadImageFromTexture(*Lil::Assets::GetTextureData(m_heightmap_texture_key));
+            Image image = Lil::Assets::TextureToImage(*Lil::Assets::GetTextureData(m_heightmap_texture_key));
+            ImageFormat(&image, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
+            TraceLog(LOG_INFO, "img: %dx%d fmt=%d data=%p", image.width, image.height, image.format, image.data);
             Lil::Assets::ModelAddHeightmap(handle, image, Vector3{1.0f, 1.0f, 1.0f});
             if (!settings_existed)
                 Lil::Assets::GetModelSettings(handle)->Material(0)->albedo.texture_key = Lil::Assets::Texture(m_heightmap_texture_key);
@@ -69,7 +71,7 @@ HeightmapQueryResult Heightmap::QueryAt(float x, float z) {
     int px = static_cast<int>(u * (heightmap->width - 1));
     int pz = static_cast<int>(v * (heightmap->height - 1));
 
-    Image img = LoadImageFromTexture(*heightmap);
+    Image img = Lil::Assets::TextureToImage(*heightmap);
 
     float value =
         static_cast<float>(GetImageColor(img, px, pz).r) / 255.0f;

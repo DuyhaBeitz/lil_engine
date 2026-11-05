@@ -93,6 +93,8 @@ namespace Lil::Assets {
     void ApplyTextureSettings(Texture handle);
     void ApplyAllTextureSettings();
 
+    Image TextureToImage(Texture2D tex);
+
     template <class Archive>
     void save_textures( Archive & ar ) {
         auto& texture_settings = TextureSettingsMap();
