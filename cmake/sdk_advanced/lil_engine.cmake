@@ -1,6 +1,6 @@
 get_filename_component(_lil_engine_root "${CMAKE_CURRENT_LIST_DIR}" ABSOLUTE)
 
-find_package(raylib 5.5 EXACT REQUIRED)
+find_package(raylib REQUIRED)
 find_package(assimp REQUIRED)
 
 if(WIN32)

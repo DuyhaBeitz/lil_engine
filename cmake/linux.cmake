@@ -19,7 +19,7 @@ target_include_directories(lil_engine PUBLIC
 )
 
 # raylib
-find_package(raylib 5.5 EXACT REQUIRED)
+find_package(raylib REQUIRED)
 target_link_libraries(lil_engine PUBLIC raylib)
 
 # r3d

@@ -1,5 +1,5 @@
 /*
- * lil3d.h - Lil3D: a tiny, fully portable lighting/shadow layer for raylib 5.5
+ * lil3d.h - Lil3D: a tiny, fully portable lighting/shadow layer for raylib 6.0
  *
  * Desktop, Web (emscripten) and Mobile (Android/iOS) using ONLY raylib/rlgl.
  * API is modelled on r3d v0.11.0 (https://github.com/Bigfoot71/r3d), prefix LIL3D_.
@@ -491,7 +491,8 @@ LIL3D_API void LIL3D_UnloadCubemap(LIL3D_Cubemap cubemap);
 #include <string.h>
 
 #ifndef LIL3D_ANIM_RESAMPLE_FPS
-/* raylib 5.5 samples glTF and M3D animations every 17 ms (GLTF_ANIMDELAY / M3D_ANIMDELAY). */
+/* raylib samples glTF and M3D animations every 17 ms (GLTF_ANIMDELAY / M3D_ANIMDELAY).
+ * NOTE: verified for 5.5; if 6.0 resamples differently, override LIL3D_ANIM_RESAMPLE_FPS. */
 #   define LIL3D_ANIM_RESAMPLE_FPS (1000.0f/17.0f)
 #endif
 
@@ -1573,7 +1574,7 @@ static Image lil3d_panorama_to_faces(Image src, int size)
     return faces;
 }
 
-/* Uploads a cubemap WITHOUT mipmaps. raylib 5.5's LoadTextureCubemap() builds the mip chain of the
+/* Uploads a cubemap WITHOUT mipmaps. raylib's LoadTextureCubemap() builds the mip chain of the
  * whole 1:6 face strip (ImageMipmaps), which does not match the per-face chain rlLoadTextureCubemap()
  * reads: for cross/line-horizontal layouts it overruns the buffer (heap-buffer-overflow). Sky and
  * reflections are sampled without LOD, so a single level is enough. Returns the GL id (0 = failure). */
@@ -1957,18 +1958,19 @@ LIL3D_Model LIL3D_LoadModel(const char* filePath)
         out.aabb = (i == 0) ? out.meshes[i].aabb : lil3d_union_aabb(out.aabb, out.meshes[i].aabb);
     }
 
-    /* Keep the skeleton (bones + model-space bind pose) for the animation player. */
-    if (m.boneCount > 0 && m.bones != NULL && m.bindPose != NULL)
+    /* Keep the skeleton (bones + model-space bind pose) for the animation player.
+     * raylib 6.0: the skeleton lives in Model.skeleton (ModelSkeleton). */
+    if (m.skeleton.boneCount > 0 && m.skeleton.bones != NULL && m.skeleton.bindPose != NULL)
     {
-        out.skeleton.invBind = (Matrix*)malloc((size_t)m.boneCount*sizeof(Matrix));
+        out.skeleton.invBind = (Matrix*)malloc((size_t)m.skeleton.boneCount*sizeof(Matrix));
         if (out.skeleton.invBind != NULL)
         {
-            out.skeleton.boneCount = m.boneCount;
-            out.skeleton.bones = m.bones;
-            out.skeleton.bindPose = m.bindPose;
-            for (int i = 0; i < m.boneCount; i++) out.skeleton.invBind[i] = MatrixInvert(lil3d_trs(m.bindPose[i]));
-            m.bones = NULL;
-            m.bindPose = NULL;
+            out.skeleton.boneCount = m.skeleton.boneCount;
+            out.skeleton.bones = m.skeleton.bones;
+            out.skeleton.bindPose = m.skeleton.bindPose;
+            for (int i = 0; i < m.skeleton.boneCount; i++) out.skeleton.invBind[i] = MatrixInvert(lil3d_trs(m.skeleton.bindPose[i]));
+            m.skeleton.bones = NULL;
+            m.skeleton.bindPose = NULL;
         }
     }
 
@@ -1977,8 +1979,10 @@ LIL3D_Model LIL3D_LoadModel(const char* filePath)
     MemFree(m.materials);
     MemFree(m.meshes);
     MemFree(m.meshMaterial);
-    MemFree(m.bones);
-    MemFree(m.bindPose);
+    MemFree(m.skeleton.bones);          /* NULL if handed over to out.skeleton above */
+    MemFree(m.skeleton.bindPose);
+    MemFree(m.currentPose);             /* raylib 6.0 runtime pose + skinning matrices: unused here */
+    MemFree(m.boneMatrices);
     return out;
 }
 
@@ -2736,8 +2740,8 @@ LIL3D_AnimationLib LIL3D_LoadAnimationLib(const char* filePath)
         LIL3D_Animation* a = &anims[i];
         if (a->name[0] == '\0') snprintf(a->name, sizeof(a->name), "anim_%d", i);
         a->boneCount = raw[i].boneCount;
-        a->frameCount = raw[i].frameCount;
-        a->framePoses = raw[i].framePoses;
+        a->frameCount = raw[i].keyframeCount;      /* raylib 6.0: keyframeCount */
+        a->framePoses = raw[i].keyframePoses;      /* raylib 6.0: keyframePoses */
         a->fps = fps[i];
         a->duration = (a->frameCount > 0) ? (float)a->frameCount/a->fps : 0.0f;
         TraceLog(LOG_INFO, LIL3D_LOG_TAG "animation %d '%s': %d frames @ %.2f fps (%.2f s)", i, a->name, a->frameCount, a->fps, a->duration);
@@ -2823,7 +2827,7 @@ static void lil3d_sample_animation(const LIL3D_Animation* a, float time, bool lo
 static bool lil3d_make_skin_mesh(const Mesh* src, LIL3D_Mesh* out)
 {
     memset(out, 0, sizeof(*out));
-    if (src->vertices == NULL || src->boneIds == NULL || src->boneWeights == NULL || src->vertexCount <= 0) return false;
+    if (src->vertices == NULL || src->boneIndices == NULL || src->boneWeights == NULL || src->vertexCount <= 0) return false;
 
     const int vc = src->vertexCount;
     Mesh m = { 0 };
@@ -2864,7 +2868,7 @@ static void lil3d_skin_mesh(const Mesh* src, Mesh* dst, const Matrix* sk, int bo
         for (int j = 0; j < 4; j++)
         {
             float w = src->boneWeights[i*4 + j];
-            int b = src->boneIds[i*4 + j];
+            int b = src->boneIndices[i*4 + j];
             if (w <= 0.0f || b >= boneCount) continue;
             const Matrix* m = &sk[b];
             px += w*(m->m0*x + m->m4*y + m->m8*z + m->m12);
