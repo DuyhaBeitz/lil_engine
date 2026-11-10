@@ -56,6 +56,7 @@ else()
         ${B}/Model.cpp
         ${B}/BackendAccess.cpp
         ${B}/Frame.cpp
+        #${B}/lil3d_impl.c
     )
 endif()
 

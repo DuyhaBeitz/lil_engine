@@ -4,6 +4,7 @@
 namespace Lil::Assets {
     // manager
     static std::unordered_map<Texture, Texture2D> textures;
+    static std::unordered_map<Texture, Image> images;
     static std::unordered_map<Texture, TextureSettings> texture_settings;
 
     std::unordered_map<Texture, TextureSettings>& TextureSettingsMap() {
@@ -88,7 +89,11 @@ namespace Lil::Assets {
         }
     }
 
-    Image TextureToImage(Texture2D tex) {
+    Image GetTextureImage(Texture handle) {
+        auto it = images.find(handle);
+        if (it != images.end()) return it->second;
+
+        Texture2D& tex = textures.at(handle);
         RenderTexture2D rt = LoadRenderTexture(tex.width, tex.height);
 
         BeginTextureMode(rt);
@@ -100,6 +105,7 @@ namespace Lil::Assets {
         ImageFlipVertical(&img);                        // render textures are stored upside down
 
         UnloadRenderTexture(rt);
+        images[handle] = img;
         return img;
     }
 

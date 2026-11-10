@@ -34,9 +34,8 @@ SET(background.color,  background.color);
     if (sky_changed) {
         if (Lil::Assets::TextureExists(m_applied_sky)) {
             SET(background.color, background.color);
-            Image image = Lil::Assets::TextureToImage(*Lil::Assets::GetTextureData(background.sky_texture));
+            Image image = Lil::Assets::GetTextureImage(background.sky_texture);
             R3D_Cubemap cubemap = R3D_LoadCubemapFromImage(image, R3D_CUBEMAP_LAYOUT_AUTO_DETECT);
-            UnloadImage(image);
             SET(background.sky, cubemap);
             SET(ambient.map, R3D_GenAmbientMap(cubemap, R3D_AMBIENT_ILLUMINATION | R3D_AMBIENT_REFLECTION));
         }

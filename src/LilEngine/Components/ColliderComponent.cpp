@@ -27,9 +27,8 @@ JPH::RefConst<JPH::Shape> CollisionShape::CreateJoltShape() const {
             
         case CollisionShapeType::HEIGHTMAP:
             if (Lil::Assets::TextureExists(m_heightmap_texture_key)) {
-                Image image = Lil::Assets::TextureToImage(*Lil::Assets::GetTextureData(m_heightmap_texture_key));
+                Image image = Lil::Assets::GetTextureImage(m_heightmap_texture_key);
                 auto res = GetHeightmapShapeSettings(image, m_map_size).Create().Get();
-                UnloadImage(image);
                 return res;
             }
             break;

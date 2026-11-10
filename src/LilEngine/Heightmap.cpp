@@ -26,14 +26,13 @@ void Heightmap::LayoutUpdate() {
         Lil::Assets::Model handle(heightmap_name);
         if (!Lil::Assets::ModelExists(handle)) {
             bool settings_existed = Lil::Assets::ModelSettingsExists(handle);
-            Image image = Lil::Assets::TextureToImage(*Lil::Assets::GetTextureData(m_heightmap_texture_key));
+            Image image = Lil::Assets::GetTextureImage(m_heightmap_texture_key);
             ImageFormat(&image, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
             TraceLog(LOG_INFO, "img: %dx%d fmt=%d data=%p", image.width, image.height, image.format, image.data);
             Lil::Assets::ModelAddHeightmap(handle, image, Vector3{1.0f, 1.0f, 1.0f});
             if (!settings_existed)
                 Lil::Assets::GetModelSettings(handle)->Material(0)->albedo.texture_key = Lil::Assets::Texture(m_heightmap_texture_key);
             Lil::Assets::ApplyModelSettings(handle);
-            UnloadImage(image);
         }
 
         if (m_model) {
@@ -54,9 +53,9 @@ void Heightmap::LayoutUpdate() {
 }
 
 HeightmapQueryResult Heightmap::QueryAt(float x, float z) {
-    Texture2D* heightmap = Lil::Assets::GetTextureData(m_heightmap_texture_key);
+    if (!Lil::Assets::TextureExists(m_heightmap_texture_key)) return {0};
 
-    if (!heightmap) return {0};
+    Image img = Lil::Assets::GetTextureImage(m_heightmap_texture_key);
 
     // World position -> normalized [0, 1] heightmap coordinates.
     float u = (x - GetPosition().x) / GetScale().x + 0.5f;
@@ -68,17 +67,13 @@ HeightmapQueryResult Heightmap::QueryAt(float x, float z) {
 
     // The mesh uses mapWidth/mapHeight vertices, with the
     // first vertex at 0 and the last at width-1/height-1.
-    int px = static_cast<int>(u * (heightmap->width - 1));
-    int pz = static_cast<int>(v * (heightmap->height - 1));
-
-    Image img = Lil::Assets::TextureToImage(*heightmap);
+    int px = static_cast<int>(u * (img.width - 1));
+    int pz = static_cast<int>(v * (img.height - 1));
 
     float value =
         static_cast<float>(GetImageColor(img, px, pz).r) / 255.0f;
 
     float height = GetPosition().y + value * GetScale().y;
-
-    UnloadImage(img);
 
     // HeightmapModel multiplies the normalized height by size.y.
     Ray ray = {

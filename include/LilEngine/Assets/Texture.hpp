@@ -93,7 +93,7 @@ namespace Lil::Assets {
     void ApplyTextureSettings(Texture handle);
     void ApplyAllTextureSettings();
 
-    Image TextureToImage(Texture2D tex);
+    Image GetTextureImage(Texture handle);
 
     template <class Archive>
     void save_textures( Archive & ar ) {

@@ -30,9 +30,8 @@ void Environment::Update() {
     env->background.energy = background.energy;
 
     if (sky_exists && sky_changed) {
-        Image image = Lil::Assets::TextureToImage(*Lil::Assets::GetTextureData(background.sky_texture));
+        Image image = Lil::Assets::GetTextureImage(background.sky_texture);
         LIL3D_Cubemap cubemap = LIL3D_LoadCubemapFromImage(image, LIL3D_CUBEMAP_LAYOUT_AUTO_DETECT);
-        UnloadImage(image);
         if (cubemap.texture != 0) {
             ReleaseSky(env);
             s_sky = cubemap;
