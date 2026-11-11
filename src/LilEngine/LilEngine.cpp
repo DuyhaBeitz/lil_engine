@@ -25,6 +25,7 @@ namespace Lil {
     }
 
     void Engine::Update(float delta_time, float physics_step_time) {
+        Input::Update();
         GetWorld().Update(delta_time, physics_step_time);
     }
 }

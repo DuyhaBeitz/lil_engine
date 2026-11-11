@@ -7,6 +7,7 @@
 #include "SceneManager.hpp"
 #include "Environment.hpp"
 #include "World.hpp"
+#include "Input.hpp"
 
 #include "imgui.h"
 #include "rlImGui.h"

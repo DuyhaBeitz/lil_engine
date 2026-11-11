@@ -8,6 +8,7 @@ set(ENGINE_SOURCES
     ${S}/ComponentRef.cpp
     ${S}/GameObject.cpp
     ${S}/Heightmap.cpp
+    ${S}/Input.cpp
     ${S}/LilEngine.cpp
     ${S}/Physics.cpp
     ${S}/PhysicsDebugRenderer.cpp
@@ -56,7 +57,7 @@ else()
         ${B}/Model.cpp
         ${B}/BackendAccess.cpp
         ${B}/Frame.cpp
-        #${B}/lil3d_impl.c
+        ${B}/lil3d_impl.c
     )
 endif()
 

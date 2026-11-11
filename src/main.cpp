@@ -11,9 +11,6 @@
 #include "LilEngine.hpp"
 #include "LilEditor.hpp"
 
-#define LIL3D_IMPLEMENTATION
-#include "lil3d/lil3d.h"
-
 constexpr int target_fps = 120;
 constexpr float dt = 1.0f / float(target_fps);
 
