@@ -1,6 +1,8 @@
 get_filename_component(_lil_engine_root "${CMAKE_CURRENT_LIST_DIR}" ABSOLUTE)
 
-if(WIN32)
+if(ANDROID)
+    set(_lil_engine_system_libs log android EGL GLESv2 OpenSLES)
+elseif(WIN32)
     set(_lil_engine_system_libs winmm gdi32 opengl32)
 elseif(PLATFORM STREQUAL "Web")
     set(_lil_engine_system_libs)
@@ -13,7 +15,6 @@ endif()
 set(_lil_engine_include_dirs
     "${_lil_engine_root}/include"
     "${_lil_engine_root}/include/LilEngine"
-    "${_lil_engine_root}/include/LilEditor"
     "${_lil_engine_root}/include/external"
     "${_lil_engine_root}/include/external/raylib/include"
     "${_lil_engine_root}/include/external/JoltPhysics"
@@ -23,9 +24,15 @@ set(_lil_engine_include_dirs
     "${_lil_engine_root}/include/external/raylib-gizmo/include"
     "${_lil_engine_root}/include/external/configparser"
 )
+if(NOT ANDROID)
+    list(APPEND _lil_engine_include_dirs "${_lil_engine_root}/include/LilEditor")
+endif()
 
-
-if (PLATFORM STREQUAL "Web")
+if(ANDROID)
+    set(lib_folder android-lib/${ANDROID_ABI})
+    set(_lil_engine_archives lil_engine imgui raylib-gizmo rlImGui Jolt configparser raylib)
+    set(libs "lil_engine::configparser;lil_engine::imgui;lil_engine::raylib-gizmo;lil_engine::rlImGui;lil_engine::Jolt;lil_engine::raylib;${_lil_engine_system_libs}")
+elseif(PLATFORM STREQUAL "Web")
     set(lib_folder web-lib)
     set(_lil_engine_archives lil_engine lil_editor imgui raylib-gizmo rlImGui Jolt tinyfiledialogs configparser raylib)
     set(libs "lil_engine::configparser;lil_engine::imgui;lil_engine::raylib;lil_engine::raylib-gizmo;lil_engine::rlImGui;lil_engine::Jolt;lil_engine::tinyfiledialogs;${_lil_engine_system_libs}")

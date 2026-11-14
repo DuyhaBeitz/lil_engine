@@ -114,18 +114,19 @@ Component *World::GetComponent(uuids::uuid id) {
     return m_components.at(id).get();
 }
 
-Actor *World::PickActor(Vector2 screen_pos, int render_w, int render_h, Camera camera, RayCollision* result, std::set<uuids::uuid> ignore_ids) const {
+Actor *World::PickActor(Vector2 screen_pos, int render_w, int render_h, Camera& camera, RayCollision* result, std::set<uuids::uuid>& ignore_ids) const {
     Ray ray = GetScreenToWorldRayEx(screen_pos, camera, render_w, render_h);
     return Raycast(ray, result, ignore_ids);
 }
 
-Actor* World::Raycast(Ray ray, RayCollision* result, std::set<uuids::uuid> ignore_ids) const {
+Actor* World::Raycast(Ray ray, RayCollision* result, std::set<uuids::uuid>& ignore_ids) const {
     float closest = INFINITY;
     Actor* a = nullptr;
     
     for (auto& [key, actor] : m_actors) {
+        if (ignore_ids.contains(actor->GetID())) continue;
         RayCollision res = actor->Raycast(ray);
-        if (res.hit && res.distance < closest && !ignore_ids.contains(actor->GetID())) {
+        if (res.hit && res.distance < closest) {
             closest = res.distance;
             a = actor.get();
             if (result) *result = res;

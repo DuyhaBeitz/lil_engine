@@ -40,7 +40,9 @@ target_include_directories(game PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include/LilEditor
 )
 
-if(WIN32)
+if(ANDROID)
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/android.cmake)
+elseif(WIN32)
     include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/windows.cmake)
 elseif (PLATFORM STREQUAL "Web")
     include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/web.cmake)

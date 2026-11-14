@@ -20,14 +20,24 @@ void CopyAsset(std::string source) {
 }
 
 std::string ReadFile(std::string source) {
-    std::ifstream file(source);
+    int size = 0;
+    unsigned char* data = LoadFileData(source.c_str(), &size);
 
-    if (!file) throw std::runtime_error("Could not open file for read: " + source);
+    if (data == nullptr)
+    {
+        throw std::runtime_error(
+            "Could not open file for read: " + source
+        );
+    }
 
-    std::stringstream buffer;
-    buffer << file.rdbuf();
+    std::string content(
+        reinterpret_cast<const char*>(data),
+        size
+    );
 
-    return buffer.str();
+    UnloadFileData(data);
+
+    return content;
 }
 
 void WriteFile(std::string content, std::string dest) {

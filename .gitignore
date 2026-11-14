@@ -1,5 +1,6 @@
 build/
 web-build/
+android-build*/
 dist/
 lil_engine_sdk/
 lil_config.ini
