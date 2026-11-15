@@ -49,6 +49,7 @@ namespace Lil::Assets {
     std::unordered_map<Model, ModelSettings>& ModelSettingsMap();
 
     void ModelDraw(Model handle, const Vector3& pos, const Quaternion& rot, const Vector3& scale);
+    BoundingBox ModelAABB(Model handle);
     RayCollision ModelRaycast(Model handle, const Ray& ray, const Transform& transform);
     BoundingBox ModelBounds(Model handle);
 

@@ -25,9 +25,18 @@ namespace Lil::Assets {
     void ModelDraw(Model handle, const Vector3& pos, const Quaternion& rot, const Vector3& scale) {
         LIL3D_DrawModelPro(models.at(handle), Backend::ComposeTransform(pos, rot, scale));
     }
+    BoundingBox ModelAABB(Model handle) {
+        return models.at(handle).aabb;
+    }
     RayCollision ModelRaycast(Model handle, const Ray& ray, const Transform& transform) {
         const LIL3D_Model& model = models.at(handle);
         const Matrix mx = Backend::ComposeTransform(transform.translation, transform.rotation, transform.scale);
+
+        // Broad phase: test the ray against the local-space box
+        const Matrix inv = MatrixInvert(mx);
+        const Vector3 o = Vector3Transform(ray.position, inv);
+        const Vector3 d = Vector3Subtract(Vector3Transform(Vector3Add(ray.position, ray.direction), inv), o);
+        if (!GetRayCollisionBox(Ray{o, d}, model.aabb).hit) return RayCollision{0};
 
         RayCollision best = {};
         best.distance = FLT_MAX;

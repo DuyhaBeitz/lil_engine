@@ -10,11 +10,13 @@
  *   - Model/mesh instancing (hardware on GL3.3/ES3, automatic fallback on GL2.1/ES2)
  *   - Cubemap sky (cross/line/panorama layouts + procedural gradient sky)
  *   - All shaders embedded; one GLSL source, adapted at runtime to the GL flavour
- *   - Simple PBR (metallic-roughness, GGX) with sky-based ambient + reflections
+ *   - Fast simple lighting: plain Lambert + ambient + shadows (no PBR, no specular)
+ *   - Fast shadows: bilinear 2x2 PCF, per-light shadow-map caching, frustum culling
  *   - Skeletal animation: animation libs + animation player (blending, crossfade),
  *     per-animation FPS read from the asset, portable CPU skinning
  *   - Per-material UV offset/scale (uvOffset / uvScale)
- *   - Heightmap mesh generator (centred on X/Z like r3d), light debug shapes
+ *   - Heightmap mesh generator (centred on X/Z like r3d), chunked heightmap models with
+ *     per-chunk AABBs (culling + fast ray casts), light debug shapes
  *
  * Usage (in exactly ONE .c file):
  *
@@ -31,16 +33,33 @@
  *         DrawFPS(10, 10);                    // 2D drawing after End()
  *     EndDrawing();
  *
- * PBR (metallic-roughness):
+ * Lighting model (simple + fast):
+ *
+ *     color = albedo*(ambient + sum(Lambert*light*attenuation*shadow)) + emission
  *
  *     LIL3D_Material mat = LIL3D_GetDefaultMaterial();
  *     mat.albedo.color = GOLD;
- *     mat.orm.metalness = 1.0f;            // 0 = dielectric, 1 = metal
- *     mat.orm.roughness = 0.25f;           // 0 = polished, 1 = matte
- *     // Optional packed glTF-style map (R occlusion, G roughness, B metalness):
- *     // mat.orm.texture = LoadTexture("orm.png");  (factors above multiply G and B)
- *     LIL3D_GetEnvironment()->background.sky = LIL3D_GenGradientSky(64, BLUE, WHITE, DARKGRAY);
- *     // -> metals reflect the sky; without a sky they reflect the ambient colour
+ *     // Everything under mat.orm (texture, occlusion, roughness, metalness) is kept for API
+ *     // compatibility but IGNORED: surfaces always look like roughness = 1 (full colour + shadow).
+ *     // Light specular is ignored too. There are no sky reflections: the sky is only a background
+ *     // (ambient.fromSky tints the ambient).
+ *
+ * Terrain:
+ *
+ *     LIL3D_Model terrain = LIL3D_GenModelHeightmap(img, (Vector3){ 256, 20, 256 }, 32);  // 32x32-cell chunks
+ *     terrain.materials[0].albedo.texture = tex;
+ *     LIL3D_DrawModel(terrain, (Vector3){ 0 }, 1.0f);              // chunks are culled individually
+ *     RayCollision rc = LIL3D_GetRayCollisionModel(ray, terrain, MatrixIdentity());   // AABB-accelerated
+ *
+ * Performance notes:
+ *   - Chunked heightmaps (LIL3D_GenModelHeightmap) are culled per chunk in the camera and shadow passes.
+ *   - Draws outside the camera frustum are skipped; opaque draws are sorted by program/state, near to far.
+ *   - Shadow maps are cached per light: they are re-rendered only when the light, the visible casters
+ *     (mesh, transform, instances) or the shadow view changed. Directional shadow boxes snap in steps of
+ *     range/4, so they do not re-render on every camera move. A skinned mesh re-renders when its pose
+ *     changed. If you edit mesh vertex buffers yourself, use LIL3D_SetHint(LIL3D_HINT_SHADOW_CACHE, 0).
+ *   - Casters are culled per light frustum (per cube face for omni lights).
+ *   - Lower LIL3D_MAX_SHADOWS / shadow map sizes / LIL3D_HINT_SHADOW_FILTER for even more speed.
  *
  * Animation:
  *
@@ -65,6 +84,8 @@
  *   LIL3D_MAX_LIGHTS    simultaneous lights per frame   (default 8)
  *   LIL3D_MAX_SHADOWS   simultaneous shadow casters 1-4 (default 4)
  *   LIL3D_DEBUG_SHADERS print the final GLSL sources to the log
+ *   LIL3D_ENABLE_STATS  per-frame counters + CPU timings, see LIL3D_GetStats() / LIL3D_DrawStats()
+ *                       (without it every counter compiles away and LIL3D_GetStats() returns zeros)
  *   LIL3D_ANIM_RESAMPLE_FPS  FPS of glTF/M3D clips as resampled by raylib (default 1000/17)
  *   LIL3D_NO_ANIMATION_NAME  define if your raylib ModelAnimation has no 'name' field
  *
@@ -78,9 +99,9 @@
 #include <stdbool.h>
 
 #define LIL3D_VERSION_MAJOR 0
-#define LIL3D_VERSION_MINOR 3
+#define LIL3D_VERSION_MINOR 5
 #define LIL3D_VERSION_PATCH 0
-#define LIL3D_VERSION       "0.3.0"
+#define LIL3D_VERSION       "0.5.0"
 
 #ifndef LIL3D_MAX_LIGHTS
 #   define LIL3D_MAX_LIGHTS 8
@@ -145,8 +166,11 @@ typedef enum LIL3D_CubemapLayout {
 /** Pre-init configuration, see LIL3D_SetHint(). */
 typedef enum LIL3D_Hint {
     LIL3D_HINT_SHADOW_MAP_SIZE = 0,     /**< Dir/spot shadow map size in px (default 1024)   */
-    LIL3D_HINT_OMNI_SHADOW_MAP_SIZE,    /**< Omni shadow *face* size in px (default 512)     */
-    LIL3D_HINT_SHADOW_FILTER,           /**< 0 = hard, 1 = 3x3 PCF (default), 2 = 5x5 PCF    */
+    LIL3D_HINT_OMNI_SHADOW_MAP_SIZE,    /**< Omni shadow *face* size in px (default 256)     */
+    LIL3D_HINT_SHADOW_FILTER,           /**< 0 = hard (1 tap), 1 = bilinear 2x2 PCF (4 taps, default),
+                                             2 = 3x3 PCF (9 taps)                               */
+    LIL3D_HINT_SHADOW_CACHE,            /**< 1 = reuse shadow maps while nothing changed (default),
+                                             0 = re-render every frame                          */
     LIL3D_HINT_COUNT
 } LIL3D_Hint;
 
@@ -160,11 +184,10 @@ typedef struct LIL3D_Material {
         float energy;                   /**< Default 1.0                 */
     } emission;
     struct {
-        Texture2D texture;              /**< glTF-style packed map: R occlusion, G roughness, B metalness.
-                                             Defaults to the 1x1 white texture (= factors only)          */
-        float occlusion;                /**< AO strength [0,1], default 1 (only matters with a texture)   */
-        float roughness;                /**< Multiplies texture G, default 0.5                            */
-        float metalness;                /**< Multiplies texture B, default 0                              */
+        Texture2D texture;              /**< IGNORED (kept for API compatibility, not sampled)            */
+        float occlusion;                /**< IGNORED (kept for API compatibility)                         */
+        float roughness;                /**< IGNORED (surfaces always behave like roughness = 1)          */
+        float metalness;                /**< IGNORED (kept for API compatibility)                         */
     } orm;
     Vector2 uvOffset;                   /**< Added to the UVs after scaling. Default (0,0)  */
     Vector2 uvScale;                    /**< Multiplies the UVs (tiling). Default (1,1)     */
@@ -266,6 +289,34 @@ typedef struct LIL3D_Environment {
     } ambient;
 } LIL3D_Environment;
 
+/** Per-frame statistics, filled by LIL3D_End() and valid until the next LIL3D_Begin().
+ *  Only populated when LIL3D_ENABLE_STATS is defined (otherwise all zeros).
+ *  Times are CPU milliseconds spent submitting work (the GPU runs asynchronously, so GPU-bound
+ *  frames show up as time inside EndDrawing()/swap, not here). */
+typedef struct LIL3D_Stats {
+    /* draw queue */
+    int draws;                  /**< Draw submissions between Begin and End                        */
+    int drawsCulled;            /**< ...rejected by the camera frustum                             */
+    int drawsOpaque;            /**< ...drawn in the opaque main pass                              */
+    int drawsTransparent;       /**< ...drawn in the transparent main pass                         */
+    /* main pass */
+    int drawCalls;              /**< GL draw calls in the main pass (1 per instanced batch on HW instancing) */
+    int triangles;              /**< Triangles submitted in the main pass                          */
+    /* lights + shadows */
+    int lights;                 /**< Lights used this frame                                        */
+    int shadowLights;           /**< Lights with a shadow map this frame                           */
+    int shadowMapsRendered;     /**< Shadow maps re-rendered                                       */
+    int shadowMapsCached;       /**< Shadow maps reused from the cache (no rendering)              */
+    int shadowMapsDynamic;      /**< ...of the rendered ones: forced by a re-skinned caster        */
+    int shadowDrawCalls;        /**< GL draw calls in all shadow passes                            */
+    int shadowTriangles;        /**< Triangles submitted in all shadow passes                      */
+    /* CPU time (ms) */
+    float cpuShadowMs;          /**< Whole shadow stage (hashing + rendering)                      */
+    float cpuHashMs;            /**< ...of which shadow-cache hashing                              */
+    float cpuMainMs;            /**< Culling + sorting + main pass + sky                           */
+    float cpuTotalMs;           /**< LIL3D_End() total                                             */
+} LIL3D_Stats;
+
 /* ========================================================================== */
 /* Core / frame control                                                       */
 /* ========================================================================== */
@@ -319,6 +370,7 @@ LIL3D_API void LIL3D_LightLookAt(LIL3D_Light light, Vector3 position, Vector3 ta
 
 LIL3D_API float LIL3D_GetLightEnergy(LIL3D_Light light);
 LIL3D_API void LIL3D_SetLightEnergy(LIL3D_Light light, float energy);
+/** Specular is ignored by the simple lighting model (kept for API compatibility). */
 LIL3D_API float LIL3D_GetLightSpecular(LIL3D_Light light);
 LIL3D_API void LIL3D_SetLightSpecular(LIL3D_Light light, float specular);
 
@@ -367,6 +419,12 @@ LIL3D_API LIL3D_Mesh LIL3D_GenMeshKnot(float radius, float size, int radSeg, int
  *  top at y = size.y (white pixel). Spans size.x by size.z. Images that would need more
  *  than 65535 vertices are sampled with a stride. */
 LIL3D_API LIL3D_Mesh LIL3D_GenMeshHeightmap(Image heightmap, Vector3 size);
+/** Same terrain, but split into square chunks of 'chunkCells' x 'chunkCells' cells (default 32 when
+ *  <= 0, clamped to [2, 254]); one LIL3D_Mesh + AABB per chunk, one shared material (materials[0]).
+ *  Uses the FULL image resolution (no stride, no 65535-vertex limit). Chunks are frustum-culled in the
+ *  camera and shadow passes and make ray casts cheap (see LIL3D_GetRayCollisionModel). Normals and
+ *  UVs are global, so chunk seams are invisible. Free with LIL3D_UnloadModel(). */
+LIL3D_API LIL3D_Model LIL3D_GenModelHeightmap(Image heightmap, Vector3 size, int chunkCells);
 
 /** Loads through raylib's LoadModel() (OBJ/GLTF/IQM/VOX/M3D). Skeleton + bone weights
  *  are kept; animations are loaded separately with LIL3D_LoadAnimationLib(). */
@@ -380,6 +438,18 @@ LIL3D_API void LIL3D_UnloadInstanceBuffer(LIL3D_InstanceBuffer buffer);
 LIL3D_API void LIL3D_UpdateInstanceBuffer(LIL3D_InstanceBuffer buffer, const Matrix* transforms, int count);
 /** Direct write access to the transforms array (capacity elements). */
 LIL3D_API Matrix* LIL3D_MapInstances(LIL3D_InstanceBuffer buffer);
+
+/* ========================================================================== */
+/* Collision                                                                  */
+/* ========================================================================== */
+
+/** Ray vs mesh: the mesh AABB is tested first, then raylib's triangle test. 'transform' is the
+ *  mesh's world matrix. Returned distance/point/normal are in world space. */
+LIL3D_API RayCollision LIL3D_GetRayCollisionMesh(Ray ray, LIL3D_Mesh mesh, Matrix transform);
+/** Ray vs model: per-mesh AABBs are tested first, then only the meshes the ray can reach are tested
+ *  triangle by triangle, nearest first, stopping as soon as no remaining box can be closer.
+ *  Pair it with LIL3D_GenModelHeightmap() for fast terrain picking. Uses the bind pose. */
+LIL3D_API RayCollision LIL3D_GetRayCollisionModel(Ray ray, LIL3D_Model model, Matrix transform);
 
 /* ========================================================================== */
 /* Draw (valid between LIL3D_Begin* and LIL3D_End)                            */
@@ -457,6 +527,15 @@ LIL3D_API Matrix LIL3D_GetBoneMatrix(const LIL3D_AnimationPlayer* player, int bo
  *  LIL3D_End(), inside BeginMode3D()/EndMode3D(): the scene depth buffer is kept. */
 LIL3D_API void LIL3D_DrawLightShape(LIL3D_Light light);
 
+/** Stats of the last LIL3D_Begin()/LIL3D_End() pair (zeros unless LIL3D_ENABLE_STATS is defined). */
+LIL3D_API LIL3D_Stats LIL3D_GetStats(void);
+/** Text overlay with the stats at (x, y). Call after LIL3D_End(), in 2D. The font size follows the
+ *  window height (about 1/45 of it, at least 14 px) and the background fits the text. No-op without
+ *  LIL3D_ENABLE_STATS. */
+LIL3D_API void LIL3D_DrawStats(int x, int y);
+/** Same with an explicit font size in pixels (<= 0 = automatic, like LIL3D_DrawStats). */
+LIL3D_API void LIL3D_DrawStatsEx(int x, int y, int fontSize);
+
 /* ========================================================================== */
 /* Cubemaps / sky                                                             */
 /* ========================================================================== */
@@ -513,12 +592,14 @@ typedef struct lil3d_light {
     float shadowBias, shadowSoftness;
     RenderTexture2D shadowMap;          /* id == 0 -> not allocated */
     int shadowMapSize;
+    unsigned long long shadowHash;      /* hash of what the cached shadow map was rendered from */
+    bool shadowHashValid;
 } lil3d_light;
 
 typedef struct lil3d_lit_program {
     Shader shader;
     Material material;                  /* raylib Material used to feed DrawMesh */
-    int locViewPos, locAmbient, locEnv, locMat, locEmission, locLightCount;
+    int locAmbient, locAlpha, locEmission, locLightCount;
     int locLightPos, locLightDir, locLightColor, locLightParams, locLightShadow;
     int locShadowMat[LIL3D_SHADOW_SLOTS];
     int locInstanceBase, locUV;
@@ -538,6 +619,11 @@ typedef struct lil3d_sky_program {
     int locEnergy;
 } lil3d_sky_program;
 
+typedef struct lil3d_frustum {
+    float p[6][4];                      /* plane normals (unnormalised) + d, inside = dot(n,x) + d >= 0 */
+    int count;                          /* planes to test (4 = sides only, 6 = all) */
+} lil3d_frustum;
+
 typedef struct lil3d_drawcall {
     LIL3D_Mesh mesh;
     LIL3D_Material material;
@@ -546,6 +632,7 @@ typedef struct lil3d_drawcall {
     int instanceCount;
     BoundingBox bounds;                 /* world AABB, valid if hasBounds */
     bool hasBounds;
+    bool dynamic;                       /* geometry changed this frame (re-skinned): never cache shadows */
     float sortKey;                      /* squared distance to camera */
 } lil3d_drawcall;
 
@@ -582,10 +669,22 @@ typedef struct lil3d_context {
     lil3d_drawcall** sortList;  int sortCap;
 
     int curBlend, curCull;              /* cached GL state during End() */
+    LIL3D_Stats stats;
 } lil3d_context;
 
 static lil3d_context lil3d_ctx;
-static int lil3d_hints[LIL3D_HINT_COUNT] = { 1024, 512, 1 };
+
+/* Stats plumbing: LIL3D_STAT(stmt) runs 'stmt' only when LIL3D_ENABLE_STATS is defined. */
+#ifdef LIL3D_ENABLE_STATS
+#   define LIL3D_STAT(stmt) do { stmt; } while (0)
+#else
+#   define LIL3D_STAT(stmt) ((void)0)
+#endif
+
+#ifdef LIL3D_ENABLE_STATS
+static void lil3d_stat_draw(const struct lil3d_drawcall* dc, int* calls, int* tris);
+#endif
+static int lil3d_hints[LIL3D_HINT_COUNT] = { 1024, 256, 1, 1 };
 
 /* -------------------------------------------------------------------------- */
 /* Small helpers                                                              */
@@ -609,9 +708,11 @@ static Vector3 lil3d_safe_normalize(Vector3 v, Vector3 fallback)
     return (len < 1e-6f) ? fallback : Vector3Scale(v, 1.0f/len);
 }
 
+/* Gamma 2.0 instead of 2.2: a multiply here and a sqrt in the shader instead of two pow(). */
 static float lil3d_to_linear(unsigned char c)
 {
-    return powf((float)c/255.0f, 2.2f);
+    float f = (float)c/255.0f;
+    return f*f;
 }
 
 static Matrix lil3d_trs(Transform t)
@@ -652,6 +753,53 @@ static bool lil3d_aabb_sphere(BoundingBox b, Vector3 c, float r)
     if (c.y < b.min.y) d += (b.min.y - c.y)*(b.min.y - c.y); else if (c.y > b.max.y) d += (c.y - b.max.y)*(c.y - b.max.y);
     if (c.z < b.min.z) d += (b.min.z - c.z)*(b.min.z - c.z); else if (c.z > b.max.z) d += (c.z - b.max.z)*(c.z - b.max.z);
     return d <= r*r;
+}
+
+/* Frustum planes from a view*projection matrix (raylib layout, Gribb/Hartmann). */
+static void lil3d_frustum_from_matrix(Matrix m, int planes, lil3d_frustum* f)
+{
+    const float r0[4] = { m.m0, m.m4, m.m8,  m.m12 };
+    const float r1[4] = { m.m1, m.m5, m.m9,  m.m13 };
+    const float r2[4] = { m.m2, m.m6, m.m10, m.m14 };
+    const float r3[4] = { m.m3, m.m7, m.m11, m.m15 };
+    for (int i = 0; i < 4; i++)
+    {
+        f->p[0][i] = r3[i] + r0[i];     /* left   */
+        f->p[1][i] = r3[i] - r0[i];     /* right  */
+        f->p[2][i] = r3[i] + r1[i];     /* bottom */
+        f->p[3][i] = r3[i] - r1[i];     /* top    */
+        f->p[4][i] = r3[i] + r2[i];     /* near   */
+        f->p[5][i] = r3[i] - r2[i];     /* far    */
+    }
+    f->count = planes;
+}
+
+/* False only when the box is entirely outside one plane (conservative). */
+static bool lil3d_aabb_in_frustum(const lil3d_frustum* f, BoundingBox b)
+{
+    for (int i = 0; i < f->count; i++)
+    {
+        const float* p = f->p[i];
+        float x = (p[0] >= 0.0f) ? b.max.x : b.min.x;
+        float y = (p[1] >= 0.0f) ? b.max.y : b.min.y;
+        float z = (p[2] >= 0.0f) ? b.max.z : b.min.z;
+        if (p[0]*x + p[1]*y + p[2]*z + p[3] < 0.0f) return false;
+    }
+    return true;
+}
+
+/* 64-bit FNV-style hash over 32-bit words (shadow-cache change detection). */
+static unsigned long long lil3d_hash_words(unsigned long long h, const void* data, size_t words)
+{
+    const unsigned char* b = (const unsigned char*)data;
+    for (size_t i = 0; i < words; i++)
+    {
+        unsigned int w;
+        memcpy(&w, b + i*4, 4);
+        h = (h ^ (unsigned long long)w)*1099511628211ULL;
+        h ^= h >> 32;
+    }
+    return h;
 }
 
 /* Cube face basis shared by the omni shadow renderer (C) and sampler (GLSL).
@@ -716,32 +864,27 @@ static const char* const lil3d_vs_lit_inst = LIL3D_GLSL(
     }
 );
 
-/* ---- lit: fragment (metallic-roughness PBR, up to LIL3D_MAX_LIGHTS, 4 shadow slots) ----
- * GGX distribution, height-correlated Smith visibility (Hammon approximation), Schlick
- * Fresnel. Light 'energy' is artist-friendly: a white energy-1 light facing a white
- * diffuse surface gives white (the usual 1/pi is folded into the light). Ambient: diffuse
- * from the environment ambient colour, specular from the sky cubemap (blended towards the
- * ambient colour as roughness rises) with Karis' analytic environment BRDF. */
+/* ---- lit: fragment (plain Lambert, up to LIL3D_MAX_LIGHTS, 4 shadow slots) ----
+ * Light 'energy' is artist-friendly: a white energy-1 light facing a white diffuse surface
+ * gives white. Colours are decoded with x*x and re-encoded with sqrt() (gamma 2.0).
+ * Shadows: depth packed in RGBA8 (no depth-texture extension needed). LIL3D_PCF:
+ *   0 = 1 tap, 1 = 4 taps with bilinear weights (smooth, default), 2 = 3x3 box (9 taps). */
 static const char* const lil3d_fs_lit = LIL3D_GLSL(
     varying vec3 vWorldPos;
     varying vec3 vNormal;
     varying vec2 vUV;
 
     uniform sampler2D texture0;
-    uniform sampler2D uORM;     // R occlusion, G roughness, B metalness
-    uniform samplerCube uSky;
     uniform vec4 colDiffuse;
-    uniform vec4 uMat;          // x metalness, y roughness, z alphaCutoff, w occlusion strength
+    uniform float uAlphaCutoff;
     uniform vec4 uEmission;     // rgb (linear, premultiplied by energy)
     uniform vec4 uAmbient;      // rgb (linear, premultiplied by energy)
-    uniform vec4 uEnv;          // x sky available (0/1), y sky energy
-    uniform vec3 uViewPos;
     uniform int uLightCount;
     uniform vec4 uLightPos[LIL3D_MAX_LIGHTS];     // xyz position, w type (0 dir, 1 spot, 2 omni)
     uniform vec4 uLightDir[LIL3D_MAX_LIGHTS];     // xyz direction of light travel
     uniform vec4 uLightColor[LIL3D_MAX_LIGHTS];   // rgb linear*energy, w specular
     uniform vec4 uLightParams[LIL3D_MAX_LIGHTS];  // x cosInner, y cosOuter, z attenuation, w range
-    uniform vec4 uLightShadow[LIL3D_MAX_LIGHTS];  // x enabled, y bias, z normal offset, w texel step
+    uniform vec4 uLightShadow[LIL3D_MAX_LIGHTS];  // x softness (0 = no shadow), y bias, z normal offset, w texel (1/size)
     uniform sampler2D uShadow0;
     uniform sampler2D uShadow1;
     uniform sampler2D uShadow2;
@@ -751,29 +894,46 @@ static const char* const lil3d_fs_lit = LIL3D_GLSL(
     uniform mat4 uShadowMat2;
     uniform mat4 uShadowMat3;
 
-    // Depth is stored packed in RGBA8 (works without depth-texture extensions).
     float lil3d_unpack(vec4 c)
     {
         return dot(c, vec4(1.0/16777216.0, 1.0/65536.0, 1.0/256.0, 1.0)*(255.0/256.0));
     }
 
-    float lil3d_pcf(sampler2D m, vec2 uv, vec2 lo, vec2 hi, float depth, vec2 texel)
+    float lil3d_tap(sampler2D m, vec2 p, vec2 lo, vec2 hi, float depth)
     {
-        float sum = 0.0;
-        for (int x = -LIL3D_PCF; x <= LIL3D_PCF; x++)
+        return step(depth, lil3d_unpack(texture2D(m, clamp(p, lo, hi))));
+    }
+
+    float lil3d_pcf(sampler2D m, vec2 uv, vec2 lo, vec2 hi, float depth, vec2 texel, float spread)
+    {
+        if (LIL3D_PCF == 0) return lil3d_tap(m, uv, lo, hi, depth);
+        vec2 o = texel*spread;
+        if (LIL3D_PCF == 1)
         {
-            for (int y = -LIL3D_PCF; y <= LIL3D_PCF; y++)
+            // Bilinear PCF on a point-sampled map: 4 comparisons weighted by the sub-texel position.
+            vec2 st = uv/texel - 0.5;
+            vec2 f = fract(st);
+            vec2 b = (st - f + 0.5)*texel - (o - texel)*0.5;
+            float a0 = lil3d_tap(m, b, lo, hi, depth);
+            float a1 = lil3d_tap(m, b + vec2(o.x, 0.0), lo, hi, depth);
+            float a2 = lil3d_tap(m, b + vec2(0.0, o.y), lo, hi, depth);
+            float a3 = lil3d_tap(m, b + o, lo, hi, depth);
+            return mix(mix(a0, a1, f.x), mix(a2, a3, f.x), f.y);
+        }
+        float sum = 0.0;
+        for (int x = -1; x <= 1; x++)
+        {
+            for (int y = -1; y <= 1; y++)
             {
-                vec2 p = clamp(uv + vec2(float(x), float(y))*texel, lo, hi);
-                sum += step(depth, lil3d_unpack(texture2D(m, p)));
+                sum += lil3d_tap(m, uv + vec2(float(x), float(y))*o, lo, hi, depth);
             }
         }
-        return sum/float((2*LIL3D_PCF + 1)*(2*LIL3D_PCF + 1));
+        return sum*(1.0/9.0);
     }
 
     // Omni shadows live in a 3x2 atlas (face = +X,-X,+Y,-Y,+Z,-Z). The face basis
     // here MUST match lil3d_face_fwd / lil3d_face_up on the C side.
-    float lil3d_omni(sampler2D m, vec3 d, float invFar, float bias, float texelStep)
+    float lil3d_omni(sampler2D m, vec3 d, float invFar, float bias, float texelStep, float spread)
     {
         vec3 ad = abs(d);
         vec3 f = vec3(0.0, 0.0, 1.0);
@@ -804,66 +964,31 @@ static const char* const lil3d_fs_lit = LIL3D_GLSL(
         vec2 lo = cell*inv + texel*0.5;
         vec2 hi = (cell + 1.0)*inv - texel*0.5;
         float depth = length(d)*invFar - bias;
-        return lil3d_pcf(m, uv, lo, hi, depth, texel);
+        return lil3d_pcf(m, uv, lo, hi, depth, texel, spread);
     }
 
-    float lil3d_shadow(sampler2D m, mat4 vp, vec4 lp, float range, vec3 p, float bias, float texelStep)
+    float lil3d_shadow(sampler2D m, mat4 vp, vec4 lp, float range, vec3 p, float bias, float texelStep, float spread)
     {
-        if (lp.w > 1.5) return lil3d_omni(m, p - lp.xyz, 1.0/range, bias, texelStep);
+        if (lp.w > 1.5) return lil3d_omni(m, p - lp.xyz, 1.0/range, bias, texelStep, spread);
         vec4 c = vp*vec4(p, 1.0);
         vec3 n = c.xyz/c.w;
         vec2 uv = n.xy*0.5 + 0.5;
         if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0 || n.z > 1.0) return 1.0;
         float depth = (lp.w < 0.5) ? (n.z*0.5 + 0.5) : (length(p - lp.xyz)/range);
-        return lil3d_pcf(m, uv, vec2(0.0), vec2(1.0), depth - bias, vec2(texelStep));
-    }
-
-    float lil3d_ggx(float ndh, float a2)
-    {
-        float d = ndh*ndh*(a2 - 1.0) + 1.0;
-        return a2/(3.14159265*d*d);
-    }
-
-    float lil3d_vis(float ndl, float ndv, float alpha)
-    {
-        return 0.5/max(mix(2.0*ndl*ndv, ndl + ndv, alpha), 0.0001);
+        return lil3d_pcf(m, uv, vec2(0.0), vec2(1.0), depth - bias, vec2(texelStep), spread);
     }
 
     void main()
     {
         vec4 albedo = texture2D(texture0, vUV)*colDiffuse;
-        if (albedo.a < uMat.z) discard;
+        if (albedo.a < uAlphaCutoff) discard;
 
-        vec3 orm = texture2D(uORM, vUV).rgb;
-        float ao = mix(1.0, orm.r, uMat.w);
-        float rough = clamp(orm.g*uMat.y, 0.06, 1.0);
-        float metal = clamp(orm.b*uMat.x, 0.0, 1.0);
-        float alpha = rough*rough;
-        float a2 = alpha*alpha;
-
-        vec3 base = pow(albedo.rgb, vec3(2.2));
-        vec3 F0 = mix(vec3(0.04), base, metal);
-        vec3 diffuse = base*(1.0 - metal);
-
+        vec3 base = albedo.rgb*albedo.rgb;                      // ~sRGB -> linear
         vec3 N = normalize(vNormal);
         if (!gl_FrontFacing) N = -N;
         vec3 P = vWorldPos;
-        vec3 V = normalize(uViewPos - P);
-        float ndv = max(dot(N, V), 0.0001);
 
-        // Ambient: diffuse irradiance + specular reflection of the sky
-        vec3 env = uAmbient.rgb;
-        if (uEnv.x > 0.5)
-        {
-            vec3 sky = pow(textureCube(uSky, reflect(-V, N)).rgb, vec3(2.2))*uEnv.y;
-            env = mix(sky, uAmbient.rgb, rough);
-        }
-        vec4 c0 = vec4(-1.0, -0.0275, -0.572, 0.022);
-        vec4 c1 = vec4(1.0, 0.0425, 1.04, -0.04);
-        vec4 r = rough*c0 + c1;
-        float a004 = min(r.x*r.x, exp2(-9.28*ndv))*r.x + r.y;
-        vec2 ab = vec2(-1.04, 1.04)*a004 + r.zw;
-        vec3 result = (uAmbient.rgb*diffuse + env*(F0*ab.x + ab.y))*ao + uEmission.rgb;
+        vec3 result = uAmbient.rgb*base + uEmission.rgb;
 
         for (int i = 0; i < LIL3D_MAX_LIGHTS; i++)
         {
@@ -871,15 +996,13 @@ static const char* const lil3d_fs_lit = LIL3D_GLSL(
 
             vec4 lp = uLightPos[i];
             vec4 ld = uLightDir[i];
-            vec4 lc = uLightColor[i];
-            vec4 lq = uLightParams[i];
-            vec4 ls = uLightShadow[i];
 
             vec3 L = -ld.xyz;
             float att = 1.0;
             float dist = 0.0;
             if (lp.w > 0.5)
             {
+                vec4 lq = uLightParams[i];
                 vec3 toLight = lp.xyz - P;
                 dist = length(toLight);
                 L = toLight/max(dist, 0.0001);
@@ -888,31 +1011,26 @@ static const char* const lil3d_fs_lit = LIL3D_GLSL(
             }
 
             float ndl = dot(N, L);
-            if (ndl > 0.0 && att > 0.0)
+            float k = ndl*att;
+            if (k > 0.002)
             {
-                float vis = 1.0;
-                if (ls.x > 0.5)
+                vec4 ls = uLightShadow[i];
+                if (ls.x > 0.0)
                 {
                     float off = (lp.w < 0.5) ? ls.z : ls.z*dist;
                     vec3 po = P + N*off;
                     float bias = ls.y*(1.0 + 2.0*(1.0 - ndl));
-                    if (i == 0) vis = lil3d_shadow(uShadow0, uShadowMat0, lp, lq.w, po, bias, ls.w);
-                    else if (i == 1) vis = lil3d_shadow(uShadow1, uShadowMat1, lp, lq.w, po, bias, ls.w);
-                    else if (i == 2) vis = lil3d_shadow(uShadow2, uShadowMat2, lp, lq.w, po, bias, ls.w);
-                    else if (i == 3) vis = lil3d_shadow(uShadow3, uShadowMat3, lp, lq.w, po, bias, ls.w);
+                    float range = uLightParams[i].w;
+                    if (i == 0) k *= lil3d_shadow(uShadow0, uShadowMat0, lp, range, po, bias, ls.w, ls.x);
+                    else if (i == 1) k *= lil3d_shadow(uShadow1, uShadowMat1, lp, range, po, bias, ls.w, ls.x);
+                    else if (i == 2) k *= lil3d_shadow(uShadow2, uShadowMat2, lp, range, po, bias, ls.w, ls.x);
+                    else if (i == 3) k *= lil3d_shadow(uShadow3, uShadowMat3, lp, range, po, bias, ls.w, ls.x);
                 }
-
-                vec3 H = normalize(L + V);
-                float ndh = max(dot(N, H), 0.0);
-                float f = 1.0 - max(dot(V, H), 0.0);
-                vec3 F = F0 + (1.0 - F0)*(f*f*f*f*f);
-                vec3 spec = min(lil3d_ggx(ndh, a2)*lil3d_vis(ndl, ndv, alpha)*3.14159265*F*lc.w, vec3(20.0));
-                result += (diffuse + spec)*ndl*lc.rgb*att*vis;
+                result += base*uLightColor[i].rgb*k;
             }
         }
 
-        result = pow(max(result, vec3(0.0)), vec3(1.0/2.2));
-        gl_FragColor = vec4(result, albedo.a);
+        gl_FragColor = vec4(sqrt(max(result, vec3(0.0))), albedo.a);
     }
 );
 
@@ -1130,10 +1248,8 @@ static bool lil3d_load_lit(lil3d_lit_program* p, bool instanced, const char* def
     if (p->shader.id == 0) return false;
 
     Shader* s = &p->shader;
-    p->locViewPos      = GetShaderLocation(*s, "uViewPos");
     p->locAmbient      = GetShaderLocation(*s, "uAmbient");
-    p->locEnv          = GetShaderLocation(*s, "uEnv");
-    p->locMat          = GetShaderLocation(*s, "uMat");
+    p->locAlpha        = GetShaderLocation(*s, "uAlphaCutoff");
     p->locEmission     = GetShaderLocation(*s, "uEmission");
     p->locUV           = GetShaderLocation(*s, "uUV");
     p->locLightCount   = GetShaderLocation(*s, "uLightCount");
@@ -1149,21 +1265,14 @@ static bool lil3d_load_lit(lil3d_lit_program* p, bool instanced, const char* def
     p->locInstanceBase = instanced ? GetShaderLocation(*s, "uInstanceBase") : -1;
 
     /* Shadow maps ride on the material "maps" array so DrawMesh binds/unbinds them
-     * (slots 1..4 are plain 2D maps: METALNESS, NORMAL, ROUGHNESS, OCCLUSION). */
+     * (slots 1..4 are plain 2D maps: METALNESS, NORMAL, ROUGHNESS, OCCLUSION). The lit shader
+     * samples nothing else: no ORM map, no sky cubemap. */
     s->locs[SHADER_LOC_MAP_ALBEDO]    = GetShaderLocation(*s, "texture0");
     s->locs[SHADER_LOC_MAP_METALNESS] = GetShaderLocation(*s, "uShadow0");
     s->locs[SHADER_LOC_MAP_NORMAL]    = GetShaderLocation(*s, "uShadow1");
     s->locs[SHADER_LOC_MAP_ROUGHNESS] = GetShaderLocation(*s, "uShadow2");
     s->locs[SHADER_LOC_MAP_OCCLUSION] = GetShaderLocation(*s, "uShadow3");
-    s->locs[SHADER_LOC_MAP_EMISSION]  = GetShaderLocation(*s, "uORM");          /* unit 5 */
-    s->locs[SHADER_LOC_MAP_CUBEMAP]   = GetShaderLocation(*s, "uSky");          /* unit 7 */
     s->locs[SHADER_LOC_COLOR_DIFFUSE] = GetShaderLocation(*s, "colDiffuse");
-    {
-        /* Never leave a samplerCube on unit 0 (it holds a 2D texture): pin the units. */
-        int unitOrm = MATERIAL_MAP_EMISSION, unitSky = MATERIAL_MAP_CUBEMAP;
-        SetShaderValue(*s, s->locs[SHADER_LOC_MAP_EMISSION], &unitOrm, SHADER_UNIFORM_INT);
-        SetShaderValue(*s, s->locs[SHADER_LOC_MAP_CUBEMAP], &unitSky, SHADER_UNIFORM_INT);
-    }
     if (instanced)
     {
         s->locs[SHADER_LOC_MATRIX_MODEL] = GetShaderLocationAttrib(*s, "instanceTransform");
@@ -1327,6 +1436,7 @@ static void lil3d_free_shadow_map(lil3d_light* l)
     if (l->shadowMap.id != 0) UnloadRenderTexture(l->shadowMap);
     memset(&l->shadowMap, 0, sizeof(l->shadowMap));
     l->shadowMapSize = 0;
+    l->shadowHashValid = false;
 }
 
 void LIL3D_Close(void)
@@ -1894,6 +2004,113 @@ static BoundingBox lil3d_union_aabb(BoundingBox a, BoundingBox b)
     return out;
 }
 
+LIL3D_Model LIL3D_GenModelHeightmap(Image heightmap, Vector3 size, int chunkCells)
+{
+    LIL3D_Model out;
+    memset(&out, 0, sizeof(out));
+    if (heightmap.data == NULL || heightmap.width < 2 || heightmap.height < 2)
+    {
+        TraceLog(LOG_WARNING, LIL3D_LOG_TAG "LIL3D_GenModelHeightmap(): image must be at least 2x2");
+        return out;
+    }
+    if (chunkCells <= 0) chunkCells = 32;
+    chunkCells = (chunkCells < 2) ? 2 : ((chunkCells > 254) ? 254 : chunkCells);    /* <= 255*255 verts: 16-bit indices */
+
+    const int w = heightmap.width, h = heightmap.height;
+    Color* px = LoadImageColors(heightmap);
+    float* hgt = (float*)malloc((size_t)w*(size_t)h*sizeof(float));
+    if (px == NULL || hgt == NULL) { UnloadImageColors(px); free(hgt); return out; }
+    for (int i = 0; i < w*h; i++) hgt[i] = ((float)px[i].r + (float)px[i].g + (float)px[i].b)/(3.0f*255.0f);
+    UnloadImageColors(px);
+
+    const int chunksX = (w - 1 + chunkCells - 1)/chunkCells;
+    const int chunksZ = (h - 1 + chunkCells - 1)/chunkCells;
+    const int total = chunksX*chunksZ;
+    out.meshes = (LIL3D_Mesh*)calloc((size_t)total, sizeof(LIL3D_Mesh));
+    out.materials = (LIL3D_Material*)calloc(1, sizeof(LIL3D_Material));
+    out.meshMaterials = (int*)calloc((size_t)total, sizeof(int));
+    if (out.meshes == NULL || out.materials == NULL || out.meshMaterials == NULL)
+    {
+        free(out.meshes); free(out.materials); free(out.meshMaterials); free(hgt);
+        memset(&out, 0, sizeof(out));
+        return out;
+    }
+    out.materials[0] = LIL3D_GetDefaultMaterial();
+    out.materialCount = 1;
+
+    const float dx = size.x/(float)(w - 1), dz = size.z/(float)(h - 1);
+    bool ok = true;
+    for (int cz = 0; cz < chunksZ && ok; cz++)
+    {
+        for (int cx = 0; cx < chunksX && ok; cx++)
+        {
+            const int x0 = cx*chunkCells, x1 = LIL3D_MIN(x0 + chunkCells, w - 1);
+            const int z0 = cz*chunkCells, z1 = LIL3D_MIN(z0 + chunkCells, h - 1);
+            const int vx = x1 - x0 + 1, vz = z1 - z0 + 1;
+            const int vertexCount = vx*vz, triangleCount = 2*(vx - 1)*(vz - 1);
+
+            Mesh mesh = { 0 };
+            mesh.vertexCount = vertexCount;
+            mesh.triangleCount = triangleCount;
+            mesh.vertices  = (float*)MemAlloc((unsigned int)(vertexCount*3*(int)sizeof(float)));
+            mesh.normals   = (float*)MemAlloc((unsigned int)(vertexCount*3*(int)sizeof(float)));
+            mesh.texcoords = (float*)MemAlloc((unsigned int)(vertexCount*2*(int)sizeof(float)));
+            mesh.indices   = (unsigned short*)MemAlloc((unsigned int)(triangleCount*3*(int)sizeof(unsigned short)));
+            if (!mesh.vertices || !mesh.normals || !mesh.texcoords || !mesh.indices) { UnloadMesh(mesh); ok = false; break; }
+
+            for (int z = 0; z < vz; z++)
+            {
+                const int gz = z0 + z;
+                for (int x = 0; x < vx; x++)
+                {
+                    const int gx = x0 + x, i = z*vx + x;
+                    mesh.vertices[i*3 + 0] = ((float)gx/(float)(w - 1) - 0.5f)*size.x;
+                    mesh.vertices[i*3 + 1] = hgt[gz*w + gx]*size.y;
+                    mesh.vertices[i*3 + 2] = ((float)gz/(float)(h - 1) - 0.5f)*size.z;
+                    mesh.texcoords[i*2 + 0] = (float)gx/(float)(w - 1);
+                    mesh.texcoords[i*2 + 1] = (float)gz/(float)(h - 1);
+
+                    /* Normals from the global height field so neighbouring chunks agree on the seam */
+                    const int xl = LIL3D_MAX(gx - 1, 0), xr = LIL3D_MIN(gx + 1, w - 1);
+                    const int zd = LIL3D_MAX(gz - 1, 0), zu = LIL3D_MIN(gz + 1, h - 1);
+                    float sx = (hgt[gz*w + xr] - hgt[gz*w + xl])*size.y/((float)(xr - xl)*dx);
+                    float sz = (hgt[zu*w + gx] - hgt[zd*w + gx])*size.y/((float)(zu - zd)*dz);
+                    Vector3 n = Vector3Normalize((Vector3){ -sx, 1.0f, -sz });
+                    mesh.normals[i*3 + 0] = n.x;
+                    mesh.normals[i*3 + 1] = n.y;
+                    mesh.normals[i*3 + 2] = n.z;
+                }
+            }
+
+            int t = 0;
+            for (int z = 0; z < vz - 1; z++)
+            {
+                for (int x = 0; x < vx - 1; x++)
+                {
+                    unsigned short i00 = (unsigned short)(z*vx + x), i10 = (unsigned short)(i00 + 1);
+                    unsigned short i01 = (unsigned short)(i00 + vx), i11 = (unsigned short)(i01 + 1);
+                    mesh.indices[t++] = i00; mesh.indices[t++] = i01; mesh.indices[t++] = i10;      /* CCW seen from +Y */
+                    mesh.indices[t++] = i10; mesh.indices[t++] = i01; mesh.indices[t++] = i11;
+                }
+            }
+
+            LIL3D_Mesh lm = LIL3D_LoadMesh(mesh);          /* uploads + computes the chunk AABB */
+            out.meshes[out.meshCount] = lm;
+            out.aabb = (out.meshCount == 0) ? lm.aabb : lil3d_union_aabb(out.aabb, lm.aabb);
+            out.meshCount++;
+        }
+    }
+    free(hgt);
+
+    if (!ok)
+    {
+        for (int i = 0; i < out.meshCount; i++) UnloadMesh(out.meshes[i].mesh);
+        free(out.meshes); free(out.materials); free(out.meshMaterials);
+        memset(&out, 0, sizeof(out));
+    }
+    return out;
+}
+
 LIL3D_Model LIL3D_LoadModel(const char* filePath)
 {
     LIL3D_Model out;
@@ -2025,6 +2242,92 @@ void LIL3D_UnloadModel(LIL3D_Model model, bool unloadMaterials)
     free(model.meshMaterials);
 }
 
+/* Slab test. tNear = entry distance (0 when the origin is inside the box). */
+static bool lil3d_ray_aabb(Ray r, BoundingBox b, float* tNear)
+{
+    const float o[3]  = { r.position.x, r.position.y, r.position.z };
+    const float d[3]  = { r.direction.x, r.direction.y, r.direction.z };
+    const float mn[3] = { b.min.x, b.min.y, b.min.z };
+    const float mx[3] = { b.max.x, b.max.y, b.max.z };
+    float t0 = 0.0f, t1 = FLT_MAX;
+    for (int i = 0; i < 3; i++)
+    {
+        if (fabsf(d[i]) < 1e-12f)
+        {
+            if (o[i] < mn[i] || o[i] > mx[i]) return false;
+        }
+        else
+        {
+            float inv = 1.0f/d[i];
+            float ta = (mn[i] - o[i])*inv, tb = (mx[i] - o[i])*inv;
+            if (ta > tb) { float tmp = ta; ta = tb; tb = tmp; }
+            if (ta > t0) t0 = ta;
+            if (tb < t1) t1 = tb;
+            if (t0 > t1) return false;
+        }
+    }
+    *tNear = t0;
+    return true;
+}
+
+RayCollision LIL3D_GetRayCollisionMesh(Ray ray, LIL3D_Mesh mesh, Matrix transform)
+{
+    RayCollision none;
+    memset(&none, 0, sizeof(none));
+    float tn;
+    if (mesh.mesh.vertexCount <= 0 || !lil3d_ray_aabb(ray, lil3d_transform_aabb(mesh.aabb, transform), &tn)) return none;
+    return GetRayCollisionMesh(ray, mesh.mesh, transform);
+}
+
+typedef struct lil3d_ray_candidate { int mesh; float tNear; } lil3d_ray_candidate;
+
+static int lil3d_cmp_ray_candidate(const void* a, const void* b)
+{
+    float ka = ((const lil3d_ray_candidate*)a)->tNear, kb = ((const lil3d_ray_candidate*)b)->tNear;
+    return (ka > kb) - (ka < kb);
+}
+
+RayCollision LIL3D_GetRayCollisionModel(Ray ray, LIL3D_Model model, Matrix transform)
+{
+    RayCollision best;
+    memset(&best, 0, sizeof(best));
+    if (model.meshes == NULL || model.meshCount <= 0) return best;
+
+    float tn;
+    if (!lil3d_ray_aabb(ray, lil3d_transform_aabb(model.aabb, transform), &tn)) return best;
+
+    lil3d_ray_candidate stackBuf[64];
+    lil3d_ray_candidate* cand = stackBuf;
+    if (model.meshCount > 64)
+    {
+        cand = (lil3d_ray_candidate*)malloc((size_t)model.meshCount*sizeof(lil3d_ray_candidate));
+        if (cand == NULL) return best;
+    }
+
+    int n = 0;
+    for (int i = 0; i < model.meshCount; i++)
+    {
+        if (model.meshes[i].mesh.vertexCount <= 0) continue;
+        if (lil3d_ray_aabb(ray, lil3d_transform_aabb(model.meshes[i].aabb, transform), &tn))
+        {
+            cand[n].mesh = i;
+            cand[n].tNear = tn;
+            n++;
+        }
+    }
+    if (n > 1) qsort(cand, (size_t)n, sizeof(lil3d_ray_candidate), lil3d_cmp_ray_candidate);
+
+    for (int k = 0; k < n; k++)
+    {
+        if (best.hit && best.distance <= cand[k].tNear) break;      /* nothing farther can be closer */
+        RayCollision rc = GetRayCollisionMesh(ray, model.meshes[cand[k].mesh].mesh, transform);
+        if (rc.hit && (!best.hit || rc.distance < best.distance)) best = rc;
+    }
+
+    if (cand != stackBuf) free(cand);
+    return best;
+}
+
 LIL3D_InstanceBuffer LIL3D_LoadInstanceBuffer(int capacity)
 {
     LIL3D_InstanceBuffer b = { NULL, 0 };
@@ -2071,6 +2374,7 @@ static void lil3d_push_draw(LIL3D_Mesh mesh, LIL3D_Material material, Matrix tra
     dc->transform = transform;
     dc->instances = instances;
     dc->instanceCount = instanceCount;
+    dc->dynamic = false;
     dc->hasBounds = (instances == NULL);
     if (dc->hasBounds) dc->bounds = lil3d_transform_aabb(mesh.aabb, transform);
     else memset(&dc->bounds, 0, sizeof(dc->bounds));
@@ -2155,6 +2459,15 @@ void LIL3D_DrawModelInstanced(LIL3D_Model model, LIL3D_InstanceBuffer instances,
 /* Frame: low-level drawing helpers                                           */
 /* -------------------------------------------------------------------------- */
 
+#ifdef LIL3D_ENABLE_STATS
+static void lil3d_stat_draw(const struct lil3d_drawcall* dc, int* calls, int* tris)
+{
+    int n = (dc->instances != NULL) ? dc->instanceCount : 1;
+    *calls += (dc->instances != NULL && lil3d_ctx.hwInstancing) ? 1 : n;
+    *tris += dc->mesh.mesh.triangleCount*n;
+}
+#endif
+
 /* Submit one draw call through raylib using the given program + material. */
 static void lil3d_submit(Shader shader, Material* material, const lil3d_drawcall* dc, int locInstanceBase)
 {
@@ -2227,13 +2540,11 @@ static void lil3d_draw_lit(const lil3d_drawcall* dc)
 
     p->material.maps[MATERIAL_MAP_ALBEDO].texture = lil3d_albedo_or_white(m);
     p->material.maps[MATERIAL_MAP_ALBEDO].color = m->albedo.color;
-    p->material.maps[MATERIAL_MAP_EMISSION].texture = (m->orm.texture.id != 0) ? m->orm.texture : lil3d_white_texture();
 
-    float mat[4] = { m->orm.metalness, m->orm.roughness, m->alphaCutoff, m->orm.occlusion };
-    if (memcmp(mat, p->lastMat, sizeof(mat)) != 0)
+    if (m->alphaCutoff != p->lastMat[0])
     {
-        SetShaderValue(p->shader, p->locMat, mat, SHADER_UNIFORM_VEC4);
-        memcpy(p->lastMat, mat, sizeof(mat));
+        SetShaderValue(p->shader, p->locAlpha, &m->alphaCutoff, SHADER_UNIFORM_FLOAT);
+        p->lastMat[0] = m->alphaCutoff;
     }
     float em[4] = {
         lil3d_to_linear(m->emission.color.r)*m->emission.energy,
@@ -2248,6 +2559,7 @@ static void lil3d_draw_lit(const lil3d_drawcall* dc)
 
     lil3d_set_uv(p->shader, p->locUV, p->lastUV, m);
     lil3d_apply_material_state(m);
+    LIL3D_STAT(lil3d_stat_draw(dc, &lil3d_ctx.stats.drawCalls, &lil3d_ctx.stats.triangles));
     lil3d_submit(p->shader, &p->material, dc, p->locInstanceBase);
 }
 
@@ -2256,7 +2568,8 @@ static void lil3d_draw_depth(const lil3d_drawcall* dc)
     lil3d_depth_program* p = (dc->instances != NULL && lil3d_ctx.hwInstancing) ? &lil3d_ctx.depthInst : &lil3d_ctx.depth;
     const LIL3D_Material* m = &dc->material;
 
-    p->material.maps[MATERIAL_MAP_ALBEDO].texture = lil3d_albedo_or_white(m);
+    /* Only alpha-tested casters need their own texture; everything else shares the 1x1 white one. */
+    p->material.maps[MATERIAL_MAP_ALBEDO].texture = (m->alphaCutoff > 0.0f) ? lil3d_albedo_or_white(m) : lil3d_white_texture();
     p->material.maps[MATERIAL_MAP_ALBEDO].color = m->albedo.color;
     if (m->alphaCutoff != p->lastAlpha)
     {
@@ -2264,6 +2577,7 @@ static void lil3d_draw_depth(const lil3d_drawcall* dc)
         p->lastAlpha = m->alphaCutoff;
     }
     lil3d_set_uv(p->shader, p->locUV, p->lastUV, m);
+    LIL3D_STAT(lil3d_stat_draw(dc, &lil3d_ctx.stats.shadowDrawCalls, &lil3d_ctx.stats.shadowTriangles));
     lil3d_submit(p->shader, &p->material, dc, p->locInstanceBase);
 }
 
@@ -2371,7 +2685,7 @@ static void lil3d_select_lights(lil3d_frame* f)
             if (l->type == LIL3D_LIGHT_DIR) normalOffset = 1.5f*(2.0f*l->range/size);                       /* world units  */
             else if (l->type == LIL3D_LIGHT_SPOT) normalOffset = 1.5f*(2.0f*tanf(0.5f*lil3d_spot_fov_deg(l)*DEG2RAD)/size); /* per metre */
             else normalOffset = 1.5f*(2.0f/size);                                                          /* per metre    */
-            f->shadow[i] = (Vector4){ 1.0f, l->shadowBias, normalOffset, l->shadowSoftness/size };
+            f->shadow[i] = (Vector4){ l->shadowSoftness, l->shadowBias, normalOffset, 1.0f/size };
         }
     }
 
@@ -2405,15 +2719,48 @@ static bool lil3d_ensure_shadow_map(lil3d_light* l)
     return true;
 }
 
-static void lil3d_draw_casters(const lil3d_light* l, bool cull)
+/* Shared by the cache hash and the render so both see exactly the same caster set. */
+static bool lil3d_caster_visible(const lil3d_drawcall* dc, const lil3d_light* l, bool sphere, const lil3d_frustum* fr)
+{
+    if (dc->material.shadowCastMode == LIL3D_SHADOW_CAST_OFF) return false;
+    if (!dc->hasBounds) return true;
+    if (sphere && !lil3d_aabb_sphere(dc->bounds, l->position, l->range)) return false;
+    if (fr != NULL && !lil3d_aabb_in_frustum(fr, dc->bounds)) return false;
+    return true;
+}
+
+static void lil3d_draw_casters(const lil3d_light* l, bool sphere, const lil3d_frustum* fr)
 {
     for (int i = 0; i < lil3d_ctx.drawCount; i++)
     {
         const lil3d_drawcall* dc = &lil3d_ctx.draws[i];
-        if (dc->material.shadowCastMode == LIL3D_SHADOW_CAST_OFF) continue;
-        if (cull && dc->hasBounds && !lil3d_aabb_sphere(dc->bounds, l->position, l->range)) continue;
-        lil3d_draw_depth(dc);
+        if (lil3d_caster_visible(dc, l, sphere, fr)) lil3d_draw_depth(dc);
     }
+}
+
+/* Hash of everything the shadow map depends on among the visible casters. */
+static unsigned long long lil3d_hash_casters(unsigned long long h, const lil3d_light* l, bool sphere, const lil3d_frustum* fr, bool* dynamic)
+{
+    for (int i = 0; i < lil3d_ctx.drawCount; i++)
+    {
+        const lil3d_drawcall* dc = &lil3d_ctx.draws[i];
+        if (!lil3d_caster_visible(dc, l, sphere, fr)) continue;
+        if (dc->dynamic) *dynamic = true;
+
+        unsigned int ids[4] = { dc->mesh.mesh.vaoId, (unsigned int)dc->mesh.mesh.vertexCount,
+                                (unsigned int)dc->instanceCount, (unsigned int)dc->mesh.mesh.triangleCount };
+        h = lil3d_hash_words(h, ids, 4);
+        h = lil3d_hash_words(h, &dc->transform, sizeof(Matrix)/4);
+        if (dc->material.alphaCutoff > 0.0f)        /* only alpha-tested casters depend on material */
+        {
+            float a[7] = { dc->material.alphaCutoff, dc->material.uvOffset.x, dc->material.uvOffset.y,
+                           dc->material.uvScale.x, dc->material.uvScale.y, (float)dc->material.albedo.color.a,
+                           (float)dc->material.albedo.texture.id };
+            h = lil3d_hash_words(h, a, 7);
+        }
+        if (dc->instances != NULL) h = lil3d_hash_words(h, dc->instances, (size_t)dc->instanceCount*(sizeof(Matrix)/4));
+    }
+    return h;
 }
 
 static void lil3d_set_depth_light(Vector4 v)
@@ -2430,6 +2777,80 @@ static void lil3d_render_shadow(lil3d_frame* f, int slot)
 
     const int size = l->shadowMapSize;
     const Camera3D* cam = &lil3d_ctx.camera;
+    const bool omni = (l->type == LIL3D_LIGHT_OMNI);
+    const bool dirLight = (l->type == LIL3D_LIGHT_DIR);
+    const float range = l->range;
+    Matrix view = MatrixIdentity(), proj = MatrixIdentity();
+    Vector4 depthLight = { 0.0f, 0.0f, 0.0f, 0.0f };
+    lil3d_frustum fr;
+    memset(&fr, 0, sizeof(fr));
+
+    /* 1) Shadow view. Omni uses one 90 degree projection shared by the 6 faces. */
+    if (omni)
+    {
+        depthLight = (Vector4){ l->position.x, l->position.y, l->position.z, 1.0f/range };
+        proj = MatrixPerspective(90.0*DEG2RAD, 1.0, LIL3D_MAX(0.05, (double)range*0.01), (double)range);
+    }
+    else
+    {
+        Vector3 dir = lil3d_safe_normalize(l->direction, (Vector3){ 0.0f, -1.0f, 0.0f });
+        Vector3 up = lil3d_pick_up(dir);
+
+        if (dirLight)
+        {
+            /* Ortho box of radius 'range' centred half a range in front of the camera. The centre
+             * snaps to a grid of ~range/4 (a whole number of texels) on all three light axes: no
+             * shimmering, and the shadow map stays valid (cached) until the camera moved that far. */
+            float R = range;
+            Vector3 fwd = lil3d_safe_normalize(Vector3Subtract(cam->target, cam->position), (Vector3){ 0, 0, -1 });
+            Vector3 center = Vector3Add(cam->position, Vector3Scale(fwd, R*0.5f));
+            Vector3 right = Vector3Normalize(Vector3CrossProduct(dir, up));
+            Vector3 upL = Vector3CrossProduct(right, dir);
+            float texel = (2.0f*R)/(float)size;
+            float step = texel*floorf((float)size*0.125f);
+            float sx = floorf(Vector3DotProduct(center, right)/step + 0.5f)*step;
+            float sy = floorf(Vector3DotProduct(center, upL)/step + 0.5f)*step;
+            float sz = floorf(Vector3DotProduct(center, dir)/step + 0.5f)*step;
+            center = Vector3Add(Vector3Add(Vector3Scale(right, sx), Vector3Scale(upL, sy)), Vector3Scale(dir, sz));
+
+            Vector3 eye = Vector3Subtract(center, Vector3Scale(dir, R));
+            view = MatrixLookAt(eye, center, up);
+            proj = MatrixOrtho(-R, R, -R, R, 0.0, 2.0*R);
+        }
+        else
+        {
+            view = MatrixLookAt(l->position, Vector3Add(l->position, dir), up);
+            proj = MatrixPerspective((double)lil3d_spot_fov_deg(l)*DEG2RAD, 1.0, LIL3D_MAX(0.05, (double)range*0.01), (double)range);
+            depthLight = (Vector4){ l->position.x, l->position.y, l->position.z, 1.0f/range };
+        }
+        f->shadowVP[slot] = MatrixMultiply(view, proj);
+        lil3d_frustum_from_matrix(f->shadowVP[slot], 6, &fr);
+    }
+
+    /* 2) Cache: skip the whole pass when nothing the map depends on has changed. */
+    const bool cache = (lil3d_hints[LIL3D_HINT_SHADOW_CACHE] != 0);
+    bool dynamic = false;
+    unsigned long long h = 1469598103934665603ULL;
+    double statT0 = 0.0;
+    LIL3D_STAT(statT0 = GetTime());
+    (void)statT0;
+    if (cache)
+    {
+        float head[8] = { (float)l->type, (float)size, l->position.x, l->position.y, l->position.z, range, 0.0f, 0.0f };
+        h = lil3d_hash_words(h, head, 8);
+        if (!omni) h = lil3d_hash_words(h, &f->shadowVP[slot], sizeof(Matrix)/4);
+        h = lil3d_hash_casters(h, l, !dirLight, omni ? NULL : &fr, &dynamic);
+        LIL3D_STAT(lil3d_ctx.stats.cpuHashMs += (float)((GetTime() - statT0)*1000.0));
+        if (!dynamic && l->shadowHashValid && l->shadowHash == h)
+        {
+            LIL3D_STAT(lil3d_ctx.stats.shadowMapsCached++);
+            return;
+        }
+    }
+    LIL3D_STAT(lil3d_ctx.stats.shadowMapsRendered++);
+    LIL3D_STAT(if (dynamic) lil3d_ctx.stats.shadowMapsDynamic++);
+
+    /* 3) Render */
     lil3d_ctx.depth.lastAlpha = -1.0f;
     lil3d_ctx.depthInst.lastAlpha = -1.0f;
     for (int i = 0; i < 4; i++) { lil3d_ctx.depth.lastUV[i] = -1e30f; lil3d_ctx.depthInst.lastUV[i] = -1e30f; }
@@ -2438,13 +2859,10 @@ static void lil3d_render_shadow(lil3d_frame* f, int slot)
     rlDisableColorBlend();              /* alpha channel carries packed depth */
     rlDisableBackfaceCulling();
     rlEnableDepthMask();
+    lil3d_set_depth_light(depthLight);
 
-    if (l->type == LIL3D_LIGHT_OMNI)
+    if (omni)
     {
-        float range = l->range;
-        lil3d_set_depth_light((Vector4){ l->position.x, l->position.y, l->position.z, 1.0f/range });
-        Matrix proj = MatrixPerspective(90.0*DEG2RAD, 1.0, LIL3D_MAX(0.05, (double)range*0.01), (double)range);
-
         rlEnableScissorTest();
         for (int face = 0; face < 6; face++)
         {
@@ -2454,54 +2872,27 @@ static void lil3d_render_shadow(lil3d_frame* f, int slot)
             rlClearColor(255, 255, 255, 255);
             rlClearScreenBuffers();
 
-            Matrix view = MatrixLookAt(l->position, Vector3Add(l->position, lil3d_face_fwd[face]), lil3d_face_up[face]);
-            lil3d_view_begin(view, proj);
-            lil3d_draw_casters(l, true);
+            Matrix fview = MatrixLookAt(l->position, Vector3Add(l->position, lil3d_face_fwd[face]), lil3d_face_up[face]);
+            lil3d_frustum ff;
+            lil3d_frustum_from_matrix(MatrixMultiply(fview, proj), 6, &ff);     /* per-face caster culling */
+            lil3d_view_begin(fview, proj);
+            lil3d_draw_casters(l, true, &ff);
             lil3d_view_end();
         }
         rlDisableScissorTest();
     }
     else
     {
-        Vector3 dir = lil3d_safe_normalize(l->direction, (Vector3){ 0.0f, -1.0f, 0.0f });
-        Vector3 up = lil3d_pick_up(dir);
-        Matrix view, proj;
-
-        if (l->type == LIL3D_LIGHT_DIR)
-        {
-            /* Ortho box of radius 'range' centred half a range in front of the camera,
-             * snapped to the shadow texel grid to avoid shimmering when the camera moves. */
-            float R = l->range;
-            Vector3 fwd = lil3d_safe_normalize(Vector3Subtract(cam->target, cam->position), (Vector3){ 0, 0, -1 });
-            Vector3 center = Vector3Add(cam->position, Vector3Scale(fwd, R*0.5f));
-            Vector3 right = Vector3Normalize(Vector3CrossProduct(dir, up));
-            Vector3 upL = Vector3CrossProduct(right, dir);
-            float texel = (2.0f*R)/(float)size;
-            float cx = Vector3DotProduct(center, right), cy = Vector3DotProduct(center, upL);
-            float sx = floorf(cx/texel + 0.5f)*texel, sy = floorf(cy/texel + 0.5f)*texel;
-            center = Vector3Add(center, Vector3Add(Vector3Scale(right, sx - cx), Vector3Scale(upL, sy - cy)));
-
-            Vector3 eye = Vector3Subtract(center, Vector3Scale(dir, R));
-            view = MatrixLookAt(eye, center, up);
-            proj = MatrixOrtho(-R, R, -R, R, 0.0, 2.0*R);
-            lil3d_set_depth_light((Vector4){ 0.0f, 0.0f, 0.0f, 0.0f });
-        }
-        else
-        {
-            float range = l->range;
-            view = MatrixLookAt(l->position, Vector3Add(l->position, dir), up);
-            proj = MatrixPerspective((double)lil3d_spot_fov_deg(l)*DEG2RAD, 1.0, LIL3D_MAX(0.05, (double)range*0.01), (double)range);
-            lil3d_set_depth_light((Vector4){ l->position.x, l->position.y, l->position.z, 1.0f/range });
-        }
-
-        f->shadowVP[slot] = MatrixMultiply(view, proj);
         rlClearColor(255, 255, 255, 255);
         rlClearScreenBuffers();
         lil3d_view_begin(view, proj);
-        lil3d_draw_casters(l, l->type != LIL3D_LIGHT_DIR);
+        lil3d_draw_casters(l, !dirLight, &fr);
         lil3d_view_end();
     }
     EndTextureMode();
+
+    l->shadowHash = h;
+    l->shadowHashValid = cache && !dynamic;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -2510,22 +2901,7 @@ static void lil3d_render_shadow(lil3d_frame* f, int slot)
 
 static void lil3d_upload_frame(lil3d_lit_program* p, const lil3d_frame* f)
 {
-    Vector3 viewPos = lil3d_ctx.camera.position;
-    SetShaderValue(p->shader, p->locViewPos, &viewPos, SHADER_UNIFORM_VEC3);
     SetShaderValue(p->shader, p->locAmbient, &f->ambient, SHADER_UNIFORM_VEC4);
-
-    /* Sky reflections: bind the cubemap to its slot (unit 7) when there is one */
-    const LIL3D_Environment* env = &lil3d_ctx.env;
-    Vector4 envInfo = { 0.0f, env->background.energy, 0.0f, 0.0f };
-    Texture2D* skyTex = &p->material.maps[MATERIAL_MAP_CUBEMAP].texture;
-    if (env->background.sky.texture != 0)
-    {
-        TextureCubemap cube = { env->background.sky.texture, env->background.sky.size, env->background.sky.size, 1, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 };
-        *skyTex = cube;
-        envInfo.x = 1.0f;
-    }
-    else memset(skyTex, 0, sizeof(*skyTex));
-    SetShaderValue(p->shader, p->locEnv, &envInfo, SHADER_UNIFORM_VEC4);
 
     int count = f->lightCount;
     SetShaderValue(p->shader, p->locLightCount, &count, SHADER_UNIFORM_INT);
@@ -2578,6 +2954,20 @@ static int lil3d_cmp_far_to_near(const void* a, const void* b)
     return (ka < kb) - (ka > kb);
 }
 
+/* Opaque order: program, cull mode, albedo texture (fewer state changes), then near to far. */
+static int lil3d_cmp_opaque(const void* a, const void* b)
+{
+    const lil3d_drawcall* da = *(lil3d_drawcall* const*)a;
+    const lil3d_drawcall* db = *(lil3d_drawcall* const*)b;
+    int pa = (da->instances != NULL && lil3d_ctx.hwInstancing) ? 1 : 0;
+    int pb = (db->instances != NULL && lil3d_ctx.hwInstancing) ? 1 : 0;
+    if (pa != pb) return pa - pb;
+    if (da->material.cullMode != db->material.cullMode) return (int)da->material.cullMode - (int)db->material.cullMode;
+    unsigned int ta = da->material.albedo.texture.id, tb = db->material.albedo.texture.id;
+    if (ta != tb) return (ta > tb) - (ta < tb);
+    return (da->sortKey > db->sortKey) - (da->sortKey < db->sortKey);
+}
+
 void LIL3D_Begin(Camera3D camera)
 {
     LIL3D_BeginEx(camera, (RenderTexture2D){ 0 });
@@ -2599,6 +2989,7 @@ void LIL3D_BeginEx(Camera3D camera, RenderTexture2D target)
     lil3d_ctx.target = target;
     lil3d_ctx.hasTarget = (target.id != 0);
     lil3d_ctx.drawCount = 0;
+    LIL3D_STAT(memset(&lil3d_ctx.stats, 0, sizeof(lil3d_ctx.stats)));
     lil3d_ctx.inFrame = true;
 }
 
@@ -2608,13 +2999,65 @@ void LIL3D_End(void)
     if (!c->initialized || !c->inFrame) return;
     c->inFrame = false;
 
+    double statEnd0 = 0.0, statShadow1 = 0.0;
+    LIL3D_STAT(statEnd0 = GetTime());
+    (void)statEnd0; (void)statShadow1;
+
     lil3d_frame frame;
     lil3d_select_lights(&frame);
+    LIL3D_STAT(c->stats.draws = c->drawCount);
+    LIL3D_STAT(c->stats.lights = frame.lightCount);
+    LIL3D_STAT(c->stats.shadowLights = frame.shadowCount);
 
     /* 1) Shadow maps (each pass binds its own framebuffer) */
     for (int s = 0; s < frame.shadowCount; s++) lil3d_render_shadow(&frame, s);
+    LIL3D_STAT(statShadow1 = GetTime());
+    LIL3D_STAT(c->stats.cpuShadowMs = (float)((statShadow1 - statEnd0)*1000.0));
 
-    /* 2) Main pass */
+    /* 2) Main pass: frustum-cull, then sort opaque (state, near->far) and transparent (far->near).
+     *    Opaque entries fill the list from the front, transparent ones from the back. */
+    lil3d_frustum camFr;
+    {
+        int w = c->hasTarget ? c->target.texture.width : GetRenderWidth();
+        int h = c->hasTarget ? c->target.texture.height : GetRenderHeight();
+        double aspect = (h > 0) ? (double)w/(double)h : 1.0;
+        double zn = rlGetCullDistanceNear(), zf = rlGetCullDistanceFar();
+        Matrix cproj;
+        if (c->camera.projection == CAMERA_PERSPECTIVE)
+            cproj = MatrixPerspective((double)c->camera.fovy*DEG2RAD, aspect, zn, zf);
+        else
+        {
+            double top = (double)c->camera.fovy*0.5, right = top*aspect;
+            cproj = MatrixOrtho(-right, right, -top, top, zn, zf);
+        }
+        Matrix cview = MatrixLookAt(c->camera.position, c->camera.target, c->camera.up);
+        lil3d_frustum_from_matrix(MatrixMultiply(cview, cproj), 4, &camFr);     /* side planes only: robust */
+    }
+
+    int nOpaque = 0, nAlpha = 0;
+    lil3d_drawcall** list = NULL;
+    if (c->drawCount > 0)
+    {
+        list = (lil3d_drawcall**)lil3d_grow_array(c->sortList, &c->sortCap, c->drawCount, sizeof(lil3d_drawcall*));
+        if (list != NULL) c->sortList = list;
+    }
+    if (list != NULL)
+    {
+        for (int i = 0; i < c->drawCount; i++)
+        {
+            lil3d_drawcall* dc = &c->draws[i];
+            if (dc->hasBounds && !lil3d_aabb_in_frustum(&camFr, dc->bounds)) continue;
+            if (dc->material.blendMode == LIL3D_BLEND_OPAQUE) list[nOpaque++] = dc;
+            else list[c->drawCount - 1 - nAlpha++] = dc;
+        }
+        if (nOpaque > 1) qsort(list, (size_t)nOpaque, sizeof(lil3d_drawcall*), lil3d_cmp_opaque);
+        if (nAlpha > 1) qsort(list + (c->drawCount - nAlpha), (size_t)nAlpha, sizeof(lil3d_drawcall*), lil3d_cmp_far_to_near);
+    }
+
+    LIL3D_STAT(c->stats.drawsOpaque = nOpaque);
+    LIL3D_STAT(c->stats.drawsTransparent = nAlpha);
+    LIL3D_STAT(c->stats.drawsCulled = c->drawCount - nOpaque - nAlpha);
+
     rlDrawRenderBatchActive();
     if (c->hasTarget) BeginTextureMode(c->target);
     Color bg = c->env.background.color;
@@ -2627,31 +3070,12 @@ void LIL3D_End(void)
         c->curBlend = -1;
         c->curCull = -1;
 
-        /* Opaque */
-        int transparentCount = 0;
-        for (int i = 0; i < c->drawCount; i++)
-        {
-            if (c->draws[i].material.blendMode == LIL3D_BLEND_OPAQUE) lil3d_draw_lit(&c->draws[i]);
-            else transparentCount++;
-        }
+        for (int i = 0; i < nOpaque; i++) lil3d_draw_lit(list[i]);
 
         /* Sky (after opaque so early-z rejects covered pixels) */
         lil3d_draw_sky();
 
-        /* Transparent, back-to-front */
-        if (transparentCount > 0)
-        {
-            lil3d_drawcall** list = (lil3d_drawcall**)lil3d_grow_array(c->sortList, &c->sortCap, transparentCount, sizeof(lil3d_drawcall*));
-            if (list != NULL)
-            {
-                c->sortList = list;
-                int n = 0;
-                for (int i = 0; i < c->drawCount; i++)
-                    if (c->draws[i].material.blendMode != LIL3D_BLEND_OPAQUE) list[n++] = &c->draws[i];
-                qsort(list, (size_t)n, sizeof(lil3d_drawcall*), lil3d_cmp_far_to_near);
-                for (int i = 0; i < n; i++) lil3d_draw_lit(list[i]);
-            }
-        }
+        for (int i = 0; i < nAlpha; i++) lil3d_draw_lit(list[c->drawCount - nAlpha + i]);
     EndMode3D();
     if (c->hasTarget) EndTextureMode();
 
@@ -2662,6 +3086,9 @@ void LIL3D_End(void)
     rlSetCullFace(RL_CULL_FACE_BACK);
     rlEnableDepthMask();
     c->drawCount = 0;
+
+    LIL3D_STAT(c->stats.cpuMainMs = (float)((GetTime() - statShadow1)*1000.0));
+    LIL3D_STAT(c->stats.cpuTotalMs = (float)((GetTime() - statEnd0)*1000.0));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -3139,6 +3566,7 @@ void LIL3D_DrawAnimatedModelPro(LIL3D_Model model, LIL3D_AnimationPlayer* p, Mat
         return;
     }
 
+    const bool poseChanged = p->dirty;
     if (p->dirty)
     {
         for (int i = 0; i < model.meshCount; i++)
@@ -3153,7 +3581,11 @@ void LIL3D_DrawAnimatedModelPro(LIL3D_Model model, LIL3D_AnimationPlayer* p, Mat
         int before = lil3d_ctx.drawCount;
         lil3d_push_draw(skinned ? p->skinMeshes[i] : model.meshes[i], *lil3d_model_material(&model, i), transform, NULL, 0);
         /* Posed geometry can leave the bind-pose AABB: never cull skinned casters. */
-        if (skinned && lil3d_ctx.drawCount > before) lil3d_ctx.draws[before].hasBounds = false;
+        if (skinned && lil3d_ctx.drawCount > before)
+        {
+            lil3d_ctx.draws[before].hasBounds = false;
+            lil3d_ctx.draws[before].dynamic = poseChanged;     /* re-skinned this frame: shadow cache must not trust it */
+        }
     }
 }
 
@@ -3167,6 +3599,42 @@ void LIL3D_DrawAnimatedModelEx(LIL3D_Model model, LIL3D_AnimationPlayer* player,
     Matrix t = MatrixMultiply(MatrixMultiply(MatrixScale(scale.x, scale.y, scale.z), MatrixRotate(rotationAxis, rotationAngle*DEG2RAD)),
                               MatrixTranslate(position.x, position.y, position.z));
     LIL3D_DrawAnimatedModelPro(model, player, t);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Stats                                                                      */
+/* -------------------------------------------------------------------------- */
+
+LIL3D_Stats LIL3D_GetStats(void) { return lil3d_ctx.stats; }
+
+void LIL3D_DrawStats(int x, int y) { LIL3D_DrawStatsEx(x, y, 0); }
+
+void LIL3D_DrawStatsEx(int x, int y, int fontSize)
+{
+#ifdef LIL3D_ENABLE_STATS
+    const LIL3D_Stats* st = &lil3d_ctx.stats;
+    enum { LINES = 8 };
+    char line[LINES][128];
+    snprintf(line[0], sizeof(line[0]), "draws %d  culled %d  opaque %d  transparent %d", st->draws, st->drawsCulled, st->drawsOpaque, st->drawsTransparent);
+    snprintf(line[1], sizeof(line[1]), "main: %d calls  %d tris", st->drawCalls, st->triangles);
+    snprintf(line[2], sizeof(line[2]), "lights %d  shadowed %d", st->lights, st->shadowLights);
+    snprintf(line[3], sizeof(line[3]), "shadow maps: %d rendered (%d dynamic)  %d cached", st->shadowMapsRendered, st->shadowMapsDynamic, st->shadowMapsCached);
+    snprintf(line[4], sizeof(line[4]), "shadow: %d calls  %d tris", st->shadowDrawCalls, st->shadowTriangles);
+    snprintf(line[5], sizeof(line[5]), "cpu shadow %.2f ms (hash %.2f)", st->cpuShadowMs, st->cpuHashMs);
+    snprintf(line[6], sizeof(line[6]), "cpu main %.2f ms", st->cpuMainMs);
+    snprintf(line[7], sizeof(line[7]), "cpu End() %.2f ms", st->cpuTotalMs);
+
+    if (fontSize <= 0) fontSize = LIL3D_MAX(14, GetScreenHeight()/45);      /* scales with the window */
+    const int pad = fontSize/2, lh = fontSize + fontSize/4;
+
+    int width = 0;
+    for (int i = 0; i < LINES; i++) width = LIL3D_MAX(width, MeasureText(line[i], fontSize));
+
+    DrawRectangle(x - pad, y - pad, width + 2*pad, LINES*lh + 2*pad - (lh - fontSize), Fade(BLACK, 0.65f));
+    for (int i = 0; i < LINES; i++) DrawText(line[i], x, y + i*lh, fontSize, WHITE);
+#else
+    (void)x; (void)y; (void)fontSize;
+#endif
 }
 
 /* -------------------------------------------------------------------------- */

@@ -23,6 +23,9 @@ namespace Lil::Assets {
     void ModelDraw(Model handle, const Vector3& pos, const Quaternion& rot, const Vector3& scale) {
         R3D_DrawModelEx(models.at(handle), pos, rot, scale);
     }
+    BoundingBox ModelAABB(Model handle) {
+        return models.at(handle).aabb;
+    }
     RayCollision ModelRaycast(Model handle, const Ray& ray, const Transform& transform) {
         const Vector3& s = transform.scale;
         const Matrix matScale = MatrixScale(s.x, s.y, s.z);
@@ -31,7 +34,15 @@ namespace Lil::Assets {
         const Vector3& p = transform.translation;
         const Matrix matTranslation = MatrixTranslate(p.x, p.y, p.z);
         const Matrix mx = MatrixMultiply(MatrixMultiply(matScale, matRotation), matTranslation);
-        return R3D_RaycastModel(ray, models.at(handle), mx);
+
+        R3D_Model& model = models.at(handle);
+        // Broad phase: test the ray against the local-space box
+        const Matrix inv = MatrixInvert(mx);
+        const Vector3 o = Vector3Transform(ray.position, inv);
+        const Vector3 d = Vector3Subtract(Vector3Transform(Vector3Add(ray.position, ray.direction), inv), o);
+        if (!GetRayCollisionBox(Ray{o, d}, model.aabb).hit) return RayCollision{0};
+
+        return R3D_RaycastModel(ray, model, mx);
     }
     BoundingBox ModelBounds(Model handle) { return models.at(handle).aabb; }
 
