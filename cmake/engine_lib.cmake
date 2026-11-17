@@ -17,6 +17,11 @@ set(ENGINE_SOURCES
     ${S}/Vehicle.cpp
     ${S}/World.cpp
 
+    ${S}/ScreenAxisJoystick.cpp
+    ${S}/ScreenButton.cpp
+    ${S}/ScreenJoystick.cpp
+    ${S}/ScreenRectangle.cpp
+
     ${S}/Components/AnimatedModelComponent.cpp
     ${S}/Components/ColliderComponent.cpp
     ${S}/Components/InstancedModelComponent.cpp

@@ -1,7 +1,7 @@
 get_filename_component(_lil_engine_root "${CMAKE_CURRENT_LIST_DIR}" ABSOLUTE)
 
 if(ANDROID)
-    set(_lil_engine_system_libs log android EGL GLESv2 OpenSLES)
+    set(_lil_engine_system_libs log android EGL GLESv3 OpenSLES)
 elseif(WIN32)
     set(_lil_engine_system_libs winmm gdi32 opengl32)
 elseif(PLATFORM STREQUAL "Web")

@@ -31,9 +31,9 @@ LIBS =
 ## OPENGL ES
 ##---------------------------------------------------------------------
 
-## This assumes a GL ES library available in the system, e.g. libGLESv2.so
+## This assumes a GL ES library available in the system, e.g. libGLESv3.so
 # CXXFLAGS += -DIMGUI_IMPL_OPENGL_ES2
-# LINUX_GL_LIBS = -lGLESv2
+# LINUX_GL_LIBS = -lGLESv3
 
 ##---------------------------------------------------------------------
 ## BUILD FLAGS PER PLATFORM

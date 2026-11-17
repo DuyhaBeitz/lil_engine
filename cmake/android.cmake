@@ -24,7 +24,7 @@ target_include_directories(lil_engine PUBLIC
 add_library(raylib_imported STATIC IMPORTED)
 set_target_properties(raylib_imported PROPERTIES
     IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/android/${ANDROID_ABI}/libraylib.a"
-    INTERFACE_LINK_LIBRARIES "log;android;EGL;GLESv2;OpenSLES"
+    INTERFACE_LINK_LIBRARIES "log;android;EGL;GLESv3;OpenSLES"
 
 )
 add_library(raylib ALIAS raylib_imported)
