@@ -5,6 +5,7 @@
 #include "Heightmap.hpp"
 #include "FileDialogHelper.hpp"
 #include "configparser.hpp"
+#include "Assets/Font.hpp"
 
 Lil::Editor &Lil::Editor::Get() {
     static Lil::Editor instance;
@@ -264,7 +265,7 @@ void Lil::Editor::InitUI() {
 #endif
 
     float fontSize = 16.0f;
-    ImFont* customFont = io.Fonts->AddFontFromFileTTF("assets/font/JetBrainsMono-Medium.ttf", fontSize);
+    ImFont* customFont = io.Fonts->AddFontFromFileTTF("assets/JetBrainsMono-Medium.ttf", fontSize);
     
     if (customFont == nullptr) {
         LIL_LOG_WARN("ImGui failed to load custom font! Falling back to default.");
@@ -665,15 +666,37 @@ void Lil::Editor::DrawResources() {
 
         for (auto& [handle, settings] : Lil::Assets::SoundSettingsMap()) {
             ImGui::PushID(&settings);
-            if (ImGui::CollapsingHeader(handle.Key().c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
-                ImGui::SetNextItemWidth(120.0f);
-                if (ImGui::Button("Play " ICON_FA_PLAY)) {
-                    Lil::Assets::GetSoundData(handle)->Play();
-                }
-                m_editor.SetCurrentObjectName(handle.Key());
-                m_editor.VisitObject(TypeInfo::Get<SoundSettings>(), &settings);
-                Lil::Assets::ApplySoundSettings(handle);
+            ImGui::SetNextItemWidth(120.0f);
+            if (ImGui::Button("Play " ICON_FA_PLAY)) {
+                Lil::Assets::GetSoundData(handle)->Play();
             }
+            ImGui::SameLine();    
+            m_editor.SetCurrentObjectName(handle.Key());
+            m_editor.VisitObject(TypeInfo::Get<SoundSettings>(), &settings);
+            Lil::Assets::ApplySoundSettings(handle);
+            ImGui::PopID();
+        }
+    }
+    ImGui::End();
+
+
+    if (ImGui::Begin("Fonts")) {
+        if (ImGui::Button(ICON_FA_PLUS)) {
+            std::vector<std::string> paths = BrowseFontDialog();
+            for (auto& path : paths) {
+                Lil::Assets::FontAdd(NameFromPath(path), path, Lil::Assets::default_font_size);
+                CopyAsset(path);
+            }
+        }
+
+        for (auto& [handle, settings] : Lil::Assets::FontSettingsMap()) {
+            ImGui::PushID(&settings);
+            if (ImGui::Button("Reload " ICON_FA_ARROWS_ROTATE)) {
+                Lil::Assets::ApplyFontSettings(handle);
+            }
+            ImGui::SameLine();
+            m_editor.SetCurrentObjectName(handle.Key());
+            m_editor.VisitObject(TypeInfo::Get<FontSettings>(), &settings);
             ImGui::PopID();
         }
     }

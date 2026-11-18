@@ -67,6 +67,20 @@ inline std::vector<std::string> BrowseSoundDialog() {
     return SplitPaths(outPath);
 }
 
+inline std::vector<std::string> BrowseFontDialog() {
+    const char* filters[] = { "*.ttf", "*.otf", "*.fnt", "*.bdf" };
+    const char* outPath = tinyfd_openFileDialog(
+        "Select Font",
+        "",
+        4,
+        filters,
+        "Font files",
+        1
+    );
+
+    return SplitPaths(outPath);
+}
+
 inline const char* BrowseSceneDialog() {
     const char* filters[] = { "*.json"};
     const char* outPath = tinyfd_openFileDialog(

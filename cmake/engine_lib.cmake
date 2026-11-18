@@ -36,6 +36,7 @@ set(ENGINE_SOURCES
 
     ${S}/Assets/Sound.cpp
     ${S}/Assets/Texture.cpp
+    ${S}/Assets/Font.cpp
 )
 
 if(BACKEND STREQUAL "Advanced")
