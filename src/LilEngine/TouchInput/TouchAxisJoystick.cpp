@@ -1,9 +1,18 @@
-#include "ScreenAxisJoystick.hpp"
+#include "TouchInput/TouchAxisJoystick.hpp"
+#include "TouchInput/TouchManager.hpp"
 #include <algorithm>
 #include <cmath>
 
+void TouchAxisJoystick::Reset() {
+    if (m_touch_id != -1) {
+        Lil::Touch::UnclaimTouch(m_touch_id);
+        m_touch_id = -1;
+    };
+    if (!m_stable) m_knob_position = m_base_position;
+}
+
 // True if the point is inside the rectangular track.
-bool ScreenAxisJoystick::HitsTrack(Vector2 p) const {
+bool TouchAxisJoystick::HitsTrack(Vector2 p) const {
     const Vector2 center = ToPixels(m_base_position);
     const float half_len = LengthPx() * 0.5f;
     const float half_wid = TrackRadiusPx();
@@ -15,33 +24,25 @@ bool ScreenAxisJoystick::HitsTrack(Vector2 p) const {
                       : (dx <= half_wid && dy <= half_len);
 }
 
-int ScreenAxisJoystick::GetTouchIndex() {
-    const int count = GetTouchPointCount();
-
-    if (m_touch_id != -1){
-        for (int i = 0; i < count; i++){
-            if (m_touch_id == GetTouchPointId(i)) return i;
-        }
-        // touch is lost
-        if (m_stable) m_touch_id = -1;      // keep the knob where it is
-        else Reset();
+void TouchAxisJoystick::Update() {
+    // the finger that pressed us was lifted
+    if (m_touch_id != -1 && !Lil::Touch::IsTouchActive(m_touch_id)) {
+        Reset();
     }
 
-    // no touch yet (or we just lost it): look for a new one on the track
-    for (int i = 0; i < count; i++){
-        if (HitsTrack(GetTouchPosition(i))){
-            m_touch_id = GetTouchPointId(i);
-            return i;
-        }
+    // look for a new finger landing on the button
+    if (m_touch_id == -1){
+        Lil::Touch::RequestTouch([this](Vector2 pos){
+                return (this->HitsTrack(pos));
+            },
+            m_priority,
+            this
+        );
+        m_touch_id = Lil::Touch::ReceiveTouch(this);
     }
-    return -1;
-}
+    if (m_touch_id == -1) return;
 
-void ScreenAxisJoystick::Update() {
-    int i = GetTouchIndex();
-    if (i == -1) return;
-
-    const Vector2 touch_pos = GetTouchPosition(i);
+    const Vector2 touch_pos = GetTouchPosition(m_touch_id);
     const Vector2 axis = AxisVector();
     const float half = HalfTravelPx();
 
@@ -52,7 +53,7 @@ void ScreenAxisJoystick::Update() {
     m_knob_position = ToRelative(Vector2Add(base, Vector2Scale(axis, t)));
 }
 
-void ScreenAxisJoystick::Draw() {
+void TouchAxisJoystick::Draw() {
     const Vector2 base = ToPixels(m_base_position);
     const Vector2 knob = ToPixels(m_knob_position);
     const float len = LengthPx();
@@ -75,11 +76,11 @@ void ScreenAxisJoystick::Draw() {
     }
 }
 
-float ScreenAxisJoystick::GetValue() {
+float TouchAxisJoystick::GetValue() {
     const float half = HalfTravelPx();
     if (half <= 0.0f) return 0.0f;
 
     const Vector2 d = Vector2Subtract(ToPixels(m_knob_position), ToPixels(m_base_position));
     const float v = Clamp(Vector2DotProduct(d, AxisVector())/half, -1.0f, 1.0f);
-    return (m_direction == Direction::Vertical) ? -v : v;       // screen Y points down: make UP positive
+    return (m_direction == Direction::Vertical) ? -v : v;       // Touch Y points down: make UP positive
 }

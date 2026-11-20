@@ -1,35 +1,38 @@
 #include <algorithm>
-#include "ScreenJoystick.hpp"
+#include "TouchInput/TouchJoystick.hpp"
+#include "TouchInput/TouchManager.hpp"
 
-int ScreenJoystick::GetTouchIndex() {
-    const int count = GetTouchPointCount();
+void TouchJoystick::Reset() {
+    if (m_touch_id != -1) {
+        Lil::Touch::UnclaimTouch(m_touch_id);
+        m_touch_id = -1;
+    }
+    m_base_position = m_original_position;
+    m_knob_position = m_original_position;
+}
 
-    if (m_touch_id != -1){
-        for (int i = 0; i < count; i++){
-            if (m_touch_id == GetTouchPointId(i)) return i;
-        }
-        // touch is lost
+void TouchJoystick::Update() {
+
+    // the finger that pressed us was lifted
+    if (m_touch_id != -1 && !Lil::Touch::IsTouchActive(m_touch_id)) {
         Reset();
     }
 
-    // if there was no touch or we just lost one, try to find new touch
-    const Vector2 base = ToPixels(m_base_position);
-    const float base_r = BaseRadiusPx();
-    for (int i = 0; i < count; i++){
-        if (Vector2Distance(GetTouchPosition(i), base) <= base_r){
-            m_touch_id = GetTouchPointId(i);
-            return i;
-        }
+    // look for a new finger landing on the button
+    if (m_touch_id == -1){
+        Lil::Touch::RequestTouch([this](Vector2 pos){
+                return (Vector2Distance(pos, ToPixels(m_base_position)) <= BaseRadiusPx());
+            },
+            m_priority,
+            this
+        );
+        m_touch_id = Lil::Touch::ReceiveTouch(this);
     }
-    return -1;
-}
 
-void ScreenJoystick::Update() {
-    int i = GetTouchIndex();
-    if (i == -1) return;
+    if (m_touch_id == -1) return;
 
     // work in pixels, store relative
-    const Vector2 touch_pos = GetTouchPosition(i);
+    const Vector2 touch_pos = GetTouchPosition(m_touch_id);
     const float base_r = BaseRadiusPx();
     const float knob_r = KnobRadiusPx();
 
@@ -47,7 +50,7 @@ void ScreenJoystick::Update() {
     m_knob_position = ToRelative(touch_pos);
 }
 
-void ScreenJoystick::Draw() {
+void TouchJoystick::Draw() {
     const Vector2 base = ToPixels(m_base_position);
     const Vector2 knob = ToPixels(m_knob_position);
     const float base_r = BaseRadiusPx();
@@ -63,7 +66,7 @@ void ScreenJoystick::Draw() {
     }
 }
 
-Vector2 ScreenJoystick::GetDirection() {
+Vector2 TouchJoystick::GetDirection() {
     // The knob can move this far from the base centre (the base follows the finger beyond it).
     const float travel = BaseRadiusPx() - KnobRadiusPx();
     if (travel <= 0.0f) return { 0.0f, 0.0f };
@@ -71,5 +74,5 @@ Vector2 ScreenJoystick::GetDirection() {
     Vector2 d = Vector2Scale(Vector2Subtract(ToPixels(m_knob_position), ToPixels(m_base_position)), 1.0f / travel);
     if (Vector2Length(d) > 1.0f) d = Vector2Normalize(d);
 
-    return { d.x, -d.y };   // screen Y points down: make UP positive
+    return { d.x, -d.y };   // Touch Y points down: make UP positive
 }

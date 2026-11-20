@@ -17,10 +17,11 @@ set(ENGINE_SOURCES
     ${S}/Vehicle.cpp
     ${S}/World.cpp
 
-    ${S}/ScreenAxisJoystick.cpp
-    ${S}/ScreenButton.cpp
-    ${S}/ScreenJoystick.cpp
-    ${S}/ScreenRectangle.cpp
+    ${S}/TouchInput/TouchAxisJoystick.cpp
+    ${S}/TouchInput/TouchButton.cpp
+    ${S}/TouchInput/TouchJoystick.cpp
+    ${S}/TouchInput/TouchArea.cpp
+    ${S}/TouchInput/TouchManager.cpp
 
     ${S}/Components/AnimatedModelComponent.cpp
     ${S}/Components/ColliderComponent.cpp

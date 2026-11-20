@@ -14,20 +14,8 @@ namespace Lil::Input {
 
     // Which components a Vector2 modifier affects (flags: X = 1, Y = 2).
     enum class Axes : unsigned { X = 1, Y = 2, XY = 3 };
-
-    // A modifier changes the value of ONE binding, after the source produced it.
-    // Any callable works and it may keep state (smoothing, etc.).
     using FloatModifier   = std::function<float(float)>;
     using Vector2Modifier = std::function<Vector2(Vector2)>;
-
-    // Direction convention for every source, as the player performs it:
-    //   right = +X, left = -X, up = +Y, down = -Y
-    // (keys: x = right - left, y = up - down; sticks and touch joysticks: pushed up => Y > 0).
-    // BindMouseDelta and BindMouseWheel pass their values through unchanged.
-    //
-    // Touch bindings (Bind Screen*) create a widget that is OWNED by the action.
-    // Positions are 0..1 of the screen; sizes are fractions of the SHORTER screen side.
-    // Input::Update() updates the widgets, Input::Draw() draws them.
 
     class Action : public Lil::Assets::AssetRef {
     public:
@@ -51,10 +39,10 @@ namespace Lil::Input {
         BoolAction& BindGamepadAxis(GamepadAxis axis, float threshold = 0.5f);
 
         // Touch button with an icon (font must contain the glyph).
-        BoolAction& BindScreenButton(Vector2 position, float radius, std::string icon, Font font);
+        BoolAction& BindTouchButton(Vector2 position, float radius, std::string icon, Font font);
 
         // True while a finger that landed in `area` is down. area = {x, y, w, h}, all 0..1 of the screen.
-        BoolAction& BindScreenRectangle(Rectangle area);
+        BoolAction& BindTouchArea(Rectangle area);
 
         bool IsDown() const;
         bool IsPressed() const;
@@ -77,7 +65,7 @@ namespace Lil::Input {
         FloatAction& BindMouseWheel(float scale = 1.f);
 
         // Single-axis touch slider. Horizontal: right is +. Vertical: up is +.
-        FloatAction& BindScreenAxis(Vector2 position, float length, float knob_radius, ScreenAxis direction, bool stable = false);
+        FloatAction& BindTouchAxis(Vector2 position, float length, float knob_radius, ScreenAxis direction, bool stable = false);
 
         // Modifiers: apply, in call order, to the binding added by the PREVIOUS Bind* call.
         // The parameters of the Bind* methods (scale, deadzone, ...) run first.
@@ -105,13 +93,13 @@ namespace Lil::Input {
         Vector2Action& BindMouseWheel(float scale = 1.f);
 
         // Floating touch joystick. Analog: length 0..1, pushed up => Y > 0.
-        Vector2Action& BindScreenJoystick(Vector2 position, float base_radius, float knob_radius);
+        Vector2Action& BindTouchJoystick(Vector2 position, float base_radius, float knob_radius);
 
         // Touch area, e.g. camera look. area = {x, y, w, h}, all 0..1 of the screen (x, y = top-left).
         // Delta: finger movement this frame in pixels * sensitivity (like BindMouseDelta), dragging up => Y > 0.
-        Vector2Action& BindScreenRectangleDelta(Rectangle area, float sensitivity = 1.f);
+        Vector2Action& BindTouchAreaDelta(Rectangle area, float sensitivity = 1.f);
         // Position of the finger inside the area, (0,0) = bottom-left, (1,1) = top-right; zero while not touching.
-        Vector2Action& BindScreenRectanglePosition(Rectangle area);
+        Vector2Action& BindTouchAreaPosition(Rectangle area);
 
         // Modifiers: apply, in call order, to the binding added by the PREVIOUS Bind* call.
         // The parameters of the Bind* methods (sensitivity, deadzone, ...) run first.

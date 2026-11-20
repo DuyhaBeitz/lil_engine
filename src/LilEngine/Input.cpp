@@ -12,10 +12,11 @@
 #include <raylib.h>
 #include <raymath.h>
 #include <type_traits>
-#include "ScreenAxisJoystick.hpp"
-#include "ScreenButton.hpp"
-#include "ScreenJoystick.hpp"
-#include "ScreenRectangle.hpp"
+#include "TouchInput/TouchAxisJoystick.hpp"
+#include "TouchInput/TouchButton.hpp"
+#include "TouchInput/TouchJoystick.hpp"
+#include "TouchInput/TouchArea.hpp"
+#include "TouchInput/TouchManager.hpp"
 
 namespace Lil::Input {
 namespace {
@@ -31,39 +32,29 @@ bool ContextEnabled(const std::string& name) {
 
 // ---------------------------------------------------------- Touch widgets
 
-struct TouchWidget {
-    virtual ~TouchWidget() = default;
-    // `claimed`: fingers held by foreground widgets this frame (only background widgets look at it)
-    virtual void Update(const std::vector<int>& claimed) = 0;
-    virtual void Draw()   = 0;
-    virtual void Reset()  = 0;
-    virtual int  TouchId() const = 0;                       // finger this widget holds, or -1
-    // Background widgets (touch areas) only take fingers that no foreground widget holds.
-    virtual bool IsBackground() const = 0;
+struct Widget {
+    virtual ~Widget() = default;
+    virtual void Update() = 0;
+    virtual void Draw() = 0;
+    virtual void Reset() = 0;
 };
 
 template <class T>
-struct TouchWidgetOf final : TouchWidget {
-    static constexpr bool kBackground = std::is_same_v<T, ScreenRectangle>;
-
+struct WidgetOf final : Widget {
     T widget;
-    template <class... Args>
-    explicit TouchWidgetOf(Args&&... args) : widget(std::forward<Args>(args)...) {}
 
-    void Update(const std::vector<int>& claimed) override {
-        if constexpr (kBackground) widget.Update(claimed);
-        else                       widget.Update();
-    }
-    void Draw()  override { widget.Draw(); }
+    template <class... Args>
+    explicit WidgetOf(Args&&... args) : widget(std::forward<Args>(args)...) {}
+
+    void Update() override { widget.Update(); }
+    void Draw() override  { widget.Draw(); }
     void Reset() override { widget.Reset(); }
-    int  TouchId() const override { return widget.GetTouchId(); }
-    bool IsBackground() const override { return kBackground; }
 };
 
 // Widgets live behind unique_ptr, so the returned pointer stays valid for the action's lifetime.
 template <class T, class... Args>
-T* AddWidget(std::vector<std::unique_ptr<TouchWidget>>& widgets, Args&&... args) {
-    auto owned = std::make_unique<TouchWidgetOf<T>>(std::forward<Args>(args)...);
+T* AddWidget(std::vector<std::unique_ptr<Widget>>& widgets, Args&&... args) {
+    auto owned = std::make_unique<WidgetOf<T>>(std::forward<Args>(args)...);
     T* raw = &owned->widget;
     widgets.push_back(std::move(owned));
     return raw;
@@ -81,7 +72,7 @@ struct ActionState {
     std::string context = "Default";
     bool enabled = true;     // per-action switch
     bool active  = true;     // effective state as of the last Tick
-    std::vector<std::unique_ptr<TouchWidget>> widgets;
+    std::vector<std::unique_ptr<Widget>> widgets;
 
     virtual void Evaluate(int gamepad) = 0;   // read sources
     virtual void Clear() = 0;                 // become neutral (disabled)
@@ -126,8 +117,8 @@ struct BoolInfo final : ActionState {
     std::unordered_set<MouseButton>    mouse_buttons;
     std::unordered_set<GamepadButton>  gamepad_buttons;
     std::vector<AxisThreshold>         gamepad_axes;
-    std::vector<ScreenButton*>         screen_buttons;   // owned by `widgets`
-    std::vector<ScreenRectangle*>      screen_rects;     // owned by `widgets`
+    std::vector<TouchButton*>         touch_buttons;   // owned by `widgets`
+    std::vector<TouchArea*>      touch_rects;     // owned by `widgets`
 
     bool was_down = false;
     bool is_down  = false;
@@ -136,8 +127,8 @@ struct BoolInfo final : ActionState {
     bool Poll(int gamepad) const {
         for (auto k : keys)          if (IsKeyDown(k)) return true;
         for (auto b : mouse_buttons) if (IsMouseButtonDown(b)) return true;
-        for (auto* b : screen_buttons) if (b->IsDown()) return true;
-        for (auto* r : screen_rects)   if (r->IsDown()) return true;
+        for (auto* b : touch_buttons) if (b->IsDown()) return true;
+        for (auto* r : touch_rects)   if (r->IsDown()) return true;
 
         if (IsGamepadAvailable(gamepad)) {
             for (auto b : gamepad_buttons)
@@ -287,25 +278,12 @@ void SetContextEnabled(const std::string& context, bool enabled) { contexts[cont
 bool IsContextEnabled(const std::string& context)                 { return ContextEnabled(context); }
 
 void Update() {
+    Lil::Touch::Update();
     for (auto& [key, a] : actions) a->Begin();
 
-    // Foreground widgets (joysticks, buttons) first: they grab the fingers that land on them.
-    // Background widgets (touch areas) then only take fingers nobody else holds, so a camera
-    // area underneath your joystick and buttons never steals their touches.
-    std::vector<int> claimed;
     for (auto& [key, a] : actions) {
         if (!a->now) continue;
-        for (auto& w : a->widgets) {
-            if (w->IsBackground()) continue;
-            w->Update(claimed);
-            const int id = w->TouchId();
-            if (id != -1) claimed.push_back(id);
-        }
-    }
-    for (auto& [key, a] : actions) {
-        if (!a->now) continue;
-        for (auto& w : a->widgets)
-            if (w->IsBackground()) w->Update(claimed);
+        for (auto& w : a->widgets) w->Update();
     }
 
     for (auto& [key, a] : actions) a->Finish(current_gamepad);
@@ -331,15 +309,15 @@ BoolAction& BoolAction::BindMouseButton(MouseButton button)    { Lookup<BoolInfo
 BoolAction& BoolAction::BindGamepadButton(GamepadButton b)     { Lookup<BoolInfo>(*this).gamepad_buttons.insert(b);        return *this; }
 BoolAction& BoolAction::BindGamepadAxis(GamepadAxis a, float t){ Lookup<BoolInfo>(*this).gamepad_axes.push_back({a, t});   return *this; }
 
-BoolAction& BoolAction::BindScreenButton(Vector2 position, float radius, std::string icon, Font font) {
+BoolAction& BoolAction::BindTouchButton(Vector2 position, float radius, std::string icon, Font font) {
     auto& info = Lookup<BoolInfo>(*this);
-    info.screen_buttons.push_back(AddWidget<ScreenButton>(info.widgets, position, radius, std::move(icon), font));
+    info.touch_buttons.push_back(AddWidget<TouchButton>(info.widgets, position, radius, std::move(icon), font));
     return *this;
 }
 
-BoolAction& BoolAction::BindScreenRectangle(Rectangle area) {
+BoolAction& BoolAction::BindTouchArea(Rectangle area) {
     auto& info = Lookup<BoolInfo>(*this);
-    info.screen_rects.push_back(AddWidget<ScreenRectangle>(info.widgets, area));
+    info.touch_rects.push_back(AddWidget<TouchArea>(info.widgets, area));
     return *this;
 }
 
@@ -394,16 +372,16 @@ FloatAction& FloatAction::BindMouseWheel(float scale) {
     return *this;
 }
 
-FloatAction& FloatAction::BindScreenAxis(Vector2 position, float length, float knob_radius, ScreenAxis direction, bool stable) {
+FloatAction& FloatAction::BindTouchAxis(Vector2 position, float length, float knob_radius, ScreenAxis direction, bool stable) {
     auto& info = Lookup<FloatInfo>(*this);
-    const auto dir = direction == ScreenAxis::Horizontal ? ScreenAxisJoystick::Direction::Horizontal
-                                                         : ScreenAxisJoystick::Direction::Vertical;
-    ScreenAxisJoystick* w = AddWidget<ScreenAxisJoystick>(info.widgets, position, length, knob_radius, dir, stable);
+    const auto dir = direction == ScreenAxis::Horizontal ? TouchAxisJoystick::Direction::Horizontal
+                                                         : TouchAxisJoystick::Direction::Vertical;
+    TouchAxisJoystick* w = AddWidget<TouchAxisJoystick>(info.widgets, position, length, knob_radius, dir, stable);
     info.sources.push_back([w](int) { return w->GetValue(); });
     return *this;
 
     // auto& info = Lookup<FloatInfo>(*this);
-    // ScreenJoystick* w = AddWidget<ScreenJoystick>(info.widgets, position, length, knob_radius);
+    // TouchJoystick* w = AddWidget<TouchJoystick>(info.widgets, position, length, knob_radius);
     // if (direction == ScreenAxis::Horizontal)
     //     info.sources.push_back([w](int) { return w->GetDirection().x; });
     // else 
@@ -475,16 +453,16 @@ Vector2Action& Vector2Action::BindMouseWheel(float scale) {
     return *this;
 }
 
-Vector2Action& Vector2Action::BindScreenJoystick(Vector2 position, float base_radius, float knob_radius) {
+Vector2Action& Vector2Action::BindTouchJoystick(Vector2 position, float base_radius, float knob_radius) {
     auto& info = Lookup<Vector2Info>(*this);
-    ScreenJoystick* w = AddWidget<ScreenJoystick>(info.widgets, position, base_radius, knob_radius);
+    TouchJoystick* w = AddWidget<TouchJoystick>(info.widgets, position, base_radius, knob_radius);
     info.sources.push_back([w](int) { return w->GetDirection(); });
     return *this;
 }
 
-Vector2Action& Vector2Action::BindScreenRectangleDelta(Rectangle area, float sensitivity) {
+Vector2Action& Vector2Action::BindTouchAreaDelta(Rectangle area, float sensitivity) {
     auto& info = Lookup<Vector2Info>(*this);
-    ScreenRectangle* w = AddWidget<ScreenRectangle>(info.widgets, area);
+    TouchArea* w = AddWidget<TouchArea>(info.widgets, area);
     info.sources.push_back([w, sensitivity](int) {
         Vector2 d = w->GetDelta();
         return Vector2{d.x * sensitivity, d.y * sensitivity};
@@ -492,9 +470,9 @@ Vector2Action& Vector2Action::BindScreenRectangleDelta(Rectangle area, float sen
     return *this;
 }
 
-Vector2Action& Vector2Action::BindScreenRectanglePosition(Rectangle area) {
+Vector2Action& Vector2Action::BindTouchAreaPosition(Rectangle area) {
     auto& info = Lookup<Vector2Info>(*this);
-    ScreenRectangle* w = AddWidget<ScreenRectangle>(info.widgets, area);
+    TouchArea* w = AddWidget<TouchArea>(info.widgets, area);
     info.sources.push_back([w](int) { return w->GetPosition(); });
     return *this;
 }
