@@ -44,6 +44,10 @@ namespace Lil::Input {
         // True while a finger that landed in `area` is down. area = {x, y, w, h}, all 0..1 of the screen.
         BoolAction& BindTouchArea(Rectangle area);
 
+        // Mouse wheel scrolled up / down this frame.
+        BoolAction& BindMouseWheelUp();
+        BoolAction& BindMouseWheelDown();
+
         bool IsDown() const;
         bool IsPressed() const;
         bool IsReleased() const;
@@ -58,7 +62,9 @@ namespace Lil::Input {
         FloatAction& BindKey(KeyboardKey key, float scale = 1.f);
         FloatAction& BindKeyPair(KeyboardKey negative, KeyboardKey positive);
         FloatAction& BindMouseButton(MouseButton button, float scale = 1.f);
+        FloatAction& BindMouseButtonPair(MouseButton negative, MouseButton positive);
         FloatAction& BindGamepadButton(GamepadButton button, float scale = 1.f);
+        FloatAction& BindGamepadButtonPair(GamepadButton negative, GamepadButton positive);
 
         FloatAction& BindGamepadAxis(GamepadAxis axis, float scale = 1.f, float deadzone = 0.1f);
         FloatAction& BindMouseDelta(MouseAxis axis, float scale = 1.f);
@@ -66,6 +72,21 @@ namespace Lil::Input {
 
         // Single-axis touch slider. Horizontal: right is +. Vertical: up is +.
         FloatAction& BindTouchAxis(Vector2 position, float length, float knob_radius, ScreenAxis direction, bool stable = false);
+
+        // Touch button that outputs `scale` while held.
+        FloatAction& BindTouchButton(Vector2 position, float radius, std::string icon, Font font, float scale = 1.f);
+        // Two touch buttons: negative => -1, positive => +1 (both held => 0).
+        FloatAction& BindTouchButtonPair(Vector2 negative_position, std::string negative_icon,
+                                         Vector2 positive_position, std::string positive_icon,
+                                         float radius, Font font);
+        // Outputs `scale` while a finger that landed in `area` is down. area = {x, y, w, h}, 0..1 of the screen.
+        FloatAction& BindTouchArea(Rectangle area, float scale = 1.f);
+        // One axis of the finger movement in `area` (pixels * sensitivity). Horizontal: right is +. Vertical: up is +.
+        FloatAction& BindTouchAreaDelta(Rectangle area, ScreenAxis direction, float sensitivity = 1.f);
+        // One axis of the finger position in `area`, 0..1 (bottom-left origin); 0 while not touching.
+        FloatAction& BindTouchAreaPosition(Rectangle area, ScreenAxis direction);
+        // One axis of a floating touch joystick. Horizontal: right is +. Vertical: up is +.
+        FloatAction& BindTouchJoystick(Vector2 position, float base_radius, float knob_radius, ScreenAxis direction);
 
         // Modifiers: apply, in call order, to the binding added by the PREVIOUS Bind* call.
         // The parameters of the Bind* methods (scale, deadzone, ...) run first.
@@ -87,13 +108,30 @@ namespace Lil::Input {
 
         // Composite of four keys, e.g. WASD. Diagonals are normalized.
         Vector2Action& BindKeys(KeyboardKey up, KeyboardKey down, KeyboardKey left, KeyboardKey right);
+        // Single key giving a fixed direction, e.g. BindKey(KEY_SPACE, {0, 1}).
+        Vector2Action& BindKey(KeyboardKey key, Vector2 direction);
+        // Composite of four mouse buttons. Diagonals are normalized.
+        Vector2Action& BindMouseButtons(MouseButton up, MouseButton down, MouseButton left, MouseButton right);
+        // Composite of four gamepad buttons (D-pad). Diagonals are normalized.
+        Vector2Action& BindGamepadButtons(GamepadButton up, GamepadButton down, GamepadButton left, GamepadButton right);
         // Radial deadzone, length clamped to 1.
         Vector2Action& BindGamepadStick(GamepadStick stick, float deadzone = 0.15f);
+        // Any two gamepad axes (e.g. triggers). Radial deadzone, length clamped to 1.
+        Vector2Action& BindGamepadAxes(GamepadAxis x, GamepadAxis y, float deadzone = 0.15f);
         Vector2Action& BindMouseDelta(float sensitivity = 1.f);
         Vector2Action& BindMouseWheel(float scale = 1.f);
 
         // Floating touch joystick. Analog: length 0..1, pushed up => Y > 0.
         Vector2Action& BindTouchJoystick(Vector2 position, float base_radius, float knob_radius);
+
+        // Four touch buttons as a D-pad around `center`, `spacing` pixels away. Diagonals are normalized.
+        Vector2Action& BindTouchDPad(Vector2 center, float spacing, float radius,
+                                     std::string up_icon, std::string down_icon,
+                                     std::string left_icon, std::string right_icon, Font font);
+        // Four touch buttons at explicit positions. Diagonals are normalized.
+        Vector2Action& BindTouchButtons(Vector2 up, Vector2 down, Vector2 left, Vector2 right, float radius,
+                                        std::string up_icon, std::string down_icon,
+                                        std::string left_icon, std::string right_icon, Font font);
 
         // Touch area, e.g. camera look. area = {x, y, w, h}, all 0..1 of the screen (x, y = top-left).
         // Delta: finger movement this frame in pixels * sensitivity (like BindMouseDelta), dragging up => Y > 0.

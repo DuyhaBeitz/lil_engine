@@ -119,6 +119,8 @@ struct BoolInfo final : ActionState {
     std::vector<AxisThreshold>         gamepad_axes;
     std::vector<TouchButton*>         touch_buttons;   // owned by `widgets`
     std::vector<TouchArea*>      touch_rects;     // owned by `widgets`
+    bool wheel_up   = false;
+    bool wheel_down = false;
 
     bool was_down = false;
     bool is_down  = false;
@@ -129,6 +131,12 @@ struct BoolInfo final : ActionState {
         for (auto b : mouse_buttons) if (IsMouseButtonDown(b)) return true;
         for (auto* b : touch_buttons) if (b->IsDown()) return true;
         for (auto* r : touch_rects)   if (r->IsDown()) return true;
+
+        if (wheel_up || wheel_down) {
+            float wheel = GetMouseWheelMove();
+            if (wheel_up   && wheel > 0.f) return true;
+            if (wheel_down && wheel < 0.f) return true;
+        }
 
         if (IsGamepadAvailable(gamepad)) {
             for (auto b : gamepad_buttons)
@@ -218,6 +226,19 @@ Vector2 ApplyRadialDeadzone(Vector2 v, float lower, float upper = 1.f) {
     if (scaled > 1.f) scaled = 1.f;
     float k = scaled / len;
     return {v.x * k, v.y * k};
+}
+
+// Four directions => one vector, up => Y > 0. Diagonals are normalized.
+Vector2 NormalizedComposite(bool up, bool down, bool left, bool right) {
+    Vector2 v{(right ? 1.f : 0.f) - (left ? 1.f : 0.f),
+              (up    ? 1.f : 0.f) - (down ? 1.f : 0.f)};
+    float len2 = v.x * v.x + v.y * v.y;
+    if (len2 > 1.f) {
+        float inv = 1.f / std::sqrt(len2);
+        v.x *= inv;
+        v.y *= inv;
+    }
+    return v;
 }
 
 // One registry for every action type.
@@ -321,6 +342,9 @@ BoolAction& BoolAction::BindTouchArea(Rectangle area) {
     return *this;
 }
 
+BoolAction& BoolAction::BindMouseWheelUp()   { Lookup<BoolInfo>(*this).wheel_up   = true; return *this; }
+BoolAction& BoolAction::BindMouseWheelDown() { Lookup<BoolInfo>(*this).wheel_down = true; return *this; }
+
 bool BoolAction::IsDown() const     { auto& i = Lookup<BoolInfo>(*this); return i.is_down; }
 bool BoolAction::IsPressed() const  { auto& i = Lookup<BoolInfo>(*this); return i.is_down && !i.was_down; }
 bool BoolAction::IsReleased() const { auto& i = Lookup<BoolInfo>(*this); return !i.is_down && i.was_down; }
@@ -344,9 +368,24 @@ FloatAction& FloatAction::BindMouseButton(MouseButton button, float scale) {
     return *this;
 }
 
+FloatAction& FloatAction::BindMouseButtonPair(MouseButton negative, MouseButton positive) {
+    Lookup<FloatInfo>(*this).sources.push_back([=](int) {
+        return (IsMouseButtonDown(positive) ? 1.f : 0.f) - (IsMouseButtonDown(negative) ? 1.f : 0.f);
+    });
+    return *this;
+}
+
 FloatAction& FloatAction::BindGamepadButton(GamepadButton button, float scale) {
     Lookup<FloatInfo>(*this).sources.push_back([=](int pad) {
         return IsGamepadAvailable(pad) && IsGamepadButtonDown(pad, button) ? scale : 0.f;
+    });
+    return *this;
+}
+
+FloatAction& FloatAction::BindGamepadButtonPair(GamepadButton negative, GamepadButton positive) {
+    Lookup<FloatInfo>(*this).sources.push_back([=](int pad) {
+        if (!IsGamepadAvailable(pad)) return 0.f;
+        return (IsGamepadButtonDown(pad, positive) ? 1.f : 0.f) - (IsGamepadButtonDown(pad, negative) ? 1.f : 0.f);
     });
     return *this;
 }
@@ -389,6 +428,62 @@ FloatAction& FloatAction::BindTouchAxis(Vector2 position, float length, float kn
     // return *this;
 }
 
+FloatAction& FloatAction::BindTouchButton(Vector2 position, float radius, std::string icon, Font font, float scale) {
+    auto& info = Lookup<FloatInfo>(*this);
+    TouchButton* w = AddWidget<TouchButton>(info.widgets, position, radius, std::move(icon), font);
+    info.sources.push_back([w, scale](int) { return w->IsDown() ? scale : 0.f; });
+    return *this;
+}
+
+FloatAction& FloatAction::BindTouchButtonPair(Vector2 negative_position, std::string negative_icon,
+                                              Vector2 positive_position, std::string positive_icon,
+                                              float radius, Font font) {
+    auto& info = Lookup<FloatInfo>(*this);
+    TouchButton* neg = AddWidget<TouchButton>(info.widgets, negative_position, radius, std::move(negative_icon), font);
+    TouchButton* pos = AddWidget<TouchButton>(info.widgets, positive_position, radius, std::move(positive_icon), font);
+    info.sources.push_back([neg, pos](int) {
+        return (pos->IsDown() ? 1.f : 0.f) - (neg->IsDown() ? 1.f : 0.f);
+    });
+    return *this;
+}
+
+FloatAction& FloatAction::BindTouchArea(Rectangle area, float scale) {
+    auto& info = Lookup<FloatInfo>(*this);
+    TouchArea* w = AddWidget<TouchArea>(info.widgets, area);
+    info.sources.push_back([w, scale](int) { return w->IsDown() ? scale : 0.f; });
+    return *this;
+}
+
+FloatAction& FloatAction::BindTouchAreaDelta(Rectangle area, ScreenAxis direction, float sensitivity) {
+    auto& info = Lookup<FloatInfo>(*this);
+    TouchArea* w = AddWidget<TouchArea>(info.widgets, area);
+    info.sources.push_back([w, direction, sensitivity](int) {
+        Vector2 d = w->GetDelta();
+        return (direction == ScreenAxis::Horizontal ? d.x : d.y) * sensitivity;
+    });
+    return *this;
+}
+
+FloatAction& FloatAction::BindTouchAreaPosition(Rectangle area, ScreenAxis direction) {
+    auto& info = Lookup<FloatInfo>(*this);
+    TouchArea* w = AddWidget<TouchArea>(info.widgets, area);
+    info.sources.push_back([w, direction](int) {
+        Vector2 p = w->GetPosition();
+        return direction == ScreenAxis::Horizontal ? p.x : p.y;
+    });
+    return *this;
+}
+
+FloatAction& FloatAction::BindTouchJoystick(Vector2 position, float base_radius, float knob_radius, ScreenAxis direction) {
+    auto& info = Lookup<FloatInfo>(*this);
+    TouchJoystick* w = AddWidget<TouchJoystick>(info.widgets, position, base_radius, knob_radius);
+    info.sources.push_back([w, direction](int) {
+        Vector2 d = w->GetDirection();
+        return direction == ScreenAxis::Horizontal ? d.x : d.y;
+    });
+    return *this;
+}
+
 // ---- modifiers (apply to the binding added by the previous Bind* call)
 
 FloatAction& FloatAction::With(FloatModifier modifier) {
@@ -411,17 +506,31 @@ float FloatAction::Value() const { return Lookup<FloatInfo>(*this).value; }
 
 Vector2Action& Vector2Action::BindKeys(KeyboardKey up, KeyboardKey down, KeyboardKey left, KeyboardKey right) {
     Lookup<Vector2Info>(*this).sources.push_back([=](int) {
-        Vector2 v{
-            (IsKeyDown(right) ? 1.f : 0.f) - (IsKeyDown(left) ? 1.f : 0.f),
-            (IsKeyDown(up)    ? 1.f : 0.f) - (IsKeyDown(down) ? 1.f : 0.f)
-        };
-        float len2 = v.x * v.x + v.y * v.y;
-        if (len2 > 1.f) {
-            float inv = 1.f / std::sqrt(len2);
-            v.x *= inv;
-            v.y *= inv;
-        }
-        return v;
+        return NormalizedComposite(IsKeyDown(up), IsKeyDown(down), IsKeyDown(left), IsKeyDown(right));
+    });
+    return *this;
+}
+
+Vector2Action& Vector2Action::BindKey(KeyboardKey key, Vector2 direction) {
+    Lookup<Vector2Info>(*this).sources.push_back([=](int) {
+        return IsKeyDown(key) ? direction : Vector2{0.f, 0.f};
+    });
+    return *this;
+}
+
+Vector2Action& Vector2Action::BindMouseButtons(MouseButton up, MouseButton down, MouseButton left, MouseButton right) {
+    Lookup<Vector2Info>(*this).sources.push_back([=](int) {
+        return NormalizedComposite(IsMouseButtonDown(up),   IsMouseButtonDown(down),
+                                   IsMouseButtonDown(left), IsMouseButtonDown(right));
+    });
+    return *this;
+}
+
+Vector2Action& Vector2Action::BindGamepadButtons(GamepadButton up, GamepadButton down, GamepadButton left, GamepadButton right) {
+    Lookup<Vector2Info>(*this).sources.push_back([=](int pad) -> Vector2 {
+        if (!IsGamepadAvailable(pad)) return {0.f, 0.f};
+        return NormalizedComposite(IsGamepadButtonDown(pad, up),   IsGamepadButtonDown(pad, down),
+                                   IsGamepadButtonDown(pad, left), IsGamepadButtonDown(pad, right));
     });
     return *this;
 }
@@ -433,6 +542,14 @@ Vector2Action& Vector2Action::BindGamepadStick(GamepadStick stick, float deadzon
         if (!IsGamepadAvailable(pad)) return {0.f, 0.f};
         // Stick pushed up => Y > 0 (the hardware reports up as negative, so negate it)
         return ApplyRadialDeadzone({GetGamepadAxisMovement(pad, ax), -GetGamepadAxisMovement(pad, ay)}, deadzone);
+    });
+    return *this;
+}
+
+Vector2Action& Vector2Action::BindGamepadAxes(GamepadAxis x, GamepadAxis y, float deadzone) {
+    Lookup<Vector2Info>(*this).sources.push_back([=](int pad) -> Vector2 {
+        if (!IsGamepadAvailable(pad)) return {0.f, 0.f};
+        return ApplyRadialDeadzone({GetGamepadAxisMovement(pad, x), GetGamepadAxisMovement(pad, y)}, deadzone);
     });
     return *this;
 }
@@ -458,6 +575,30 @@ Vector2Action& Vector2Action::BindTouchJoystick(Vector2 position, float base_rad
     TouchJoystick* w = AddWidget<TouchJoystick>(info.widgets, position, base_radius, knob_radius);
     info.sources.push_back([w](int) { return w->GetDirection(); });
     return *this;
+}
+
+Vector2Action& Vector2Action::BindTouchButtons(Vector2 up, Vector2 down, Vector2 left, Vector2 right, float radius,
+                                               std::string up_icon, std::string down_icon,
+                                               std::string left_icon, std::string right_icon, Font font) {
+    auto& info = Lookup<Vector2Info>(*this);
+    TouchButton* u = AddWidget<TouchButton>(info.widgets, up,    radius, std::move(up_icon),    font);
+    TouchButton* d = AddWidget<TouchButton>(info.widgets, down,  radius, std::move(down_icon),  font);
+    TouchButton* l = AddWidget<TouchButton>(info.widgets, left,  radius, std::move(left_icon),  font);
+    TouchButton* r = AddWidget<TouchButton>(info.widgets, right, radius, std::move(right_icon), font);
+    info.sources.push_back([=](int) {
+        return NormalizedComposite(u->IsDown(), d->IsDown(), l->IsDown(), r->IsDown());
+    });
+    return *this;
+}
+
+Vector2Action& Vector2Action::BindTouchDPad(Vector2 center, float spacing, float radius,
+                                            std::string up_icon, std::string down_icon,
+                                            std::string left_icon, std::string right_icon, Font font) {
+    // Screen y grows downward, so "up" sits at center.y - spacing.
+    return BindTouchButtons({center.x, center.y - spacing}, {center.x, center.y + spacing},
+                            {center.x - spacing, center.y}, {center.x + spacing, center.y}, radius,
+                            std::move(up_icon), std::move(down_icon),
+                            std::move(left_icon), std::move(right_icon), font);
 }
 
 Vector2Action& Vector2Action::BindTouchAreaDelta(Rectangle area, float sensitivity) {
